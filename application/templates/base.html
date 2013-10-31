@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" class="ng-app">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" href="static/img/favicon.png">
+
+    <title>Easy Learn Code - Hoc lap trinh de dang hon</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <style>
+    body {
+      padding-top: 50px;
+      padding-bottom: 20px;
+    }
+    </style>
+    {% block style_block %}{# page-specific CSS #}{% endblock %}
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="/static/js/lib/html5shiv.js"></script>
+      <script src="/static/js/lib/respond.min.js"></script>
+    <![endif]-->
+    {% block head_script %}{# defer-incapable JS block #}{% endblock %}
+  </head>
+
+  <body>
+
+    {% include 'includes/nav.html' %} {# pull in navbar #}
+
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+    <ng-view>
+        {% block main_content %}
+        {% endblock %}
+    </ng-view>
+
+    <footer>
+        <p>© EasyLearnCode 2013</p>
+    </footer>
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script data-main="/static/js/main" src="/static/js/lib/require.min.js"></script>
+    {% block tail_script %}{# defer-capable JS block #}{% endblock %}
+
+  </body>
+</html>

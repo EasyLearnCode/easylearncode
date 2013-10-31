@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<!--[if (IE 8)&!(IEMobile)]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if (IE 9)]><html class="no-js ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html lang="en-US"> <!--<![endif]-->
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Easy Learn Code</title>
+    <link href="/static/css/welcome.css" rel="stylesheet">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+
+    <!--[if (lt IE 9) & (!IEMobile)]>
+  <link href="/public/assets/css/ie8.css" rel="stylesheet">
+  <![endif]-->
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
+    <script src="/static/js/lib/jqconsole.min.js"></script>
+
+</head>
+<body class="homepage">
+
+<div class="modal fade" id="hello_console">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="mac" style="overflow: hidden;">
+                <div id="console"></div>
+                <script>
+                    $(function () {
+                        var jqconsole = $('#console').jqconsole('Hi\n', '>>>');
+                        var startPrompt = function () {
+                            // Start the prompt with history enabled.
+                            jqconsole.Prompt(true, function (input) {
+                                // Output input with the class jqconsole-output.
+                                jqconsole.Write(input + '\n', 'jqconsole-output');
+                                // Restart the prompt.
+                                startPrompt();
+                            });
+                        };
+                        startPrompt();
+                    });
+                </script>
+            </div>
+        </div>
+    </div>
+</div>
+
+<header id="masthead" class="site-header navbar navbar-default navbar-fixed-top" role="banner">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/" title="Jupo" rel="home">
+
+                <img src="/static/img/logo.png" alt="">
+
+            </a>
+        </div>
+        <nav id="site-navigation" class="collapse navbar-collapse main-navigation pull-right" role="navigation">
+            <ul class="nav navbar-nav">
+                <!--
+                <li class="current_page_item active">
+                  <a href="index.html" title="Home">Home</a>
+                </li>
+                -->
+                <li class="page_item page-item-2">
+                    <a href="#">Blog</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<div class="site-content">
+
+    <div class="jumbotron jumbotron-homepage">
+        <div class="inner">
+            <div class="container">
+                <div class="intro">
+
+                    <h1>Hoc lap trinh de dang hon</h1>
+
+                    <p>...vi da co Easy Learn Code .</p>
+
+                    <form class="form-signup form-signup-horizontal" role="form" id='authenticate-with-google'
+                          action='/oauth/google' method="POST" data-validate="parsley">
+                        <div class="form-group">
+                            <!-- <div class="popover top">
+                                <div class="arrow"></div>
+                                <div class="popover-content">
+                                  <h3>Enter your Google App username</h3>
+                                  <p>Get all Facebook features is just 1 click away.</p>
+                                </div>
+                              </div> -->
+
+                            <div class="input-group">
+                                <!--
+                                <input type="text" class="form-control input-lg"
+                                       placeholder="Enter you Google Apps email here!" id="email" name="email"
+                                       data-type="email"
+                                       data-error-message="Email is blank or not provided by Google App. Please check again"
+                                       data-error-container="div.flash-message"/>
+                                       -->
+                <span class="input-group-btn">
+                  <button class="btn btn-lg btn-primary" data-toggle="modal" href="#hello_console">Get Started!</button>
+                </span>
+                            </div>
+                        </div>
+                        <div class='flash-message'></div>
+
+
+                        <input type="hidden" name="domain" value="jupo.com">
+                        <input type="hidden" name="call_from" value="landing">
+                        <input type="hidden" name="_csrf_token" value="eae90d70f457f1cf70542ec89c618dbc8e8ac71d">
+                    </form>
+
+                </div>
+                <!-- <div class="screenshot"></div> -->
+            </div>
+        </div>
+    </div>
+
+    <a class="jumbo-anchor"></a>
+
+    <main id="main" class="site-main" role="main" style="background-color: #4d4d4d">
+
+        <div class="container">
+
+            <section class="section section-animation" id="load_section0">
+                <a name="section0" class="section-anchor"></a>
+
+                <div class="row col-group">
+                    <div class="col-md-4">
+                        <i class="icon-cogs"></i>
+
+                        <h3>FAMILIAR</h3>
+
+                        <p>Like the famous social network. Easy to use.</p>
+                    </div>
+                    <div class="col-md-4">
+                        <i class="icon-dashboard"></i>
+
+                        <h3>FOCUS</h3>
+
+                        <p>Just your teammates. Non distraction.</p>
+                    </div>
+                    <div class="col-md-4">
+                        <i class="icon-rocket"></i>
+
+                        <h3>FAST</h3>
+
+                        <p>Blazingly fast, and secure.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section section-animation" id="load_section1">
+                <a name="section1" class="section-anchor"></a>
+
+                <div class="row">
+                    <div class="col-md-7" data-pos="left">
+                        <img src="/public/assets/img/img-0.png" class="img-responsive"/>
+                    </div>
+                    <div class="col-md-5" data-pos="right">
+                        <h2>Easy to connect your team</h2>
+
+                        <p class="lead">Bring your team’s communication to a familiar workspace.
+                            <br>Start collaborating right away.</p>
+                    </div>
+
+                </div>
+            </section>
+
+            <section class="section section-animation" id="load_section2">
+                <a name="section2" class="section-anchor"></a>
+
+                <div class="row">
+                    <div class="col-md-5" data-pos="left">
+                        <h2>Optimized for Google Apps.</h2>
+
+                        <p class="lead">Web based tool for your team to get things done, and rejoice. Make full use of
+                            your Google Apps.</p>
+                    </div>
+                    <div class="col-md-7" data-pos="right">
+                        <img src="/public/assets/img/img-1.png" class="img-responsive"/>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section section-animation" id="load_section3">
+                <a name="section3" class="section-anchor"></a>
+
+                <div class="row">
+                    <div class="col-md-7" data-pos="left">
+                        <img src="/public/assets/img/img-2.png" class="img-responsive"/>
+                    </div>
+                    <div class="col-md-5" data-pos="right">
+                        <h2>Centralized communication.</h2>
+
+                        <p class="lead">Start discussion and comment on any topics, and get your team move forward. This
+                            is your team’s private social network.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section section-animation" id="load_section5">
+                <a name="section5" class="section-anchor"></a>
+
+                <div class="row">
+                    <div class="col-md-5" data-pos="left">
+                        <h2>Third party. Supported.</h2>
+
+                        <p class="lead">You can use your own team’s apps. Jupo works with Google Apps, Drive, Dropbox
+                            and many more to come</p>
+                    </div>
+                    <div class="col-md-7" data-pos="right">
+                        <img src="/public/assets/img/img-4.png" class="img-responsive"/>
+                    </div>
+                </div>
+            </section>
+            <!--
+                    <section class="section signup">
+                      <h1>Sign-up Now!</h1>
+                      <form class="form-inline" role="form" id='authenticate-with-google' action='/oauth/google' method="POST">
+                        <div class="form-group">
+                          <input id="email" type="text" name="email" class="form-control" placeholder="Enter you Google Apps mail here!" />
+                        </div>
+                        <button class="btn btn-success" type="submit">Get Started!</button>
+
+                        <input type="hidden" name="domain" value="jupo.com">
+                        <input type="hidden" name="call_from" value="landing">
+                        <input type="hidden" name="_csrf_token" value="eae90d70f457f1cf70542ec89c618dbc8e8ac71d">
+                      </form>
+                    </section>
+            -->
+        </div>
+    </main>
+
+    <footer id="colophon" class="site-footer" role="contentinfo">
+        <div class="site-info container">
+
+            <p class="pull-right">Copyright 2013 @ EasyLearnCode</p>
+        </div>
+    </footer>
+
+</div>
+
+<a id="back-to-top" class="scrollup icon-circle-arrow-up" href="#"></a>
+
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+<script src="/static/js/lib/respond.min.js"></script>
+<script src="/static/js/welcome.js"></script>
+</body>
+</html>
