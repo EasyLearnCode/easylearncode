@@ -1,8 +1,8 @@
 require.config({
 	paths: {
-		'angular' : 'lib/angular.min',
-        'angular.route' : 'lib/angular-route.min',
-        'angular.ui.bootstrap': 'lib/ui-bootstrap-tpls-0.6.0.min'
+		'angular' : 'lib/angularjs/angular.min',
+        'angular.route' : 'lib/angularjs/angular-route.min',
+        'angular.ui.bootstrap': 'lib/angularjs/ui-bootstrap-tpls-0.6.0.min'
 	},
 	baseUrl: '/static/js',
 	shim: {

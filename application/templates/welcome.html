@@ -2,7 +2,7 @@
 <!--[if (IE 8)&!(IEMobile)]><html class="no-js lt-ie9" lang="en"><![endif]-->
 <!--[if (IE 9)]><html class="no-js ie9" lang="en"><![endif]-->
 <!--[if gt IE 8]><!-->
-<html lang="en-US"> <!--<![endif]-->
+<html lang="en-US" ng-app> <!--<![endif]-->
 <head>
     <meta charset="UTF-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -17,30 +17,28 @@
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
     <script src="/static/js/lib/jqconsole.min.js"></script>
-
+    <script src="/static/js/lib/jsrepl/jsrepl.js" id="jsrepl-script"></script>
 </head>
 <body class="homepage">
 
 <div class="modal fade" id="hello_console">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="mac" style="overflow: hidden;">
-                <div id="console"></div>
-                <script>
-                    $(function () {
-                        var jqconsole = $('#console').jqconsole('Hi\n', '>>>');
-                        var startPrompt = function () {
-                            // Start the prompt with history enabled.
-                            jqconsole.Prompt(true, function (input) {
-                                // Output input with the class jqconsole-output.
-                                jqconsole.Write(input + '\n', 'jqconsole-output');
-                                // Restart the prompt.
-                                startPrompt();
-                            });
-                        };
-                        startPrompt();
-                    });
-                </script>
+            <div class="console-wrap" ng-controller="HelloCtrl">
+                <div class="blanket"></div>
+                <span class="icon-console-controls"></span>
+
+                <div class="console-chrome">
+                    <div id="progress">
+                        <span></span>
+                    </div>
+
+                    <div class="console hello-interactive-console" id="console"></div>
+                    <div class="register-wrap cf">
+                        <p class="congratulate-msg">Congratulations, you finished your first lesson!</p>
+                        <a href="/register/sign_up" class="bttn large baby-blue register">Keep going! &rarr;</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -254,5 +252,148 @@
 <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
 <script src="/static/js/lib/respond.min.js"></script>
 <script src="/static/js/welcome.js"></script>
+<script src="/static/js/lib/angularjs/angular.min.js"></script>
+<script>
+    function HelloCtrl($scope, $http) {
+        $ = jQuery;
+        $scope.jqconsole = $('#console').jqconsole('', '> ');
+        $scope.startPrompt = function () {
+            // Start the prompt with history enabled.
+            $scope.jqconsole.Prompt(true, function (input) {
+                // Output input with the class jqconsole-output.
+                dataObj = {
+                    command: input,
+                    testScript: '',
+                    type: 'evalUser'
+                };
+                $scope.jsrepl.sandbox.post({
+                    type: 'engine.EasyLearnCode_Eval',
+                    data: dataObj
+                });
+            });
+        };
+        $scope.inputCallback = function (callback) {
+            $scope.jqconsole.Input(function (result) {
+                var e;
+                try {
+                    callback(result);
+                } catch (_error) {
+
+                }
+            });
+
+        };
+        $scope.outputCallback = function (output, cls) {
+            if (output) {
+                $scope.jqconsole.Write(output, cls);
+            }
+        };
+        $scope.resultCallback = function (result) {
+            var code, error_msg, isSuccess, output, resultObj, result_val, _ref;
+            if (result && typeof result === 'object') {
+                resultObj = result;
+                result_val = resultObj.result;
+                code = resultObj.code;
+                output = resultObj.output;
+                if (result_val) {
+                    if (result_val[-1] !== '\n') {
+                        result = result_val + '\n';
+                    }
+                } else {
+                    result = '';
+                }
+                error_msg = null;
+                isSuccess = false;
+                if (resultObj.type === 'evalSolution') {
+                    if (result_val === 'true' || result_val === 'True') {
+                        isSuccess = true;
+                    } else if (result_val !== 'false' && result_val !== 'False') {
+                        error_msg = result_val;
+                    }
+                    if (isSuccess) {
+                        $scope.get_current_project().index += 1;
+                        $scope.jqconsole.Write($scope.get_current_checkpoint().entry_html + $scope.get_current_checkpoint().instruction_html, 'log', false);
+                        $scope.startPrompt();
+                        //return this.ShowCongratulations();
+                    } else {
+                        //this.exercises_fail_detail[this.Exercises[this.Exercises.CurrentLang][this.Exercises.CurrentExercise].ExerciseID] += 1;
+                        //return this.ShowRetryAnswerPrompt(msg);
+                        $scope.jqconsole.Write('<span style="color: crimson">Oops, try again.<br><span style="color: #F80">' + result_val + '</span></span>', 'log', false);
+                        $scope.startPrompt();
+                    }
+                } else if (resultObj.type === 'evalUser') {
+                    $scope.jqconsole.Write('==> ' + result, 'output');
+                    result = result_val;
+                    if (!result) {
+                        result = '';
+                    }
+                    if (!code) {
+                        code = '';
+                    }
+                    if (!output) {
+                        output = '';
+                    }
+                    result = JSON.stringify(result);
+                    code = JSON.stringify(code);
+                    output = JSON.stringify(output);
+                    command = 'easylearncode_validate(' + result + ', ' + code + ', ' + output + ')';
+                    command = command.replace(/#{/g, '\\#{');
+                    dataObj = {
+                        command: command,
+                        testScript: $scope.get_current_checkpoint().test_functions,
+                        type: 'evalSolution'
+                    };
+                    $scope.jsrepl.sandbox.post({
+                        type: 'engine.EasyLearnCode_Eval',
+                        data: dataObj
+                    });
+                }
+            } else if (result) {
+                $scope.jqconsole.Write('==> ' + result, 'output');
+                $scope.startPrompt();
+            }
+        };
+        $scope.errorCallback = function (e) {
+            $scope.jqconsole.Write(e, 'error');
+            $scope.startPrompt();
+
+        };
+        $scope.timeoutCallback = function () {
+
+        }
+        $scope.jsrepl = new JSREPL({
+            input: $scope.inputCallback,
+            output: $scope.outputCallback,
+            result: $scope.resultCallback,
+            error: $scope.errorCallback,
+            timeout: {
+                time: 30000,
+                callback: $scope.timeoutCallback
+            }
+        });
+        $http({method: 'GET', url: '/static/js/hello_exercise.json'}).
+                success(function (data, status, headers, config) {
+                    // this callback will be called asynchronously
+                    // when the response is available
+                    $scope.exercise = data;
+                    $scope.jsrepl.loadLanguage($scope.exercise.language, function () {
+                        $("#progress").hide();
+                    });
+                    $scope.get_current_project = function () {
+                        return $scope.exercise.projects[$scope.exercise.project_index];
+                    };
+                    $scope.get_current_checkpoint = function () {
+                        return $scope.get_current_project().checkpoints[$scope.get_current_project().index];
+                    };
+                    $scope.jqconsole.Write($scope.get_current_checkpoint().entry_html + $scope.get_current_checkpoint().instruction_html, 'log', false);
+                    $scope.startPrompt();
+                }).
+                error(function (data, status, headers, config) {
+                    // called asynchronously if an error occurs
+                    // or server returns response with an error status.
+                });
+    }
+    ;
+</script>
 </body>
 </html>
