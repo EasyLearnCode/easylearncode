@@ -7607,8 +7607,8 @@ a.btn-social:focus {
 
 .btn-google,
 a.btn-google {
-    background-color: #d62229;
-    color: #fff;
+    background-color: #d62229 !important;
+    color: #fff !important;
 }
 
 .btn-google:hover,
@@ -8654,4 +8654,27 @@ a.async {
         color: green;
         display: block;
     }
+}
+
+#feedback-welcome, #feedback-highlighter, #feedback-overview, #feedback-submit-success, #feedback-submit-error
+{
+    color:#333;
+}
+
+.feedback-logo {
+    white-space: nowrap;
+}
+
+.btn-google:hover, a.btn-google:hover, .btn-google:active, a.btn-google:active, .btn-google:focus, a.btn-google:focus {
+    background-color: rgb(170, 27, 33) !important;
+}
+
+.btn-social.btn-lg {
+    width: 100% !important;
+    margin-top: 10px !important;
+    margin-bottom: 11px !important;
+}
+.btn-social {
+text-align: left !important;
+border-radius: 4px !important;
 }

@@ -9,6 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Easy Learn Code</title>
     <link href="/static/css/welcome.css" rel="stylesheet">
+    <link href="/static/css/feedback.min.css" rel="stylesheet">
     <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
 
     <!--[if (lt IE 9) & (!IEMobile)]>
@@ -16,6 +17,7 @@
   <![endif]-->
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
+    <script src="/static/js/lib/feedback.js"></script>
     <script src="/static/js/lib/jqconsole.min.js"></script>
     <script src="/static/js/lib/jsrepl/jsrepl.js" id="jsrepl-script"></script>
 </head>
@@ -66,7 +68,7 @@
                 </li>
                 -->
                 <li class="page_item page-item-2">
-                    <a href="#">Blog</a>
+                    <a href="/oauth/google?domain=jupo.com&amp;network=meta.jupo.com" title="" class="btn btn-lg btn-social btn-google"><i class="icon-google-plus-sign"></i>Sign in</a>
                 </li>
             </ul>
         </nav>
@@ -161,7 +163,7 @@
 
                 <div class="row">
                     <div class="col-md-7" data-pos="left">
-                        <img src="/public/assets/img/img-0.png" class="img-responsive"/>
+                        <img src="/static/img/welcome/img-0.png" class="img-responsive"/>
                     </div>
                     <div class="col-md-5" data-pos="right">
                         <h2>Easy to connect your team</h2>
@@ -184,7 +186,7 @@
                             your Google Apps.</p>
                     </div>
                     <div class="col-md-7" data-pos="right">
-                        <img src="/public/assets/img/img-1.png" class="img-responsive"/>
+                        <img src="/static/img/welcome/img-1.png" class="img-responsive"/>
                     </div>
                 </div>
             </section>
@@ -194,7 +196,7 @@
 
                 <div class="row">
                     <div class="col-md-7" data-pos="left">
-                        <img src="/public/assets/img/img-2.png" class="img-responsive"/>
+                        <img src="/static/img/welcome/img-2.png" class="img-responsive"/>
                     </div>
                     <div class="col-md-5" data-pos="right">
                         <h2>Centralized communication.</h2>
@@ -216,7 +218,7 @@
                             and many more to come</p>
                     </div>
                     <div class="col-md-7" data-pos="right">
-                        <img src="/public/assets/img/img-4.png" class="img-responsive"/>
+                        <img src="/static/img/welcome/img-3.png" class="img-responsive"/>
                     </div>
                 </div>
             </section>
@@ -254,6 +256,10 @@
 <script src="/static/js/welcome.js"></script>
 <script src="/static/js/lib/angularjs/angular.min.js"></script>
 <script>
+    $.feedback({
+        ajaxURL: '/feedback',
+        html2canvasURL: '/static/js/lib/html2canvas.min.js'
+    });
     function HelloCtrl($scope, $http) {
         $ = jQuery;
         $scope.jqconsole = $('#console').jqconsole('', '> ');

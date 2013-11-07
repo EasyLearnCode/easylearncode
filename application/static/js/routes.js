@@ -10,6 +10,10 @@ define(['angular', 'app'], function (angular, app) {
             templateUrl: '/static/partials/home.html',
             controller: 'HomeCtrl'
         });
+        $routeProvider.when('/admin/feedback', {
+            templateUrl: '/static/partials/feedback.html',
+            controller: 'FeedbackCtrl'
+        });
         //$routeProvider.otherwise({redirectTo: '/'});
         /* change configure to use [[]] to be the interpolation */
         //$interpolateProvider.startSymbol('[[');

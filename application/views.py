@@ -11,7 +11,7 @@ For example the *say_hello* handler, handling the URL route '/hello/<username>',
 from google.appengine.api import users
 from google.appengine.runtime.apiproxy_errors import CapabilityDisabledError
 
-from flask import request, render_template, flash, url_for, redirect
+from flask import request, render_template, flash, url_for, redirect, jsonify
 
 from flask_cache import Cache
 
@@ -19,6 +19,7 @@ from application import app
 from decorators import login_required, admin_required
 from forms import ExampleForm
 from models import ExampleModel
+from models import Feedback
 
 
 # Flask-Cache (configured to use App Engine Memcache API)
@@ -29,6 +30,20 @@ def home():
     if users.get_current_user():
         return render_template("base.html")
     return render_template("welcome.html")
+
+
+def feedback():
+    import base64
+    import re
+    import json
+
+    img = base64.b64decode(re.findall("base64,(.*)", request.form['img'])[0])
+    browser_info = dict((key, request.form.get(key, None)) for key in request.form.keys() if 'browser' in key)
+    feedback = Feedback(browser=json.dumps(browser_info), note=request.form['note'], html=request.form['html'],
+                        url=request.form['url'],
+                        img=img)
+    feedback.put()
+    return jsonify(status="ok")
 
 
 def say_hello(username):

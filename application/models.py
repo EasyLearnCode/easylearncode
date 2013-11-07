@@ -15,3 +15,10 @@ class ExampleModel(ndb.Model):
     example_description = ndb.TextProperty(required=True)
     added_by = ndb.UserProperty()
     timestamp = ndb.DateTimeProperty(auto_now_add=True)
+
+class Feedback(ndb.Model):
+    browser = ndb.JsonProperty()
+    url = ndb.StringProperty()
+    note = ndb.StringProperty()
+    img = ndb.BlobProperty()
+    html = ndb.StringProperty(indexed=False)
