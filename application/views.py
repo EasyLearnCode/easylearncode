@@ -32,19 +32,22 @@ def home():
     return render_template("welcome.html")
 
 
+
 def feedback():
-    import base64
-    import re
+    #import re
     import json
 
-    img = base64.b64decode(re.findall("base64,(.*)", request.form['img'])[0])
+    #img = base64.b64decode(re.findall("base64,(.*)", request.form['img'])[0])
     browser_info = dict((key, request.form.get(key, None)) for key in request.form.keys() if 'browser' in key)
     feedback = Feedback(browser=json.dumps(browser_info), note=request.form['note'], html=request.form['html'],
                         url=request.form['url'],
-                        img=img)
+                        img=request.form['img'])
     feedback.put()
     return jsonify(status="ok")
 
+@admin_required
+def admin_feedback():
+    return render_template('admin/admin_feedback.html', feedbacks=Feedback.query().fetch(), link = {'logout': users.create_logout_url('/')})
 
 def say_hello(username):
     """Contrived example to demonstrate Flask's url routing capabilities"""

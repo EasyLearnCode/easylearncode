@@ -20,7 +20,10 @@ app.add_url_rule('/', 'home', view_func=views.home)
 
 # Feedback
 
-app.add_url_rule('/feedback','feed_back', view_func=views.feedback, methods=['POST'])
+app.add_url_rule('/feedback','feedback', view_func=views.feedback, methods=['POST'])
+
+# Admin Feedback
+app.add_url_rule('/admin/feedback','admin_feedback', view_func=views.admin_feedback, methods=['GET'])
 
 # Say hello
 app.add_url_rule('/hello/<username>', 'say_hello', view_func=views.say_hello)

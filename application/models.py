@@ -20,5 +20,5 @@ class Feedback(ndb.Model):
     browser = ndb.JsonProperty()
     url = ndb.StringProperty()
     note = ndb.StringProperty()
-    img = ndb.BlobProperty()
+    img = ndb.StringProperty(indexed=False)
     html = ndb.StringProperty(indexed=False)

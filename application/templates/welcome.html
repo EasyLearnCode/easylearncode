@@ -7,7 +7,7 @@
     <meta charset="UTF-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Easy Learn Code</title>
+    <title>Easy Learn Code - Học lập trình dễ dàng hơn, vui hơn</title>
     <link href="/static/css/welcome.css" rel="stylesheet">
     <link href="/static/css/feedback.min.css" rel="stylesheet">
     <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
@@ -37,8 +37,8 @@
 
                     <div class="console hello-interactive-console" id="console"></div>
                     <div class="register-wrap cf">
-                        <p class="congratulate-msg">Congratulations, you finished your first lesson!</p>
-                        <a href="/register/sign_up" class="bttn large baby-blue register">Keep going! &rarr;</a>
+                        <p class="congratulate-msg">Tuyệt, bạn đã hoàn thành khóa học đầu tiên!</p>
+                        <a href="/register/sign_up" class="btn btn-primary">Tiếp tục nào! &rarr;</a>
                     </div>
                 </div>
             </div>
@@ -68,7 +68,7 @@
                 </li>
                 -->
                 <li class="page_item page-item-2">
-                    <a href="/oauth/google?domain=jupo.com&amp;network=meta.jupo.com" title="" class="btn btn-lg btn-social btn-google"><i class="icon-google-plus-sign"></i>Sign in</a>
+                    <a class="btn btn-primary" href="{{ users.create_login_url() }}" style="color: #ffffff">Đăng nhập</a>
                 </li>
             </ul>
         </nav>
@@ -82,9 +82,9 @@
             <div class="container">
                 <div class="intro">
 
-                    <h1>Hoc lap trinh de dang hon</h1>
+                    <h1>Học lập trình dễ dàng hơn, vui hơn</h1>
 
-                    <p>...vi da co Easy Learn Code .</p>
+                    <p>...vì đã có Easy Learn Code.</p>
 
                     <form class="form-signup form-signup-horizontal" role="form" id='authenticate-with-google'
                           action='/oauth/google' method="POST" data-validate="parsley">
@@ -106,7 +106,7 @@
                                        data-error-container="div.flash-message"/>
                                        -->
                 <span class="input-group-btn">
-                  <button class="btn btn-lg btn-primary" data-toggle="modal" href="#hello_console">Get Started!</button>
+                  <button class="btn btn-lg btn-primary" data-toggle="modal" href="#hello_console">Thử ngay!</button>
                 </span>
                             </div>
                         </div>
@@ -137,21 +137,21 @@
                     <div class="col-md-4">
                         <i class="icon-cogs"></i>
 
-                        <h3>FAMILIAR</h3>
+                        <h3>THÂN THIỆN</h3>
 
                         <p>Like the famous social network. Easy to use.</p>
                     </div>
                     <div class="col-md-4">
                         <i class="icon-dashboard"></i>
 
-                        <h3>FOCUS</h3>
+                        <h3>CHUYÊN NGHIỆP</h3>
 
                         <p>Just your teammates. Non distraction.</p>
                     </div>
                     <div class="col-md-4">
                         <i class="icon-rocket"></i>
 
-                        <h3>FAST</h3>
+                        <h3>NHANH</h3>
 
                         <p>Blazingly fast, and secure.</p>
                     </div>
@@ -166,7 +166,7 @@
                         <img src="/static/img/welcome/img-0.png" class="img-responsive"/>
                     </div>
                     <div class="col-md-5" data-pos="right">
-                        <h2>Easy to connect your team</h2>
+                        <h2>Học với video tương tác</h2>
 
                         <p class="lead">Bring your team’s communication to a familiar workspace.
                             <br>Start collaborating right away.</p>
@@ -180,7 +180,7 @@
 
                 <div class="row">
                     <div class="col-md-5" data-pos="left">
-                        <h2>Optimized for Google Apps.</h2>
+                        <h2>Mô phỏng code.</h2>
 
                         <p class="lead">Web based tool for your team to get things done, and rejoice. Make full use of
                             your Google Apps.</p>
@@ -199,7 +199,7 @@
                         <img src="/static/img/welcome/img-2.png" class="img-responsive"/>
                     </div>
                     <div class="col-md-5" data-pos="right">
-                        <h2>Centralized communication.</h2>
+                        <h2>Học mà chơi, chơi mà học.</h2>
 
                         <p class="lead">Start discussion and comment on any topics, and get your team move forward. This
                             is your team’s private social network.</p>
@@ -212,7 +212,7 @@
 
                 <div class="row">
                     <div class="col-md-5" data-pos="left">
-                        <h2>Third party. Supported.</h2>
+                        <h2>Lập trình ngay trên trình duyệt.</h2>
 
                         <p class="lead">You can use your own team’s apps. Jupo works with Google Apps, Drive, Dropbox
                             and many more to come</p>
@@ -242,6 +242,7 @@
 
     <footer id="colophon" class="site-footer" role="contentinfo">
         <div class="site-info container">
+            <p class="pull-left"><a href="http://developer.hackerearth.com" style="color: #ffffff">HackerEarth</a></p>
 
             <p class="pull-right">Copyright 2013 @ EasyLearnCode</p>
         </div>

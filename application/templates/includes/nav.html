@@ -1,40 +1,37 @@
-<div class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
         <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">Easy Learn Code</a>
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Easy Learn Code</a>
         </div>
         <div class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
-              <ul class="dropdown-menu">
-                <li><a href="#">Action</a></li>
-                <li><a href="#">Another action</a></li>
-                <li><a href="#">Something else here</a></li>
-                <li class="divider"></li>
-                <li class="dropdown-header">Nav header</li>
-                <li><a href="#">Separated link</a></li>
-                <li><a href="#">One more separated link</a></li>
-              </ul>
-            </li>
-          </ul>
-          <form class="navbar-form navbar-right">
-            <div class="form-group">
-              <input type="text" placeholder="Email" class="form-control">
-            </div>
-            <div class="form-group">
-              <input type="password" placeholder="Password" class="form-control">
-            </div>
-            <button type="submit" class="btn btn-success">Sign in</button>
-          </form>
-        </div><!--/.navbar-collapse -->
-      </div>
+            <ul class="nav navbar-nav" ng-controller="HeaderController">
+                <li ng-class="{ active: isActive('/')}"><a href="/">Trang chủ</a></li>
+                <li ng-class="{ active: isActive('/learn')}"><a href="/learn">Học</a></li>
+                <li ng-class="{ active: isActive('/practice')}"><a href="/practice">Thực hành</a></li>
+                <li ng-class="{ active: isActive('/contest')}"><a href="/contest">Đố vui hàng tuần</a></li>
+
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Chào bạn {{ users.get_current_user() }} <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{{ users.create_logout_url('/') }}">Đăng xuất</a></li>
+{#                        <li><a href="#">Another action</a></li>#}
+{#                        <li><a href="#">Something else here</a></li>#}
+{#                        <li class="divider"></li>#}
+{#                        <li class="dropdown-header">Nav header</li>#}
+{#                        <li><a href="#">Separated link</a></li>#}
+{#                        <li><a href="#">One more separated link</a></li>#}
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <!--/.nav-collapse -->
     </div>
+</div>

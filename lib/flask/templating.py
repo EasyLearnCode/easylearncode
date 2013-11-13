@@ -16,6 +16,7 @@ from .globals import _request_ctx_stack, _app_ctx_stack
 from .signals import template_rendered
 from .module import blueprint_is_module
 from ._compat import itervalues, iteritems
+from google.appengine.api import users
 
 
 def _default_template_ctx_processor():
@@ -124,6 +125,7 @@ def render_template(template_name_or_list, **context):
     """
     ctx = _app_ctx_stack.top
     ctx.app.update_template_context(context)
+    context.update({'users':users})
     return _render(ctx.app.jinja_env.get_or_select_template(template_name_or_list),
                    context, ctx.app)
 
