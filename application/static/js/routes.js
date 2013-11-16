@@ -19,12 +19,23 @@ define(['angular', 'app'], function (angular, app) {
             templateUrl: '/static/partials/test.html',
             controller: 'AlertDemoCtrl'
         });
+
         $routeProvider.when('/', {
             templateUrl: '/static/partials/home.html',
             controller: 'HomeCarouselCtrl',
             resolve: {
                 style: function () {
                     $('head').append('<link href="/static/css/carousel.css" rel="stylesheet">');
+
+                }
+            }
+        });
+        $routeProvider.when('/practice',{
+            templateUrl: '/static/partials/practise.html',
+            controller: 'PractiseCtrl',
+            resolve: {
+                style: function () {
+                    angular.element(document).find('head').append('<link href="/static/css/practise.css" rel="stylesheet">');
 
                 }
             }
@@ -38,14 +49,14 @@ define(['angular', 'app'], function (angular, app) {
             controller:'ContestCtrl',
             resolve: {
                 style: function () {
-                    $('head').append('<link href="/static/css/contest.css" rel="stylesheet">');
+                    angular.element(document).find('head').append('<link href="/static/css/contest.css" rel="stylesheet">');
 
                 }
             }
         });
-        $routeProvider.when('/_ah/:action', {
-            redirectTo: redirect
-        });
+//        $routeProvider.when('/_ah/:action', {
+//            redirectTo: redirect
+//        });
         //$routeProvider.otherwise({redirectTo: '/'});
         /* change configure to use [[]] to be the interpolation */
         //$interpolateProvider.startSymbol('[[');

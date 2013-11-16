@@ -5,4 +5,7 @@
     margin-bottom: 14px;
     padding: 9px 14px;
 }
-.ace_editor { height: 200px; }
+.ace_editor {
+    height: 600px;
+    font-size: 14px;
+}

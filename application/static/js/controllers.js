@@ -47,5 +47,12 @@ define(['angular', 'services'], function (angular) {
                 }
             ];
         }])
+        .controller('ContestCtrl',['$scope',function($scope){
+
+        }])
+        .controller('PractiseCtrl',['$scope',function($scope){
+
+        }])
+
 
 });
