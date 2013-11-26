@@ -1,0 +1,446 @@
+{% extends base_layout %}
+{% block title %}
+    Easy Learn Code - Học lập trình dễ dàng hơn, vui hơn
+{% endblock %}
+{% block mediaCSS %}
+    <link href="/application/css/welcome.css" rel="stylesheet">
+{% endblock %}
+{% block main_content %}
+    <div class="modal fade" id="hello_console">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="console-wrap" ng-controller="HelloCtrl">
+                    <div class="blanket"></div>
+                    <span class="icon-console-controls"></span>
+
+                    <div class="console-chrome">
+                        <div id="progress">
+                            <span></span>
+                        </div>
+
+                        <div class="console hello-interactive-console" id="console"></div>
+                        <div class="register-wrap cf">
+                            <p class="congratulate-msg">Tuyệt, bạn đã hoàn thành khóa học đầu tiên!</p>
+                            <a href="/register/sign_up" class="btn btn-primary">Tiếp tục nào! &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <header id="masthead" class="site-header navbar navbar-default navbar-fixed-top" role="banner">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/" title="Jupo" rel="home">
+
+                    <img src="/application/img/logo.png" alt="">
+
+                </a>
+            </div>
+            <nav id="site-navigation" class="collapse navbar-collapse main-navigation pull-right" role="navigation">
+                <ul class="nav navbar-nav">
+                    <!--
+                    <li class="current_page_item active">
+                      <a href="index.html" title="Home">Home</a>
+                    </li>
+                    -->
+                    <li class="page_item page-item-2">
+                        <a class="btn btn-primary" href="/login" style="color: #ffffff">Đăng
+                            nhập</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="site-content">
+
+        <div class="jumbotron jumbotron-homepage">
+            <div class="inner">
+                <div class="container">
+                    <div class="intro">
+
+                        <h1>Học lập trình dễ dàng hơn, vui hơn</h1>
+
+                        <p>...vì đã có Easy Learn Code.</p>
+
+                        <form class="form-signup form-signup-horizontal" role="form" id='authenticate-with-google'
+                              action='/oauth/google' method="POST" data-validate="parsley">
+                            <div class="form-group">
+                                <!-- <div class="popover top">
+                                    <div class="arrow"></div>
+                                    <div class="popover-content">
+                                      <h3>Enter your Google App username</h3>
+                                      <p>Get all Facebook features is just 1 click away.</p>
+                                    </div>
+                                  </div> -->
+
+                                <div class="input-group">
+                                    <!--
+                                    <input type="text" class="form-control input-lg"
+                                           placeholder="Enter you Google Apps email here!" id="email" name="email"
+                                           data-type="email"
+                                           data-error-message="Email is blank or not provided by Google App. Please check again"
+                                           data-error-container="div.flash-message"/>
+                                           -->
+                <span class="input-group-btn">
+                  <button class="btn btn-lg btn-primary" data-toggle="modal" href="#hello_console">Thử ngay!</button>
+                </span>
+                                </div>
+                            </div>
+                            <div class='flash-message'></div>
+
+
+                            <input type="hidden" name="domain" value="jupo.com">
+                            <input type="hidden" name="call_from" value="landing">
+                            <input type="hidden" name="_csrf_token" value="eae90d70f457f1cf70542ec89c618dbc8e8ac71d">
+                        </form>
+
+                    </div>
+                    <!-- <div class="screenshot"></div> -->
+                </div>
+            </div>
+        </div>
+
+        <a class="jumbo-anchor"></a>
+
+        <main id="main" class="site-main" role="main" style="background-color: #4d4d4d">
+
+            <div class="container">
+
+                <section class="section section-animation" id="load_section0">
+                    <a name="section0" class="section-anchor"></a>
+
+                    <div class="row col-group">
+                        <div class="col-md-4">
+                            <i class="icon-cogs"></i>
+
+                            <h3>THÂN THIỆN</h3>
+
+                            <p>Like the famous social network. Easy to use.</p>
+                        </div>
+                        <div class="col-md-4">
+                            <i class="icon-dashboard"></i>
+
+                            <h3>CHUYÊN NGHIỆP</h3>
+
+                            <p>Just your teammates. Non distraction.</p>
+                        </div>
+                        <div class="col-md-4">
+                            <i class="icon-rocket"></i>
+
+                            <h3>NHANH</h3>
+
+                            <p>Blazingly fast, and secure.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="section section-animation" id="load_section1">
+                    <a name="section1" class="section-anchor"></a>
+
+                    <div class="row">
+                        <div class="col-md-7" data-pos="left">
+                            <img src="/application/img/welcome/img-0.png" class="img-responsive"/>
+                        </div>
+                        <div class="col-md-5" data-pos="right">
+                            <h2>Học với video tương tác</h2>
+
+                            <p class="lead">Bring your team’s communication to a familiar workspace.
+                                <br>Start collaborating right away.</p>
+                        </div>
+
+                    </div>
+                </section>
+
+                <section class="section section-animation" id="load_section2">
+                    <a name="section2" class="section-anchor"></a>
+
+                    <div class="row">
+                        <div class="col-md-5" data-pos="left">
+                            <h2>Mô phỏng code.</h2>
+
+                            <p class="lead">Web based tool for your team to get things done, and rejoice. Make full use
+                                of
+                                your Google Apps.</p>
+                        </div>
+                        <div class="col-md-7" data-pos="right">
+                            <img src="/application/img/welcome/img-1.png" class="img-responsive"/>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="section section-animation" id="load_section3">
+                    <a name="section3" class="section-anchor"></a>
+
+                    <div class="row">
+                        <div class="col-md-7" data-pos="left">
+                            <img src="/application/img/welcome/img-2.png" class="img-responsive"/>
+                        </div>
+                        <div class="col-md-5" data-pos="right">
+                            <h2>Học mà chơi, chơi mà học.</h2>
+
+                            <p class="lead">Start discussion and comment on any topics, and get your team move forward.
+                                This
+                                is your team’s private social network.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="section section-animation" id="load_section5">
+                    <a name="section5" class="section-anchor"></a>
+
+                    <div class="row">
+                        <div class="col-md-5" data-pos="left">
+                            <h2>Lập trình ngay trên trình duyệt.</h2>
+
+                            <p class="lead">You can use your own team’s apps. Jupo works with Google Apps, Drive,
+                                Dropbox
+                                and many more to come</p>
+                        </div>
+                        <div class="col-md-7" data-pos="right">
+                            <img src="/application/img/welcome/img-3.png" class="img-responsive"/>
+                        </div>
+                    </div>
+                </section>
+                <!--
+                        <section class="section signup">
+                          <h1>Sign-up Now!</h1>
+                          <form class="form-inline" role="form" id='authenticate-with-google' action='/oauth/google' method="POST">
+                            <div class="form-group">
+                              <input id="email" type="text" name="email" class="form-control" placeholder="Enter you Google Apps mail here!" />
+                            </div>
+                            <button class="btn btn-success" type="submit">Get Started!</button>
+
+                            <input type="hidden" name="domain" value="jupo.com">
+                            <input type="hidden" name="call_from" value="landing">
+                            <input type="hidden" name="_csrf_token" value="eae90d70f457f1cf70542ec89c618dbc8e8ac71d">
+                          </form>
+                        </section>
+                -->
+            </div>
+        </main>
+
+        <footer id="colophon" class="site-footer" role="contentinfo">
+            <div class="site-info container">
+                <p class="pull-left"><a href="http://developer.hackerearth.com" style="color: #ffffff">HackerEarth</a>
+                </p>
+
+                <p class="pull-right">Copyright 2013 @ EasyLearnCode</p>
+            </div>
+        </footer>
+
+    </div>
+
+    <a id="back-to-top" class="scrollup icon-circle-arrow-up" href="#"></a>
+{% endblock %}
+{% block pluginJS %}
+    <script src="/application/js/libs/respond.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
+    <script src="/application/js/libs/jqconsole.min.js" charset="UTF-8"></script>
+    <script src="/application/js/libs/jsrepl/jsrepl.js" id="jsrepl-script"></script>
+{% endblock %}
+{% block mediaJS %}
+    <script src="/application/js/welcome.js"></script>
+    <script>
+        function utf8_decode(str_data) {
+            // http://kevin.vanzonneveld.net
+            // +   original by: Webtoolkit.info (http://www.webtoolkit.info/)
+            // +      input by: Aman Gupta
+            // +   improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
+            // +   improved by: Norman "zEh" Fuchs
+            // +   bugfixed by: hitwork
+            // +   bugfixed by: Onno Marsman
+            // +      input by: Brett Zamir (http://brett-zamir.me)
+            // +   bugfixed by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
+            // +   bugfixed by: kirilloid
+            // *     example 1: utf8_decode('Kevin van Zonneveld');
+            // *     returns 1: 'Kevin van Zonneveld'
+
+            var tmp_arr = [],
+                    i = 0,
+                    ac = 0,
+                    c1 = 0,
+                    c2 = 0,
+                    c3 = 0,
+                    c4 = 0;
+
+            str_data += '';
+
+            while (i < str_data.length) {
+                c1 = str_data.charCodeAt(i);
+                if (c1 <= 191) {
+                    tmp_arr[ac++] = String.fromCharCode(c1);
+                    i++;
+                } else if (c1 <= 223) {
+                    c2 = str_data.charCodeAt(i + 1);
+                    tmp_arr[ac++] = String.fromCharCode(((c1 & 31) << 6) | (c2 & 63));
+                    i += 2;
+                } else if (c1 <= 239) {
+                    // http://en.wikipedia.org/wiki/UTF-8#Codepage_layout
+                    c2 = str_data.charCodeAt(i + 1);
+                    c3 = str_data.charCodeAt(i + 2);
+                    tmp_arr[ac++] = String.fromCharCode(((c1 & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63));
+                    i += 3;
+                } else {
+                    c2 = str_data.charCodeAt(i + 1);
+                    c3 = str_data.charCodeAt(i + 2);
+                    c4 = str_data.charCodeAt(i + 3);
+                    c1 = ((c1 & 7) << 18) | ((c2 & 63) << 12) | ((c3 & 63) << 6) | (c4 & 63);
+                    c1 -= 0x10000;
+                    tmp_arr[ac++] = String.fromCharCode(0xD800 | ((c1 >> 10) & 0x3FF));
+                    tmp_arr[ac++] = String.fromCharCode(0xDC00 | (c1 & 0x3FF));
+                    i += 4;
+                }
+            }
+
+            return tmp_arr.join('');
+        }
+        function HelloCtrl($scope, $http) {
+            $ = jQuery;
+            $scope.jqconsole = $('#console').jqconsole('', '> ');
+            $scope.startPrompt = function () {
+                // Start the prompt with history enabled.
+                $scope.jqconsole.Prompt(true, function (input) {
+                    // Output input with the class jqconsole-output.
+                    dataObj = {
+                        command: input,
+                        testScript: '',
+                        type: 'evalUser'
+                    };
+                    $scope.jsrepl.sandbox.post({
+                        type: 'engine.EasyLearnCode_Eval',
+                        data: dataObj
+                    });
+                });
+            };
+            $scope.inputCallback = function (callback) {
+                $scope.jqconsole.Input(function (result) {
+                    var e;
+                    try {
+                        callback(result);
+                    } catch (_error) {
+
+                    }
+                });
+
+            };
+            $scope.outputCallback = function (output, cls) {
+                if (output) {
+                    $scope.jqconsole.Write(output, cls);
+                }
+            };
+            $scope.resultCallback = function (result) {
+                var code, error_msg, isSuccess, output, resultObj, result_val, _ref;
+                if (result && typeof result === 'object') {
+                    resultObj = result;
+                    result_val = resultObj.result;
+                    code = resultObj.code;
+                    output = resultObj.output;
+                    if (result_val) {
+                        if (result_val[-1] !== '\n') {
+                            result = result_val + '\n';
+                        }
+                    } else {
+                        result = '';
+                    }
+                    error_msg = null;
+                    isSuccess = false;
+                    if (resultObj.type === 'evalSolution') {
+                        if (result_val === 'true' || result_val === 'True') {
+                            isSuccess = true;
+                        } else if (result_val !== 'false' && result_val !== 'False') {
+                            error_msg = result_val;
+                        }
+                        if (isSuccess) {
+                            $scope.get_current_project().index += 1;
+                            $scope.jqconsole.Write($scope.get_current_checkpoint().entry_html + $scope.get_current_checkpoint().instruction_html, 'log', false);
+                            $scope.startPrompt();
+                            //return this.ShowCongratulations();
+                        } else {
+                            //this.exercises_fail_detail[this.Exercises[this.Exercises.CurrentLang][this.Exercises.CurrentExercise].ExerciseID] += 1;
+                            //return this.ShowRetryAnswerPrompt(msg);
+                            $scope.jqconsole.Write('<span style="color: crimson">Oops, Hãy thử lại!.<br><span style="color: #F80">' + utf8_decode(result_val) + '</span></span>', 'log', false);
+                            $scope.startPrompt();
+                        }
+                    } else if (resultObj.type === 'evalUser') {
+                        $scope.jqconsole.Write('==> ' + result, 'output');
+                        result = result_val;
+                        if (!result) {
+                            result = '';
+                        }
+                        if (!code) {
+                            code = '';
+                        }
+                        if (!output) {
+                            output = '';
+                        }
+                        result = JSON.stringify(result);
+                        code = JSON.stringify(code);
+                        output = JSON.stringify(output);
+                        command = 'easylearncode_validate(' + result + ', ' + code + ', ' + output + ')';
+                        command = command.replace(/#{/g, '\\#{');
+                        dataObj = {
+                            command: command,
+                            testScript: $scope.get_current_checkpoint().test_functions,
+                            type: 'evalSolution'
+                        };
+                        $scope.jsrepl.sandbox.post({
+                            type: 'engine.EasyLearnCode_Eval',
+                            data: dataObj
+                        });
+                    }
+                } else if (result) {
+                    $scope.jqconsole.Write('==> ' + result, 'output');
+                    $scope.startPrompt();
+                }
+            };
+            $scope.errorCallback = function (e) {
+                $scope.jqconsole.Write(e, 'error');
+                $scope.startPrompt();
+
+            };
+            $scope.timeoutCallback = function () {
+
+            }
+            $scope.jsrepl = new JSREPL({
+                input: $scope.inputCallback,
+                output: $scope.outputCallback,
+                result: $scope.resultCallback,
+                error: $scope.errorCallback,
+                timeout: {
+                    time: 30000,
+                    callback: $scope.timeoutCallback
+                }
+            });
+            $http({method: 'GET', url: '/application/js/hello_exercise.json'}).
+                    success(function (data, status, headers, config) {
+                        // this callback will be called asynchronously
+                        // when the response is available
+                        $scope.exercise = data;
+                        $scope.jsrepl.loadLanguage($scope.exercise.language, function () {
+                            $("#progress").hide();
+                        });
+                        $scope.get_current_project = function () {
+                            return $scope.exercise.projects[$scope.exercise.project_index];
+                        };
+                        $scope.get_current_checkpoint = function () {
+                            return $scope.get_current_project().checkpoints[$scope.get_current_project().index];
+                        };
+                        $scope.jqconsole.Write($scope.get_current_checkpoint().entry_html + $scope.get_current_checkpoint().instruction_html, 'log', false);
+                        $scope.startPrompt();
+                    }).
+                    error(function (data, status, headers, config) {
+                        // called asynchronously if an error occurs
+                        // or server returns response with an error status.
+                    });
+        }
+        ;
+    </script>
+{% endblock %}
