@@ -1510,3 +1510,12 @@ class HomeRequestHandler(RegisterBaseHandler):
             params.update({'body_class': 'homepage'})
             return self.render_template('welcome.html', **params)
         return self.render_template('home.html', **params)
+
+
+class ContestHandler(BaseHandler):
+
+    @user_required
+    def get(self):
+        params = {}
+        params['angular_app_name']="easylearncode.contest"
+        return self.render_template("contest.html", **params)

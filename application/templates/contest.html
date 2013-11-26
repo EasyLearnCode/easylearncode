@@ -1,0 +1,66 @@
+{% extends "main.html" %}
+{% block mediaCSS %}
+    <link rel="stylesheet" href="/application/css/contest.css">
+{% endblock %}
+{% block content %}
+    {% raw %}
+    <div class="container" data-ng-controller="ContestCtrl">
+        <div class="row">
+            <div class="col-xs-12 col-md-12 highlight">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Câu hỏi:</h3>
+                            </div>
+                            <div class="panel-body">
+                                Nội dung câu hỏi
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="panel panel-success">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Bảng thành tích</h3>
+                            </div>
+                            <div class="panel-body">
+                                <ul class="list-group">
+                                    <li class="list-group-item">1. Phạm Ngọc Quang Nam</li>
+                                    <li class="list-group-item">2. Nguyễn Phan Phương Thanh</li>
+                                    <li class="list-group-item">3. Huỳnh Thị Phi Thân</li>
+                                    <li class="list-group-item">4. Nguyễn Ngọc Hân</li>
+                                    <li class="list-group-item">5. Phạm Thị Ngọc Diệp</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-md-12 highlight">
+                <tabset>
+                    <tab data-ng-repeat="lang in langs" heading="{{ lang.name }}">
+                        <div ui-ace="{ theme:'twilight',
+  mode:lang.mode, onLoad: aceLoaded(lang)}" data-ng-model="lang.source">
+                        </div>
+                    </tab>
+
+                </tabset>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-md-12 highlight">
+                <button type="button" class="btn btn-lg btn-success" data-ng-click="runCode()">Submit</button>
+                <button type="button" class="btn btn-lg btn-warning">Reset</button>
+            </div>
+        </div>
+    </div>
+    {% endraw %}
+{% endblock %}
+{% block pluginJS %}
+    <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js"></script>
+    <script src="/application/js/libs/angularjs/ui-ace.min.js"></script>
+    <script src="/application/js/libs/angularjs/ui-bootstrap-tpls-0.6.0.min.js"></script>
+
+{% endblock %}
