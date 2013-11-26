@@ -1,7 +1,0 @@
-Help on built-in function hasattr in module __builtin__:
-
-hhaassaattttrr(...)
-    hasattr(object, name) -> bool
-    
-    Return whether the object has an attribute with the given name.
-    (This is done by calling getattr(object, name) and catching exceptions.)
