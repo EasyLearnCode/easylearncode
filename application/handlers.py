@@ -1509,6 +1509,7 @@ class HomeRequestHandler(RegisterBaseHandler):
         if not self.user:
             params.update({'body_class': 'homepage'})
             return self.render_template('welcome.html', **params)
+        params.update({'angular_app_name': 'easylearncode.home'})
         return self.render_template('home.html', **params)
 
 

@@ -1,7 +1,7 @@
 (function () {
     angular.module("easylearncode.core", ["services", "controllers", "directives", "oldFilters", "oldMeta"]);
     angular.module("services", "services.gateways services.utility services.reviews services.blogFeed services.forum services.user services.auth services.content services.dummyData services.milestones services.search services.payment".split(" "));
-    angular.module("controllers", "controllers.courseCatalog controllers.lesson controllers.reviews controllers.editor controllers.myCourses controllers.search controllers.utility controllers.courseOverview controllers.contest controllers.header".split(" "));
+    angular.module("controllers", "controllers.courseCatalog controllers.lesson controllers.reviews controllers.editor controllers.myCourses controllers.search controllers.utility controllers.courseOverview controllers.header".split(" "));
     angular.module("directives", "directives.user directives.utility directives.reviews directives.forum directives.myCourses directives.search directives.payment".split(" "));
     angular.module("oldFilters", []);
     angular.module("oldMeta", ["meta.configuration"]);
@@ -44,8 +44,7 @@
     angular.module("services.permissions", []);
     angular.module("services.milestones", []);
     angular.module("services.dummyData", []);
-    angular.module("controllers.contest", []);
-    angular.module("controllers.header",[]);
+    angular.module("controllers.header", []);
     angular.module("youtube", []);
     angular.module("oldeasylearncode", ["easylearncode.core"]);
     angular.module("easylearncode.viewer", ["easylearncode.core", "youtube", "services.lesson", "directives.lesson", "controllers.lesson"]);
@@ -55,6 +54,7 @@
     angular.module("easylearncode.settings", ["easylearncode.core", "controllers.settings", "directives.location"]);
     angular.module("easylearncode.payment", ["easylearncode.core"]);
     angular.module("easylearncode.contest", ["ui.bootstrap", "ui.ace", "easylearncode.core"]);
+    angular.module("easylearncode.home", ["ui.bootstrap", "easylearncode.core"]);
     angular.module("easylearncode.core").config(["$locationProvider",
         function ($locationProvider) {
             $locationProvider.html5Mode(!1);
@@ -225,7 +225,7 @@ angular.module("services.utility").factory("libraryLoader", ["$q", "$rootScope",
         }
     }
 ]);
-angular.module("controllers.contest").controller("ContestCtrl", ["$scope", function ($scope) {
+angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", function ($scope) {
     $scope.langs = [
         {
             name: 'Python',
@@ -259,4 +259,26 @@ angular.module("controllers.header").controller('HeaderController', ['$scope', '
     $scope.isActive = function (viewLocation) {
         return viewLocation === $window.location.pathname;
     };
+}]);
+angular.module("easylearncode.home").controller('HomeCarouselCtrl', ['$scope', function ($scope) {
+    $scope.myInterval = 5500;
+    $scope.langs = [
+        {
+            name: 'Python',
+            img: 'python.jpg',
+            description: 'Python là một ngôn ngữ lập trình thông dịch do Guido van Rossum tạo ra năm 1990. Python hoàn toàn tạo kiểu động và dùng cơ chế cấp phát bộ nhớ tự động; do vậy nó tương tự như Perl, Ruby, Scheme, Smalltalk, và Tcl. Python được phát triển trong một dự án mã mở, do tổ chức phi lợi nhuận Python Software Foundation quản lý. Là một ngôn ngữ lập trình hướng đối tượng, chạy được trên nhiều hệ điều hành khác nhau như Windows, Linux, Unix, Mac. Nó Đơn giản như các shellscript nhưng lại thực sự là ngôn ngữ để phát triển ứng dụng cấp siêu cao (very-high-level-language).'
+
+        },
+        {
+            name: 'C',
+            img: 'C.png',
+            description: 'C là một ngôn ngữ lập trình tương đối nhỏ gọn vận hành gần với phần cứng và nó giống với ngôn ngữ Assembler hơn hầu hết các ngôn ngữ bậc cao. Hơn thế, C đôi khi được đánh giá như là "có khả năng di động", cho thấy sự khác nhau quan trọng giữa nó với ngôn ngữ bậc thấp như là Assembler, đó là việc mã C có thể được dịch và thi hành trong hầu hết các máy tính, hơn hẳn các ngôn ngữ hiện tại trong khi đó thì Assembler chỉ có thể chạy trong một số máy tính đặc biệt. Vì lý do này C được xem là ngôn ngữ ...'
+
+        },
+        {
+            name: 'Java',
+            img: 'Java.jpg',
+            description: 'Java (đọc như "Gia-va") là một ngôn ngữ lập trình dạng lập trình hướng đối tượng (OOP). Khác với phần lớn ngôn ngữ lập trình thông thường, thay vì biên dịch mã nguồn thành mã máy hoặc thông dịch mã nguồn khi chạy, Java được thiết kế để biên dịch mã nguồn thành bytecode, bytecode sau đó sẽ được môi trường thực thi (runtime environment) chạy. Bằng cách này, Java thường chạy chậm hơn những ngôn ngữ lập trình thông dịch khác như C++, Python, Perl, PHP, C#...'
+        }
+    ];
 }]);

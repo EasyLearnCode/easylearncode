@@ -6,7 +6,7 @@ located in the application root rather than this config.
 config = {
 
     # webapp2 sessions
-    'webapp2_extras.sessions': {'secret_key': '_PUT_KEY_HERE_YOUR_SECRET_KEY_'},
+    'webapp2_extras.sessions': {'secret_key': '|G9!$y#9QwZsE%jApd^a(-:g`*O/OZV;@t7zhjxRcD4Y[?396o|RY+P0 (O6!]K/'},
 
     # webapp2 authentication
     'webapp2_extras.auth': {'user_model': 'application.models.User',
@@ -17,7 +17,7 @@ config = {
                               'environment_args': {'extensions': ['jinja2.ext.i18n']}},
 
     # application name
-    'app_name': "Google App Engine Boilerplate",
+    'app_name': "Easy Learn Code",
 
     # the default language code for the application.
     # should match whatever language the site uses when i18n is disabled
