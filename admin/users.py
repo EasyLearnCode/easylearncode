@@ -15,6 +15,13 @@ class AdminLogoutHandler(BaseHandler):
         self.redirect(users.create_logout_url(dest_url=self.uri_for('home')))
 
 
+class AdminHomeHandler(BaseHandler):
+    def get(self):
+        params = {}
+        params['angular_app_name'] = "easylearncode.admin.home"
+        return self.render_template("admin/home.html", **params)
+
+
 class AdminGeoChartHandler(BaseHandler):
     def get(self):
         users = models.User.query().fetch(projection=['country'])

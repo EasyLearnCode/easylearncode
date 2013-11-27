@@ -23,13 +23,13 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'application/external
 import webapp2
 
 import routes
-from application import routes as boilerplate_routes
+from application import routes as application_routes
 from admin import routes as admin_routes
-from application import config as boilerplate_config
+from application import config as application_config
 import config
 from application.lib.error_handler import handle_error
 
-webapp2_config = boilerplate_config.config
+webapp2_config = application_config.config
 webapp2_config.update(config.config)
 
 app = webapp2.WSGIApplication(debug = os.environ['SERVER_SOFTWARE'].startswith('Dev'), config=webapp2_config)
@@ -39,7 +39,7 @@ if not app.debug:
         app.error_handlers[status_int] = handle_error
 
 routes.add_routes(app)
-boilerplate_routes.add_routes(app)
+application_routes.add_routes(app)
 admin_routes.add_routes(app)
 
 

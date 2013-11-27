@@ -32,6 +32,18 @@ builtins:
 - remote_api: on #/_ah/remote_api/
 
 handlers:
+
+- url: /admin/css
+  mime_type: text/css
+  static_dir: admin/static/css
+
+- url: /admin/js
+  mime_type: text/javascript
+  static_dir: admin/static/js
+
+- url: /admin/img
+  static_dir: admin/static/img
+
 - url: /admin.*
   script: main.app
   login: admin
@@ -52,15 +64,6 @@ handlers:
 - url: /(robots\.txt|humans\.txt|crossdomain\.xml)
   static_files: static/\1
   upload: static/(robots\.txt|humans\.txt|crossdomain\.xml)
-
-- url: /admin/css
-  static_dir: admin/static/css
-
-- url: /admin/js
-  static_dir: admin/static/js
-
-- url: /admin/img
-  static_dir: admin/static/img
 
 - url: /application/css
   mime_type: text/css

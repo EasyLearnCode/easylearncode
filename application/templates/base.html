@@ -1,64 +1,72 @@
 {% import "macros.html" as macros %}
 <!DOCTYPE html>
 <html class="no-js" data-ng-app="{{ angular_app_name }}" lang="{{ locale_language_id }}">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>{% block title %}{{ app_name }}{% endblock %}</title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{% block title %}{{ app_name }}{% endblock %}</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
     <link rel="shortcut icon" href="/favicon.ico">
     {% if is_mobile %}
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     {% endif %}
 
-        <link rel="stylesheet" href="/application/css/normalize.css">
-        <link rel="stylesheet" href="/application/css/main.css">
+    <link rel="stylesheet" href="/application/css/normalize.css">
+    <link rel="stylesheet" href="/application/css/main.css">
     {% block mediaCSS %}{% endblock %}
-        <script src="/application/js/libs/modernizr-2.7.0.min.js"></script>
+    <script src="/application/js/libs/modernizr-2.7.0.min.js"></script>
 
-    </head>
-    <body class="{{ body_class }}">
-        <!--[if lt IE 8]>
+</head>
+<body class="{{ body_class }}">
+<!--[if lt IE 8]>
         <p class=chromeframe>{% trans %}Your browser is <em>ancient!</em>{% endtrans %}
     	{% trans %}<a href="http://browsehappy.com/">Upgrade to a different browser</a>
     	or <a href="http://www.google.com/chromeframe/?redirect=true">
     	install Google Chrome Frame</a> to experience this site.{% endtrans %}</p>
         <![endif]-->
 
-        <!-- Add your site or application content here -->
-        {% block main_content %}
-        {% endblock %}
+<!-- Add your site or application content here -->
+{% block main_content %}
+{% endblock %}
 
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-        <script>window.jQuery || document.write('<script src="/application/js/libs/jquery-1.10.2.min.js"><\/script>')</script>
-        <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.2/js/bootstrap.min.js"></script>
-        <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
-        <script src="/application/js/plugins.js"></script>
-        {% block pluginJS %}{% endblock %}
-        <script src="/application/js/main.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="/application/js/libs/jquery-1.10.2.min.js"><\/script>')</script>
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.2/js/bootstrap.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
+<script src="/application/js/plugins.js"></script>
+{% block pluginJS %}{% endblock %}
+<script src="/application/js/main.js"></script>
 
-        <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
-        <script>
-            (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
-            function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
-            e=o.createElement(i);r=o.getElementsByTagName(i)[0];
-            e.src='//www.google-analytics.com/analytics.js';
-            r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
-            ga('create','{{ google_analytics_code }}');ga('send','pageview');
-        </script>
-        {% if locale_language_id != "en" %}
-        {% if locale_iso.language == "pt" and locale_iso.territory == "BR" %}
-    <script src="/application/js/libs/jquery_validation/localization/messages_{{ locale_iso.language }}_{{ locale_iso.territory }}.js"></script>
-        {% else %}
-    <script src="/application/js/libs/jquery_validation/localization/messages_{{ locale_language_id }}.js"></script>
-        {% endif %}
+<!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
+<script>
+    (function (b, o, i, l, e, r) {
+        b.GoogleAnalyticsObject = l;
+        b[l] || (b[l] =
+                function () {
+                    (b[l].q = b[l].q || []).push(arguments)
+                });
+        b[l].l = +new Date;
+        e = o.createElement(i);
+        r = o.getElementsByTagName(i)[0];
+        e.src = '//www.google-analytics.com/analytics.js';
+        r.parentNode.insertBefore(e, r)
+    }(window, document, 'script', 'ga'));
+    ga('create', '{{ google_analytics_code }}');
+    ga('send', 'pageview');
+</script>
+{% if locale_language_id != "en" %}
+    {% if locale_iso.language == "pt" and locale_iso.territory == "BR" %}
+        <script src="/application/js/libs/jquery_validation/localization/messages_{{ locale_iso.language }}_{{ locale_iso.territory }}.js"></script>
+    {% else %}
+        <script src="/application/js/libs/jquery_validation/localization/messages_{{ locale_language_id }}.js"></script>
     {% endif %}
-    {% block mediaJS %}{% endblock %}
-    </body>
+{% endif %}
+{% block mediaJS %}{% endblock %}
+</body>
 </html>
 {#--------------------#}
 {#<!DOCTYPE html>#}
