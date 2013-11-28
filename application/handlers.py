@@ -1518,5 +1518,12 @@ class ContestHandler(BaseHandler):
     @user_required
     def get(self):
         params = {}
-        params['angular_app_name']="easylearncode.contest"
+        params['angular_app_name'] = "easylearncode.contest"
         return self.render_template("contest.html", **params)
+
+class LearnHandler(BaseHandler):
+    @user_required
+    def get(self):
+        params = {}
+        params['angular_app_name'] = "easylearncode.learn"
+        return self.render_template("learn.html", **params)
