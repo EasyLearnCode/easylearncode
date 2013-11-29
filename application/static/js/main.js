@@ -55,6 +55,7 @@
     angular.module("easylearncode.payment", ["easylearncode.core"]);
     angular.module("easylearncode.contest", ["ui.bootstrap", "ui.ace", "easylearncode.core"]);
     angular.module("easylearncode.home", ["ui.bootstrap", "easylearncode.core"]);
+    angular.module("easylearncode.game",["easylearncode.core"]);
     angular.module("easylearncode.core").config(["$locationProvider",
         function ($locationProvider) {
             $locationProvider.html5Mode(!1);

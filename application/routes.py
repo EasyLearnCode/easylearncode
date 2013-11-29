@@ -28,6 +28,7 @@ _routes = [
     RedirectRoute('/password-reset/<user_id>/<token>', handlers.PasswordResetCompleteHandler, name='password-reset-check', strict_slash=True),
     RedirectRoute('/change-email/<user_id>/<encoded_email>/<token>', handlers.EmailChangedCompleteHandler, name='email-changed-check', strict_slash=True),
     RedirectRoute('/contest',handlers.ContestHandler,name="contest",strict_slash=True),
+    RedirectRoute('/game', handlers.GameHandler, name="game", strict_slash=True),
     RedirectRoute('/', handlers.HomeRequestHandler, name='home', strict_slash=True)
 ]
 

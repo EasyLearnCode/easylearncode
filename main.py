@@ -13,9 +13,6 @@
 # limitations under the License.
 #
 
-__author__  = 'Rodrigo Augosto (@coto)'
-__website__ = 'www.beecoss.com'
-
 import os, sys
 # Third party libraries path must be fixed before importing webapp2
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'application/external'))
@@ -28,6 +25,7 @@ from admin import routes as admin_routes
 from application import config as application_config
 import config
 from application.lib.error_handler import handle_error
+from api import routers as api_routes
 
 webapp2_config = application_config.config
 webapp2_config.update(config.config)
@@ -41,5 +39,4 @@ if not app.debug:
 routes.add_routes(app)
 application_routes.add_routes(app)
 admin_routes.add_routes(app)
-
-
+api_routes.add_routes(app)

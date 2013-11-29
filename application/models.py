@@ -150,3 +150,34 @@ class SocialUser(ndb.Model):
     @staticmethod
     def open_id_providers():
         return [k for k,v in SocialUser.PROVIDERS_INFO.items() if v['uri']]
+
+
+class ExerciseCheckpoint(ndb.Model):
+    entry = ndb.StringProperty()
+    entry_html = ndb.StringProperty()
+    hint = ndb.StringProperty()
+    hint_html = ndb.StringProperty()
+    instruction = ndb.StringProperty()
+    instruction_html = ndb.StringProperty()
+    name = ndb.StringProperty()
+    test_functions = ndb.StringProperty()
+    index = ndb.StringProperty()
+    timestamp = ndb.DateTimeProperty(auto_now_add=True)
+
+
+class Exercise(ndb.Model):
+    author = ndb.UserProperty()
+    name = ndb.StringProperty()
+    description = ndb.StringProperty()
+    checkpoints = ndb.StructuredProperty(ExerciseCheckpoint)
+    index = ndb.StringProperty()
+    timestamp = ndb.DateTimeProperty(auto_now_add=True)
+
+
+class Course(ndb.Model):
+    created = ndb.DateTimeProperty(auto_now_add=True)
+    updated = ndb.DateTimeProperty(auto_now=True)
+    name = ndb.StringProperty()
+    img = ndb.BlobProperty()
+    description = ndb.StringProperty(indexed=False)
+    excercise_keys = ndb.KeyProperty(Exercise, repeated=True)

@@ -20,7 +20,7 @@
                         <li ng-class="{ active: isActive('/')}"><a href="/">Trang chủ</a></li>
                         <li ng-class="{ active: isActive('/learn')}"><a href="/learn">Học</a></li>
                         <li ng-class="{ active: isActive('{{ uri_for("contest") }}')}"><a href="{{ uri_for("contest") }}">Đố vui hàng tuần</a></li>
-                        <li ng-class="{ active: isActive('/practice')}"><a href="/practice">Học mà chơi</a></li>
+                        <li ng-class="{ active: isActive('{{ uri_for("game") }}')}"><a href="{{ uri_for("game") }}">Học mà chơi</a></li>
 
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
