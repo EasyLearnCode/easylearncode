@@ -470,8 +470,8 @@ Maze.init = function() {
        rtl: rtl,
        toolbox: toolbox,
        trashcan: true});
-  Blockly.loadAudio_(['apps/maze/win.mp3', 'apps/maze/win.ogg'], 'win');
-  Blockly.loadAudio_(['apps/maze/whack.mp3', 'apps/maze/whack.ogg'], 'whack');
+  Blockly.loadAudio_(['maze/win.mp3', 'maze/win.ogg'], 'win');
+  Blockly.loadAudio_(['maze/whack.mp3', 'maze/whack.ogg'], 'whack');
 
   Blockly.JavaScript.INFINITE_LOOP_TRAP = '  BlocklyApps.checkTimeout(%1);\n';
   Maze.drawMap();
@@ -571,8 +571,8 @@ Maze.levelHelp = function() {
   if (Maze.LEVEL == 1) {
     if (Blockly.mainWorkspace.getAllBlocks().length < 2) {
       content = document.getElementById('dialogHelpStack');
-      style = {width: '370px', top: '120px'};
-      style[Blockly.RTL ? 'right' : 'left'] = '215px';
+      style = {width: '370px', top: '180px'};
+      style[Blockly.RTL ? 'right' : 'left'] = '360px';
       origin = toolbar[0].getSvgRoot();
     } else {
       var topBlocks = Blockly.mainWorkspace.getTopBlocks(true)
@@ -584,14 +584,14 @@ Maze.levelHelp = function() {
             '?lang=' + encodeURIComponent(BlocklyApps.LANG) +
             '&xml=' + encodeURIComponent(xml);
         content = document.getElementById('dialogHelpOneTopBlock');
-        style = {width: '360px', top: '120px'};
+        style = {width: '360px', top: '180px'};
         style[Blockly.RTL ? 'right' : 'left'] = '225px';
         origin = topBlocks[0].getSvgRoot();
       } else if (Maze.result == Maze.ResultType.UNSET) {
         // Show run help dialog.
         content = document.getElementById('dialogHelpRun');
-        style = {width: '360px', top: '410px'};
-        style[Blockly.RTL ? 'right' : 'left'] = '400px';
+        style = {width: '360px', top: '470px'};
+        style[Blockly.RTL ? 'right' : 'left'] = '545px';
         origin = document.getElementById('runButton');
       }
     }
@@ -599,21 +599,21 @@ Maze.levelHelp = function() {
     if (Maze.result != Maze.ResultType.UNSET &&
         document.getElementById('runButton').style.display == 'none') {
       content = document.getElementById('dialogHelpReset');
-      style = {width: '360px', top: '410px'};
-      style[Blockly.RTL ? 'right' : 'left'] = '400px';
+      style = {width: '360px', top: '470px'};
+      style[Blockly.RTL ? 'right' : 'left'] = '545px';
       origin = document.getElementById('resetButton');
     }
   } else if (Maze.LEVEL == 3) {
     if (userBlocks.indexOf('maze_forever') == -1) {
       if (Blockly.mainWorkspace.remainingCapacity() == 0) {
         content = document.getElementById('dialogHelpCapacity');
-        style = {width: '430px', top: '310px'};
-        style[Blockly.RTL ? 'right' : 'left'] = '50px';
+        style = {width: '430px', top: '370px'};
+        style[Blockly.RTL ? 'right' : 'left'] = '195px';
         origin = document.getElementById('capacityBubble');
       } else {
         content = document.getElementById('dialogHelpRepeat');
-        style = {width: '360px', top: '320px'};
-        style[Blockly.RTL ? 'right' : 'left'] = '425px';
+        style = {width: '360px', top: '380px'};
+        style[Blockly.RTL ? 'right' : 'left'] = '570px';
         origin = toolbar[3].getSvgRoot();
       }
     }
@@ -622,8 +622,8 @@ Maze.levelHelp = function() {
         (userBlocks.indexOf('maze_forever') == -1 ||
          Blockly.mainWorkspace.getTopBlocks(false).length > 1)) {
       content = document.getElementById('dialogHelpCapacity');
-      style = {width: '430px', top: '310px'};
-      style[Blockly.RTL ? 'right' : 'left'] = '50px';
+      style = {width: '430px', top: '430px'};
+      style[Blockly.RTL ? 'right' : 'left'] = '195px';
       origin = document.getElementById('capacityBubble');
     } else {
       var showHelp = true;
@@ -647,23 +647,23 @@ Maze.levelHelp = function() {
       }
       if (showHelp) {
         content = document.getElementById('dialogHelpRepeatMany');
-        style = {width: '360px', top: '320px'};
-        style[Blockly.RTL ? 'right' : 'left'] = '425px';
+        style = {width: '360px', top: '380px'};
+        style[Blockly.RTL ? 'right' : 'left'] = '570px';
         origin = toolbar[3].getSvgRoot();
       }
     }
   } else if (Maze.LEVEL == 5) {
     if (Maze.SKIN_ID == 0 && !Maze.showPegmanMenu.activatedOnce) {
       content = document.getElementById('dialogHelpSkins');
-      style = {width: '360px', top: '60px'};
-      style[Blockly.RTL ? 'left' : 'right'] = '20px';
+      style = {width: '360px', top: '120px'};
+      style[Blockly.RTL ? 'left' : 'right'] = '105px';
       origin = document.getElementById('pegmanButton');
     }
   } else if (Maze.LEVEL == 6) {
     if (userBlocks.indexOf('maze_if') == -1) {
       content = document.getElementById('dialogHelpIf');
-      style = {width: '360px', top: '400px'};
-      style[Blockly.RTL ? 'right' : 'left'] = '425px';
+      style = {width: '360px', top: '460px'};
+      style[Blockly.RTL ? 'right' : 'left'] = '570px';
       origin = toolbar[4].getSvgRoot();
     }
   } else if (Maze.LEVEL == 7) {
@@ -699,15 +699,15 @@ Maze.levelHelp = function() {
     if (userBlocks.indexOf('maze_if') == -1 ||
         userBlocks.indexOf('isPathForward') != -1) {
       content = document.getElementById('dialogHelpMenu');
-      style = {width: '360px', top: '400px'};
-      style[Blockly.RTL ? 'right' : 'left'] = '425px';
+      style = {width: '360px', top: '460px'};
+      style[Blockly.RTL ? 'right' : 'left'] = '570px';
       origin = toolbar[4].getSvgRoot();
     }
   } else if (Maze.LEVEL == 9) {
     if (userBlocks.indexOf('maze_ifElse') == -1) {
       content = document.getElementById('dialogHelpIfElse');
-      style = {width: '360px', top: '305px'};
-      style[Blockly.RTL ? 'right' : 'left'] = '425px';
+      style = {width: '360px', top: '365px'};
+      style[Blockly.RTL ? 'right' : 'left'] = '570px';
       origin = toolbar[5].getSvgRoot();
     }
   }
