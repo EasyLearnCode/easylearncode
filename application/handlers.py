@@ -1514,7 +1514,6 @@ class HomeRequestHandler(RegisterBaseHandler):
 
 
 class ContestHandler(BaseHandler):
-
     @user_required
     def get(self):
         params = {}
@@ -1523,9 +1522,16 @@ class ContestHandler(BaseHandler):
 
 
 class GameHandler(BaseHandler):
-
     @user_required
     def get(self):
         params = {}
         params.update({'angular_app_name': 'easylearncode.game'})
         return self.render_template("game_maze.html", **params)
+
+
+class LearnHandler(BaseHandler):
+    @user_required
+    def get(self):
+        params = {}
+        params.update({'angular_app_name': "easylearncode.learn"})
+        return self.render_template("learn.html", **params)

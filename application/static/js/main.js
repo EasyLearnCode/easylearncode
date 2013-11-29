@@ -55,7 +55,8 @@
     angular.module("easylearncode.payment", ["easylearncode.core"]);
     angular.module("easylearncode.contest", ["ui.bootstrap", "ui.ace", "easylearncode.core"]);
     angular.module("easylearncode.home", ["ui.bootstrap", "easylearncode.core"]);
-    angular.module("easylearncode.game",["easylearncode.core"]);
+    angular.module("easylearncode.game", ["easylearncode.core"]);
+    angular.module("easylearncode.learn", ["ui.bootstrap", "ui.ace", "easylearncode.core"])
     angular.module("easylearncode.core").config(["$locationProvider",
         function ($locationProvider) {
             $locationProvider.html5Mode(!1);
@@ -282,4 +283,14 @@ angular.module("easylearncode.home").controller('HomeCarouselCtrl', ['$scope', f
             description: 'Java (đọc như "Gia-va") là một ngôn ngữ lập trình dạng lập trình hướng đối tượng (OOP). Khác với phần lớn ngôn ngữ lập trình thông thường, thay vì biên dịch mã nguồn thành mã máy hoặc thông dịch mã nguồn khi chạy, Java được thiết kế để biên dịch mã nguồn thành bytecode, bytecode sau đó sẽ được môi trường thực thi (runtime environment) chạy. Bằng cách này, Java thường chạy chậm hơn những ngôn ngữ lập trình thông dịch khác như C++, Python, Perl, PHP, C#...'
         }
     ];
+}]);
+
+angular.module("easylearncode.learn").controller('LearnCtrl', ['$scope', function ($scope) {
+    $scope.lang =
+    {
+        name: 'Python',
+        mode: 'python',
+        lang: 'PYTHON',
+        source: "'''\n# Read input from stdin and provide input before running code\n\nname = raw_input('What is your name?\\n')\nprint 'Hi, %s.' % name\n'''\nprint 'Hello World!'\n"
+    };
 }]);
