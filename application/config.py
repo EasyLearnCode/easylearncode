@@ -65,8 +65,8 @@ config = {
     'github_client_secret': 'PUT_YOUR_GITHUB_CLIENT_SECRET_HERE',
 
     # get your own recaptcha keys by registering at http://www.google.com/recaptcha/
-    'captcha_public_key': "PUT_YOUR_RECAPCHA_PUBLIC_KEY_HERE",
-    'captcha_private_key': "PUT_YOUR_RECAPCHA_PRIVATE_KEY_HERE",
+    'captcha_public_key': "6LdXj-oSAAAAAHA-cIdPcTFAqK_RLABtYJla1SEG",
+    'captcha_private_key': "6LdXj-oSAAAAAIiu0mrSR-vJu_LRegnBJoPKfY0r",
 
     # Leave blank "google_analytics_domain" if you only want Analytics code
     'google_analytics_domain': "YOUR_PRIMARY_DOMAIN (e.g. google.com)",

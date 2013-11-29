@@ -16,20 +16,24 @@
 			        	</div>
 			        	<hr>
 			        	<div class="login-form">
-			        		<div class="alert alert-error hide">
-								  <button type="button" class="close" data-dismiss="alert">×</button>
-								  <h4>Error!</h4>
-								   Your Error Message goes here
-							</div>
-			        		<form action="#" method="get">
-						   		 <input type="text" placeholder="Name" class="input-field" required="">
-						   		 <input type="email" placeholder="E-mail" class="input-field" required="">
-						   		 <input type="password" placeholder="Password" class="input-field" required="">
-						   		 <input type="password" placeholder="Confirm Password" class="input-field" required="">
+			        		{% if messages|safe %}
+                                {% for message in messages %}
+                                    <div class="alert alert-{{ message[1]|safe }}">
+                                        <button type="button" class="close" data-dismiss="alert">×</button>
+                                        {{ message[0]|safe }}
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+			        		<form action="{{ url|safe }}" method="post" id="form_register" >
+                                 <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+						   		 <input name="username" id="username" type="text" placeholder="{% trans %}Username{% endtrans %}" class="input-field" required="">
+						   		 <input name="email" id="email" type="email" placeholder="{% trans %}Email{% endtrans %}" class="input-field" required="">
+						   		 <input name="password" id="password" type="password" placeholder="{% trans %}Password{% endtrans %}" class="input-field" required="">
+						   		 <input name="c_password" id="c_password" type="password" placeholder="{% trans %}Confirm Password{% endtrans %}" class="input-field" required="">
 						   		 <label class="checkbox">
-        		                	<input type="checkbox" value="option1" required=""> I agree to something I will never read
+        		                	<input name="rule" type="checkbox" value="option1" required=""> I agree to something I will never read
         		           		  </label>
-						   		 <button type="submit" class="btn btn-login">Sign Up</button>
+						   		 <button type="submit" class="btn btn-login">{% trans %}Sign Up{% endtrans %}</button>
 							</form>
 							<div class="login-links">
 					            <a href="/password-reset/">
@@ -45,6 +49,28 @@
 			    </div>
 			</div>
     	</div>
+{% endblock %}
+{% block mediaJS %}
+<script>
+    $().ready(function() {
+        $("#form_register").validate({
+            submitHandler: function(form) {
+                    form.submit();
+            },
+            rules: {
+                password: 'required',
+                c_password: {
+                    required: true,
+                    equalTo: '#password'
+                }
+            },
+            errorPlacement: function(error, element) {
+                element.parent().parent().addClass("error");
+            }
+        });
+
+    });
+</script>
 {% endblock %}
 {#{% extends base_layout %}#}
 {##}

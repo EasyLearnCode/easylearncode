@@ -89,8 +89,8 @@ class ContactForm(EmailMixin):
 
 
 class RegisterForm(PasswordConfirmMixin, UsernameMixin, NameMixin, EmailMixin):
-    country = fields.SelectField(_('Country'), choices=[])
-    tz = fields.SelectField(_('Timezone'), choices=[])
+    #country = fields.SelectField(_('Country'), choices=[])
+    #tz = fields.SelectField(_('Timezone'), choices=[])
     pass
 
 

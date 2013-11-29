@@ -15,8 +15,8 @@
                     {#            </button>#}
                     <a class="navbar-brand" href="/">Easy Learn Code</a>
                 </div>
-                <div class="navbar-collapse collapse">
-                    <ul class="nav navbar-nav" data-ng-controller="HeaderController">
+                <div class="navbar-collapse collapse" data-ng-controller="HeaderController">
+                    <ul class="nav navbar-nav" >
                         <li ng-class="{ active: isActive('/')}"><a href="/">Trang chủ</a></li>
                         <li ng-class="{ active: isActive('/learn')}"><a href="/learn">Học</a></li>
                         <li ng-class="{ active: isActive('{{ uri_for("contest") }}')}"><a href="{{ uri_for("contest") }}">Đố vui hàng tuần</a></li>
@@ -36,8 +36,8 @@
                                 </ul>
                             </li>
                         {% else %}
-                        <li ng-class="{ active: isActive('/login')}"><a href="/login">Đăng nhập</a></li>
-                        <li ng-class="{ active: isActive('/register')}"><a href="/register">Đăng kí</a></li>
+                        <li ng-class="{ active: isActive('{{ uri_for("login") }}')}"><a href="{{ uri_for("login") }}">Đăng nhập</a></li>
+                        <li ng-class="{ active: isActive('{{ uri_for("register") }}')}"><a href="{{ uri_for("register") }}">Đăng kí</a></li>
                         {% endif %}
                     </ul>
                 </div>

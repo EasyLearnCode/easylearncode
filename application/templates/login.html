@@ -26,18 +26,18 @@
                         {% endif %}
                         <form action="{{ url|safe }}" method="post" id="form_login_user">
                             <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
-                            <input type="text" placeholder="User name" class="input-field" required="">
-                            <input type="password" placeholder="Password" class="input-field" required="">
+                            <input name="username" type="text" placeholder="{% trans %}Username or Email{% endtrans %}" class="input-field focused required" required="">
+                            <input name="password" type="password" placeholder="{% trans %}Password{% endtrans %}" class="input-field focused required" required="">
 
                             <button type="submit" class="btn btn-login">Login</button>
                         </form>
                         <div class="login-links">
                             <a href="{{ uri_for("password-reset") }}">
-                                Forgot password?
+                               {% trans %}Forgot your password?{% endtrans %}
                             </a>
                             <br>
                             <a href="{{ uri_for("register") }}">
-                                Don't have an account? <strong>Sign Up</strong>
+                                {% trans %}Don't have an account?{% endtrans %} <strong>{% trans %}Sign Up{% endtrans %}</strong>
                             </a>
                         </div>
                     </div>
@@ -92,7 +92,6 @@
                 },
                 errorPlacement: function (error, element) {
                     element.parent().parent().addClass("error");
-                    error.addClass("help-inline").appendTo(element.parent());
                 }
             });
         });

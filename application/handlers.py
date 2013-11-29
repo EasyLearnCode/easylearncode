@@ -110,6 +110,7 @@ class LoginHandler(BaseHandler):
         if self.user:
             self.redirect_to('home')
         params = {}
+        params.update({'angular_app_name': 'easylearncode.simple'})
         return self.render_template('login.html', **params)
 
     def post(self):
@@ -157,8 +158,8 @@ class LoginHandler(BaseHandler):
                                                 token=models.User.create_resend_token(user.get_id()))
                 message = _('Your account has not yet been activated. Please check your email to activate it or') + \
                           ' <a href="' + resend_email_uri + '">' + _('click here') + '</a> ' + _('to resend the email.')
-                self.add_message(message, 'error')
-                return self.redirect_to('home')
+                self.add_message(message, 'danger')
+                return self.redirect_to('login')
 
             # check twitter association in session
             twitter_helper = twitter.TwitterAuth(self)
@@ -229,7 +230,7 @@ class LoginHandler(BaseHandler):
             # the BaseHandler.dispatcher
             message = _("Your username or password is incorrect. "
                         "Please try again (make sure your caps lock is off)")
-            self.add_message(message, 'error')
+            self.add_message(message, 'danger')
             self.redirect_to('login', continue_url=continue_url) if continue_url else self.redirect_to('login')
 
     @webapp2.cached_property
@@ -289,7 +290,7 @@ class SocialLoginHandler(BaseHandler):
             except users.NotAllowedError:
                 self.add_message('You must enable Federated Login Before for this application.<br> '
                                  '<a href="http://appengine.google.com" target="_blank">Google App Engine Control Panel</a> -> '
-                                 'Administration -> Application Settings -> Authentication Options', 'error')
+                                 'Administration -> Application Settings -> Authentication Options', 'danger')
                 self.redirect_to('login')
 
         else:
@@ -332,7 +333,7 @@ class CallbackSocialLoginHandler(BaseHandler):
                     self.add_message(message, 'success')
                 else:
                     message = _('This Twitter account is already in use.')
-                    self.add_message(message, 'error')
+                    self.add_message(message, 'danger')
                 if continue_url:
                     self.redirect(continue_url)
                 else:
@@ -397,7 +398,7 @@ class CallbackSocialLoginHandler(BaseHandler):
                     self.add_message(message, 'success')
                 else:
                     message = _('This Github account is already in use.')
-                    self.add_message(message, 'error')
+                    self.add_message(message, 'danger')
                 self.redirect_to('edit-profile')
             else:
                 # user is not logged in, but is trying to log in via github
@@ -450,7 +451,7 @@ class CallbackSocialLoginHandler(BaseHandler):
                     self.add_message(message, 'success')
                 else:
                     message = _('This Facebook account is already in use!')
-                    self.add_message(message, 'error')
+                    self.add_message(message, 'danger')
                 if continue_url:
                     self.redirect(continue_url)
                 else:
@@ -520,7 +521,7 @@ class CallbackSocialLoginHandler(BaseHandler):
                     self.add_message(message, 'success')
                 else:
                     message = _('This Linkedin account is already in use!')
-                    self.add_message(message, 'error')
+                    self.add_message(message, 'danger')
                 if continue_url:
                     self.redirect(continue_url)
                 else:
@@ -572,7 +573,7 @@ class CallbackSocialLoginHandler(BaseHandler):
                 message = _('No user authentication information received from %s. '
                             'Please ensure you are logging in from an authorized OpenID Provider (OP).'
                             % provider_display_name)
-                self.add_message(message, 'error')
+                self.add_message(message, 'danger')
                 return self.redirect_to('login', continue_url=continue_url) if continue_url else self.redirect_to(
                     'login')
             if self.user:
@@ -590,7 +591,7 @@ class CallbackSocialLoginHandler(BaseHandler):
                     self.add_message(message, 'success')
                 else:
                     message = _('This %s account is already in use.' % provider_display_name)
-                    self.add_message(message, 'error')
+                    self.add_message(message, 'danger')
                 if continue_url:
                     self.redirect(continue_url)
                 else:
@@ -648,7 +649,7 @@ class CallbackSocialLoginHandler(BaseHandler):
                 )
             if not user_info[0]: #user is a tuple
                 message = _('The account %s is already in use.' % provider_display_name)
-                self.add_message(message, 'error')
+                self.add_message(message, 'danger')
                 return self.redirect_to('register')
 
             user = user_info[1]
@@ -682,7 +683,7 @@ class CallbackSocialLoginHandler(BaseHandler):
             self.add_message(message, 'success')
         else:
             message = _('This %s account is already in use.' % provider_display_name)
-            self.add_message(message, 'error')
+            self.add_message(message, 'danger')
         if continue_url:
             self.redirect(continue_url)
         else:
@@ -706,11 +707,11 @@ class DeleteSocialProviderHandler(BaseHandler):
                     self.add_message(message, 'success')
                 else:
                     message = _('Social account on %s not found for this user.' % provider_name)
-                    self.add_message(message, 'error')
+                    self.add_message(message, 'danger')
             else:
                 message = ('Social account on %s cannot be deleted for user.'
                            '  Please create a username and password to delete social account.' % provider_name)
-                self.add_message(message, 'error')
+                self.add_message(message, 'danger')
         self.redirect_to('edit-profile')
 
 
@@ -732,7 +733,7 @@ class LogoutHandler(BaseHandler):
         except (AttributeError, KeyError), e:
             logging.error("Error logging out: %s" % e)
             message = _("User is logged out, but there was an error on the redirection.")
-            self.add_message(message, 'error')
+            self.add_message(message, 'danger')
             return self.redirect_to('home')
 
 
@@ -747,20 +748,22 @@ class RegisterHandler(BaseHandler):
         if self.user:
             self.redirect_to('home')
         params = {}
+        params.update({'angular_app_name': 'easylearncode.simple'})
         return self.render_template('register.html', **params)
 
     def post(self):
         """ Get fields from POST dict """
 
+        import logging
         if not self.form.validate():
             return self.get()
         username = self.form.username.data.lower()
-        name = self.form.name.data.strip()
-        last_name = self.form.last_name.data.strip()
+        #name = self.form.name.data.strip()
+        #last_name = self.form.last_name.data.strip()
         email = self.form.email.data.lower()
         password = self.form.password.data.strip()
-        country = self.form.country.data
-        tz = self.form.tz.data
+        #country = self.form.country.data
+        #tz = self.form.tz.data
 
         # Password to SHA512
         password = utils.hashing(password, self.app.config.get('salt'))
@@ -772,8 +775,10 @@ class RegisterHandler(BaseHandler):
         auth_id = "own:%s" % username
         user = self.auth.store.user_model.create_user(
             auth_id, unique_properties, password_raw=password,
-            username=username, name=name, last_name=last_name, email=email,
-            ip=self.request.remote_addr, country=country, tz=tz
+            username=username, email=email,
+            ip=self.request.remote_addr
+            #username=username, name=name, last_name=last_name, email=email,
+            #ip=self.request.remote_addr, country=country, tz=tz
         )
 
         if not user[0]: #user is a tuple
@@ -784,7 +789,7 @@ class RegisterHandler(BaseHandler):
                 message = _('Sorry, The email <strong>{}</strong> is already registered.').format(email)
             else:
                 message = _('Sorry, The user is already registered.')
-            self.add_message(message, 'error')
+            self.add_message(message, 'danger')
             return self.redirect_to('register')
         else:
             # User registered successfully
@@ -818,7 +823,7 @@ class RegisterHandler(BaseHandler):
                     message = _('You were successfully registered. '
                                 'Please check your email to activate your account.')
                     self.add_message(message, 'success')
-                    return self.redirect_to('home')
+                    return self.redirect_to('login')
 
                 # If the user didn't register using registration form ???
                 db_user = self.auth.get_user_by_password(user[1].auth_ids[0], password)
@@ -866,14 +871,14 @@ class RegisterHandler(BaseHandler):
             except (AttributeError, KeyError), e:
                 logging.error('Unexpected error creating the user %s: %s' % (username, e ))
                 message = _('Unexpected error creating the user %s' % username)
-                self.add_message(message, 'error')
+                self.add_message(message, 'danger')
                 return self.redirect_to('home')
 
     @webapp2.cached_property
     def form(self):
         f = forms.RegisterForm(self)
-        f.country.choices = self.countries_tuple
-        f.tz.choices = self.tz
+        #f.country.choices = self.countries_tuple
+        #f.tz.choices = self.tz
         return f
 
 
@@ -886,7 +891,7 @@ class AccountActivationHandler(BaseHandler):
         try:
             if not models.User.validate_auth_token(user_id, token):
                 message = _('The link is invalid.')
-                self.add_message(message, 'error')
+                self.add_message(message, 'danger')
                 return self.redirect_to('home')
 
             user = models.User.get_by_id(long(user_id))
@@ -908,7 +913,7 @@ class AccountActivationHandler(BaseHandler):
         except (AttributeError, KeyError, InvalidAuthIdError, NameError), e:
             logging.error("Error activating an account: %s" % e)
             message = _('Sorry, Some error occurred.')
-            self.add_message(message, 'error')
+            self.add_message(message, 'danger')
             return self.redirect_to('home')
 
 
@@ -921,7 +926,7 @@ class ResendActivationEmailHandler(BaseHandler):
         try:
             if not models.User.validate_resend_token(user_id, token):
                 message = _('The link is invalid.')
-                self.add_message(message, 'error')
+                self.add_message(message, 'danger')
                 return self.redirect_to('home')
 
             user = models.User.get_by_id(long(user_id))
@@ -957,17 +962,17 @@ class ResendActivationEmailHandler(BaseHandler):
                 message = _('The verification email has been resent to %s. '
                             'Please check your email to activate your account.' % email)
                 self.add_message(message, 'success')
-                return self.redirect_to('home')
+                return self.redirect_to('login')
             else:
                 message = _('Your account has been activated. Please <a href="/login/">sign in</a> to your account.')
                 self.add_message(message, 'warning')
-                return self.redirect_to('home')
+                return self.redirect_to('login')
 
         except (KeyError, AttributeError), e:
             logging.error("Error resending activation email: %s" % e)
             message = _('Sorry, Some error occurred.')
-            self.add_message(message, 'error')
-            return self.redirect_to('home')
+            self.add_message(message, 'danger')
+            return self.redirect_to('login')
 
 
 class ContactHandler(BaseHandler):
@@ -1053,7 +1058,7 @@ class ContactHandler(BaseHandler):
         except (AttributeError, KeyError), e:
             logging.error('Error sending contact form: %s' % e)
             message = _('Error sending the message. Please try again later.')
-            self.add_message(message, 'error')
+            self.add_message(message, 'danger')
             return self.redirect_to('contact')
 
     @webapp2.cached_property
@@ -1129,7 +1134,7 @@ class EditProfileHandler(BaseHandler):
                             'The username <strong>{}</strong> is already taken. Please choose another.').format(
                             username)
                         # At least one of the values is not unique.
-                        self.add_message(message, 'error')
+                        self.add_message(message, 'danger')
                         return self.get()
                 user_info.name = name
                 user_info.last_name = last_name
@@ -1143,12 +1148,12 @@ class EditProfileHandler(BaseHandler):
             except (AttributeError, KeyError, ValueError), e:
                 logging.error('Error updating profile: ' + e)
                 message = _('Unable to update profile. Please try again later.')
-                self.add_message(message, 'error')
+                self.add_message(message, 'danger')
                 return self.get()
 
         except (AttributeError, TypeError), e:
             login_error_message = _('Sorry you are not logged in.')
-            self.add_message(login_error_message, 'error')
+            self.add_message(login_error_message, 'danger')
             self.redirect_to('login')
 
     @webapp2.cached_property
@@ -1221,11 +1226,11 @@ class EditPasswordHandler(BaseHandler):
                 # Returns error message to self.response.write in
                 # the BaseHandler.dispatcher
                 message = _("Incorrect password! Please enter your current password to change your account settings.")
-                self.add_message(message, 'error')
+                self.add_message(message, 'danger')
                 return self.redirect_to('edit-password')
         except (AttributeError, TypeError), e:
             login_error_message = _('Sorry you are not logged in.')
-            self.add_message(login_error_message, 'error')
+            self.add_message(login_error_message, 'danger')
             self.redirect_to('login')
 
     @webapp2.cached_property
@@ -1274,7 +1279,7 @@ class EditEmailHandler(BaseHandler):
                     aUser = models.User.get_by_email(new_email)
                     if aUser is not None:
                         message = _("The email %s is already registered." % new_email)
-                        self.add_message(message, 'error')
+                        self.add_message(message, 'danger')
                         return self.redirect_to("edit-email")
 
                     # send email
@@ -1329,12 +1334,12 @@ class EditEmailHandler(BaseHandler):
                 # Returns error message to self.response.write in
                 # the BaseHandler.dispatcher
                 message = _("Incorrect password! Please enter your current password to change your account settings.")
-                self.add_message(message, 'error')
+                self.add_message(message, 'danger')
                 return self.redirect_to('edit-email')
 
         except (AttributeError, TypeError), e:
             login_error_message = _('Sorry you are not logged in.')
-            self.add_message(login_error_message, 'error')
+            self.add_message(login_error_message, 'danger')
             self.redirect_to('login')
 
     @webapp2.cached_property
@@ -1354,7 +1359,7 @@ class PasswordResetHandler(BaseHandler):
             error=None)
         if self.app.config.get('captcha_public_key') == "PUT_YOUR_RECAPCHA_PUBLIC_KEY_HERE" or \
                         self.app.config.get('captcha_private_key') == "PUT_YOUR_RECAPCHA_PUBLIC_KEY_HERE":
-            chtml = '<div class="alert alert-error"><strong>Error</strong>: You have to ' \
+            chtml = '<div class="alert alert-danger"><strong>Error</strong>: You have to ' \
                     '<a href="http://www.google.com/recaptcha/whyrecaptcha" target="_blank">sign up ' \
                     'for API keys</a> in order to use reCAPTCHA.</div>' \
                     '<input type="hidden" name="recaptcha_challenge_field" value="manual_challenge" />' \
@@ -1362,6 +1367,7 @@ class PasswordResetHandler(BaseHandler):
         params = {
             'captchahtml': chtml,
         }
+        params.update({'angular_app_name':'easylearncode.simple'})
         return self.render_template('password_reset.html', **params)
 
     def post(self):
@@ -1381,7 +1387,7 @@ class PasswordResetHandler(BaseHandler):
             pass
         else:
             _message = _('Wrong image verification code. Please try again.')
-            self.add_message(_message, 'error')
+            self.add_message(_message, 'danger')
             return self.redirect_to('password-reset')
             #check if we got an email or username
         email_or_username = str(self.request.POST.get('email_or_username')).lower().strip()
@@ -1463,7 +1469,7 @@ class PasswordResetCompleteHandler(BaseHandler):
             return self.redirect_to('home')
 
         else:
-            self.add_message(_('The two passwords must match.'), 'error')
+            self.add_message(_('The two passwords must match.'), 'danger')
             return self.redirect_to('password-reset-check', user_id=user_id, token=token)
 
     @webapp2.cached_property
