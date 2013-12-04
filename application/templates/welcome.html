@@ -364,7 +364,9 @@
                             $scope.startPrompt();
                         }
                     } else if (resultObj.type === 'evalUser') {
-                        $scope.jqconsole.Write('==> ' + result, 'output');
+                        if(result){
+                            $scope.jqconsole.Write('==> ' + result, 'output');
+                        }
                         result = result_val;
                         if (!result) {
                             result = '';

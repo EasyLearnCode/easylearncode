@@ -2,14 +2,22 @@ class self.JSREPLEngine
   constructor: (unused_input, @output, @result, @error, sandbox, ready) ->
     @Python = sandbox.Python
     sandbox.print = (->)
+
+    @output_buffer = []
+    output_wrapper = (chr) =>
+      if chr?
+        @output_buffer.push chr
+        output chr
+    printOutput = makeUtf8Print(output_wrapper)
+
     @error_buffer = []
-    printOutput = makeUtf8Print(output)
+    printError = makeUtf8Print(output)
     bufferError = (chr) =>
       if chr?
         if @Python.isHandlingError
           @error_buffer.push String.fromCharCode chr
         else
-          printOutput chr
+          printError chr
     @Python.initialize null, printOutput, bufferError
     ready()
 

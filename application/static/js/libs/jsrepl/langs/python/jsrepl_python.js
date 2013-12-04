@@ -2,21 +2,29 @@
 (function() {
   self.JSREPLEngine = (function() {
     function JSREPLEngine(unused_input, output, result, error, sandbox, ready) {
-      var bufferError, printOutput,
+      var bufferError, output_wrapper, printError, printOutput,
         _this = this;
       this.output = output;
       this.result = result;
       this.error = error;
       this.Python = sandbox.Python;
       sandbox.print = (function() {});
+      this.output_buffer = [];
+      output_wrapper = function(chr) {
+        if (chr != null) {
+          _this.output_buffer.push(chr);
+          return output(chr);
+        }
+      };
+      printOutput = makeUtf8Print(output_wrapper);
       this.error_buffer = [];
-      printOutput = makeUtf8Print(output);
+      printError = makeUtf8Print(output);
       bufferError = function(chr) {
         if (chr != null) {
           if (_this.Python.isHandlingError) {
             return _this.error_buffer.push(String.fromCharCode(chr));
           } else {
-            return printOutput(chr);
+            return printError(chr);
           }
         }
       };
