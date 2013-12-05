@@ -1,0 +1,100 @@
+{% extends "main.html" %}
+{% block mediaCSS %}
+    <link rel="stylesheet" href="/application/css/login.css">
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6 col-md-4 col-sm-offset-3 col-md-offset-4">
+
+                <div class="login-box clearfix animated flipInY">
+                    <div class="page-icon animated bounceInDown">
+                        <img class="img-responsive" src="/application/img/login-key-icon.png" alt="Key icon">
+                    </div>
+                    <div class="login-logo">
+                        <a href="#"><img src="/application/img/logo.png" alt="Company Logo"></a>
+                    </div>
+                    <hr>
+                    <div class="login-form">
+                        {% if messages|safe %}
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message[1]|safe }}">
+                                    <button type="button" class="close" data-dismiss="alert">×</button>
+                                    {{ message[0]|safe }}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                        <form action="{{ url|safe }}" method="post" id="form_login_user">
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                            <input type="text" placeholder="User name" class="input-field" required="">
+                            <input type="password" placeholder="Password" class="input-field" required="">
+
+                            <button type="submit" class="btn btn-login">Login</button>
+                        </form>
+                        <div class="login-links">
+                            <a href="{{ uri_for("password-reset") }}">
+                                Forgot password?
+                            </a>
+                            <br>
+                            <a href="{{ uri_for("register") }}">
+                                Don't have an account? <strong>Sign Up</strong>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="social-login row">
+                    <div class="fb-login col-lg-6 col-md-12 animated flipInX">
+                        <a href="/social_login/facebook" class="btn btn-facebook btn-block">Connect with <strong>Facebook</strong></a>
+                    </div>
+                    <div class="twit-login col-lg-6 col-md-12 animated flipInX">
+                        <a href="/social_login/google" class="btn btn-twitter btn-block">Connect with
+                            <strong>Google</strong></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {#    <form id="form_login_user" action="{{ url|safe }}" method="post" class="well form-vertical auth-at-loginpage">#}
+    {#        <fieldset>#}
+    {#            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">#}
+    {#            {{ macros.field(form.username, label=_("Username or Email"), placeholder=_("Enter your")+" "+_("Username or Email"), class="input-xlarge focused required") }}#}
+    {#            {{ macros.field(form.password, label=_("Password"), placeholder=_("Enter your")+" "+_("Password"), class="input-xlarge focused required", type="password") }}#}
+    {#            <div class="control-group">#}
+    {#                <div class="controls">#}
+    {#                    <button type="submit" class="btn btn-primary btn-login">{% trans %}Login{% endtrans %}</button>#}
+    {#                    <label class="remember">#}
+    {#                        <input type="checkbox" name="remember_me" id="remember_me" value="on">#}
+    {#                        {% trans %}Remember me?{% endtrans %}#}
+    {#                    </label>#}
+    {#                </div>#}
+    {#            </div>#}
+    {#            <div class="control-group">#}
+    {#                <a href="{{ uri_for("password-reset") }}">{% trans %}Forgot your password?{% endtrans %}</a>#}
+    {#            </div>#}
+    {#            {{ macros.federated_login(provider_info, provider_uris, enable_federated_login) }}#}
+    {#            <div id="register" class="form-actions">#}
+    {#                <h4>{% trans %}Don't have an account?{% endtrans %}</h4>#}
+    {#                <a href="{{ uri_for("register") }}" class="btn btn-primary btn-login">{% trans %}Sign#}
+    {#                    Up{% endtrans %}</a>#}
+    {#            </div>#}
+    {#        </fieldset>#}
+    {#    </form>#}
+{% endblock %}
+
+{% block mediaJS %}
+    <script>
+        $().ready(function () {
+            $("#form_login_user").validate({
+                submitHandler: function (form) {
+                    form.submit();
+                },
+                errorPlacement: function (error, element) {
+                    element.parent().parent().addClass("error");
+                    error.addClass("help-inline").appendTo(element.parent());
+                }
+            });
+        });
+    </script>
+{% endblock %}
