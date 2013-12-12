@@ -181,19 +181,25 @@ class Course(ndb.Model):
     img = ndb.BlobProperty()
     description = ndb.StringProperty(indexed=False)
     excercise_keys = ndb.KeyProperty(Exercise, repeated=True)
+
+
 class TestOlympic(ndb.Model):
     description = ndb.StringProperty(indexed=False)
     startdate = ndb.DateTimeProperty()
     publishdate = ndb.DateTimeProperty(auto_now_add=True)
     limitmemory = ndb.IntegerProperty(default=100)
     limitTime = ndb.FloatProperty(default=60)
+
+
 class TestCaseOlympic(ndb.Model):
     input = ndb.StringProperty()
     output = ndb.StringProperty()
-    excercise_keys = ndb.KeyProperty(TestOlympic,repeated=True)
+    test_keys = ndb.KeyProperty(TestOlympic, repeated=True)
+
+
 class Achievements(ndb.Model):
-    excercise_keys = ndb.KeyProperty(TestOlympic,repeated=True)
-    excercise_keys = ndb.KeyProperty(User,repeated=True)
+    test_keys = ndb.KeyProperty(TestOlympic, repeated=True)
+    user_keys = ndb.KeyProperty(User, repeated=True)
     datetime = ndb.DateTimeProperty(auto_now_add=True)
     resultdetail = ndb.StringProperty()
     result = ndb.IntegerProperty()
