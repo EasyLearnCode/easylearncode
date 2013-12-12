@@ -296,7 +296,7 @@
 
             return tmp_arr.join('');
         }
-        function HelloCtrl($scope, $http) {
+        function HelloCtrl($scope, $http, $timeout) {
             $ = jQuery;
             $scope.jqconsole = $('#console').jqconsole('', '> ');
             $scope.startPrompt = function () {
@@ -429,6 +429,7 @@
                         $scope.get_current_checkpoint = function () {
                             return $scope.get_current_project().checkpoints[$scope.get_current_project().index];
                         };
+
                         $scope.jqconsole.Write($scope.get_current_checkpoint().entry_html + $scope.get_current_checkpoint().instruction_html, 'log', false);
                         $scope.startPrompt();
                     }).
