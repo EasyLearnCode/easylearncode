@@ -14,7 +14,7 @@
                                 <h3 class="panel-title">Câu hỏi:</h3>
                             </div>
                             <div class="panel-body">
-                                Nội dung câu hỏi
+                                {{ question }}
                             </div>
                         </div>
                     </div>
@@ -40,7 +40,7 @@
         <div class="row">
             <div class="col-xs-12 col-md-12 highlight">
                 <tabset>
-                    <tab data-ng-repeat="lang in langs" heading="{{ lang.name }}">
+                    <tab data-ng-repeat="lang in langs" heading="{{ lang.name }}" active="lang.active">
                         <div ui-ace="{ theme:'twilight',
   mode:lang.mode, onLoad: aceLoaded(lang)}" data-ng-model="lang.source">
                         </div>
@@ -55,12 +55,23 @@
                 <button type="button" class="btn btn-lg btn-warning">Reset</button>
             </div>
         </div>
+        <div data-ng-show="compiling">
+            Compiling.....
+        </div>
+        <div>{{ result }}</div>
     </div>
+
     {% endraw %}
 {% endblock %}
 {% block pluginJS %}
     <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js"></script>
     <script src="/application/js/libs/angularjs/ui-ace.min.js"></script>
     <script src="/application/js/libs/angularjs/ui-bootstrap-tpls-0.7.0.min.js"></script>
-
+    <script>
+    </script>
+{% endblock %}
+{% block mediaJS %}
+    <script>
+    angular.module('services.utility').constant('csrf_token','{{ csrf_token() }}');
+    </script>
 {% endblock %}

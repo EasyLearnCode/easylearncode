@@ -36,7 +36,9 @@ _routes = [
     RedirectRoute('/contest', handlers.ContestHandler, name="contest", strict_slash=True),
     RedirectRoute('/game', handlers.GameHandler, name="game", strict_slash=True),
     RedirectRoute('/learn', handlers.LearnHandler, name="learn", strict_slash=True),
+    RedirectRoute('/run_code', handlers.RunCodeHandler, name='run-code', strict_slash=True),
     RedirectRoute('/', handlers.HomeRequestHandler, name='home', strict_slash=True)
+
 ]
 
 

@@ -80,8 +80,10 @@ class BaseHandler(webapp2.RequestHandler):
         try:
             # csrf protection
             if self.request.method == "POST" and not self.request.path.startswith('/taskqueue'):
+                import json
                 token = self.session.get('_csrf_token')
-                if not token or token != self.request.get('_csrf_token'):
+                client_csrf_token = self.request.get('_csrf_token') or json.loads(self.request.body).get('_csrf_token')
+                if not token or token != client_csrf_token:
                     self.abort(403)
 
             # Dispatch the request.

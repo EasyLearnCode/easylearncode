@@ -755,6 +755,7 @@ class RegisterHandler(BaseHandler):
         """ Get fields from POST dict """
 
         import logging
+
         if not self.form.validate():
             return self.get()
         username = self.form.username.data.lower()
@@ -1367,7 +1368,7 @@ class PasswordResetHandler(BaseHandler):
         params = {
             'captchahtml': chtml,
         }
-        params.update({'angular_app_name':'easylearncode.simple'})
+        params.update({'angular_app_name': 'easylearncode.simple'})
         return self.render_template('password_reset.html', **params)
 
     def post(self):
@@ -1541,3 +1542,25 @@ class LearnHandler(BaseHandler):
         params = {}
         params.update({'angular_app_name': "easylearncode.learn"})
         return self.render_template("learn.html", **params)
+
+
+class RunCodeHandler(BaseHandler):
+    @user_required
+    def post(self):
+        import json
+        import urllib
+        from google.appengine.api import urlfetch
+        from config import config
+
+        data = json.loads(self.request.body)
+        data.update({'client_secret': config.get("HACKEREARTH_CLIENT_SECRET")})
+        data.update({'async': 0})
+        form_data = urllib.urlencode(data)
+        result = urlfetch.fetch(url=config.get("HACKEREARTH_RUN_URL"),
+                                payload=form_data,
+                                method=urlfetch.POST)
+        self.response.headers['Content-Type'] = "application/json"
+        if result:
+            self.response.write(result.content)
+        else:
+            self.response.write("{status:'Server die!'}")

@@ -72,6 +72,10 @@ config = {
     'google_analytics_domain': "YOUR_PRIMARY_DOMAIN (e.g. google.com)",
     'google_analytics_code': "UA-XXXXX-X",
 
+    # Hackerearth config
+    'HACKEREARTH_CLIENT_SECRET': 'd07bff3fc29148e7243bf894e584904afafedcdd',
+    'HACKEREARTH_RUN_URL': 'http://api.hackerearth.com/code/run/',
+
     # add status codes and templates used to catch and display errors
     # if a status code is not listed here it will use the default app engine
     # stacktrace error page or browser error page
