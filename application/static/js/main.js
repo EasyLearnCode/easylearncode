@@ -253,7 +253,7 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "$h
 
         }
     ]
-    $scope.question = "Hello\nOng long";
+    $scope.question = "Hello Vietnam";
     $scope.compiling = false;
     $scope.runCode = function () {
         angular.forEach($scope.langs, function (lang) {
