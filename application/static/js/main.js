@@ -253,19 +253,71 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "$h
 
         }
     ]
-    $scope.question = "Hello\nOng long";
+
+    $http.get('/contest/get_thisweek_contest').success(function (data) {
+        $scope.thisweek_contest = data;
+    });
+    $scope.resetCode = function()
+    {
+        $http.post('/contest/reset',{"_csrf_token": csrf_token}).success(function(){
+            $scope.langs = [
+        {
+            name: 'Python',
+            mode: 'python',
+            lang: 'PYTHON',
+            active: false,
+            source: "'''\n# Read input from stdin and provide input before running code\n\nname = raw_input('What is your name?\\n')\nprint 'Hi, %s.' % name\n'''\nprint 'Hello World!'\n"
+        },
+        {
+            name: 'Java',
+            mode: 'java',
+            lang: 'JAVA',
+            active: true,
+            source: "/* IMPORTANT: class must not be public. */\n\n/*\n * uncomment this if you want to read input.\nimport java.io.BufferedReader;\nimport java.io.InputStreamReader;\n*/\n\nclass TestClass {\n    public static void main(String args[] ) throws Exception {\n        /*\n         * Read input from stdin and provide input before running\n\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        String line = br.readLine();\n        int N = Integer.parseInt(line);\n        for (int i = 0; i < N; i++) {\n            System.out.println(\"hello world\");\n        }\n        */\n\n        System.out.println(\"Hello World!\");\n    }\n}\n"
+        },
+        {
+            name: 'C++',
+            mode: 'c_cpp',
+            lang: 'CPP',
+            active: false,
+            source: "#include <iostream>\nusing namespace std;\n\nint main()\n{\n    cout << \"Hello World!\" << endl;\n    return 0;\n}\n"
+
+        }
+    ]
+        });
+    };
+    $scope.submitCode = function () {
+        angular.forEach($scope.langs, function (lang) {
+            if (lang.active) {
+                $http.post('/contest/submit', {"key": $scope.thisweek_contest.test_key, "source": lang.source,
+                    "_csrf_token": csrf_token, "lang": lang.lang}).success(function (status) {
+
+                });
+            }
+        });
+    }
     $scope.compiling = false;
+    $scope.compile_result = [];
     $scope.runCode = function () {
         angular.forEach($scope.langs, function (lang) {
             if (lang.active) {
                 $scope.compiling = true;
-                $http.post('/run_code', {"_csrf_token": csrf_token, "lang": lang.lang, "source": lang.source}).success(function (data, status, headers, config) {
-                    $scope.data = data;
-                    $scope.result = data.run_status.output;
-                    $scope.compiling = false;
-                }).error(function (data, status, headers, config) {
-                        $scope.status = status;
-                    });
+                $scope.compile_result = new Array();
+                angular.forEach($scope.thisweek_contest.test_case, function (test) {
+                    $http.post('/run_code', {"_csrf_token": csrf_token, "lang": lang.lang, "source": lang.source, "input": test.input}).success(function (data, status, headers, config) {
+//                        $scope.data = data;
+//                        $scope.result = data.run_status.output;
+                        $scope.compiling = false;
+                        $scope.compile_result.push({
+                            'result': test.output == data.run_status.output ? data.run_status.output.split('\n')[0] : false,
+                            'time': data.run_status.time_used,
+                            'memory': data.run_status.memory_used,
+                            'error': data.compile_status
+                        });
+                    }).error(function (data, status, headers, config) {
+                            $scope.status = status;
+                        });
+                });
             }
         })
 
