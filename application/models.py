@@ -183,27 +183,26 @@ class Course(ndb.Model):
     excercise_keys = ndb.KeyProperty(Exercise, repeated=True)
 
 
-class TestOlympic(ndb.Model):
-    description = ndb.StringProperty(indexed=False)
-    startdate = ndb.DateTimeProperty()
-    publishdate = ndb.DateTimeProperty(auto_now_add=True)
-    limitmemory = ndb.IntegerProperty(default=100)
-    limitTime = ndb.FloatProperty(default=60)
-
-
 class TestCaseOlympic(ndb.Model):
     input = ndb.StringProperty()
     output = ndb.StringProperty()
-    test_keys = ndb.KeyProperty(TestOlympic, repeated=True)
+
+
+class TestOlympic(ndb.Model):
+    description = ndb.StringProperty(indexed=False)
+    start_date = ndb.DateTimeProperty()
+    publish_date = ndb.DateTimeProperty(auto_now_add=True)
+    limit_memory = ndb.IntegerProperty(default=100)
+    limit_time = ndb.FloatProperty(default=60)
+    test_case = ndb.StructuredProperty(TestCaseOlympic, repeated=True)
 
 
 class Achievements(ndb.Model):
-    test_keys = ndb.KeyProperty(TestOlympic, repeated=True)
-    user_keys = ndb.KeyProperty(User, repeated=True)
-    datetime = ndb.DateTimeProperty(auto_now_add=True)
-    resultdetail = ndb.StringProperty()
-    result = ndb.IntegerProperty()
-    complitecostTime = ndb.FloatProperty()
-    memory = ndb.IntegerProperty()
+    test_key = ndb.KeyProperty(TestOlympic)
+    user_key = ndb.KeyProperty(User)
+    submit_time = ndb.DateTimeProperty(auto_now_add=True)
+    result = ndb.BooleanProperty()
+    time_used = ndb.FloatProperty()
+    memory_used = ndb.IntegerProperty()
     language = ndb.StringProperty()
     code = ndb.StringProperty()
