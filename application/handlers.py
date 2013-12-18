@@ -1577,32 +1577,33 @@ class GetThisweekContestHandler(BaseHandler):
         test = TestOlympic().query(TestOlympic.start_date >= datetime.now() + timedelta(0 - datetime.now().weekday()),
                                    TestOlympic.start_date <= datetime.now() + timedelta(
                                        6 - datetime.now().weekday())).get()
-        top_player = Achievements.query(Achievements.test_key == test.key).order(Achievements.time_used,
-                                                                                 Achievements.memory_used).fetch(5)
-        top = []
-        for player in top_player:
-            username = player.user_key.get().email
-            player = player.to_dict()
-            player.pop('submit_time', None)
-            player.pop('test_key', None)
-            player.pop('user_key', None)
-            player.update({'username': username})
-            top.append(player)
-
-        top_player = top
-        test_key = test.key.urlsafe()
-        test = test.to_dict()
-        test.pop('start_date', None)
-        test.pop('publish_date', None)
-        test.update({'top_player': top_player})
-        test.update({'test_key': test_key})
-        import json
-
-        self.response.headers["Content-Type"] = "application/json"
         if test:
+            top_player = Achievements.query(Achievements.test_key == test.key).order(Achievements.time_used,
+                                                                                     Achievements.memory_used).fetch(5)
+            top = []
+            for player in top_player:
+                username = player.user_key.get().email
+                player = player.to_dict()
+                player.pop('submit_time', None)
+                player.pop('test_key', None)
+                player.pop('user_key', None)
+                player.update({'username': username})
+                top.append(player)
+
+            top_player = top
+            test_key = test.key.urlsafe()
+            test = test.to_dict()
+            test.pop('start_date', None)
+            test.pop('publish_date', None)
+            test.update({'top_player': top_player})
+            test.update({'test_key': test_key})
+            import json
+            self.response.headers["Content-Type"] = "application/json"
             self.response.write(json.dumps(test))
         else:
-            self.response.write("{status: Khong co de thi}")
+            import json
+            self.response.headers["Content-Type"] = "application/json"
+            self.response.write(json.dumps({'status': 1}))
 
 
 class ResetContestHandler(BaseHandler):

@@ -255,7 +255,13 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "$h
     ]
 
     $http.get('/contest/get_thisweek_contest').success(function (data) {
-        $scope.thisweek_contest = data;
+        if(data.status == 1){
+            $scope.error = "Chưa có đề thi";
+        }
+        else{
+            $scope.thisweek_contest = data;
+        }
+
     });
     $scope.resetCode = function()
     {
