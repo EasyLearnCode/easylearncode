@@ -39,9 +39,10 @@ _routes = [
     RedirectRoute('/run_code', handlers.RunCodeHandler, name='run-code', strict_slash=True),
     RedirectRoute('/contest/get_thisweek_contest', handlers.GetThisweekContestHandler, name='get-thisweek-contest', strict_slash=True),
     RedirectRoute('/contest/submit', handlers.SubmitContestHandler, name='submit-contest', strict_slash=True),
-    RedirectRoute('/contest/reset', handlers.ResetContestHandler, name='reset-contest', strict_slash=True),
-    RedirectRoute('/', handlers.HomeRequestHandler, name='home', strict_slash=True)
+    RedirectRoute('/contest/result', handlers.ResultContestHandler, name='result-contest', strict_slash=True),
 
+    RedirectRoute('/contest/get_thisweek_result', handlers.GetThisweekResulttHandler, name='get-thisweek-result', strict_slash=True),
+    RedirectRoute('/', handlers.HomeRequestHandler, name='home', strict_slash=True)
 ]
 
 

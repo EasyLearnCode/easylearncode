@@ -15,7 +15,6 @@
                             </div>
                             <div class="panel-body">
                                 {{ thisweek_contest.description }}
-                                {{ error }}
                             </div>
                         </div>
                     </div>
@@ -78,6 +77,24 @@
         </div>
         </div>
     </div>
+
+        <div data-backdrop='static' data-keyboard='false'  class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Thông báo</h4>
+        </div>
+        <div class="modal-body">
+          Chưa có đề thi. Xin vui lòng quay lại sau!
+        </div>
+        <div class="modal-footer">
+          <a href="/" class="btn btn-primary btn-lg">OK</a>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+  <!-- Modal -->
+
 
     {% endraw %}
 {% endblock %}

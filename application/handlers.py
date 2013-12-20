@@ -1572,25 +1572,9 @@ class GetThisweekContestHandler(BaseHandler):
     @user_required
     def get(self):
         from models import TestOlympic, Achievements
-        from datetime import datetime, timedelta
-
-        test = TestOlympic().query(TestOlympic.start_date >= datetime.now() + timedelta(0 - datetime.now().weekday()),
-                                   TestOlympic.start_date <= datetime.now() + timedelta(
-                                       6 - datetime.now().weekday())).get()
+        test = TestOlympic().get_test_week(0, 6)
         if test:
-            top_player = Achievements.query(Achievements.test_key == test.key).order(Achievements.time_used,
-                                                                                     Achievements.memory_used).fetch(5)
-            top = []
-            for player in top_player:
-                username = player.user_key.get().email
-                player = player.to_dict()
-                player.pop('submit_time', None)
-                player.pop('test_key', None)
-                player.pop('user_key', None)
-                player.update({'username': username})
-                top.append(player)
-
-            top_player = top
+            top_player = Achievements().get_top_player(test, 5)
             test_key = test.key.urlsafe()
             test = test.to_dict()
             test.pop('start_date', None)
@@ -1606,12 +1590,6 @@ class GetThisweekContestHandler(BaseHandler):
             self.response.write(json.dumps({'status': 1}))
 
 
-class ResetContestHandler(BaseHandler):
-    @user_required
-    def post(self):
-        return 0
-
-
 class SubmitContestHandler(BaseHandler):
     @user_required
     def post(self):
@@ -1621,7 +1599,7 @@ class SubmitContestHandler(BaseHandler):
         from config import config
 
         data = json.loads(self.request.body)
-        from models import Achievements, TestOlympic
+        from models import Achievements
 
         testOlympic = ndb.Key(urlsafe=data['key']).get()
         test_key = testOlympic.key
@@ -1656,5 +1634,39 @@ class SubmitContestHandler(BaseHandler):
         achievement = Achievements(user_key=user_key, test_key=test_key, result=result, time_used=avg_time,
                                    memory_used=avg_memory, language=data['lang'], code=data['source'])
         achievement.put()
-        self.response.write("OK")
+        self.response.headers["Content-Type"] = "application/json"
+        self.response.write(json.dumps({'status': 1}))
+
+
+class ResultContestHandler(BaseHandler):
+    @user_required
+    def get(self):
+        params = {}
+        params.update({'angular_app_name': "easylearncode.contest_result"})
+        return self.render_template("contest_result.html", **params)
+
+
+class GetThisweekResulttHandler(BaseHandler):
+    @user_required
+    def get(self):
+        from models import TestOlympic, Achievements
+        test = TestOlympic().get_test_week(0, 6)
+        if test:
+            top_player = Achievements().get_top_player(test, 1000)
+            test_key = test.key.urlsafe()
+            test = test.to_dict()
+            test.pop('start_date', None)
+            test.pop('publish_date', None)
+            test.update({'top_player': top_player})
+            test.update({'test_key': test_key})
+            import json
+            self.response.headers["Content-Type"] = "application/json"
+            print test
+            self.response.write(json.dumps(test))
+        else:
+            import json
+            self.response.headers["Content-Type"] = "application/json"
+            self.response.write(json.dumps({'status': 1}))
+
+
 
