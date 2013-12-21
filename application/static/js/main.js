@@ -356,14 +356,14 @@ angular.module("easylearncode.learn").run(function () {
         lang: 'PYTHON',
         source: "'''\n# Read input from stdin and provide input before running code\n\nname = raw_input('What is your name?\\n')\nprint 'Hi, %s.' % name\n'''\nprint 'Hello World!'\n"
     };
-    $scope.video = videojs('video-content', {"techOrder": ["youtube"], "src": "https://www.youtube.com/watch?v=vfzfwPo6MZ4", "ytcontrols": true }).ready(function () {
-        // Cue a video using ended event
+    $scope.video = videojs('video-content', {"techOrder": ["youtube"], "src": "https://www.youtube.com/watch?v=vfzfwPo6MZ4", "ytcontrols": true  }).ready(function () {
     });
 
     var codes = [
         {
             time: 100,
-            code: "print 3+7"
+            code: "print 3+7",
+            description: "mo ta"
         },
         {
             time: 110,
@@ -406,6 +406,21 @@ angular.module("easylearncode.learn").run(function () {
             code: 'a = -6\na = a * a - a - 1\nc = a * b\nprint(c)'
         }
     ];
+
+    $scope.videoQuestion = videojs("video-content");
+    $scope.videoQuestion.imageOverlay({
+    image_url: "http://assets0.ordienetworks.com/misc/JimCarreyEyebrow.jpg",
+    click_url:"https://itunes.apple.com/WebObjects/MZStore.woa/wa/viewAlbum?id=624854547",
+    opacity: 0.5,
+    start_time: 10,
+    end_time: 20
+  });
+    $scope.btnOk = function(){
+        hideQuestion();
+        alert('Chào các bạn');
+    }
+
+
     var i = 0;
     $scope.video.on('timeupdate', function (e) {
 
@@ -414,6 +429,7 @@ angular.module("easylearncode.learn").run(function () {
             if (code.time <= times) {
                 $scope.$apply(function () {
                     $scope.code = code.code;
+                    $scope.code = showQuestion();
                 });
             }
         });
@@ -526,4 +542,6 @@ angular.module("easylearncode.learn").run(function () {
 
     $scope.jsrepl.loadLanguage("python", function () {
     });
+
+
 }]);

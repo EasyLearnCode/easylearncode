@@ -2,6 +2,7 @@
 {% block mediaCSS %}
     <link rel="stylesheet" href="/application/css/learn.css">
     <link rel="stylesheet" href="/application/css/video-js.min.css">
+    <link rel="stylesheet" href="/application/css/videojs.imageOverlay.css">
 {% endblock %}
 {% block content %}
     {% raw %}
@@ -11,19 +12,10 @@
                     <div class="panel-heading">
                         <h3 class="panel-title"><a href="#modal" class="second">Bài 1: Toán tử và biểu thức</a></h3>
                     </div>
-		             <ul class="nav nav-tabs">
-		                <li class="active"><a href="#video" data-toggle="tab">Video</a></li>
-		                <li><a href="#slide" data-toggle="tab">Slide</a></li>
-		                <li><a href="#messages" data-toggle="tab">Messages</a></li>
-		            </ul>
                   <div class="panel-body">
-                    <div class="tab-content">
-                        <div class="tab-pane active" id="video" class="aligncenter">
-                              <video id="video-content" src="" class="video-js vjs-default-skin aligncenter" preload="auto" width="720" height="405"></video>
+                        <div class="tab-pane active" id="video">
+                              <video id="video-content" src="" class="video-js vjs-default-skin aligncenter" preload="auto" width="100%" height="405"></video>
                         </div>
-                        <div class="tab-pane" id="slide">
-                        </div>
-                    </div>
                   </div>
                 </div>
             </div>
@@ -36,8 +28,8 @@
                     <div class="panel-body">
                         <div ui-ace="{ theme:'twilight',
                         mode:lang.mode}" data-ng-model="code" id="code-content"></div></br>
-                        <button type="button" class="btn btn-success" data-ng-click="runCode()"><span class="glyphicon glyphicon-play"></span> Chạy code</button>
-                        <button type="button" class="btn btn-warning" data-ng-click="reSet()"><span class="glyphicon glyphicon-remove" ></span> Làm lại</button>
+                        <button type="button" class="btn btn-success" ng-click="runCode()"><span class="glyphicon glyphicon-play"></span> Chạy code</button>
+                        <button type="button" class="btn btn-warning" ng-clik="reSet()"><span class="glyphicon glyphicon-remove"></span> Làm lại</button>
                         <button type="button" class="btn btn-default pull-right"><span class="glyphicon glyphicon-fullscreen"></span> Phóng to</button>
                         <textarea class="form-control" cols="200" rows="8" data-ng-model="kq"> >> </textarea>
                     </div>
@@ -52,6 +44,7 @@
     <script src="/application/js/libs/angularjs/ui-bootstrap-tpls-0.7.0.min.js"></script>
     <script src="/application/js/libs/video-plugin/video.js"></script>
     <script src="/application/js/libs/video-plugin/vjs.youtube.js"></script>
+    <script src="/application/js/libs/video-plugin/videojs.imageOverlay.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
     <script src="/application/js/libs/jsrepl/jsrepl.js" id="jsrepl-script"></script>
 {% endblock %}
