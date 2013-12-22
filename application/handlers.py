@@ -1571,15 +1571,16 @@ class RunCodeHandler(BaseHandler):
 class GetThisweekContestHandler(BaseHandler):
     @user_required
     def get(self):
-        from models import TestOlympic, Achievements
+        from models import WeeklyQuiz, WeeklyQuizResult
         from datetime import datetime, timedelta
 
-        test = TestOlympic().query(TestOlympic.start_date >= datetime.now() + timedelta(0 - datetime.now().weekday()),
-                                   TestOlympic.start_date <= datetime.now() + timedelta(
-                                       6 - datetime.now().weekday())).get()
+        test = WeeklyQuiz().query(WeeklyQuiz.start_date >= datetime.now() + timedelta(0 - datetime.now().weekday()),
+                                  WeeklyQuiz.start_date <= datetime.now() + timedelta(
+                                      6 - datetime.now().weekday())).get()
         if test:
-            top_player = Achievements.query(Achievements.test_key == test.key).order(Achievements.time_used,
-                                                                                     Achievements.memory_used).fetch(5)
+            top_player = WeeklyQuizResult.query(WeeklyQuizResult.test_key == test.key).order(WeeklyQuizResult.time_used,
+                                                                                             WeeklyQuizResult.memory_used).fetch(
+                5)
             top = []
             for player in top_player:
                 username = player.user_key.get().email
@@ -1598,10 +1599,12 @@ class GetThisweekContestHandler(BaseHandler):
             test.update({'top_player': top_player})
             test.update({'test_key': test_key})
             import json
+
             self.response.headers["Content-Type"] = "application/json"
             self.response.write(json.dumps(test))
         else:
             import json
+
             self.response.headers["Content-Type"] = "application/json"
             self.response.write(json.dumps({'status': 1}))
 
@@ -1621,7 +1624,7 @@ class SubmitContestHandler(BaseHandler):
         from config import config
 
         data = json.loads(self.request.body)
-        from models import Achievements, TestOlympic
+        from models import WeeklyQuizResult
 
         testOlympic = ndb.Key(urlsafe=data['key']).get()
         test_key = testOlympic.key
@@ -1639,22 +1642,22 @@ class SubmitContestHandler(BaseHandler):
                 testcase['time_used'] = float(compile_result['run_status']['time_used']) or None
                 testcase['memory_used'] = int(compile_result['run_status']['memory_used']) or None
                 if compile_result['run_status'] and compile_result['run_status']['output'].split()[0] == testcase[
-                        'output']:
+                    'output']:
                     testcase['result'] = True
                 else:
                     testcase['result'] = False
         avg_time = sum(
             test['time_used'] or testOlympic['limit_time'] for test in testOlympic['test_case']) / len(
-                testOlympic['test_case'])
+            testOlympic['test_case'])
         avg_memory = sum(
             test['memory_used'] or testOlympic['limit_memory'] for test in testOlympic['test_case']) / len(
-                testOlympic['test_case'])
+            testOlympic['test_case'])
         user_key = self.user_key
         result = True
         for test in testOlympic['test_case']:
             result = result and test['result']
-        achievement = Achievements(user_key=user_key, test_key=test_key, result=result, time_used=avg_time,
-                                   memory_used=avg_memory, language=data['lang'], code=data['source'])
+        achievement = WeeklyQuizResult(user_key=user_key, test_key=test_key, result=result, time_used=avg_time,
+                                       memory_used=avg_memory, language=data['lang'], code=data['source'])
         achievement.put()
         self.response.write("OK")
 

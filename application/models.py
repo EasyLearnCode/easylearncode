@@ -183,22 +183,29 @@ class Course(ndb.Model):
     excercise_keys = ndb.KeyProperty(Exercise, repeated=True)
 
 
-class TestCaseOlympic(ndb.Model):
+class WeeklyQuizTest(ndb.Model):
     input = ndb.StringProperty()
     output = ndb.StringProperty()
 
 
-class TestOlympic(ndb.Model):
+class WeeklyQuiz(ndb.Model):
     description = ndb.StringProperty(indexed=False)
     start_date = ndb.DateTimeProperty()
     publish_date = ndb.DateTimeProperty(auto_now_add=True)
     limit_memory = ndb.IntegerProperty(default=100)
     limit_time = ndb.FloatProperty(default=60)
-    test_case = ndb.StructuredProperty(TestCaseOlympic, repeated=True)
+    test_case = ndb.StructuredProperty(WeeklyQuizTest, repeated=True)
+
+    def get_top_player(self, limit):
+        pass
+
+    @classmethod
+    def get_this_week_contest(cls):
+        pass
 
 
-class Achievements(ndb.Model):
-    test_key = ndb.KeyProperty(TestOlympic)
+class WeeklyQuizResult(ndb.Model):
+    test_key = ndb.KeyProperty(WeeklyQuiz)
     user_key = ndb.KeyProperty(User)
     submit_time = ndb.DateTimeProperty(auto_now_add=True)
     result = ndb.BooleanProperty()
@@ -206,3 +213,6 @@ class Achievements(ndb.Model):
     memory_used = ndb.IntegerProperty()
     language = ndb.StringProperty()
     code = ndb.StringProperty()
+
+    def run_test_case(self):
+        pass
