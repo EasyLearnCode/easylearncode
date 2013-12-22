@@ -32,7 +32,7 @@ class User(User):
     tz = ndb.StringProperty()
     #: Account activation verifies email
     activated = ndb.BooleanProperty(default=False)
-    
+
     @classmethod
     def get_by_email(cls, email):
         """Returns a user object based on an email.
@@ -61,16 +61,16 @@ class User(User):
     def get_social_providers_names(self):
         social_user_objects = SocialUser.get_by_user(self.key)
         result = []
-#        import logging
+        #        import logging
         for social_user_object in social_user_objects:
-#            logging.error(social_user_object.extra_data['screen_name'])
+        #            logging.error(social_user_object.extra_data['screen_name'])
             result.append(social_user_object.provider)
         return result
 
     def get_social_providers_info(self):
         providers = self.get_social_providers_names()
         result = {'used': [], 'unused': []}
-        for k,v in SocialUser.PROVIDERS_INFO.items():
+        for k, v in SocialUser.PROVIDERS_INFO.items():
             if k in providers:
                 result['used'].append(v)
             else:
@@ -97,14 +97,14 @@ class LogEmail(ndb.Model):
 
 
 class SocialUser(ndb.Model):
-    PROVIDERS_INFO = { # uri is for OpenID only (not OAuth)
-        'google': {'name': 'google', 'label': 'Google', 'uri': 'gmail.com'},
-        'github': {'name': 'github', 'label': 'Github', 'uri': ''},
-        'facebook': {'name': 'facebook', 'label': 'Facebook', 'uri': ''},
-        'linkedin': {'name': 'linkedin', 'label': 'LinkedIn', 'uri': ''},
-        'myopenid': {'name': 'myopenid', 'label': 'MyOpenid', 'uri': 'myopenid.com'},
-        'twitter': {'name': 'twitter', 'label': 'Twitter', 'uri': ''},
-        'yahoo': {'name': 'yahoo', 'label': 'Yahoo!', 'uri': 'yahoo.com'},
+    PROVIDERS_INFO = {# uri is for OpenID only (not OAuth)
+                      'google': {'name': 'google', 'label': 'Google', 'uri': 'gmail.com'},
+                      'github': {'name': 'github', 'label': 'Github', 'uri': ''},
+                      'facebook': {'name': 'facebook', 'label': 'Facebook', 'uri': ''},
+                      'linkedin': {'name': 'linkedin', 'label': 'LinkedIn', 'uri': ''},
+                      'myopenid': {'name': 'myopenid', 'label': 'MyOpenid', 'uri': 'myopenid.com'},
+                      'twitter': {'name': 'twitter', 'label': 'Twitter', 'uri': ''},
+                      'yahoo': {'name': 'yahoo', 'label': 'Yahoo!', 'uri': 'yahoo.com'},
     }
 
     user = ndb.KeyProperty(kind=User)
@@ -132,7 +132,7 @@ class SocialUser(ndb.Model):
             return False
         else:
             return True
-    
+
     @classmethod
     def check_unique_user(cls, provider, user):
         # pair (user, provider) should be unique
@@ -146,10 +146,10 @@ class SocialUser(ndb.Model):
     def check_unique(cls, user, provider, uid):
         # pair (provider, uid) should be unique and pair (user, provider) should be unique
         return cls.check_unique_uid(provider, uid) and cls.check_unique_user(provider, user)
-    
+
     @staticmethod
     def open_id_providers():
-        return [k for k,v in SocialUser.PROVIDERS_INFO.items() if v['uri']]
+        return [k for k, v in SocialUser.PROVIDERS_INFO.items() if v['uri']]
 
 
 class ExerciseCheckpoint(ndb.Model):
@@ -190,18 +190,36 @@ class WeeklyQuizTest(ndb.Model):
 
 class WeeklyQuiz(ndb.Model):
     description = ndb.StringProperty(indexed=False)
-    start_date = ndb.DateTimeProperty()
+    start_date = ndb.DateProperty()
     publish_date = ndb.DateTimeProperty(auto_now_add=True)
     limit_memory = ndb.IntegerProperty(default=100)
     limit_time = ndb.FloatProperty(default=60)
     test_case = ndb.StructuredProperty(WeeklyQuizTest, repeated=True)
 
-    def get_top_player(self, limit):
-        pass
-
     @classmethod
     def get_this_week_contest(cls):
-        pass
+        from datetime import datetime, timedelta
+
+        test = cls.query(cls.start_date >= (datetime.now() + timedelta(0 - datetime.now().weekday())).date(),
+                         cls.start_date <= (datetime.now() + timedelta(
+                             6 - datetime.now().weekday())).date()).get()
+        return test
+
+    def get_top_player(self, num):
+        top_player = WeeklyQuizResult.query(WeeklyQuizResult.test_key == self.key) \
+            .order(WeeklyQuizResult.time_used, WeeklyQuizResult.memory_used) \
+            .fetch(num)
+        top = []
+        for player in top_player:
+            username = player.user_key.get().email
+            player = player.to_dict()
+            player.update({'submit_time': str(player['submit_time'])})
+            player.pop('test_key', None)
+            player.pop('user_key', None)
+            player.update({'username': username})
+            top.append(player)
+        top_player = top
+        return top_player
 
 
 class WeeklyQuizResult(ndb.Model):
@@ -212,7 +230,5 @@ class WeeklyQuizResult(ndb.Model):
     time_used = ndb.FloatProperty()
     memory_used = ndb.IntegerProperty()
     language = ndb.StringProperty()
-    code = ndb.StringProperty()
+    code = ndb.StringProperty(indexed=False)
 
-    def run_test_case(self):
-        pass

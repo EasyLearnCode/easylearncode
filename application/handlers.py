@@ -1571,27 +1571,11 @@ class RunCodeHandler(BaseHandler):
 class GetThisweekContestHandler(BaseHandler):
     @user_required
     def get(self):
-        from models import WeeklyQuiz, WeeklyQuizResult
-        from datetime import datetime, timedelta
+        from models import WeeklyQuiz
 
-        test = WeeklyQuiz().query(WeeklyQuiz.start_date >= datetime.now() + timedelta(0 - datetime.now().weekday()),
-                                  WeeklyQuiz.start_date <= datetime.now() + timedelta(
-                                      6 - datetime.now().weekday())).get()
+        test = WeeklyQuiz.get_this_week_contest()
         if test:
-            top_player = WeeklyQuizResult.query(WeeklyQuizResult.test_key == test.key).order(WeeklyQuizResult.time_used,
-                                                                                             WeeklyQuizResult.memory_used).fetch(
-                5)
-            top = []
-            for player in top_player:
-                username = player.user_key.get().email
-                player = player.to_dict()
-                player.pop('submit_time', None)
-                player.pop('test_key', None)
-                player.pop('user_key', None)
-                player.update({'username': username})
-                top.append(player)
-
-            top_player = top
+            top_player = test.get_top_player(5)
             test_key = test.key.urlsafe()
             test = test.to_dict()
             test.pop('start_date', None)
@@ -1607,12 +1591,6 @@ class GetThisweekContestHandler(BaseHandler):
 
             self.response.headers["Content-Type"] = "application/json"
             self.response.write(json.dumps({'status': 1}))
-
-
-class ResetContestHandler(BaseHandler):
-    @user_required
-    def post(self):
-        return 0
 
 
 class SubmitContestHandler(BaseHandler):
@@ -1642,16 +1620,16 @@ class SubmitContestHandler(BaseHandler):
                 testcase['time_used'] = float(compile_result['run_status']['time_used']) or None
                 testcase['memory_used'] = int(compile_result['run_status']['memory_used']) or None
                 if compile_result['run_status'] and compile_result['run_status']['output'].split()[0] == testcase[
-                    'output']:
+                        'output']:
                     testcase['result'] = True
                 else:
                     testcase['result'] = False
         avg_time = sum(
             test['time_used'] or testOlympic['limit_time'] for test in testOlympic['test_case']) / len(
-            testOlympic['test_case'])
+                testOlympic['test_case'])
         avg_memory = sum(
             test['memory_used'] or testOlympic['limit_memory'] for test in testOlympic['test_case']) / len(
-            testOlympic['test_case'])
+                testOlympic['test_case'])
         user_key = self.user_key
         result = True
         for test in testOlympic['test_case']:
@@ -1659,5 +1637,39 @@ class SubmitContestHandler(BaseHandler):
         achievement = WeeklyQuizResult(user_key=user_key, test_key=test_key, result=result, time_used=avg_time,
                                        memory_used=avg_memory, language=data['lang'], code=data['source'])
         achievement.put()
-        self.response.write("OK")
+        self.response.headers["Content-Type"] = "application/json"
+        self.response.write(json.dumps({'status': 1}))
 
+
+class ResultContestHandler(BaseHandler):
+    @user_required
+    def get(self):
+        params = {}
+        params.update({'angular_app_name': "easylearncode.contest_result"})
+        return self.render_template("contest_result.html", **params)
+
+
+class GetThisweekResulttHandler(BaseHandler):
+    @user_required
+    def get(self):
+        from models import WeeklyQuiz
+
+        test = WeeklyQuiz.get_this_week_contest()
+        if test:
+            top_player = test.get_top_player(100)
+            test_key = test.key.urlsafe()
+            test = test.to_dict()
+            test.pop('start_date', None)
+            test.pop('publish_date', None)
+            test.update({'top_player': top_player})
+            test.update({'test_key': test_key})
+            import json
+
+            self.response.headers["Content-Type"] = "application/json"
+            print test
+            self.response.write(json.dumps(test))
+        else:
+            import json
+
+            self.response.headers["Content-Type"] = "application/json"
+            self.response.write(json.dumps({'status': 1}))
