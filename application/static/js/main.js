@@ -308,17 +308,37 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "$h
         });
     }
     $scope.compiling = false;
+    $scope.compile_result = [];
     $scope.runCode = function () {
         angular.forEach($scope.langs, function (lang) {
             if (lang.active) {
                 $scope.compiling = true;
-                $http.post('/run_code', {"_csrf_token": csrf_token, "lang": lang.lang, "source": lang.source}).success(function (data, status, headers, config) {
-                    $scope.data = data;
-                    $scope.result = data.run_status.output;
-                    $scope.compiling = false;
-                }).error(function (data, status, headers, config) {
-                        $scope.status = status;
-                    });
+                $scope.compile_result = new Array();
+                angular.forEach($scope.thisweek_contest.test_case, function (test) {
+                    $http.post('/run_code', {"_csrf_token": csrf_token, input: test.input, "lang": lang.lang, "source": lang.source}).success(function (data, status, headers, config) {
+                        $scope.compile_result.push(
+                            {
+                                'result': data.run_status.output == test.output,
+                                'time': data.run_status.time_used,
+                                'memory': data.run_status.memory_used,
+                                'error': data.compile_status
+                            }
+                        );
+                        if ($scope.compile_result.length == $scope.thisweek_contest.test_case.length) {
+                            $scope.compiling = false;
+                        }
+                    }).error(function (data, status, headers, config) {
+                            $scope.compile_result.push(
+                                {
+                                    'result': false,
+                                    'time': 0,
+                                    'memory': 0,
+                                    'error': 'Disconnect from server...Please try again'
+                                });
+                        });
+                });
+
+
             }
         })
 

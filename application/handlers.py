@@ -1649,7 +1649,7 @@ class ResultContestHandler(BaseHandler):
         return self.render_template("contest_result.html", **params)
 
 
-class GetThisweekResulttHandler(BaseHandler):
+class GetThisweekResultHandler(BaseHandler):
     @user_required
     def get(self):
         from models import WeeklyQuiz
