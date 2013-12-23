@@ -372,15 +372,204 @@ angular.module("easylearncode.home").controller('HomeCarouselCtrl', ['$scope', f
     ];
 }]);
 
-angular.module("easylearncode.learn").controller('LearnCtrl', ['$scope', function ($scope) {
-    $scope.lang =
-    {
-        name: 'Python',
-        mode: 'python',
-        lang: 'PYTHON',
-        source: "'''\n# Read input from stdin and provide input before running code\n\nname = raw_input('What is your name?\\n')\nprint 'Hi, %s.' % name\n'''\nprint 'Hello World!'\n"
-    };
-}]);
+angular.module("easylearncode.learn").run(function () {
+}).controller('LearnCtrl', ['$scope', function ($scope) {
+        $scope.lang =
+        {
+            name: 'Python',
+            mode: 'python',
+            lang: 'PYTHON',
+            source: "'''\n# Read input from stdin and provide input before running code\n\nname = raw_input('What is your name?\\n')\nprint 'Hi, %s.' % name\n'''\nprint 'Hello World!'\n"
+        };
+        $scope.video = videojs('video-content', {"techOrder": ["youtube"], "src": "https://www.youtube.com/watch?v=vfzfwPo6MZ4", "ytcontrols": true  }).ready(function () {
+        });
+
+        var codes = [
+            {
+                time: 100,
+                code: "print 3+7",
+                description: "mo ta"
+            },
+            {
+                time: 110,
+                code: "print(3+7)"
+            },
+            {
+                time: 126,
+                code: "print(3+7)\nprint(2-1)"
+            },
+            {
+                time: 138,
+                code: 'print(3+7)\nprint(2-1)\nprint("this is a chunk of text")'
+            },
+            {
+                time: 244,
+                code: 'print(type(3+7))\nprint(2-1)\nprint("this is a chunk of text")'
+            },
+            {
+                time: 260,
+                code: 'print(type(3+7))\nprint(2-1)\nprint(type("this is a chunk of text"))'
+            },
+            {
+                time: 340,
+                code: 'a = 3 + 5'
+            },
+            {
+                time: 353,
+                code: 'a = 3 + 5\na = a * a - a - 1'
+            },
+            {
+                time: 363,
+                code: 'a = 3 + 5\na = a * a - a - 1\nc = a * b'
+            },
+            {
+                time: 385,
+                code: 'a = 3 + 5\na = a * a - a - 1\nc = a * b\nprint(c)'
+            },
+            {
+                time: 486,
+                code: 'a = -6\na = a * a - a - 1\nc = a * b\nprint(c)'
+            }
+        ];
+
+        $scope.videoQuestion = videojs("video-content");
+        $scope.videoQuestion.imageOverlay({
+            image_url: "http://assets0.ordienetworks.com/misc/JimCarreyEyebrow.jpg",
+            click_url: "https://itunes.apple.com/WebObjects/MZStore.woa/wa/viewAlbum?id=624854547",
+            opacity: 0.5,
+            start_time: 10,
+            end_time: 20
+        });
+        $scope.btnOk = function () {
+            hideQuestion();
+            alert('Chào các bạn');
+        }
+
+
+        var i = 0;
+        $scope.video.on('timeupdate', function (e) {
+
+            times = $scope.video.currentTime();
+            angular.forEach(codes, function (code) {
+                if (code.time <= times) {
+                    $scope.$apply(function () {
+                        $scope.code = code.code;
+                        $scope.code = showQuestion();
+                    });
+                }
+            });
+        });
+        $scope.inputCallback = function (callback) {
+            $scope.jqconsole.Input(function (result) {
+                var e;
+                try {
+                    callback(result);
+                } catch (_error) {
+
+                }
+            });
+        };
+
+        $scope.outputCallback = function (output, cls) {
+            if (output) {
+                $scope.kq = output;
+            }
+        };
+
+        $scope.errorCallback = function (e) {
+        };
+
+        $scope.timeoutCallback = function () {
+        };
+
+        $scope.resultCallback = function (result) {
+            console.log(result);
+            /*) var code, error_msg, isSuccess, output, resultObj, result_val, _ref;
+             if (result && typeof result === 'object') {
+             resultObj = result;
+             result_val = resultObj.result;
+             code = resultObj.code;
+             output = resultObj.output;
+             if (result_val) {
+             if (result_val[-1] !== '\n') {
+             result = result_val + '\n';
+             }
+             } else {
+             result = '';
+             }
+             error_msg = null;
+             isSuccess = false;
+             if (resultObj.type === 'evalSolution') {
+             if (result_val === 'true' || result_val === 'True') {
+             isSuccess = true;
+             } else if (result_val !== 'false' && result_val !== 'False') {
+             error_msg = result_val;
+             }
+             if (isSuccess) {
+             //                    $scope.get_current_project().index += 1;
+             //                    $scope.jqconsole.Write($scope.get_current_checkpoint().entry_html + $scope.get_current_checkpoint().instruction_html, 'log', false);
+             //                    $scope.startPrompt();
+             //return this.ShowCongratulations();
+             } else {
+             //this.exercises_fail_detail[this.Exercises[this.Exercises.CurrentLang][this.Exercises.CurrentExercise].ExerciseID] += 1;
+             //return this.ShowRetryAnswerPrompt(msg);
+             //                    $scope.jqconsole.Write('<span style="color: crimson">Oops, Hãy thử lại!.<br><span style="color: #F80">' + utf8_decode(result_val) + '</span></span>', 'log', false);
+             //                    $scope.startPrompt();
+             }
+             } else if (resultObj.type === 'evalUser') {
+             if(result){
+             alert(result);
+             }
+             result = result_val;
+             if (!result) {
+             result = '';
+             }
+             if (!code) {
+             code = '';
+             }
+             if (!output) {
+             output = '';
+             }
+
+             }
+             } else if (result) {
+             alert(result);
+             }*/
+        };
+        $scope.jsrepl = new JSREPL({
+            input: $scope.inputCallback,
+            output: $scope.outputCallback,
+            result: $scope.resultCallback,
+            error: $scope.errorCallback,
+            timeout: {
+                time: 30000,
+                callback: $scope.timeoutCallback
+            }
+        });
+
+
+        $scope.runCode = function () {
+            console.log($scope.jsrepl);
+            dataObj = {
+                command: $scope.code,
+                testScript: '',
+                type: 'evalUser'
+            };
+            $scope.jsrepl.sandbox.post({
+                type: 'engine.EasyLearnCode_Eval',
+                data: dataObj
+            });
+        };
+
+        $scope.reSet = function () {
+            $scope.code = "";
+        };
+
+        $scope.jsrepl.loadLanguage("python", function () {
+        });
+
+
+    }]);
 
 angular.module("easylearncode.contest_result").controller('ContestResultCtrl', ['$scope', '$http', function ($scope, $http) {
     $http.get('/contest/get_thisweek_result').success(function (data) {
