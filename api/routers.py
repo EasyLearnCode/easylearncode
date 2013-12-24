@@ -3,9 +3,16 @@ __author__ = 'nampnq'
 from webapp2_extras.routes import RedirectRoute
 
 from grest import CreateHandler, ReadHandler, UpdateHandler, DeleteHandler
+import handlers
 
 
 _routes = [
+    RedirectRoute('/contest/get_thisweek_result', handlers.GetThisweekResultHandler, name='get-thisweek-result',
+                  strict_slash=True),
+    RedirectRoute('/run_code', handlers.RunCodeHandler, name='run-code', strict_slash=True),
+    RedirectRoute('/contest/get_thisweek_contest', handlers.GetThisweekContestHandler, name='get-thisweek-contest',
+                  strict_slash=True),
+    RedirectRoute('/contest/submit', handlers.SubmitContestHandler, name='submit-contest', strict_slash=True),
     RedirectRoute('/api/<model>/create/',
                   handler=CreateHandler, name="model-create", strict_slash=True),
     RedirectRoute('/api/<model>/read/<model_id:\d+>/',
