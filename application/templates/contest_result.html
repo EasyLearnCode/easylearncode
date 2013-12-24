@@ -4,13 +4,15 @@
         <div class="container" data-ng-controller='ContestResultCtrl'>
             <div class="row">
                 <div class="col-xs-3 col-md-3 highlight">
-                    <div class="list-group">
-                        <div class="list-group-item" style="background-color:#006dcc; color: #ffffff">Kết quả tuần
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Kết quả tuần</div>
+                        <div class="panel-body">
+                            <span>Chọn tuần:</span>
+                            <div class="list-group col-md-12">
+                                <a href="#" class="list-group-item" ng-class="{active:currentWeek}" data-ng-click="getThisResult()">Tuần này</a>
+                                <a href="#" class="list-group-item" ng-class="{active:!currentWeek}" data-ng-click="getLastResult()">Tuần trước</a>
+                            </div>
                         </div>
-                        <a href="/contest/result" class="list-group-item">Tuần này
-                        </a>
-                        <a href="#"  class="list-group-item">Tuần trước
-                        </a>
                     </div>
                 </div>
                 <div class="col-xs-8 col-md-8 highlight" >
@@ -39,4 +41,9 @@
             </div>
         </div>
     {% endraw %}
+{% endblock %}
+{% block mediaJS %}
+    <script>
+        angular.module('services.utility').constant('csrf_token', '{{ csrf_token() }}');
+    </script>
 {% endblock %}

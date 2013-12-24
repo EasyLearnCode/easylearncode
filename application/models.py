@@ -221,6 +221,15 @@ class WeeklyQuiz(ndb.Model):
         top_player = top
         return top_player
 
+    @classmethod
+    def get_last_week_contest(cls):
+        from datetime import datetime, timedelta
+
+        test = cls.query(cls.start_date >= (datetime.now() + timedelta(-7 - datetime.now().weekday())).date(),
+                         cls.start_date <= (datetime.now() + timedelta(
+                             -1 - datetime.now().weekday())).date()).get()
+        return test
+
 
 class WeeklyQuizResult(ndb.Model):
     test_key = ndb.KeyProperty(WeeklyQuiz)
