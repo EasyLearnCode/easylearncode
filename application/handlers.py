@@ -1620,16 +1620,16 @@ class SubmitContestHandler(BaseHandler):
                 testcase['time_used'] = float(compile_result['run_status']['time_used']) or None
                 testcase['memory_used'] = int(compile_result['run_status']['memory_used']) or None
                 if compile_result['run_status'] and compile_result['run_status']['output'].split()[0] == testcase[
-                        'output']:
+                    'output']:
                     testcase['result'] = True
                 else:
                     testcase['result'] = False
         avg_time = sum(
             test['time_used'] or testOlympic['limit_time'] for test in testOlympic['test_case']) / len(
-                testOlympic['test_case'])
+            testOlympic['test_case'])
         avg_memory = sum(
             test['memory_used'] or testOlympic['limit_memory'] for test in testOlympic['test_case']) / len(
-                testOlympic['test_case'])
+            testOlympic['test_case'])
         user_key = self.user_key
         result = True
         for test in testOlympic['test_case']:
@@ -1663,6 +1663,61 @@ class GetThisweekResultHandler(BaseHandler):
             test.pop('publish_date', None)
             test.update({'top_player': top_player})
             test.update({'test_key': test_key})
+            test.update({'color1': 'blue'})
+            test.update({'color2': 'black'})
+            import json
+
+            self.response.headers["Content-Type"] = "application/json"
+            print test
+            self.response.write(json.dumps(test))
+        else:
+            import json
+
+            self.response.headers["Content-Type"] = "application/json"
+            self.response.write(json.dumps({'status': 1}))
+
+    def post(self):
+        from models import WeeklyQuiz
+
+        test = WeeklyQuiz.get_this_week_contest()
+        if test:
+            top_player = test.get_top_player(100)
+            test_key = test.key.urlsafe()
+            test = test.to_dict()
+            test.pop('start_date', None)
+            test.pop('publish_date', None)
+            test.update({'top_player': top_player})
+            test.update({'test_key': test_key})
+            test.update({'color1': 'blue'})
+            test.update({'color2': 'black'})
+            import json
+
+            self.response.headers["Content-Type"] = "application/json"
+            print test
+            self.response.write(json.dumps(test))
+        else:
+            import json
+
+            self.response.headers["Content-Type"] = "application/json"
+            self.response.write(json.dumps({'status': 1}))
+
+
+class GetLastweekResultHandler(BaseHandler):
+    @user_required
+    def post(self):
+        from models import WeeklyQuiz
+
+        test = WeeklyQuiz.get_last_week_contest()
+        if test:
+            top_player = test.get_top_player(100)
+            test_key = test.key.urlsafe()
+            test = test.to_dict()
+            test.pop('start_date', None)
+            test.pop('publish_date', None)
+            test.update({'top_player': top_player})
+            test.update({'test_key': test_key})
+            test.update({'color1': 'black'})
+            test.update({'color2': 'blue'})
             import json
 
             self.response.headers["Content-Type"] = "application/json"

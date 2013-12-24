@@ -4,96 +4,135 @@
 {% endblock %}
 {% block content %}
     {% raw %}
-    <div class="container" data-ng-controller="ContestCtrl">
-        <div class="row">
-            <div class="col-xs-12 col-md-12 highlight">
-                <div class="row">
-                    <div class="col-md-8">
-                        <div class="panel panel-primary">
-                            <div class="panel-heading">
-                                <h3 class="panel-title">Câu hỏi:</h3>
-                            </div>
-                            <div class="panel-body">
-                                {{ thisweek_contest.description }}
+        <div class="container" data-ng-controller="ContestCtrl">
+            <div class="row">
+                <div class="col-xs-12 col-md-12 highlight">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="panel panel-primary">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">Câu hỏi:</h3>
+                                </div>
+                                <div class="panel-body">
+                                    {{ thisweek_contest.description }}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="panel panel-success">
-                            <div class="panel-heading">
-                                <h3 class="panel-title">Bảng thành tích</h3>
-                            </div>
-                            <div class="panel-body">
-                                <ul class="list-group">
-                                    <li data-ng-repeat="player in thisweek_contest.top_player" class="list-group-item">{{ $index+1 }}. {{ player.username }}</li>
-                                </ul>
+                        <div class="col-md-4">
+                            <div class="panel panel-success">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">Bảng thành tích</h3>
+                                </div>
+                                <div class="panel-body">
+                                    <ul class="list-group">
+                                        <li data-ng-repeat="player in thisweek_contest.top_player"
+                                            class="list-group-item">{{ $index+1 }}. {{ player.username }}</li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-xs-12 col-md-12 highlight">
-                <tabset>
-                    <tab data-ng-repeat="lang in langs" heading="{{ lang.name }}" active="lang.active">
-                        <div ui-ace="{ theme:'twilight',
+            <div class="row">
+                <div class="col-xs-12 col-md-12 highlight">
+                    <tabset>
+                        <tab data-ng-repeat="lang in langs" heading="{{ lang.name }}" active="lang.active">
+                            <div ui-ace="{ theme:'twilight',
   mode:lang.mode, onLoad: aceLoaded(lang)}" data-ng-model="lang.source">
-                        </div>
-                    </tab>
+                            </div>
+                        </tab>
 
-                </tabset>
+                    </tabset>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-md-12 highlight">
+                    <button type="button" class="btn btn-success" data-ng-click="submitCode()">Nộp bài</button>
+                    <button type="button" class="btn btn-info" data-ng-click="runCode()">Chạy thử</button>
+                    <button type="button" class="btn btn-warning" data-ng-click="resetCode()">Làm lại</button>
+                </div>
+            </div>
+            <div style="height: 50px; text-align: center;" data-ng-show="compiling" id="fountainTextG">
+                <div id="fountainTextG_1" class="fountainTextG">
+                    C
+                </div>
+                <div id="fountainTextG_2" class="fountainTextG">
+                    o
+                </div>
+                <div id="fountainTextG_3" class="fountainTextG">
+                    m
+                </div>
+                <div id="fountainTextG_4" class="fountainTextG">
+                    p
+                </div>
+                <div id="fountainTextG_5" class="fountainTextG">
+                    i
+                </div>
+                <div id="fountainTextG_6" class="fountainTextG">
+                    l
+                </div>
+                <div id="fountainTextG_7" class="fountainTextG">
+                    i
+                </div>
+                <div id="fountainTextG_8" class="fountainTextG">
+                    n
+                </div>
+                <div id="fountainTextG_9" class="fountainTextG">
+                    g
+                </div>
+                <div id="fountainTextG_10" class="fountainTextG">
+                    .
+                </div>
+                <div id="fountainTextG_11" class="fountainTextG">
+                    .
+                </div>
+                <div id="fountainTextG_12" class="fountainTextG">
+                    .
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-md-12 highlight">
+                    <h3>Bảng kết quả</h3>
+                    <table class="table">
+                        <tr>
+                            <td>#STT</td>
+                            <td>Kết quả</td>
+                            <td>Thời gian(s)</td>
+                            <td>Bộ nhớ(KiB)</td>
+                            <td>Lỗi</td>
+                        </tr>
+                        <tr data-ng-repeat="result in compile_result">
+                            <td>{{ $index+1 }}</td>
+                            <td>{{ result.result }}</td>
+                            <td>{{ result.time }}</td>
+                            <td>{{ result.memory }}</td>
+                            <td>{{ result.error }}</td>
+                        </tr>
+                    </table>
+                </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-xs-12 col-md-12 highlight">
-                <button type="button" class="btn btn-success" data-ng-click="submitCode()">Nộp bài</button>
-                <button type="button" class="btn btn-info" data-ng-click="runCode()">Chạy thử</button>
-                <button type="button" class="btn btn-warning" data-ng-click="resetCode()">Làm lại</button>
-            </div>
-        </div>
-        <div data-ng-show="compiling">
-            Compiling.....
-        </div>
-        <div class="row">
-            <div class="col-xs-12 col-md-12 highlight">
-                <h3>Bảng kết quả</h3>
-        <table class="table">
-            <tr>
-                <td>#STT</td>
-                <td>Kết quả</td>
-                <td>Thời gian(s)</td>
-                <td>Bộ nhớ(KiB)</td>
-                <td>Lỗi</td>
-            </tr>
-            <tr data-ng-repeat="result in compile_result">
-                <td>{{ $index+1 }}</td>
-                <td>{{ result.result }}</td>
-                <td>{{ result.time }}</td>
-                <td>{{ result.memory }}</td>
-                <td>{{ result.error }}</td>
-            </tr>
-        </table>
-        </div>
-        </div>
-    </div>
 
-        <div data-backdrop='static' data-keyboard='false'  class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h4 class="modal-title">Thông báo</h4>
-        </div>
-        <div class="modal-body">
-          Chưa có đề thi. Xin vui lòng quay lại sau!
-        </div>
-        <div class="modal-footer">
-          <a href="/" class="btn btn-primary btn-lg">OK</a>
-        </div>
-      </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-  </div><!-- /.modal -->
-  <!-- Modal -->
+        <div data-backdrop='static' data-keyboard='false' class="modal fade" id="myModal1" tabindex="-1" role="dialog"
+             aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Thông báo</h4>
+                    </div>
+                    <div class="modal-body">
+                        Chưa có đề thi. Xin vui lòng quay lại sau!
+                    </div>
+                    <div class="modal-footer">
+                        <a href="/" class="btn btn-primary btn-lg">OK</a>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+        <!-- Modal -->
 
 
     {% endraw %}
@@ -107,6 +146,6 @@
 {% endblock %}
 {% block mediaJS %}
     <script>
-    angular.module('services.utility').constant('csrf_token','{{ csrf_token() }}');
+        angular.module('services.utility').constant('csrf_token', '{{ csrf_token() }}');
     </script>
 {% endblock %}
