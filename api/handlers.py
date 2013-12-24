@@ -6,7 +6,7 @@ from application.handlers import BaseHandler, user_required
 class GetThisWeekResultHandler(BaseHandler):
     @user_required
     def get(self):
-        from models import WeeklyQuiz
+        from application.models import WeeklyQuiz
 
         test = WeeklyQuiz.get_this_week_contest()
         if test:
@@ -39,7 +39,7 @@ class SubmitContestHandler(BaseHandler):
         from config import config
 
         data = json.loads(self.request.body)
-        from models import WeeklyQuizResult
+        from application.models import WeeklyQuizResult
 
         weeklyQuiz = ndb.Key(urlsafe=data['key']).get()
         quiz_key = weeklyQuiz.key
@@ -104,7 +104,7 @@ class RunCodeHandler(BaseHandler):
 class GetThisweekContestHandler(BaseHandler):
     @user_required
     def get(self):
-        from models import WeeklyQuiz
+        from application.models import WeeklyQuiz
 
         test = WeeklyQuiz.get_this_week_contest()
         if test:

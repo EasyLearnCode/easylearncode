@@ -7,7 +7,7 @@ import handlers
 
 
 _routes = [
-    RedirectRoute('/contest/get_thisweek_result', handlers.GetThisweekResultHandler, name='get-thisweek-result',
+    RedirectRoute('/contest/get_thisweek_result', handlers.GetThisWeekResultHandler, name='get-thisweek-result',
                   strict_slash=True),
     RedirectRoute('/run_code', handlers.RunCodeHandler, name='run-code', strict_slash=True),
     RedirectRoute('/contest/get_thisweek_contest', handlers.GetThisweekContestHandler, name='get-thisweek-contest',
