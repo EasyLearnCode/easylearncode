@@ -1,0 +1,49 @@
+{% extends "main.html" %}
+{% block content %}
+    {% raw %}
+        <div class="container" data-ng-controller='ContestResultCtrl'>
+            <div class="row">
+                <div class="col-xs-3 col-md-3 highlight">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Kết quả tuần</div>
+                        <div class="panel-body">
+                            <span>Chọn tuần:</span>
+                            <div class="list-group col-md-12">
+                                <a href="#" class="list-group-item" ng-class="{active:currentWeek}" data-ng-click="getThisResult()">Tuần này</a>
+                                <a href="#" class="list-group-item" ng-class="{active:!currentWeek}" data-ng-click="getLastResult()">Tuần trước</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-8 col-md-8 highlight" >
+                    <div class="well" style="min-height:500px">
+                        <h2 class="text-center">Bảng trạng nguyên</h2>
+                        <table class="table table-bordered table-condensed table-hover">
+                            <tr class="success">
+                                <th>STT</th>
+                                <th>Họ tên</th>
+                                <th>Kết quả</th>
+                                <th>Thời gian biên dịch</th>
+                                <th>Bộ nhớ sử dụng</th>
+                                <th>Ngày giờ nộp</th>
+                            </tr>
+                            <tr data-ng-repeat="player in thisweek_contest.top_player">
+                                <td>{{ $index+1 }}</td>
+                                <td>{{ player.username }}</td>
+                                <td>{{ player.result }}</td>
+                                <td>{{ player.time_used }}</td>
+                                <td>{{ player.memory_used }}</td>
+                                <td>{{ player.submit_time }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endraw %}
+{% endblock %}
+{% block mediaJS %}
+    <script>
+        angular.module('services.utility').constant('csrf_token', '{{ csrf_token() }}');
+    </script>
+{% endblock %}

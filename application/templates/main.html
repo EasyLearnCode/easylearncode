@@ -1,0 +1,61 @@
+{% extends base_layout %}
+{% block mediaCss %}
+
+{% endblock %}
+{% block main_content %}
+    {% block nav %}
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    {#            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">#}
+                    {#                <span class="sr-only">Toggle navigation</span>#}
+                    {#                <span class="icon-bar"></span>#}
+                    {#                <span class="icon-bar"></span>#}
+                    {#                <span class="icon-bar"></span>#}
+                    {#            </button>#}
+                    <a class="navbar-brand" href="/">Easy Learn Code</a>
+                </div>
+                <div class="navbar-collapse collapse" data-ng-controller="HeaderController">
+                    <ul class="nav navbar-nav" >
+                        <li ng-class="{ active: isActive('/')}"><a href="/">Trang chủ</a></li>
+                        <li ng-class="{ active: isActive('/learn')}"><a href="/learn">Học</a></li>
+                        <li ng-class="{ active: isActive('{{ uri_for("contest") }}')}"><a href="{{ uri_for("contest") }}">Đố vui hàng tuần</a></li>
+                        <li ng-class="{ active: isActive('{{ uri_for("game") }}')}"><a href="{{ uri_for("game") }}">Học mà chơi</a></li>
+
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        {% if user_id %}
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">@{{ username }} <b
+                                        class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="{{ uri_for("edit-profile") }}"> Thông tin cá nhân</a></li>
+                                    <li><a href="#"> Hộp thư <span class="badge">7</span></a></li>
+                                    <li class="divider"></li>
+                                    <li><a href="{{ logout_url }}" target="_self"> Đăng xuất</a></li>
+                                </ul>
+                            </li>
+                        {% else %}
+                        <li ng-class="{ active: isActive('{{ uri_for("login") }}')}"><a href="{{ uri_for("login") }}">Đăng nhập</a></li>
+                        <li ng-class="{ active: isActive('{{ uri_for("register") }}')}"><a href="{{ uri_for("register") }}">Đăng kí</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+                <!--/.nav-collapse -->
+            </div>
+        </div>
+    {% endblock %}
+    {% block content %}
+    {% endblock %}
+    {% block footer %}
+        <div id="footer">
+            <div class="container">
+                <p class="text-muted credit pull-left"><a href="http://developer.hackerearth.com">HackerEarth</a></p>
+
+                <p class="credit pull-right">© EasyLearnCode 2013</p>
+
+                <p class="clear-fix"></p>
+            </div>
+        </div>
+    {% endblock %}
+{% endblock %}
