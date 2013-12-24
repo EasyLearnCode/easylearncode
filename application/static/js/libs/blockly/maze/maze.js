@@ -30,7 +30,7 @@ var Maze = {};
 
 // Supported languages.
 BlocklyApps.LANGUAGES = ['en', 'vi'];
-BlocklyApps.LANG = BlocklyApps.getLang();
+//BlocklyApps.LANG = BlocklyApps.getLang();
 
 document.write('<script type="text/javascript" src="/application/js/libs/blockly/maze/generated/' +
                BlocklyApps.LANG + '.js"></script>\n');

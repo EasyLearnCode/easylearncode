@@ -161,31 +161,31 @@ BlocklyApps.init = function() {
   document.head.parentElement.setAttribute('lang', BlocklyApps.LANG);
 
   // Sort languages alphabetically.
-  var languages = [];
-  for (var i = 0; i < BlocklyApps.LANGUAGES.length; i++) {
-    var lang = BlocklyApps.LANGUAGES[i];
-    languages.push([BlocklyApps.LANGUAGE_NAME[lang], lang]);
-  }
-  var comp = function(a, b) {
-    // Sort based on first argument ('English', 'Русский', '简体字', etc).
-    if (a[0] > b[0]) return 1;
-    if (a[0] < b[0]) return -1;
-    return 0;
-  };
-  languages.sort(comp);
+//  var languages = [];
+//  for (var i = 0; i < BlocklyApps.LANGUAGES.length; i++) {
+//    var lang = BlocklyApps.LANGUAGES[i];
+//    languages.push([BlocklyApps.LANGUAGE_NAME[lang], lang]);
+//  }
+//  var comp = function(a, b) {
+//    // Sort based on first argument ('English', 'Русский', '简体字', etc).
+//    if (a[0] > b[0]) return 1;
+//    if (a[0] < b[0]) return -1;
+//    return 0;
+//  };
+//  languages.sort(comp);
   // Populate the language selection menu.
-  var languageMenu = document.getElementById('languageMenu');
-  languageMenu.options.length = 0;
-  for (var i = 0; i < languages.length; i++) {
-    var tuple = languages[i];
-    var lang = tuple[tuple.length - 1];
-    var option = new Option(tuple[0], lang);
-    if (lang == BlocklyApps.LANG) {
-      option.selected = true;
-    }
-    languageMenu.options.add(option);
-  }
-  languageMenu.addEventListener('change', BlocklyApps.changeLanguage, true);
+//  var languageMenu = document.getElementById('languageMenu');
+//  languageMenu.options.length = 0;
+//  for (var i = 0; i < languages.length; i++) {
+//    var tuple = languages[i];
+//    var lang = tuple[tuple.length - 1];
+//    var option = new Option(tuple[0], lang);
+//    if (lang == BlocklyApps.LANG) {
+//      option.selected = true;
+//    }
+//    languageMenu.options.add(option);
+//  }
+//  languageMenu.addEventListener('change', BlocklyApps.changeLanguage, true);
 
   // Disable the link button if page isn't backed by App Engine storage.
   var linkButton = document.getElementById('linkButton');
@@ -266,31 +266,32 @@ BlocklyApps.loadBlocks = function(defaultXml) {
 /**
  * Save the blocks and reload with a different language.
  */
-BlocklyApps.changeLanguage = function() {
-  // Store the blocks for the duration of the reload.
-  // This should be skipped for the index page, which has no blocks and does
-  // not load Blockly.
-  if (typeof Blockly != 'undefined') {
-    var xml = Blockly.Xml.workspaceToDom(Blockly.mainWorkspace);
-    var text = Blockly.Xml.domToText(xml);
-    window.sessionStorage.loadOnceBlocks = text;
-  }
-
-  var languageMenu = document.getElementById('languageMenu');
-  var newLang = encodeURIComponent(
-      languageMenu.options[languageMenu.selectedIndex].value);
-  var search = window.location.search;
-  if (search.length <= 1) {
-    search = '?lang=' + newLang;
-  } else if (search.match(/[?&]lang=[^&]*/)) {
-    search = search.replace(/([?&]lang=)[^&]*/, '$1' + newLang);
-  } else {
-    search = search.replace(/\?/, '?lang=' + newLang + '&');
-  }
-
-  window.location = window.location.protocol + '//' +
-      window.location.host + window.location.pathname + search;
-};
+//BlocklyApps.changeLanguage = function() {
+//  // Store the blocks for the duration of the reload.
+//  // This should be skipped for the index page, which has no blocks and does
+//  // not load Blockly.
+//  if (typeof Blockly != 'undefined') {
+//    var xml = Blockly.Xml.workspaceToDom(Blockly.mainWorkspace);
+//    var text = Blockly.Xml.domToText(xml);
+//    window.sessionStorage.loadOnceBlocks = text;
+//  }
+//
+////  var languageMenu = document.getElementById('languageMenu');
+////  var newLang = encodeURIComponent(
+////      languageMenu.options[languageMenu.selectedIndex].value);
+//    //var newLang="vi";
+//  var search = window.location.search;
+//  if (search.length <= 1) {
+//    search = '?lang=' + newLang;
+//  } else if (search.match(/[?&]lang=[^&]*/)) {
+//    search = search.replace(/([?&]lang=)[^&]*/, '$1' + newLang);
+//  } else {
+//    search = search.replace(/\?/, '?lang=' + newLang + '&');
+//  }
+//
+//  window.location = window.location.protocol + '//' +
+//      window.location.host + window.location.pathname + search;
+//};
 
 /**
  * Highlight the block (or clear highlighting).

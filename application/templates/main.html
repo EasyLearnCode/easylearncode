@@ -1,6 +1,13 @@
 {% extends base_layout %}
 {% block mediaCss %}
-
+    <style>
+        .nav .dropdown-menu.bottom-up::after {
+            border-bottom: 0px solid transparent !important;
+            border-top: 6px solid white;
+            top: auto !important;
+            bottom: -6px;
+        }
+    </style>
 {% endblock %}
 {% block main_content %}
     {% block nav %}
@@ -16,11 +23,13 @@
                     <a class="navbar-brand" href="/">Easy Learn Code</a>
                 </div>
                 <div class="navbar-collapse collapse" data-ng-controller="HeaderController">
-                    <ul class="nav navbar-nav" >
+                    <ul class="nav navbar-nav">
                         <li ng-class="{ active: isActive('/')}"><a href="/">Trang chủ</a></li>
                         <li ng-class="{ active: isActive('/learn')}"><a href="/learn">Học</a></li>
-                        <li ng-class="{ active: isActive('{{ uri_for("contest") }}')}"><a href="{{ uri_for("contest") }}">Đố vui hàng tuần</a></li>
-                        <li ng-class="{ active: isActive('{{ uri_for("game") }}')}"><a href="{{ uri_for("game") }}">Học mà chơi</a></li>
+                        <li ng-class="{ active: isActive('{{ uri_for("contest") }}')}"><a
+                                href="{{ uri_for("contest") }}">Đố vui hàng tuần</a></li>
+                        <li ng-class="{ active: isActive('{{ uri_for("game") }}')}"><a href="{{ uri_for("game") }}">Học
+                            mà chơi</a></li>
 
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
@@ -36,8 +45,10 @@
                                 </ul>
                             </li>
                         {% else %}
-                        <li ng-class="{ active: isActive('{{ uri_for("login") }}')}"><a href="{{ uri_for("login") }}">Đăng nhập</a></li>
-                        <li ng-class="{ active: isActive('{{ uri_for("register") }}')}"><a href="{{ uri_for("register") }}">Đăng kí</a></li>
+                            <li ng-class="{ active: isActive('{{ uri_for("login") }}')}"><a
+                                    href="{{ uri_for("login") }}">Đăng nhập</a></li>
+                            <li ng-class="{ active: isActive('{{ uri_for("register") }}')}"><a
+                                    href="{{ uri_for("register") }}">Đăng kí</a></li>
                         {% endif %}
                     </ul>
                 </div>
@@ -50,11 +61,33 @@
     {% block footer %}
         <div id="footer">
             <div class="container">
-                <p class="text-muted credit pull-left"><a href="http://developer.hackerearth.com">HackerEarth</a></p>
-
-                <p class="credit pull-right">© EasyLearnCode 2013</p>
-
-                <p class="clear-fix"></p>
+                <div class="collapse navbar-collapse" style="margin-top: 20px">
+                    <ul class="nav navbar-nav">
+                        <li><a href="http://developer.hackerearth.com"><span>HackerEarth</span></a></li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        {% if locale_iso %}
+                            <li class="dropdown btn-group dropup">
+                                <button type="button" class="btn btn-primary">{% trans %}Language{% endtrans %}
+                                    : {{ locale_language }}</button>
+                                <button type="button" class="btn btn-default dropdown-toggle"
+                                        data-toggle="dropdown">
+                                    <span class="caret"></span>
+                                    <span class="sr-only">Toggle Dropdown</span>
+                                </button>
+                                <ul class="dropdown-menu pull-right">
+                                    {% for l in locales %}
+                                        {% if locale_iso != l %}
+                                            <li><a href="{{ path_for_language }}&hl={{ l }}">{{ locales[l] }}</a></li>
+                                        {% endif %}
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                        {% endif %}
+                        <li><a href="#"><span>© EasyLearnCode 2013</span></a></li>
+                    </ul>
+                    <ul class="clearfix"></ul>
+                </div>
             </div>
         </div>
     {% endblock %}
