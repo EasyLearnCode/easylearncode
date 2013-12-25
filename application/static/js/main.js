@@ -571,7 +571,7 @@ angular.module("easylearncode.learn").run(function () {
 
     }]);
 
-angular.module("easylearncode.contest_result").controller('ContestResultCtrl', ['$scope', '$http', function ($scope, $http) {
+angular.module("easylearncode.contest_result").controller('ContestResultCtrl', ['$scope', '$http', 'csrf_token', function ($scope, $http, csrf_token) {
     $http.get('/contest/get_thisweek_result').success(function (data) {
         if (data.status == 1) {
 
@@ -581,5 +581,31 @@ angular.module("easylearncode.contest_result").controller('ContestResultCtrl', [
         }
 
     });
+    $scope.getThisResult = function () {
+        $scope.currentWeek = true;
+        $scope.thisweek_contest = new Array();
+        $http.post('/contest/get_thisweek_result_link', {"_csrf_token": csrf_token}).success(function (data) {
+            if (data.status == 1) {
 
+            }
+            else {
+                $scope.thisweek_contest = data;
+            }
+
+        });
+    }
+    $scope.currentWeek = true;
+    $scope.getLastResult = function () {
+        $scope.currentWeek = false;
+        $scope.thisweek_contest = new Array();
+        $http.post('/contest/get_lastweek_result', {"_csrf_token": csrf_token}).success(function (data) {
+            if (data.status == 1) {
+
+            }
+            else {
+                $scope.thisweek_contest = data;
+            }
+
+        });
+    }
 }]);
