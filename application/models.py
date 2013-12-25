@@ -51,6 +51,12 @@ class User(User):
         return entity.token
 
     @classmethod
+    def get_current_user(cls):
+        from webapp2_extras import auth
+
+        return auth.get_auth().get_user_by_session()
+
+    @classmethod
     def validate_resend_token(cls, user_id, token):
         return cls.validate_token(user_id, 'resend-activation-mail', token)
 
@@ -220,6 +226,72 @@ class WeeklyQuiz(ndb.Model):
             top.append(player)
         top_player = top
         return top_player
+
+    def run_test_case(self, **kwargs):
+
+        import urllib
+        import logging
+        import json
+        from google.appengine.api import urlfetch
+        from application.config import config
+
+        test_result = []
+
+        def handle_result(rpc, **kwargs):
+            result = rpc.get_result()
+            if result and result.content:
+                compile_result = json.loads(result.content)
+                testcase = {'time_used': float(compile_result['run_status']['time_used']) or None,
+                            'memory_used': int(compile_result['run_status']['memory_used']) or None}
+                if compile_result['run_status'] and compile_result['run_status']['output'].strip() == kwargs[
+                    'test_output']:
+                    testcase['result'] = True
+                else:
+                    testcase['result'] = False
+                test_result.append(testcase)
+                if len(test_result) == len(self.test_case):
+                    avg_time = sum(
+                        test['time_used'] or self.limit_time for test in test_result) / len(
+                        self.test_case)
+                    avg_memory = sum(
+                        test['memory_used'] or self.limit_memory for test in test_result) / len(
+                        self.test_case)
+                    result = True
+                    for test in test_result:
+                        result = result and test['result']
+                    quiz_result = WeeklyQuizResult(user_key=kwargs['user_key'],
+                                                   test_key=self.key, result=result,
+                                                   time_used=avg_time,
+                                                   memory_used=avg_memory, language=kwargs['lang'], code=kwargs['code'])
+                    quiz_result.put()
+                    logging.debug("Finshed run test case")
+
+        def create_callback(rpc, **kwargs):
+            return lambda: handle_result(rpc, **kwargs)
+
+        rpcs = []
+        data = {
+            'source': kwargs['code'],
+            'lang': kwargs['lang']
+        }
+        data.update({'client_secret': config.get("HACKEREARTH_CLIENT_SECRET")})
+        data.update({'async': 0})
+
+        for test in self.test_case:
+            rpc = urlfetch.create_rpc()
+            rpc.callback = create_callback(rpc, test_output=test.output, lang=kwargs['lang'], code=kwargs['code'],
+                                           user_key=kwargs['user_key'])
+            data.update({'input': test.input})
+            form_data = urllib.urlencode(data)
+            urlfetch.make_fetch_call(rpc, url=config.get("HACKEREARTH_RUN_URL"), payload=form_data,
+                                     method=urlfetch.POST)
+            rpcs.append(rpc)
+
+        # ...
+
+        # Finish all RPCs, and let callbacks process the results.
+        for rpc in rpcs:
+            rpc.wait()
 
 
 class WeeklyQuizResult(ndb.Model):

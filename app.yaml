@@ -30,6 +30,7 @@ skip_files:
 builtins:
 - appstats: on #/_ah/stats/
 - remote_api: on #/_ah/remote_api/
+- deferred: on #/_ah/queue/deferred
 
 handlers:
 

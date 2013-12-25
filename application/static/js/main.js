@@ -318,7 +318,7 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "$h
                     $http.post('/run_code', {"_csrf_token": csrf_token, input: test.input, "lang": lang.lang, "source": lang.source}).success(function (data, status, headers, config) {
                         $scope.compile_result.push(
                             {
-                                'result': data.run_status.output == test.output,
+                                'result': data.run_status.output.trim() == test.output.trim(),
                                 'time': data.run_status.time_used,
                                 'memory': data.run_status.memory_used,
                                 'error': data.compile_status
