@@ -13,6 +13,8 @@ _routes = [
     RedirectRoute('/contest/get_thisweek_contest', handlers.GetThisweekContestHandler, name='get-thisweek-contest',
                   strict_slash=True),
     RedirectRoute('/contest/submit', handlers.SubmitContestHandler, name='submit-contest', strict_slash=True),
+    RedirectRoute('/contest/get_lastweek_result', handlers.GetLastWeekResultHandler, name='get-lastweek-result',
+                  strict_slash=True),
     RedirectRoute('/api/<model>/create/',
                   handler=CreateHandler, name="model-create", strict_slash=True),
     RedirectRoute('/api/<model>/read/<model_id:\d+>/',

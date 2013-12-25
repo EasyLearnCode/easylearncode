@@ -117,3 +117,23 @@ class GetThisweekContestHandler(BaseHandler):
             self.response.write(json.dumps({'status': 1}))
 
 
+class GetLastWeekResultHandler(BaseHandler):
+    @user_required
+    def get(self):
+        from application.models import WeeklyQuiz
+        import json
+
+        test = WeeklyQuiz.get_last_week_contest()
+        if test:
+            top_player = test.get_top_player(100)
+            test_key = test.key.urlsafe()
+            test = test.to_dict()
+            test.pop('start_date', None)
+            test.pop('publish_date', None)
+            test.update({'top_player': top_player})
+            test.update({'test_key': test_key})
+            self.response.headers["Content-Type"] = "application/json"
+            self.response.write(json.dumps(test))
+        else:
+            self.response.headers["Content-Type"] = "application/json"
+            self.response.write(json.dumps({'status': 1}))
