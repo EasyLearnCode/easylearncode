@@ -8481,7 +8481,7 @@ a.async {
     .console-chrome {
         border: 15px solid #4c4c4c;
         border-top: 30px solid #4c4c4c;
-        height: 600px;
+        height: 700px;
         overflow: hidden;
         border-radius: 3px;
     }
@@ -8652,11 +8652,39 @@ a.async {
         color: green;
         display: block;
     }
+
+    chrome.finished .console, .console-chrome.finished .register-wrap {
+        top: -85px;
+    }
+
+    .console-chrome .register-wrap {
+        padding: 20px;
+        background-color: #08c;
+        position: relative;
+        z-index: 1;
+    }
+
+    .console-chrome .console, .console-chrome .register-wrap {
+        -webkit-transition: top .2s;
+        -moz-transition: top .2s;
+        -ms-transition: top .2s;
+        -o-transition: top .2s;
+        transition: top .2s;
+    }
+
+    .console-chrome .register-wrap .congratulate-msg {
+        font-size: 17px;
+        line-height: 50px;
+        float: left;
+    }
+
+    .console-chrome .register-wrap p {
+        color: white;
+    }
 }
 
-#feedback-welcome, #feedback-highlighter, #feedback-overview, #feedback-submit-success, #feedback-submit-error
-{
-    color:#333;
+#feedback-welcome, #feedback-highlighter, #feedback-overview, #feedback-submit-success, #feedback-submit-error {
+    color: #333;
 }
 
 .feedback-logo {
@@ -8672,7 +8700,13 @@ a.async {
     margin-top: 10px !important;
     margin-bottom: 11px !important;
 }
+
 .btn-social {
-text-align: left !important;
-border-radius: 4px !important;
+    text-align: left !important;
+    border-radius: 4px !important;
+}
+
+.notification {
+    display: none;
+    z-index: 1000;
 }

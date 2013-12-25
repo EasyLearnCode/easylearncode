@@ -20,8 +20,13 @@
 
                         <div class="console hello-interactive-console" id="console"></div>
                         <div class="register-wrap cf">
-                            <p class="congratulate-msg">Tuyệt, bạn đã hoàn thành khóa học đầu tiên!</p>
-                            <a href="/register/sign_up" class="btn btn-primary">Tiếp tục nào! &rarr;</a>
+                            {% raw %}
+                            <p class="congratulate-msg">{{ notification }}</p>
+                            {% endraw %}
+                            <button type="button" data-ng-click="nextExercise()" class="btn btn-primary pull-right">Tiếp
+                                tục nào!
+                            </button>
+                            <div class="clearfix"></div>
                         </div>
                     </div>
                 </div>
@@ -152,7 +157,7 @@
                         <div class="col-md-5" data-pos="right">
                             <h2>Học với video tương tác</h2>
 
-                            <p class="lead">Học theo video hướng dẫn và làm bài tập một cách thông minh  nhất.
+                            <p class="lead">Học theo video hướng dẫn và làm bài tập một cách thông minh nhất.
                                 <br>Bạn hãy bắt đầu ngay để xem nó thông minh như thế nào nhé! ^^.</p>
                         </div>
 
@@ -184,7 +189,8 @@
                         <div class="col-md-5" data-pos="right">
                             <h2>Học mà chơi, chơi mà học.</h2>
 
-                            <p class="lead">Với các trò chơi giúp bạn suy nghĩ logic trong lập trình, vui nhộn, hữu ích.</p>
+                            <p class="lead">Với các trò chơi giúp bạn suy nghĩ logic trong lập trình, vui nhộn, hữu
+                                ích.</p>
                         </div>
                     </div>
                 </section>
@@ -196,7 +202,8 @@
                         <div class="col-md-5" data-pos="left">
                             <h2>Lập trình ngay trên trình duyệt.</h2>
 
-                            <p class="lead">Các bài tập, các đoạn code Python đều có thể chạy trực tiếp trên trình duyệt mà bạn không cần phải cài đặt một chương trình gì. Ngay cả việc kiểm lỗi.</p>
+                            <p class="lead">Các bài tập, các đoạn code Python đều có thể chạy trực tiếp trên trình duyệt
+                                mà bạn không cần phải cài đặt một chương trình gì. Ngay cả việc kiểm lỗi.</p>
                         </div>
                         <div class="col-md-7" data-pos="right">
                             <img src="/application/img/welcome/img-3.png" class="img-responsive"/>
@@ -243,201 +250,218 @@
 {% block mediaJS %}
     <script src="/application/js/welcome.js"></script>
     <script>
-        function utf8_decode(str_data) {
-            // http://kevin.vanzonneveld.net
-            // +   original by: Webtoolkit.info (http://www.webtoolkit.info/)
-            // +      input by: Aman Gupta
-            // +   improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-            // +   improved by: Norman "zEh" Fuchs
-            // +   bugfixed by: hitwork
-            // +   bugfixed by: Onno Marsman
-            // +      input by: Brett Zamir (http://brett-zamir.me)
-            // +   bugfixed by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-            // +   bugfixed by: kirilloid
-            // *     example 1: utf8_decode('Kevin van Zonneveld');
-            // *     returns 1: 'Kevin van Zonneveld'
+    function utf8_decode(str_data) {
+        // http://kevin.vanzonneveld.net
+        // +   original by: Webtoolkit.info (http://www.webtoolkit.info/)
+        // +      input by: Aman Gupta
+        // +   improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
+        // +   improved by: Norman "zEh" Fuchs
+        // +   bugfixed by: hitwork
+        // +   bugfixed by: Onno Marsman
+        // +      input by: Brett Zamir (http://brett-zamir.me)
+        // +   bugfixed by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
+        // +   bugfixed by: kirilloid
+        // *     example 1: utf8_decode('Kevin van Zonneveld');
+        // *     returns 1: 'Kevin van Zonneveld'
 
-            var tmp_arr = [],
-                    i = 0,
-                    ac = 0,
-                    c1 = 0,
-                    c2 = 0,
-                    c3 = 0,
-                    c4 = 0;
+        var tmp_arr = [],
+                i = 0,
+                ac = 0,
+                c1 = 0,
+                c2 = 0,
+                c3 = 0,
+                c4 = 0;
 
-            str_data += '';
+        str_data += '';
 
-            while (i < str_data.length) {
-                c1 = str_data.charCodeAt(i);
-                if (c1 <= 191) {
-                    tmp_arr[ac++] = String.fromCharCode(c1);
-                    i++;
-                } else if (c1 <= 223) {
-                    c2 = str_data.charCodeAt(i + 1);
-                    tmp_arr[ac++] = String.fromCharCode(((c1 & 31) << 6) | (c2 & 63));
-                    i += 2;
-                } else if (c1 <= 239) {
-                    // http://en.wikipedia.org/wiki/UTF-8#Codepage_layout
-                    c2 = str_data.charCodeAt(i + 1);
-                    c3 = str_data.charCodeAt(i + 2);
-                    tmp_arr[ac++] = String.fromCharCode(((c1 & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63));
-                    i += 3;
-                } else {
-                    c2 = str_data.charCodeAt(i + 1);
-                    c3 = str_data.charCodeAt(i + 2);
-                    c4 = str_data.charCodeAt(i + 3);
-                    c1 = ((c1 & 7) << 18) | ((c2 & 63) << 12) | ((c3 & 63) << 6) | (c4 & 63);
-                    c1 -= 0x10000;
-                    tmp_arr[ac++] = String.fromCharCode(0xD800 | ((c1 >> 10) & 0x3FF));
-                    tmp_arr[ac++] = String.fromCharCode(0xDC00 | (c1 & 0x3FF));
-                    i += 4;
-                }
+        while (i < str_data.length) {
+            c1 = str_data.charCodeAt(i);
+            if (c1 <= 191) {
+                tmp_arr[ac++] = String.fromCharCode(c1);
+                i++;
+            } else if (c1 <= 223) {
+                c2 = str_data.charCodeAt(i + 1);
+                tmp_arr[ac++] = String.fromCharCode(((c1 & 31) << 6) | (c2 & 63));
+                i += 2;
+            } else if (c1 <= 239) {
+                // http://en.wikipedia.org/wiki/UTF-8#Codepage_layout
+                c2 = str_data.charCodeAt(i + 1);
+                c3 = str_data.charCodeAt(i + 2);
+                tmp_arr[ac++] = String.fromCharCode(((c1 & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63));
+                i += 3;
+            } else {
+                c2 = str_data.charCodeAt(i + 1);
+                c3 = str_data.charCodeAt(i + 2);
+                c4 = str_data.charCodeAt(i + 3);
+                c1 = ((c1 & 7) << 18) | ((c2 & 63) << 12) | ((c3 & 63) << 6) | (c4 & 63);
+                c1 -= 0x10000;
+                tmp_arr[ac++] = String.fromCharCode(0xD800 | ((c1 >> 10) & 0x3FF));
+                tmp_arr[ac++] = String.fromCharCode(0xDC00 | (c1 & 0x3FF));
+                i += 4;
             }
-
-            return tmp_arr.join('');
         }
-        function HelloCtrl($scope, $http, $timeout) {
-            $ = jQuery;
-            $scope.jqconsole = $('#console').jqconsole('', '> ');
-            $scope.startPrompt = function () {
-                // Start the prompt with history enabled.
-                $scope.jqconsole.Prompt(true, function (input) {
-                    // Output input with the class jqconsole-output.
+
+        return tmp_arr.join('');
+    }
+    function HelloCtrl($scope, $http, $timeout) {
+        $ = jQuery;
+        $scope.jqconsole = $('#console').jqconsole('', '> ');
+        $scope.startPrompt = function () {
+            // Start the prompt with history enabled.
+            $scope.jqconsole.Prompt(true, function (input) {
+                // Output input with the class jqconsole-output.
+                dataObj = {
+                    command: input,
+                    testScript: '',
+                    type: 'evalUser'
+                };
+                $scope.jsrepl.sandbox.post({
+                    type: 'engine.EasyLearnCode_Eval',
+                    data: dataObj
+                });
+            });
+        };
+        $scope.inputCallback = function (callback) {
+            $scope.jqconsole.Input(function (result) {
+                var e;
+                try {
+                    callback(result);
+                } catch (_error) {
+
+                }
+            });
+
+        };
+        $scope.outputCallback = function (output, cls) {
+            if (output) {
+                $scope.jqconsole.Write(output, cls);
+            }
+        };
+        $scope.resultCallback = function (result) {
+            var code, error_msg, isSuccess, output, resultObj, result_val, _ref;
+            if (result && typeof result === 'object') {
+                resultObj = result;
+                result_val = resultObj.result;
+                code = resultObj.code;
+                output = resultObj.output;
+                if (result_val) {
+                    if (result_val[-1] !== '\n') {
+                        result = result_val + '\n';
+                    }
+                } else {
+                    result = '';
+                }
+                error_msg = null;
+                isSuccess = false;
+                if (resultObj.type === 'evalSolution') {
+                    if (result_val === 'true' || result_val === 'True') {
+                        isSuccess = true;
+                    } else if (result_val !== 'false' && result_val !== 'False') {
+                        error_msg = result_val;
+                    }
+                    if (isSuccess) {
+                        setTimeout(function(){$('.console-chrome').addClass('finished');},1000);
+                        $scope.$apply(function(){
+                            if(($scope.get_current_project().index+1)<=2){
+                                 $scope.notification = "Chúc mừng bạn đã hoàn thành ví dụ "+($scope.get_current_project().index+1);
+                            }
+                            else
+                               $scope.notification = "Chúc mừng bạn đã hoàn thành xong các ví dụ. Giờ bạn có thể nhấn tiếp tục để đăng nhập hệ thống và bắt đầu các khóa học của chúng tôi!";
+                        });
+                        //return this.ShowCongratulations();
+                    } else {
+                        //this.exercises_fail_detail[this.Exercises[this.Exercises.CurrentLang][this.Exercises.CurrentExercise].ExerciseID] += 1;
+                        //return this.ShowRetryAnswerPrompt(msg);
+                        $scope.jqconsole.Write('<span style="color: crimson">Bạn đã nhập sai! <br><span style="color: #F80">' + utf8_decode(result_val) + '</span></span>', 'log', false);
+                        $scope.startPrompt();
+                    }
+                } else if (resultObj.type === 'evalUser') {
+                    if (result) {
+                        $scope.jqconsole.Write('==> ' + result, 'output');
+                    }
+                    result = result_val;
+                    if (!result) {
+                        result = '';
+                    }
+                    if (!code) {
+                        code = '';
+                    }
+                    if (!output) {
+                        output = '';
+                    }
+                    result = JSON.stringify(result);
+                    code = JSON.stringify(code);
+                    output = JSON.stringify(output);
+                    command = 'easylearncode_validate(' + result + ', ' + code + ', ' + output + ')';
+                    command = command.replace(/#{/g, '\\#{');
                     dataObj = {
-                        command: input,
-                        testScript: '',
-                        type: 'evalUser'
+                        command: command,
+                        testScript: $scope.get_current_checkpoint().test_functions,
+                        type: 'evalSolution'
                     };
                     $scope.jsrepl.sandbox.post({
                         type: 'engine.EasyLearnCode_Eval',
                         data: dataObj
                     });
-                });
-            };
-            $scope.inputCallback = function (callback) {
-                $scope.jqconsole.Input(function (result) {
-                    var e;
-                    try {
-                        callback(result);
-                    } catch (_error) {
-
-                    }
-                });
-
-            };
-            $scope.outputCallback = function (output, cls) {
-                if (output) {
-                    $scope.jqconsole.Write(output, cls);
                 }
-            };
-            $scope.resultCallback = function (result) {
-                var code, error_msg, isSuccess, output, resultObj, result_val, _ref;
-                if (result && typeof result === 'object') {
-                    resultObj = result;
-                    result_val = resultObj.result;
-                    code = resultObj.code;
-                    output = resultObj.output;
-                    if (result_val) {
-                        if (result_val[-1] !== '\n') {
-                            result = result_val + '\n';
-                        }
-                    } else {
-                        result = '';
-                    }
-                    error_msg = null;
-                    isSuccess = false;
-                    if (resultObj.type === 'evalSolution') {
-                        if (result_val === 'true' || result_val === 'True') {
-                            isSuccess = true;
-                        } else if (result_val !== 'false' && result_val !== 'False') {
-                            error_msg = result_val;
-                        }
-                        if (isSuccess) {
-                            $scope.get_current_project().index += 1;
-                            $scope.jqconsole.Write($scope.get_current_checkpoint().entry_html + $scope.get_current_checkpoint().instruction_html, 'log', false);
-                            $scope.startPrompt();
-                            //return this.ShowCongratulations();
-                        } else {
-                            //this.exercises_fail_detail[this.Exercises[this.Exercises.CurrentLang][this.Exercises.CurrentExercise].ExerciseID] += 1;
-                            //return this.ShowRetryAnswerPrompt(msg);
-                            $scope.jqconsole.Write('<span style="color: crimson">Oops, Hãy thử lại!.<br><span style="color: #F80">' + utf8_decode(result_val) + '</span></span>', 'log', false);
-                            $scope.startPrompt();
-                        }
-                    } else if (resultObj.type === 'evalUser') {
-                        if(result){
-                            $scope.jqconsole.Write('==> ' + result, 'output');
-                        }
-                        result = result_val;
-                        if (!result) {
-                            result = '';
-                        }
-                        if (!code) {
-                            code = '';
-                        }
-                        if (!output) {
-                            output = '';
-                        }
-                        result = JSON.stringify(result);
-                        code = JSON.stringify(code);
-                        output = JSON.stringify(output);
-                        command = 'easylearncode_validate(' + result + ', ' + code + ', ' + output + ')';
-                        command = command.replace(/#{/g, '\\#{');
-                        dataObj = {
-                            command: command,
-                            testScript: $scope.get_current_checkpoint().test_functions,
-                            type: 'evalSolution'
-                        };
-                        $scope.jsrepl.sandbox.post({
-                            type: 'engine.EasyLearnCode_Eval',
-                            data: dataObj
-                        });
-                    }
-                } else if (result) {
-                    $scope.jqconsole.Write('==> ' + result, 'output');
-                    $scope.startPrompt();
-                }
-            };
-            $scope.errorCallback = function (e) {
-                $scope.jqconsole.Write(e, 'error');
+            } else if (result) {
+                $scope.jqconsole.Write('==> ' + result, 'output');
                 $scope.startPrompt();
-
-            };
-            $scope.timeoutCallback = function () {
-
             }
-            $scope.jsrepl = new JSREPL({
-                input: $scope.inputCallback,
-                output: $scope.outputCallback,
-                result: $scope.resultCallback,
-                error: $scope.errorCallback,
-                timeout: {
-                    time: 30000,
-                    callback: $scope.timeoutCallback
-                }
-            });
-            $http({method: 'GET', url: '/application/js/hello_exercise.json'}).
-                    success(function (data, status, headers, config) {
-                        // this callback will be called asynchronously
-                        // when the response is available
-                        $scope.exercise = data;
-                        $scope.jsrepl.loadLanguage($scope.exercise.language, function () {
-                            $("#progress").hide();
-                        });
-                        $scope.get_current_project = function () {
-                            return $scope.exercise.projects[$scope.exercise.project_index];
-                        };
-                        $scope.get_current_checkpoint = function () {
-                            return $scope.get_current_project().checkpoints[$scope.get_current_project().index];
-                        };
+        };
+        $scope.errorCallback = function (e) {
+            $scope.jqconsole.Write(e, 'error');
+            $scope.startPrompt();
 
-                        $scope.jqconsole.Write($scope.get_current_checkpoint().entry_html + $scope.get_current_checkpoint().instruction_html, 'log', false);
-                        $scope.startPrompt();
-                    }).
-                    error(function (data, status, headers, config) {
-                        // called asynchronously if an error occurs
-                        // or server returns response with an error status.
-                    });
+        };
+        $scope.timeoutCallback = function () {
+
         }
-        ;
+        $scope.nextExercise = function () {
+            $('.console-chrome').removeClass('finished');
+            if ($scope.get_current_project().index+1 == $scope.get_current_project().checkpoints_count) {
+                window.location.pathname = '/register/';
+            } else {
+                $scope.jqconsole.Reset();
+                $scope.get_current_project().index += 1;
+                $scope.jqconsole.Write($scope.get_current_checkpoint().entry_html + $scope.get_current_checkpoint().instruction_html, 'log', false);
+                $scope.startPrompt();
+            }
+
+        }
+        $scope.jsrepl = new JSREPL({
+            input: $scope.inputCallback,
+            output: $scope.outputCallback,
+            result: $scope.resultCallback,
+            error: $scope.errorCallback,
+            timeout: {
+                time: 30000,
+                callback: $scope.timeoutCallback
+            }
+        });
+        $http({method: 'GET', url: '/application/js/hello_exercise.json'}).
+                success(function (data, status, headers, config) {
+                    // this callback will be called asynchronously
+                    // when the response is available
+                    $scope.exercise = data;
+                    $scope.jsrepl.loadLanguage($scope.exercise.language, function () {
+                        $("#progress").hide();
+                    });
+                    $scope.get_current_project = function () {
+                        return $scope.exercise.projects[$scope.exercise.project_index];
+                    };
+                    $scope.get_current_checkpoint = function () {
+                        return $scope.get_current_project().checkpoints[$scope.get_current_project().index];
+                    };
+
+                    $scope.jqconsole.Write($scope.get_current_checkpoint().entry_html + $scope.get_current_checkpoint().instruction_html, 'log', false);
+                    $scope.startPrompt();
+                }).
+                error(function (data, status, headers, config) {
+                    // called asynchronously if an error occurs
+                    // or server returns response with an error status.
+                });
+    }
+    ;
     </script>
 {% endblock %}

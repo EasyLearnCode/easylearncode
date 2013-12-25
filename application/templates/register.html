@@ -31,17 +31,18 @@
 						   		 <input name="password" id="password" type="password" placeholder="{% trans %}Password{% endtrans %}" class="input-field" required="">
 						   		 <input name="c_password" id="c_password" type="password" placeholder="{% trans %}Confirm Password{% endtrans %}" class="input-field" required="">
 						   		 <label class="checkbox">
-        		                	<input name="rule" type="checkbox" value="option1" required=""> I agree to something I will never read
+        		                	<input name="rule" type="checkbox" value="option1" required=""> {% trans %} I agree to something I will never read{% endtrans %}
         		           		  </label>
 						   		 <button type="submit" class="btn btn-login">{% trans %}Sign Up{% endtrans %}</button>
 							</form>
 							<div class="login-links">
 					            <a href="/password-reset/">
-					          	   Forgot password?
+					          	   {% trans %}Forgot password?{% endtrans %}
 					            </a>
 					            <br>
 					             <a href="/login/">
-					             Already have an account?  <strong>Sign In</strong>
+                                   {% trans %}Already have an account? {% endtrans %}
+					              <strong>{% trans %}Sign In{% endtrans %}</strong>
 					            </a>
 							</div>
 			        	</div>
