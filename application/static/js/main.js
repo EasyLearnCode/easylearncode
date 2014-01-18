@@ -54,7 +54,7 @@
     angular.module("easylearncode.settings", ["easylearncode.core", "controllers.settings", "directives.location"]);
     angular.module("easylearncode.payment", ["easylearncode.core"]);
     angular.module("easylearncode.simple", ["easylearncode.core"]);
-    angular.module("easylearncode.contest", ["ui.bootstrap", "ui.ace", "easylearncode.core"]);
+    angular.module("easylearncode.contest", ["ui.bootstrap", "ui.ace", "easylearncode.core", "timer"]);
     angular.module("easylearncode.home", ["ui.bootstrap", "easylearncode.core"]);
     angular.module("easylearncode.game", ["easylearncode.core"]);
     angular.module("easylearncode.learn", ["ui.bootstrap", "ui.ace", "easylearncode.core"])
@@ -230,27 +230,32 @@ angular.module("services.utility").factory("libraryLoader", ["$q", "$rootScope",
     }
 ]);
 angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "$http", "csrf_token", function ($scope, $http, csrf_token) {
+    var curr = new Date(); // get current date
+    curr.setHours(0, 0, 0, 0);
+    var first = curr.getDate() - curr.getDay(); // First day is the day of the month - the day of the week
+    var last = first + 8;
+    $scope.endtime = new Date(curr.setDate(last)).getTime();
     $scope.langs = [
         {
             name: 'Python',
             mode: 'python',
             lang: 'PYTHON',
-            active: false,
-            source: "'''\n# Read input from stdin and provide input before running code\n\nname = raw_input('What is your name?\\n')\nprint 'Hi, %s.' % name\n'''\nprint 'Hello World!'\n"
+            active: true,
+            source: ""
         },
         {
             name: 'Java',
             mode: 'java',
             lang: 'JAVA',
-            active: true,
-            source: "/* IMPORTANT: class must not be public. */\n\n/*\n * uncomment this if you want to read input.\nimport java.io.BufferedReader;\nimport java.io.InputStreamReader;\n*/\n\nclass TestClass {\n    public static void main(String args[] ) throws Exception {\n        /*\n         * Read input from stdin and provide input before running\n\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        String line = br.readLine();\n        int N = Integer.parseInt(line);\n        for (int i = 0; i < N; i++) {\n            System.out.println(\"hello world\");\n        }\n        */\n\n        System.out.println(\"Hello World!\");\n    }\n}\n"
+            active: false,
+            source: ""
         },
         {
             name: 'C++',
             mode: 'c_cpp',
             lang: 'CPP',
             active: false,
-            source: "#include <iostream>\nusing namespace std;\n\nint main()\n{\n    cout << \"Hello World!\" << endl;\n    return 0;\n}\n"
+            source: ""
 
         }
     ]
@@ -274,22 +279,22 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "$h
                 name: 'Python',
                 mode: 'python',
                 lang: 'PYTHON',
-                active: false,
-                source: "'''\n# Read input from stdin and provide input before running code\n\nname = raw_input('What is your name?\\n')\nprint 'Hi, %s.' % name\n'''\nprint 'Hello World!'\n"
+                active: true,
+                source: ""
             },
             {
                 name: 'Java',
                 mode: 'java',
                 lang: 'JAVA',
-                active: true,
-                source: "/* IMPORTANT: class must not be public. */\n\n/*\n * uncomment this if you want to read input.\nimport java.io.BufferedReader;\nimport java.io.InputStreamReader;\n*/\n\nclass TestClass {\n    public static void main(String args[] ) throws Exception {\n        /*\n         * Read input from stdin and provide input before running\n\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        String line = br.readLine();\n        int N = Integer.parseInt(line);\n        for (int i = 0; i < N; i++) {\n            System.out.println(\"hello world\");\n        }\n        */\n\n        System.out.println(\"Hello World!\");\n    }\n}\n"
+                active: false,
+                source: ""
             },
             {
                 name: 'C++',
                 mode: 'c_cpp',
                 lang: 'CPP',
                 active: false,
-                source: "#include <iostream>\nusing namespace std;\n\nint main()\n{\n    cout << \"Hello World!\" << endl;\n    return 0;\n}\n"
+                source: ""
 
             }
         ]

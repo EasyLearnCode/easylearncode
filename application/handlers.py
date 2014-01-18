@@ -1663,8 +1663,6 @@ class GetThisweekResultHandler(BaseHandler):
             test.pop('publish_date', None)
             test.update({'top_player': top_player})
             test.update({'test_key': test_key})
-            test.update({'color1': 'blue'})
-            test.update({'color2': 'black'})
             import json
 
             self.response.headers["Content-Type"] = "application/json"
@@ -1688,8 +1686,6 @@ class GetThisweekResultHandler(BaseHandler):
             test.pop('publish_date', None)
             test.update({'top_player': top_player})
             test.update({'test_key': test_key})
-            test.update({'color1': 'blue'})
-            test.update({'color2': 'black'})
             import json
 
             self.response.headers["Content-Type"] = "application/json"
@@ -1716,8 +1712,6 @@ class GetLastweekResultHandler(BaseHandler):
             test.pop('publish_date', None)
             test.update({'top_player': top_player})
             test.update({'test_key': test_key})
-            test.update({'color1': 'black'})
-            test.update({'color2': 'blue'})
             import json
 
             self.response.headers["Content-Type"] = "application/json"

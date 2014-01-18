@@ -1,0 +1,100 @@
+{% extends "admin/base.html" %}
+{% block content %}
+    {% raw %}
+        <div class="container col-lg-12" data-ng-controller='WeeklyQuizCtrl'>
+        <button class="btn" data-ng-click="them()">Thêm</button>
+            <table class="table table-bordered">
+                <tr>
+                    <th>STT</th>
+                    <th>Mô tả</th>
+                    <th>Bộ nhớ giới hạn</th>
+                    <th>Thời gian giới hạn</th>
+                    <th>Ngày tạo</th>
+                    <th>Ngày bắt đầu thi</th>
+                    <th>Xóa</th>
+                    <th>Sửa</th>
+                </tr>
+                <tr data-ng-repeat="contest in contests">
+                    <td>{{ $index + 1 }}</td>
+                    <td>{{ contest.description }}</td>
+                    <td>{{ contest.limit_memory }}</td>
+                    <td>{{ contest.limit_time }}</td>
+                    <td>{{ contest.publish_date }}</td>
+                    <td>{{ contest.start_date }}</td>
+                    <td>
+                        <button value="Xóa" data-ng-click="xoa(contest)">Xóa</button>
+                    </td>
+                    <td>
+                        <button value="Sửa" data-ng-click="sua(contest)">Sửa</button>
+                    </td>
+                </tr>
+            </table>
+            <div>
+                <div data-backdrop='static' data-keyboard='false' class="modal fade" id="modelAdd" tabindex="-1"
+                     role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Thêm bài thi</h4>
+                            </div>
+                            <div class="modal-body">
+                                <form class="form-horizontal">
+                                    <div class="form-group">
+                                        <label for="desciption" class="col-lg-3 control-label">Mô tả</label>
+                                        <div class="col-lg-5">
+                                            <input type="text" class="form-control" id="desciption" placeholder="Mô tả">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="limit_memory" class="col-lg-3 control-label">Bộ nhớ giới hạn</label>
+                                        <div class="col-lg-5">
+                                            <input type="text" class="form-control" id="limit_memory"
+                                                   placeholder="Bộ nhớ giới hạn">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="limit_time" class="col-lg-3 control-label">Thời gian giới
+                                            hạn</label>
+
+                                        <div class="col-lg-5">
+                                            <input type="text" class="form-control" id="limit_time"
+                                                   placeholder="Thời gian giới hạn">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="start_date" class="col-lg-3 control-label">Ngày bắt đầu</label>
+
+                                        <div class="col-lg-5">
+                                            <input type="text" class="form-control" id="start_date"
+                                                   placeholder="Ngày bắt đầu">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="test_case" class="col-lg-3 control-label">Bộ test</label>
+
+                                        <div class="col-lg-5">
+                                            <button class="button">Thêm bộ test</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-primary btn-lg">Lưu</button>
+                            </div>
+                        </div>
+                        <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
+                </div>
+                <!-- /.modal -->
+                <!-- Modal -->
+            </div>
+        </div>
+    {% endraw %}
+{% endblock %}
+{% block mediaJS %}
+    {{ super() }}
+    <script>
+        angular.module('services.utility').constant('csrf_token', '{{ csrf_token() }}');
+    </script>
+{% endblock %}

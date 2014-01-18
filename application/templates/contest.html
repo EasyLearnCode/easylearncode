@@ -5,54 +5,80 @@
 {% block content %}
     {% raw %}
         <div class="container" data-ng-controller="ContestCtrl">
-            <div class="row">
-                <div class="col-xs-12 col-md-12 highlight">
-                    <div class="row">
-                        <div class="col-md-8">
-                            <div class="panel panel-primary">
-                                <div class="panel-heading">
-                                    <h3 class="panel-title">Câu hỏi:</h3>
-                                </div>
-                                <div class="panel-body">
-                                    {{ thisweek_contest.description }}
-                                </div>
+            <div class="col-md-12 highlight">
+                <div class="row">
+                    <div class="col-md-8">
+                        <timer end-time="endtime">{{days}} days, {{hours}} hours, {{minutes}} minutes, {{seconds}} seconds.</timer>
+                        <div class="profileSteps">
+                            <div class="profileStep profileStepPassive profileStepOne">
+                                <div class="connect"></div>
+                                <div class="icon">5</div>
+                                <div class="info">Step Five</div>
+                            </div>
+                            <div class="profileStep profileStepPassive profileStepOne">
+                                <div class="connect"></div>
+                                <div class="icon">4</div>
+                                <div class="info">Step Four</div>
+                            </div>
+                            <div class="profileStep profileStepPassive profileStepOne">
+                                <div class="connect"></div>
+                                <div class="icon">3</div>
+                                <div class="info">Step Three</div>
+                            </div>
+                            <div class="profileStep profileStepActive profileStepOne">
+                                <div class="connect"></div>
+                                <div class="icon">2</div>
+                                <div class="info">Step Two</div>
+                            </div>
+                            <div class="profileStep profileStepActive profileStepOne">
+                                <div class="connect"></div>
+                                <div class="icon">1</div>
+                                <div class="info">Step One</div>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="panel panel-success">
-                                <div class="panel-heading">
-                                    <h3 class="panel-title">Bảng thành tích</h3>
-                                </div>
-                                <div class="panel-body">
-                                    <ul class="list-group">
-                                        <li data-ng-repeat="player in thisweek_contest.top_player"
-                                            class="list-group-item">{{ $index+1 }}. {{ player.username }}</li>
-                                    </ul>
-                                </div>
+                        <div class="clearfix"></div>
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Câu hỏi:</h3>
+                            </div>
+                            <div class="panel-body">
+                                {{ thisweek_contest.description }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="panel panel-success">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Bảng thành tích</h3>
+                            </div>
+                            <div class="panel-body">
+                                <ul class="list-group">
+                                    <li data-ng-repeat="player in thisweek_contest.top_player"
+                                        class="list-group-item">{{ $index+1 }}. {{ player.username }}</li>
+                                </ul>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-12 col-md-12 highlight">
-                    <tabset>
-                        <tab data-ng-repeat="lang in langs" heading="{{ lang.name }}" active="lang.active">
-                            <div ui-ace="{ theme:'twilight',
-  mode:lang.mode, onLoad: aceLoaded(lang)}" data-ng-model="lang.source">
-                            </div>
-                        </tab>
 
-                    </tabset>
-                </div>
             </div>
-            <div class="row">
-                <div class="col-xs-12 col-md-12 highlight">
-                    <button type="button" class="btn btn-success" data-ng-click="submitCode()">Nộp bài</button>
-                    <button type="button" class="btn btn-info" data-ng-click="runCode()">Chạy thử</button>
-                    <button type="button" class="btn btn-warning" data-ng-click="resetCode()">Làm lại</button>
-                </div>
+
+            <div class="col-xs-12 col-md-12 highlight">
+                <tabset>
+                    <tab data-ng-repeat="lang in langs" heading="{{ lang.name }}" active="lang.active">
+                        <div ui-ace="{ theme:'twilight',
+  mode:lang.mode, onLoad: aceLoaded(lang)}" data-ng-model="lang.source">
+                        </div>
+                    </tab>
+
+                </tabset>
             </div>
+            <div class="col-xs-12 col-md-12 highlight">
+                <button type="button" class="btn btn-success" data-ng-click="submitCode()">Nộp bài</button>
+                <button type="button" class="btn btn-info" data-ng-click="runCode()">Chạy thử</button>
+                <button type="button" class="btn btn-warning" data-ng-click="resetCode()">Làm lại</button>
+            </div>
+
             <div style="height: 50px; text-align: center;" data-ng-show="compiling" id="fountainTextG">
                 <div id="fountainTextG_1" class="fountainTextG">
                     C
@@ -91,26 +117,24 @@
                     .
                 </div>
             </div>
-            <div class="row">
-                <div class="col-xs-12 col-md-12 highlight">
-                    <h3>Bảng kết quả</h3>
-                    <table class="table">
-                        <tr>
-                            <td>#STT</td>
-                            <td>Kết quả</td>
-                            <td>Thời gian(s)</td>
-                            <td>Bộ nhớ(KiB)</td>
-                            <td>Lỗi</td>
-                        </tr>
-                        <tr data-ng-repeat="result in compile_result">
-                            <td>{{ $index+1 }}</td>
-                            <td>{{ result.result }}</td>
-                            <td>{{ result.time }}</td>
-                            <td>{{ result.memory }}</td>
-                            <td>{{ result.error }}</td>
-                        </tr>
-                    </table>
-                </div>
+            <div class="col-xs-12 col-md-12 highlight">
+                <h3>Bảng kết quả</h3>
+                <table class="table">
+                    <tr>
+                        <td>#STT</td>
+                        <td>Kết quả</td>
+                        <td>Thời gian(s)</td>
+                        <td>Bộ nhớ(KiB)</td>
+                        <td>Lỗi</td>
+                    </tr>
+                    <tr data-ng-repeat="result in compile_result">
+                        <td>{{ $index+1 }}</td>
+                        <td>{{ result.result }}</td>
+                        <td>{{ result.time }}</td>
+                        <td>{{ result.memory }}</td>
+                        <td>{{ result.error }}</td>
+                    </tr>
+                </table>
             </div>
         </div>
 
@@ -138,11 +162,11 @@
     {% endraw %}
 {% endblock %}
 {% block pluginJS %}
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js"></script>
     <script src="/application/js/libs/angularjs/ui-ace.min.js"></script>
     <script src="/application/js/libs/angularjs/ui-bootstrap-tpls-0.7.0.min.js"></script>
-    <script>
-    </script>
+    <script src="/application/js/libs/angularjs/angular-timer.min.js"></script>
 {% endblock %}
 {% block mediaJS %}
     <script>
