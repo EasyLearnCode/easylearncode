@@ -1557,3 +1557,10 @@ class PractiseHandler(BaseHandler):
         params = {}
         params.update({'angular_app_name': "easylearncode.practise"})
         return self.render_template("practise.html", **params)
+
+class InfoHandler(BaseHandler):
+    @user_required
+    def get(self):
+        params = {}
+        params.update({'angular_app_name': "easylearncode.info"})
+        return self.render_template("info.html", **params)

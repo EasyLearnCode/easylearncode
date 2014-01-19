@@ -1,0 +1,53 @@
+{% extends "main.html" %}
+{% block mediaCSS %}
+    <link rel="stylesheet" href="/application/css/info.css">
+{% endblock %}
+{% block content %}
+    {% raw %}
+        <div data-ng-controller="InfoCtrl" class="container">
+            <div class="page" data-ng-controller="InfoCtrl">
+                <div  class="jumbotron headlogo">
+                    <div >
+                        <img class="img-circle pull-right logo-img" src="application/img/python.jpg">
+                        <h1>Python</h1>
+                        <p>Giới thiệu về lập trình và khoa học máy tính sử dụng PYTHON.</p>
+                    </div>
+                    <p><a class="btn btn-success btn-lg">Bắt đầu</a></p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="list-group" data-ng-repeat="section in sections">
+                        <div class="list-group-item" style="height:100px;">
+                            <p>
+                                <div><img src="application/img/badges_WebsiteIsland1_Stage1.png" width="60" style="float:left; margin-right:10px;" /></div>
+                                <div>
+                                    <h3 class="list-group-item-heading">Phần {{ $index+1 }}: </h3>
+                                    <p class="list-group-item-text">{{ section.name }}</p>
+                                </div>
+                            </p>
+                        </div>
+                            <div id="list">
+                                <a class="list-group-item" data-ng-show="section.toggle" data-ng-class="'bouncy-slide-top'" data-ng-repeat="unit in section.units" href="{{ unit.src }}">
+                                <span class="badge">{{ unit.time }}</span>
+                                  <img src="application/img/video-play-48.png" width="32" style="margin-right:10px" /> {{ unit.description }}
+                                </a>
+                            </div>
+                            <a class="list-group-item" ng-click="toggle(section)">
+                                <img src="application/img/toggle_icon.png" width="24" style="margin-right:10px" /> Chuyển đổi
+                            </a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <h3>Tác giả</h3>
+                    <div><img class="img-circle" width="70px" height="70px" src="application/img/computer.jpg"> Tên tác giả </div>
+                    <div>Giới thiệu về tác giả</div>
+                </div>
+            </div>
+        </div>
+    {% endraw %}
+{% endblock %}
+{% block pluginJS %}
+    <script src="/application/js/libs/angularjs/ui-bootstrap-tpls-0.7.0.min.js"></script>
+    <script src="/application/js/libs/angularjs/angular-animate.js"></script>
+{% endblock %}>

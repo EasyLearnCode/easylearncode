@@ -59,6 +59,7 @@
     angular.module("easylearncode.game", ["easylearncode.core"]);
     angular.module("easylearncode.learn", ["ui.bootstrap", "ui.ace", "easylearncode.core"]);
     angular.module("easylearncode.practise", ["ui.bootstrap", "ui.ace", "easylearncode.core"]);
+    angular.module("easylearncode.info", ["ui.bootstrap", "easylearncode.core", "ngAnimate"]);
     angular.module("easylearncode.contest_result", ["easylearncode.core"]);
     angular.module("easylearncode.core").config(["$locationProvider",
         function ($locationProvider) {
@@ -622,3 +623,28 @@ angular.module("easylearncode.practise").controller("PractiseCtrl", ["$scope", f
         source: 'print "Hello World"'
     };
 }]);
+
+angular.module("easylearncode.info").controller('InfoCtrl', ['$scope', function ($scope) {
+    $scope.sections = [
+        {
+        name: 'Những tiết học căn bản đầu tiên về python',
+        units: [
+            {time: '10:00', description: 'Giới thiệu về chương trình, loại dữ liệu và giá trị.', src: "/learn"},
+            {time: '10:00', description: 'Số nhị phân.', src: "/learn"},
+            {time: '10:00', description: 'List trong Python', src: "/learn"},
+        ]
+        },
+        {
+        name: 'Những tiết học căn bản đầu tiên về python2',
+        units: [
+            {time: '10:00', description: 'Giới thiệu về chương trình, loại dữ liệu và giá trị.', src: "/learn"},
+            {time: '10:00', description: 'Số nhị phân.', src: "/learn"},
+            {time: '10:00', description: 'List trong Python', src: "/learn"},
+        ]
+        }
+    ];
+    $scope.toggle = function (section) {
+        section.toggle = !section.toggle;
+    }
+}])
+;
