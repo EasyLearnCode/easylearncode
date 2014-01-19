@@ -1,0 +1,34 @@
+.logo-img{
+    margin-top: -30px;
+    width: 200px;
+    height: 200px;
+}
+.headlogo
+{
+    background-color:#39ADD1;
+    color:#FFF;
+}
+
+.toggle{
+    -webkit-transition: -webkit-transition: linear 1s;
+    -moz-transition: linear 1s;
+    -ms-transition: linear 1s;
+    -o-transition: linear 1s;
+    transition: linear 1s;
+}
+
+.toggle.ng-enter{
+    opacity: 0;
+}
+
+.toggle.ng-enter-active{
+    opacity: 1;
+}
+
+.toggle.ng-leave{
+    opacity: 1;
+}
+
+.toggle.ng-leave-active{
+    opacity: 0;
+}

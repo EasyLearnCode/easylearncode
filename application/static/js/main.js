@@ -57,7 +57,8 @@
     angular.module("easylearncode.contest", ["ui.bootstrap", "ui.ace", "easylearncode.core"]);
     angular.module("easylearncode.home", ["ui.bootstrap", "easylearncode.core"]);
     angular.module("easylearncode.game", ["easylearncode.core"]);
-    angular.module("easylearncode.learn", ["ui.bootstrap", "ui.ace", "easylearncode.core"])
+    angular.module("easylearncode.learn", ["ui.bootstrap", "ui.ace", "easylearncode.core"]);
+    angular.module("easylearncode.info", ["ui.bootstrap", "easylearncode.core", "ngAnimate"]);
     angular.module("easylearncode.contest_result", ["easylearncode.core"]);
     angular.module("easylearncode.core").config(["$locationProvider",
         function ($locationProvider) {
@@ -608,4 +609,8 @@ angular.module("easylearncode.contest_result").controller('ContestResultCtrl', [
 
         });
     }
+}]);
+
+angular.module("easylearncode.info").controller('InfoCtrl', ['$scope', function ($scope) {
+    $scope.toggle1 = true;
 }]);
