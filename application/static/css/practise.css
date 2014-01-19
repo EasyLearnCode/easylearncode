@@ -1,0 +1,16 @@
+.highlight {
+    background-color: #F7F7F9;
+    border: 1px solid #E1E1E8;
+    border-radius: 4px;
+    margin-bottom: 14px;
+    padding: 9px 14px;
+}
+.ace_editor {
+    height: 600px;
+    font-size: 14px;
+}
+.wrap_introduction
+{
+    height: 600px;
+    overflow:auto;
+}

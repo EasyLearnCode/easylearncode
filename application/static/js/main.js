@@ -57,7 +57,8 @@
     angular.module("easylearncode.contest", ["ui.bootstrap", "ui.ace", "easylearncode.core"]);
     angular.module("easylearncode.home", ["ui.bootstrap", "easylearncode.core"]);
     angular.module("easylearncode.game", ["easylearncode.core"]);
-    angular.module("easylearncode.learn", ["ui.bootstrap", "ui.ace", "easylearncode.core"])
+    angular.module("easylearncode.learn", ["ui.bootstrap", "ui.ace", "easylearncode.core"]);
+    angular.module("easylearncode.practise", ["ui.bootstrap", "ui.ace", "easylearncode.core"]);
     angular.module("easylearncode.contest_result", ["easylearncode.core"]);
     angular.module("easylearncode.core").config(["$locationProvider",
         function ($locationProvider) {
@@ -217,12 +218,12 @@ angular.module("services.utility").factory("libraryLoader", ["$q", "$rootScope",
                         cache: !0,
                         url: f
                     }).success(function () {
-                            j.resolve();
-                            $rootScope.$apply()
-                        }).error(function () {
-                            j.reject();
-                            $rootScope.$apply()
-                        }), d = j.promise);
+                        j.resolve();
+                        $rootScope.$apply()
+                    }).error(function () {
+                        j.reject();
+                        $rootScope.$apply()
+                    }), d = j.promise);
                     return d
                 }))
             }
@@ -299,11 +300,11 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "$h
             if (lang.active) {
                 $http.post('/contest/submit', {"key": $scope.thisweek_contest.test_key, "source": lang.source,
                     "_csrf_token": csrf_token, "lang": lang.lang}).success(function (data) {
-                        if (data.status == 1) {
-                            window.location = "/contest/result"
-                        }
+                    if (data.status == 1) {
+                        window.location = "/contest/result"
+                    }
 
-                    });
+                });
             }
         });
     }
@@ -328,14 +329,14 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "$h
                             $scope.compiling = false;
                         }
                     }).error(function (data, status, headers, config) {
-                            $scope.compile_result.push(
-                                {
-                                    'result': false,
-                                    'time': 0,
-                                    'memory': 0,
-                                    'error': 'Disconnect from server...Please try again'
-                                });
-                        });
+                        $scope.compile_result.push(
+                            {
+                                'result': false,
+                                'time': 0,
+                                'memory': 0,
+                                'error': 'Disconnect from server...Please try again'
+                            });
+                    });
                 });
 
 
@@ -608,4 +609,11 @@ angular.module("easylearncode.contest_result").controller('ContestResultCtrl', [
 
         });
     }
+}]);
+
+angular.module("easylearncode.practise").controller("PractiseCtrl", ["$scope", function ($scope) {
+    $scope.exercise = {
+        lang: 'python',
+        source: 'print "Hello World"'
+    };
 }]);

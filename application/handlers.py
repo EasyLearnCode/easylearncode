@@ -1550,3 +1550,10 @@ class ResultContestHandler(BaseHandler):
         params = {}
         params.update({'angular_app_name': "easylearncode.contest_result"})
         return self.render_template("contest_result.html", **params)
+
+class PractiseHandler(BaseHandler):
+    @user_required
+    def get(self):
+        params = {}
+        params.update({'angular_app_name': "easylearncode.practise"})
+        return self.render_template("practise.html", **params)
