@@ -203,6 +203,10 @@ class WeeklyQuiz(ndb.Model):
     test_case = ndb.StructuredProperty(WeeklyQuizTest, repeated=True)
 
     @classmethod
+    def get_weeklyquizs(cls):
+        return cls.query().fetch();
+
+    @classmethod
     def get_this_week_contest(cls):
         from datetime import datetime, timedelta
 

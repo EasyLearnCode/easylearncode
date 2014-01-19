@@ -209,3 +209,47 @@
     }
 
 }
+div.profileStep {
+	position:relative;
+	float:right;
+	width:100px;height:40px;
+    left: -200px;
+}
+div.profileStep .connect {
+	position:absolute;
+	top:10px;left:0;
+	width:80px;height:10px;
+	margin-left:-5px;
+	background-color:#24d4ec;
+	-webkit-border-radius:5px;
+	border-radius:5px;
+}
+div.profileStep .icon {
+	position:absolute;
+	top:0;right:0;
+	width:30px;height:30px;
+	background-color:#24d4ec;
+	-webkit-border-radius:15px;
+	border-radius:15px;
+
+	color:#fff;
+	font-size:16px;
+	line-height:30px;
+	text-align:center;
+}
+div.profileStep .info {
+	position:absolute;
+	bottom:0;left:0;
+	width:100px;
+	color:#24d4ec;
+	font-size:12px;
+	line-height:20px;
+	text-align:center;
+}
+div.profileStepPassive .connect {
+	background-color:#ffffff;
+}
+div.profileStepPassive .icon {
+	background-color:#ffffff;
+    color:#24d4ec;
+}
