@@ -8,6 +8,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+<<<<<<< Updated upstream
+"POT-Creation-Date: 2013-06-23 22:37-0400\n"
+=======
+"POT-Creation-Date: 2014-01-20 13:26+0700\n"
+>>>>>>> Stashed changes
 "POT-Creation-Date: 2013-12-24 13:32+0700\n"
 "PO-Revision-Date: 2012-06-21 01:50-0400\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
@@ -29,7 +34,7 @@ msgid "%r is not callable"
 msgstr ""
 
 #, python-format
-msgid "%s option does not take a value"
+msgid "%s Password Assistance"
 msgstr ""
 
 #, python-format
@@ -56,7 +61,7 @@ msgid ""
 "    \tinstall Google Chrome Frame</a> to experience this site."
 msgstr ""
 
-msgid "Already have an account? "
+msgid "Associate account with"
 msgstr ""
 
 msgid "Cancel"
@@ -92,10 +97,22 @@ msgstr ""
 msgid "Enter your"
 msgstr ""
 
-msgid "Forgot password?"
+msgid "Error sending the message. Please try again later."
+msgstr ""
+
+msgid "Existing social association"
+msgstr ""
+
+msgid "Facebook association added!"
+msgstr ""
+
+msgid "Federated login is disabled."
 msgstr ""
 
 msgid "Forgot your password?"
+msgstr ""
+
+msgid "Github association added."
 msgstr ""
 
 msgid "Good Password"
@@ -119,7 +136,10 @@ msgstr ""
 msgid "New Password"
 msgstr ""
 
-msgid "Options"
+#, python-format
+msgid ""
+"No user authentication information received from %s. Please ensure you "
+"are logging in from an authorized OpenID Provider (OP)."
 msgstr ""
 
 msgid "Or Sign in using:"
@@ -146,23 +166,98 @@ msgstr ""
 msgid "Short Password"
 msgstr ""
 
-msgid "Sign In"
-msgstr ""
-
 msgid "Sign Up"
 msgstr ""
 
-msgid "Usage"
+#, python-format
+msgid "Social account on %s not found for this user."
+msgstr ""
+
+msgid "Sorry you are not logged in."
+msgstr ""
+
+msgid "Sorry, Some error occurred."
+msgstr ""
+
+msgid "Sorry, The email <strong>{}</strong> is already registered."
+msgstr ""
+
+msgid "Sorry, The user is already registered."
+msgstr ""
+
+msgid "Sorry, The username <strong>{}</strong> is already registered."
+msgstr ""
+
+msgid "Source Code"
+msgstr ""
+
+msgid "Thanks, your settings have been saved."
+msgstr ""
+
+msgid "The URL you tried to use is either incorrect or no longer valid."
+msgstr ""
+
+msgid ""
+"The URL you tried to use is either incorrect or no longer valid. Enter "
+"your details again below to get a new one."
 msgstr ""
 
 #, python-format
-msgid "Usage: %s\n"
+msgid "The account %s is already in use."
+msgstr ""
+
+#, python-format
+msgid "The email %s is already registered."
+msgstr ""
+
+#, python-format
+msgid ""
+"The verification email has been resent to %s. Please check your email to "
+"activate your account."
+msgstr ""
+
+#, python-format
+msgid "This %s account is already in use."
+msgstr ""
+
+msgid "This Facebook account is already in use!"
+msgstr ""
+
+msgid "This Github account is already in use."
+msgstr ""
+
+msgid "This Linkedin account is already in use!"
+msgstr ""
+
+msgid "This Twitter account is already in use."
+msgstr ""
+
+msgid "This authentication method is not yet implemented."
+msgstr ""
+
+msgid "Timezone"
+msgstr ""
+
+msgid "Twitter association added."
+msgstr ""
+
+msgid "Unable to update profile. Please try again later."
+msgstr ""
+
+#, python-format
+msgid "Unexpected error creating the user %s"
+msgstr ""
+
+msgid "Update Profile"
 msgstr ""
 
 msgid "User Details"
 msgstr ""
 
 msgid "User List"
+msgstr ""
+
+msgid "User is logged out, but there was an error on the redirection."
 msgstr ""
 
 msgid "Username"
@@ -174,139 +269,81 @@ msgstr ""
 msgid "Users Geolocation"
 msgstr ""
 
+msgid "Welcome <strong>{}</strong>, you are now logged in."
+msgstr ""
+
+#, python-format
+msgid "Welcome!  You have been registered as a new user through %s and logged in."
+msgstr ""
+
+msgid "Wrong image verification code. Please try again."
+msgstr ""
+
+msgid "You didn't change your email."
+msgstr ""
+
+msgid ""
+"You were successfully registered. Please check your email to activate "
+"your account."
+msgstr ""
+
+msgid ""
+"You've signed out successfully. Warning: Please clear all cookies and "
+"logout of OpenId providers too if you logged in on a public computer."
+msgstr ""
+
+msgid ""
+"Your account has been activated. Please <a href=\"/login/\">sign in</a> "
+"to your account."
+msgstr ""
+
+msgid ""
+"Your account has not yet been activated. Please check your email to "
+"activate it or"
+msgstr ""
+
 msgid "Your browser is <em>ancient!</em>"
 msgstr ""
 
-#, python-format
-msgid "ambiguous option: %s (%s?)"
+msgid "Your email has been successfully updated."
 msgstr ""
 
-#, python-format
-msgid "ambiguous option: %s could match %s"
+msgid "Your message was sent successfully."
 msgstr ""
 
-#, python-format
-msgid "argument \"-\" with mode %r"
+msgid "Your new username is <strong>{}</strong>"
 msgstr ""
 
-#, python-format
-msgid "argument %s is required"
+msgid ""
+"Your username or password is incorrect. Please try again (make sure your "
+"caps lock is off)"
 msgstr ""
 
-#, python-format
-msgid "can't open '%s': %s"
+msgid "click here"
 msgstr ""
 
-msgid "cannot have multiple subparser arguments"
+msgid "contact us"
 msgstr ""
 
-#, python-format
-msgid "cannot merge actions - two groups are named %r"
+msgid "download the Source Code"
 msgstr ""
 
-msgid "complex"
+msgid "for further assistance."
 msgstr ""
 
-#, python-format
-msgid "conflicting option string(s): %s"
+msgid ""
+"is associated with an account in our records, you will receive an email "
+"from us with instructions for resetting your password. <br>If you don't "
+"receive instructions within a minute or two, check your email's spam and "
+"junk filters, or "
 msgstr ""
 
-#, python-format
-msgid "dest= is required for options like %r"
+msgid "or just"
 msgstr ""
 
-#, python-format
-msgid "expected %s argument(s)"
+msgid "to help you to create your application."
 msgstr ""
 
-msgid "expected at least one argument"
-msgstr ""
-
-msgid "expected at most one argument"
-msgstr ""
-
-msgid "expected one argument"
-msgstr ""
-
-msgid "floating-point"
-msgstr ""
-
-#, python-format
-msgid "ignored explicit argument %r"
-msgstr ""
-
-msgid "integer"
-msgstr ""
-
-#, python-format
-msgid "invalid %s value: %r"
-msgstr ""
-
-#, python-format
-msgid "invalid choice: %r (choose from %s)"
-msgstr ""
-
-#, python-format
-msgid "invalid conflict_resolution value: %r"
-msgstr ""
-
-#, python-format
-msgid "invalid option string %r: must start with a character %r"
-msgstr ""
-
-msgid "long integer"
-msgstr ""
-
-msgid "mutually exclusive arguments must be optional"
-msgstr ""
-
-#, python-format
-msgid "no such option: %s"
-msgstr ""
-
-#, python-format
-msgid "not allowed with argument %s"
-msgstr ""
-
-#, python-format
-msgid "one of the arguments %s is required"
-msgstr ""
-
-#, python-format
-msgid "option %s: invalid %s value: %r"
-msgstr ""
-
-#, python-format
-msgid "option %s: invalid choice: %r (choose from %s)"
-msgstr ""
-
-msgid "optional arguments"
-msgstr ""
-
-msgid "positional arguments"
-msgstr ""
-
-msgid "show program's version number and exit"
-msgstr ""
-
-msgid "show this help message and exit"
-msgstr ""
-
-msgid "too few arguments"
-msgstr ""
-
-#, python-format
-msgid "unexpected option string: %s"
-msgstr ""
-
-#, python-format
-msgid "unknown parser %r (choices: %s)"
-msgstr ""
-
-#, python-format
-msgid "unrecognized arguments: %s"
-msgstr ""
-
-msgid "usage: "
+msgid "to resend the email."
 msgstr ""
 

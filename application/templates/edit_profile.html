@@ -1,72 +1,390 @@
 {% extends "main.html" %}
-
+{% block mediaCSS %}
+    <link rel="stylesheet" type="text/css" href="/application/css/style.css">
+{% endblock %}
 {% block content %}
-    <div class="container">
-        <div class="page-header">
-            <h1>
-                <small class="pull-right" title="Connected Accounts"><span class="fa fa-google-plus"></span>
-                    <span class="fa fa-twitter"></span>
-                </small>
-                Nam Phạm Ngọc Quang
-            </h1>
-        </div>
-        <form method="POST" action="." novalidate="">
-            <div class="row">
-                <div class="col-md-4 col-sm-6">
-                    <input id="csrf_token" name="csrf_token" type="hidden"
-                           value="20131125163511##34acd82d9ef691113bee2c537f6c2b55b91abdab">
 
-                    <div class="form-group ">
-                        <label class="control-label" for="username">Username</label>
-                        <input id="username" class="form-control" name="username" type="text" value="nampnq"
-                               readonly="readonly">
+    <div class="container" data-ng-controller="UserProfileCtrl" style="min-height: 600px">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="row">
+                    <div class="col-md-4">
+                        {% raw %}
+                            <img src="//gravatar.com/avatar/{{ userInfo.email|md5 }}?d=identicon&amp;r=x&amp;s=170">
+                        {% endraw %}
                     </div>
-                    <div class="form-group ">
-                        <label class="control-label" for="name">Name</label>
-                        <input autofocus="" class="form-control" id="name" name="name" type="text"
-                               value="Nam Phạm Ngọc Quang">
+                    <div class="col-md-8">
+                        <div data-ng-show="!edit_mode && !change_pass_mode">
+                            <div class="alert alert-success alert-dismissable" data-ng-show="showSuccessAlert">
+                                <button type="button" class="close" aria-hidden="true"
+                                        data-ng-click="showSuccessAlert=false">&times;</button>
+                                <strong>{% trans %}Well done! {% endtrans %}</strong> {% trans %}Your data successfully
+                                saved.{% endtrans %}
+                            </div>
+                            <div class="caption">
+                                {% raw %}
+                                    <h3>{{ userInfo.username }}</h3>
 
-
-                    </div>
-
-
-                    <div class="form-group ">
-                        <label class="control-label" for="email">Email</label>
-                        <input class="form-control" id="email" name="email" type="email" value="nampnq@gmail.com">
-
-
-                    </div>
-
-
-                </div>
-                <div class="col-md-2 col-sm-3">
-                    <div class="form-group">
-                        <label class="control-label">Avatar</label>
-
-                        <div>
-                            <img class="img-thumbnail"
-                                 src="//gravatar.com/avatar/7cf19173e360b0e328de258ea52c1f9a?d=identicon&amp;r=x&amp;s=170"
-                                 alt="Avatar of Nam Phạm Ngọc Quang">
+                                    <p>{{ userInfo.name }} {{ userInfo.last_name }}</p>
+                                {% endraw %}
+                                <div>
+                                    {% for provider in userInfo.used_providers %}
+                                        {% if provider.name =='google' %}
+                                            <i class="fa fa-google-plus-square"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                                <a class="btn btn-primary" data-ng-click="changeEditMode()">{% trans %}Edit
+                                    Profile{% endtrans %}</a>
+                                <a class="btn btn-primary" data-ng-click="changeEditPass()">{% trans %}Edit
+                                    Password{% endtrans %}</a>
+                            </div>
                         </div>
-                        <p class="help-block">
-                            Change on
-                            <a href="//gravatar.com" target="_blank">Gravatar</a>
-                        </p>
+                        <div data-ng-show="edit_mode">
+                            <form role="form" id="userProfileForm">
+                                <div class="form-group">
+                                    <label for="inputUsername">{% trans %}Username{% endtrans %}</label>
+                                    <input type="text" class="form-control" id="inputUsername"
+                                           placeholder="{% trans %}Username{% endtrans %}"
+                                           data-ng-model="userInfo.username">
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputEmail">{% trans %}Email{% endtrans %}</label>
+                                    <input type="email" class="form-control" id="inputEmail1"
+                                           placeholder="{% trans %}Email{% endtrans %}" data-ng-model="userInfo.email"
+                                           disabled value="{{ email }}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputName">{% trans %}Name{% endtrans %}</label>
+                                    <input type="text" class="form-control"
+                                           placeholder="{% trans %}Name{% endtrans %}" data-ng-model="userInfo.name"
+                                           value="{{ name }}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputLastName">{% trans %}Last Name{% endtrans %}</label>
+                                    <input type="text" class="form-control"
+                                           placeholder="{% trans %}Last Name{% endtrans %}" data-ng-model="userInfo.last_name
+                                           " value="{{ last_name }}">
+                                </div>
+                                <button type="submit" class="btn btn-primary" data-ng-click="save()">{% trans %}
+                                    Save{% endtrans %}</button>
+                                <button type="submit" class="btn btn-default" data-ng-click="cancelEditMode()">
+                                    {% trans %}Cancel{% endtrans %}</button>
+                            </form>
+                        </div>
+                        {#                        <div data-ng-show="!edit_mode && !change_pass_mode">#}
+                        {#                            <div class="alert alert-success alert-dismissable" data-ng-show="showSuccessAlert">#}
+                        {#                                <button type="button" class="close" aria-hidden="true"#}
+                        {#                                        data-ng-click="showSuccessAlert=false">&times;</button>#}
+                        {#                                <strong>{% trans %}Well done! {% endtrans %}</strong> {% trans %}Your password#}
+                        {#                                successfully#}
+                        {#                                saved.{% endtrans %}#}
+                        {#                            </div>#}
+                        {#                            <div class="caption">#}
+                        {#                            </div>#}
+                        {#                        </div>#}
+                        <div data-ng-show="change_pass_mode">
+                            <form role="form" id="userProfileForm">
+                                <div class="form-group">
+                                    <label for="inputPassword">{% trans %}Current Password{% endtrans %}</label>
+                                    <input type="password" class="form-control"
+                                           placeholder="" data-ng-model="userInfo.Password
+                                           " value="{{ Password }}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputPassword">{% trans %}New Password{% endtrans %}</label>
+                                    <input type="password" class="form-control"
+                                           placeholder="" data-ng-model="userInfo.Password
+                                           " value="{{ Password }}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputPassword">{% trans %}Confirm Password{% endtrans %}</label>
+                                    <input type="password" class="form-control"
+                                           placeholder="" data-ng-model="userInfo.Password
+                                           " value="{{ Password }}">
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary" data-ng-click="savepass()">{% trans %}
+                                        Save{% endtrans %}</button>
+                                    <button type="submit" class="btn btn-default" data-ng-click="cancelEditMode()">
+                                        {% trans %}Cancel{% endtrans %}</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-6 col-sm-9">
-                    <div class="controls">
-                        <button type="submit" class="btn btn-primary btn-block btn-loading"
-                                data-loading-text="Updating Profile..">
-                            Update Profile
-                        </button>
-                    </div>
+        </div>
+        <div class="col-md-3">
+            <div class="user-points-bar-container">
+                <div class="points-labels">
+                    Points today
+                        <span class="best" style="float: right">Best <strong class="best-count"
+                                                                             style="color: #333">203</strong></span>
                 </div>
+
+                <div class="points-bar" style="height: 15px;background-color: #e9fdc7;position: relative;">
+        <span class="points-bar-fill"
+              style="width: 0.0%;position: absolute;top: 0;left: 0;height: 100%;background-color: #27d60f;">
+          <span class="count-container count-right"
+                style="right: -40px;text-align: left;box-sizing: border-box;position: absolute;line-height: 15px;top: 0;padding: 0 5px;width: 40px;">
+            <span class="points-today-count" style="font-weight: 700;font-size: 13px;line-height: 15px;">0</span>
+          </span>
+</span></div>
             </div>
-        </form>
+
+            <span class="stat-count" style="font-weight: 700;font-size: 26px;color: #333">460</span>
+            total points
+
+            &nbsp;
+            &nbsp;
+
+            <span class="stat-count" style="font-weight: 700;font-size: 26px;color: #333">0</span>
+            day streak
+
+            <div class="last-coded">
+                Last coded <span class="last-coded-time">4 months ago</span>
+            </div>
+        </div>
     </div>
+    <div class="row">
+    <div class="col-md-8">
+        <div id="dashboard__primary-content">
+
+            <div class="content-list-container">
+                <header>
+                    <h2 class="ruled-header">{% trans %}Goals{% endtrans %}</h2>
+                </header>
+                <div class="tracks-progress">
+                    <div class="track-progress module neutral cell" data-percent="1.0">
+
+                        <a href="/en/tracks/python/resume" class="plain-text-link track-link">
+
+                            <div class="track-name text-overflow" title="Python">Python</div>
+
+                            <div class="meter">
+                                <div class="meter-label light-text">100%</div>
+                                <svg>
+                                    <g transform="translate(50,50)">
+                                        <path d="M0,50A50,50 0 1,1 0,-50A50,50 0 1,1 0,50M0,45A45,45 0 1,0 0,-45A45,45 0 1,0 0,45Z"></path>
+                                        <circle r="45"></circle>
+                                    </g>
+                                </svg>
+                            </div>
+
+                            <div class="track-progress-stats">
+
+          <span class="stat last-progress">
+
+              <div class="stat-description"
+                   style=" font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; font-weight: normal ">{% trans %}Last progress{endtrans
+              </div>
+              <span class="stat-value">
+                4 {% trans %}months{% endtrans %}
+              </span>
+              <span class="stat-description">{% trans %}ago{% endtrans %}</span>
+
+          </span>
+                            </div>
+
+                            <div class="resume-container light-text">
+                                {% trans %}review{% endtrans %}
+                            </div>
+
+                        </a>
+
+                    </div>
+
+                    <div class="track-progress module neutral cell" data-percent="0.2457627118644068">
+
+                        <a href="/en/tracks/web/resume" class="plain-text-link track-link">
+
+                            <div class="track-name text-overflow" title=""> C</div>
+
+                            <div class="meter">
+                                <div class="meter-label light-text">25%</div>
+                                <svg>
+                                    <g transform="translate(50,50)">
+                                        <path d="M3.061515884555943e-15,-50A50,50 0 0,1 49.98228055617263,-1.3310260718887377L44.98405250055537,-1.197923464699864A45,45 0 0,0 2.755364296100349e-15,-45Z"></path>
+                                        <circle r="45"></circle>
+                                    </g>
+                                </svg>
+                            </div>
+
+                            <div class="track-progress-stats">
+
+          <span class="stat last-progress">
+
+              <div class="stat-description"
+                   style=" font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; font-weight: normal ">{% trans %}Last progress{% endtrans %}
+              </div>
+              <span class="stat-value">
+                9 {% tran %}months{% endtrans %}
+              </span>
+              <span class="stat-description">{% trans %}ago{% endtrans %}</span>
+
+          </span>
+                            </div>
+
+                            <div class="resume-container light-text">
+                                resume
+                            </div>
+
+                        </a>
+
+                    </div>
+
+                    <div class="track-progress module neutral cell" data-percent="0.10067114093959731">
+
+                        <a href="/en/tracks/javascript-original/resume" class="plain-text-link track-link">
+
+                            <div class="track-name text-overflow" title="Java">Java</div>
+
+                            <div class="meter">
+                                <div class="meter-label light-text">10%</div>
+                                <svg>
+                                    <g transform="translate(50,50)">
+                                        <path d="M3.061515884555943e-15,-50A50,50 0 0,1 29.559578110679315,-40.32655876613635L26.603620299611382,-36.29390288952271A45,45 0 0,0 2.755364296100349e-15,-45Z"></path>
+                                        <circle r="45"></circle>
+                                    </g>
+                                </svg>
+                            </div>
+
+                            <div class="track-progress-stats">
+
+          <span class="stat last-progress">
+
+              <div class="stat-description"
+                   style=" font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; font-weight: normal ">{% trans %}Last progress{% endtrans %}
+              </div>
+              <span class="stat-value">
+                10 {% trans %}months{% endtrans %}
+              </span>
+              <span class="stat-description">ago</span>
+
+          </span>
+                            </div>
+
+                            <div class="resume-container light-text">
+                                {% trans %}resume{% endtrans %}
+                            </div>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="dashboard__groups-and-badges__module">
+            <h4 class="ruled-header">
+                {% trans %}Your Badges{% endtrans %}
+
+                <a href="/users/NamPNQ/achievements" class="ruled-header__link" style="float: right">
+                   {% trans %} View all {% endtrans %}
+                </a></h4>
+            <h4>
+                <a href="/users/nampnq/achievements/course-javascript-beginner-en-Bthev-mskY8">
+                    <div class="dashboard__badge" title="Build &quot;Rock, Paper, Scissors&quot;">
+                        <div class="ui-media">
+                            <div class="ui-media__image dashboard__badge__icon">
+                                <div class="badge badge-30"
+                                     style="background-image:url(/assets/badges/default_course.png);"></div>
+                            </div>
+                            <div class="ui-media__main dashboard__badge__info">
+                                <b>Build "Rock, Paper, Scissors"</b>
+
+                                <div class="ui-media__main dashboard__badge__timestamp">
+                                    Earned 9 months ago
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </h4>
+        </div>
+    </div>
+    </div>
+    </div>
+    </div>
+
+
+
+    {#    <div class="container" data-ng-controller = "UserProfileCtrl">#}
+    {#        <div class="page-header">#}
+    {#            <h1>#}
+    {#                <small class="pull-right" title="Connected Accounts"><span class="fa fa-google-plus"></span>#}
+    {#                    <span class="fa fa-twitter"></span>#}
+    {#                </small>#}
+    {#                {{ name }} {{ lastname }}#}
+    {#            </h1>#}
+    {#        </div>#}
+    {#        <form method="POST" action="." novalidate="">#}
+    {#            <div class="row">#}
+    {#                <div class="col-md-4 col-sm-6">#}
+    {#                    <input id="csrf_token" name="csrf_token" type="hidden"#}
+    {#                           value="20131125163511##34acd82d9ef691113bee2c537f6c2b55b91abdab">#}
+    {##}
+    {#                    <div class="form-group ">#}
+    {#                        <label class="control-label" for="username">Username</label>#}
+    {#                        <input id="username" class="form-control" name="username" type="text" value="{{ username }}"#}
+    {#                               readonly="readonly">#}
+    {#                    </div>#}
+    {#                    <div class="form-group ">#}
+    {#                        <label class="control-label" for="name">Name</label>#}
+    {#                        <input autofocus="" class="form-control" id="name" name="name" type="text"#}
+    {#                               value="{{ name }}">#}
+    {##}
+    {##}
+    {#                    </div>#}
+    {##}
+    {##}
+    {#                    <div class="form-group ">#}
+    {#                        <label class="control-label" for="email">Email</label>#}
+    {#                        <input class="form-control" id="email" name="email" type="email" value="{{ email }}">#}
+    {##}
+    {##}
+    {#                    </div>#}
+    {##}
+    {##}
+    {#                </div>#}
+    {#                <div class="col-md-2 col-sm-3">#}
+    {#                    <div class="form-group">#}
+    {#                        <label class="control-label">Avatar</label>#}
+    {##}
+    {#                        <div>#}
+    {#                            <img class="img-thumbnail"#}
+    {#                                 src="//gravatar.com/avatar/7cf19173e360b0e328de258ea52c1f9a?d=identicon&amp;r=x&amp;s=170"#}
+    {#                                 alt="Avatar of Nam Phạm Ngọc Quang">#}
+    {#                        </div>#}
+    {#                        <p class="help-block">#}
+    {#                            Change on#}
+    {#                            <a href="//gravatar.com" target="_blank">Gravatar</a>#}
+    {#                        </p>#}
+    {#                    </div>#}
+    {#                </div>#}
+    {#            </div>#}
+    {#            <div class="row">#}
+    {#                <div class="col-md-6 col-sm-9">#}
+    {#                    <div class="controls">#}
+    {#                        <button type="submit" class="btn btn-primary btn-block btn-loading"#}
+    {#                                data-loading-text="Updating Profile.." data-ng-click="UpdateProflie()">#}
+    {#                            Update Profile#}
+    {#                        </button>#}
+    {#                    </div>#}
+    {#                </div>#}
+    {#            </div>#}
+    {#        </form>#}
+    {#    </div>#}
+{% endblock %}
+{% block mediaJS %}
+    <script>
+        angular.module('services.utility').constant('csrf_token', '{{ csrf_token() }}');
+        angular.module('services.utility').constant('userInfo', {{ userInfo }});
+    </script>
 {% endblock %}
 {#{% block header_title %}#}
 {#        {% trans %}Edit Profile{% endtrans %}#}

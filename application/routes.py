@@ -40,6 +40,10 @@ _routes = [
     RedirectRoute('/contest/result', handlers.ResultContestHandler, name='result-contest', strict_slash=True),
     RedirectRoute('/', handlers.HomeRequestHandler, name='home', strict_slash=True),
     RedirectRoute('/info', handlers.InfoHandler, name='info', strict_slash=True)
+
+    RedirectRoute('/contest/get_thisweek_result', handlers.GetThisweekResultHandler, name='get-thisweek-result', strict_slash=True),
+    RedirectRoute('/setting/profile/change_password', handlers.ChangePasswordHander, name='change_password', strict_slash=True),
+    RedirectRoute('/', handlers.HomeRequestHandler, name='home', strict_slash=True)
 ]
 
 

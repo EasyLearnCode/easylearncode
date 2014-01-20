@@ -316,4 +316,3 @@ class WeeklyQuizResult(ndb.Model):
     memory_used = ndb.IntegerProperty()
     language = ndb.StringProperty()
     code = ndb.StringProperty(indexed=False)
-

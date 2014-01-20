@@ -1,0 +1,288 @@
+body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 20px;
+    color: #333;
+}
+
+a {
+    color: #08c;
+}
+
+a {
+    text-decoration: none;
+    font-weight: bold;
+}
+
+body.user-profile-page a {
+    font-weight: normal;
+}
+
+.meter svg path {
+    fill: #27d60f;
+}
+
+.meter svg circle {
+    fill: white;
+    stroke: #d2d2d2;
+}
+
+#dashboard__primary-content {
+    width: 640px;
+    float: left;
+}
+
+.tracks-progress:before, .tracks-progress:after {
+    display: table;
+    content: "";
+}
+
+.dashboard__groups-and-badges__module {
+    margin-bottom: 30px;
+}
+
+#dashboard__groups-and-badges {
+    margin-top: 7px;
+    width: 260px;
+    float: right;
+}
+
+.ruled-header {
+    border-bottom: 1px solid #ced5d9;
+    padding-bottom: .5em;
+    margin-bottom: 15px;
+}
+
+.dashboard__badge {
+    margin: 10px 0;
+    color: #333;
+    font-size: 14px;
+}
+
+div {
+    display: block;
+}
+
+.dashboard__badge__icon {
+    margin-right: 5px;
+    padding-top: 5px;
+}
+
+.dashboard__badge .badge {
+    float: left;
+}
+
+.dashboard__badge__info {
+    width: 200px;
+}
+
+.dashboard__badge__timestamp {
+    color: #999;
+    font-size: .9em;
+}
+
+header h2 {
+    font-size: 21px;
+}
+
+.content-list-container header {
+    line-height: 30px;
+}
+
+.user-profile-header {
+    position: relative;
+    padding: 30px 0;
+    margin-bottom: 20px;
+}
+
+h4, h5, h6 {
+    line-height: 20px;
+}
+
+.track-progress {
+    float: left;
+    width: 190px;
+    height: 250px;
+    margin: 0 0 30px 30px;
+}
+
+h4 {
+    font-size: 14px;
+}
+
+div {
+    display: block;
+}
+
+.dashboard__badge .badge {
+    float: left;
+}
+
+.dashboard__groups__item {
+    display: block;
+    padding: 5px 0 10px;
+}
+
+.ui-media__image {
+    float: left;
+    display: block;
+}
+
+.dashboard__group__info {
+    color: #333;
+}
+
+#dashboard__primary-content {
+    width: 640px;
+    float: left;
+}
+
+.content-list-container {
+    margin-bottom: 30px;
+    position: relative;
+}
+
+.profiles header h2 {
+    font-size: 21px;
+}
+
+.tracks-progress {
+    margin-top: 10px;
+}
+
+.tracks-progress .track-progress:nth-child(3n+1) {
+    margin-left: 0;
+}
+
+.track-progress .track-name {
+    margin-bottom: 15px;
+    text-align: center;
+    font-size: 18px;
+}
+
+.meter {
+    height: 100px;
+    width: 100px;
+    position: relative;
+    margin: auto;
+}
+
+.meter .meter-label {
+    line-height: 100px;
+    text-align: center;
+    font-size: 24px;
+    position: relative;
+    z-index: 10;
+}
+
+.meter svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100px;
+    width: 100px;
+}
+
+.track-progress-stats .stat-value {
+    font-size: 13px;
+    font-weight: 700;
+}
+
+a {
+    font-weight: bold;
+}
+
+.resume-container {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    padding: 5px;
+}
+
+.track-progress .track-name {
+    margin-bottom: 15px;
+    text-align: center;
+    font-size: 18px;
+}
+
+.track-progress-stats {
+    text-align: center;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.header-gray {
+    background-color: #7aba7b;
+    border-bottom: 1px solid #ffdba3;
+}
+
+.resume-container {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    padding: 5px;
+}
+
+#dashboard__groups-and-badges {
+    margin-top: 7px;
+    width: 260px;
+    float: right;
+}
+
+.module, .discussion-items, .discussion-entry .entry-container, .comments-container, .entry-editor, #user-registration-form .zebra-form, #user-session-form .zebra-form, body.user-profile-page .zebra-form, #badges-modal .zebra-form, body.curricula.apis .zebra-form, body.dashboard .zebra-form, body.home .zebra-form, body.composer .zebra-form, body.styleguide .zebra-form, body.groups .zebra-form, body.tags .zebra-form, body.registrations .zebra-form, body.embed .zebra-form, body.quizzes .zebra-form, .v2-scope .zebra-form, body.proposed_groups .zebra-form, .modal-content #shared-markdown, .zebra-table {
+    margin-bottom: 20px;
+    overflow: hidden;
+    border: 3px solid #d2d2d2;
+    background-color: white;
+    border-radius: 8px;
+    -webkit-box-shadow: 0 0 3px rgba(0, 0, 0, 0.07), 0 0 0 rgba(0, 0, 0, 0);
+    -moz-box-shadow: 0 0 3px rgba(0, 0, 0, 0.07), 0 0 0 rgba(0, 0, 0, 0);
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.07), 0 0 0 rgba(0, 0, 0, 0);
+}
+
+.plain-text-link {
+    color: #333;
+}
+
+.track-progress-stats .stat {
+    font-size: 12px;
+}
+
+.track-progress-stats {
+    text-align: center;
+}
+
+.plain-text-link:hover {
+    color: #08c;
+}
+
+.text-overflow {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#dashboard__groups-and-badges .ruled-header__link {
+    font-size: 13px;
+}
+
+.light-text {
+    color: #969696;
+}
+
+#user-registration-form a, #user-session-form a, body.user-profile-page a, #badges-modal a, body.curricula.apis a, body.dashboard a, body.home a, body.composer a, body.styleguide a, body.groups a, body.tags a, body.registrations a, body.embed a, body.quizzes a, .v2-scope a, body.proposed_groups a {
+    font-weight: normal;
+}
+
+.module.neutral, .neutral.discussion-items, .discussion-entry .entry-container, .comments-container, .entry-editor, #user-registration-form .zebra-form, #user-session-form .zebra-form, body.user-profile-page .zebra-form, #badges-modal .zebra-form, body.curricula.apis .zebra-form, body.dashboard .zebra-form, body.home .zebra-form, body.composer .zebra-form, body.styleguide .zebra-form, body.groups .zebra-form, body.tags .zebra-form, body.registrations .zebra-form, body.embed .zebra-form, body.quizzes .zebra-form, .v2-scope .zebra-form, body.proposed_groups .zebra-form, .modal-content .neutral#shared-markdown, .neutral.zebra-table {
+    background-color: #fafafa;
+}
+
+.cell, .discussion-item, .entry-container, .modal-content #shared-markdown {
+    display: block;
+    padding: 20px;
+    position: relative;
+}
+
+#user-registration-form a, #user-session-form a, body.user-profile-page a, #badges-modal a, body.curricula.apis a, body.dashboard a, body.home a, body.composer a, body.styleguide a, body.groups a, body.tags a, body.registrations a, body.embed a, body.quizzes a, .v2-scope a, body.proposed_groups a {
+    font-weight: normal;
+}
