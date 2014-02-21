@@ -21,11 +21,11 @@
                         <div class="console hello-interactive-console" id="console"></div>
                         <div class="register-wrap cf">
                             {% raw %}
-                            <p class="congratulate-msg">{{ notification }}</p>
+                                <p class="congratulate-msg">{{ notification }}</p>
                             {% endraw %}
-                            <button type="button" data-ng-click="nextExercise()" class="btn btn-primary pull-right">Tiếp
-                                tục nào!
-                            </button>
+                            <button type="button" data-ng-click="nextExercise()" class="btn btn-primary pull-right"> {% trans %}Go{% endtrans %}</button>
+                            <button type="button" class="btn btn-primary pull-right" style="margin-right: 10px" data-dismiss="modal" aria-hidden="true" >{% trans %}Skip{% endtrans %}</button>
+{#                                <h4 class="modal-title" id="myModalLabel">Modal title</h4>#}
                             <div class="clearfix"></div>
                         </div>
                     </div>
@@ -360,13 +360,15 @@
                         error_msg = result_val;
                     }
                     if (isSuccess) {
-                        setTimeout(function(){$('.console-chrome').addClass('finished');},1000);
-                        $scope.$apply(function(){
-                            if(($scope.get_current_project().index+1)<=2){
-                                 $scope.notification = "Chúc mừng bạn đã hoàn thành ví dụ "+($scope.get_current_project().index+1);
+                        setTimeout(function () {
+                            $('.console-chrome').addClass('finished');
+                        }, 1000);
+                        $scope.$apply(function () {
+                            if (($scope.get_current_project().index + 1) <= 2) {
+                                $scope.notification = "Chúc mừng bạn đã hoàn thành ví dụ " + ($scope.get_current_project().index + 1);
                             }
                             else
-                               $scope.notification = "Chúc mừng bạn đã hoàn thành xong các ví dụ. Giờ bạn có thể nhấn tiếp tục để đăng nhập hệ thống và bắt đầu các khóa học của chúng tôi!";
+                                $scope.notification = "Chúc mừng bạn đã hoàn thành xong các ví dụ. Giờ bạn có thể nhấn tiếp tục để đăng nhập hệ thống và bắt đầu các khóa học của chúng tôi!";
                         });
                         //return this.ShowCongratulations();
                     } else {
@@ -419,7 +421,7 @@
         }
         $scope.nextExercise = function () {
             $('.console-chrome').removeClass('finished');
-            if ($scope.get_current_project().index+1 == $scope.get_current_project().checkpoints_count) {
+            if ($scope.get_current_project().index + 1 == $scope.get_current_project().checkpoints_count) {
                 window.location.pathname = '/register/';
             } else {
                 $scope.jqconsole.Reset();

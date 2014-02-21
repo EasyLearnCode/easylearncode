@@ -1,4 +1,17 @@
+msgid ""
+"\n"
+"                                        Save"
+msgstr ""
+
+msgid ""
+"\n"
+"                                    Save"
+msgstr ""
+
 msgid " I agree to something I will never read"
+msgstr ""
+
+msgid " View all "
 msgstr ""
 
 msgid "%prog [options]"
@@ -63,6 +76,16 @@ msgstr ""
 msgid "Don't have an account?"
 msgstr ""
 
+msgid ""
+"Edit\n"
+"                                    Password"
+msgstr ""
+
+msgid ""
+"Edit\n"
+"                                    Profile"
+msgstr ""
+
 msgid "Email"
 msgstr ""
 
@@ -78,10 +101,25 @@ msgstr ""
 msgid "Forgot your password?"
 msgstr ""
 
+msgid "Go"
+msgstr ""
+
+msgid "Goals"
+msgstr ""
+
 msgid "Good Password"
 msgstr ""
 
 msgid "Insecure Password"
+msgstr ""
+
+msgid "Language"
+msgstr ""
+
+msgid "Last Name"
+msgstr ""
+
+msgid "Last progress"
 msgstr ""
 
 msgid "Logout"
@@ -132,6 +170,9 @@ msgstr ""
 msgid "Sign Up"
 msgstr ""
 
+msgid "Skip"
+msgstr ""
+
 msgid "Usage"
 msgstr ""
 
@@ -154,7 +195,21 @@ msgstr ""
 msgid "Users Geolocation"
 msgstr ""
 
+msgid "Well done! "
+msgstr ""
+
+msgid "Your Badges"
+msgstr ""
+
 msgid "Your browser is <em>ancient!</em>"
+msgstr ""
+
+msgid ""
+"Your data successfully\n"
+"                                saved."
+msgstr ""
+
+msgid "ago"
 msgstr ""
 
 #, python-format
@@ -237,6 +292,9 @@ msgstr ""
 msgid "long integer"
 msgstr ""
 
+msgid "months"
+msgstr ""
+
 msgid "mutually exclusive arguments must be optional"
 msgstr ""
 
@@ -264,6 +322,12 @@ msgid "optional arguments"
 msgstr ""
 
 msgid "positional arguments"
+msgstr ""
+
+msgid "resume"
+msgstr ""
+
+msgid "review"
 msgstr ""
 
 msgid "show program's version number and exit"

@@ -553,9 +553,7 @@ angular.module("easylearncode.home").controller('HomeCarouselCtrl', ['$scope', f
         }
     ];
 }]);
-
-angular.module("easylearncode.learn").run(function () {
-}).controller('LearnCtrl', ['$scope', function ($scope) {
+angular.module("easylearncode.learn").controller('LearnCtrl', ['$scope', function ($scope) {
         $scope.lang =
         {
             name: 'Python',
@@ -752,24 +750,29 @@ angular.module("easylearncode.learn").run(function () {
 
 
     }]);
-
 angular.module("easylearncode.contest_result").controller('ContestResultCtrl', ['$scope', '$http', 'csrf_token', function ($scope, $http, csrf_token) {
-    $http.get('/contest/get_thisweek_result').success(function (data) {
-        if (data.status == 1) {
 
-        }
-        else {
-            $scope.thisweek_contest = data;
-        }
-
-    });
-}]);
     $scope.getThisResult = function () {
         $scope.currentWeek = true;
         $scope.thisweek_contest = new Array();
         $http.get('/contest/get_thisweek_result').success(function (data) {
             if (data.status == 1) {
+            }
+            else {
+                $scope.thisweek_contest = data;
+            }
+        });}
+    $scope.getLastResult = function () {
+        $scope.currentWeek = false;
+        $scope.thisweek_contest = new Array();
+        $http.get('/contest/get_lastweek_result').success(function (data) {
+            if (data.status == 1) {
+            } else {
+                $scope.thisweek_contest = data;
+            }
 
+        });}
+    }]);
 angular.module("easylearncode.user_profile")
     .controller('UserProfileCtrl', ['$scope', '$http', 'userInfo', 'csrf_token', function ($scope, $http, userInfo, csrf_token) {
         $scope.showSuccessAlert = false;
@@ -805,28 +808,7 @@ angular.module("easylearncode.user_profile")
         return function (text) {
             return text ? md5.createHash(text.toString().toLowerCase()) : text;
         };
-    } ]);            }
-            else {
-                $scope.thisweek_contest = data;
-            }
-
-        });
-    }
-    $scope.currentWeek = true;
-    $scope.getLastResult = function () {
-        $scope.currentWeek = false;
-        $scope.thisweek_contest = new Array();
-        $http.get('/contest/get_lastweek_result').success(function (data) {
-            if (data.status == 1) {
-
-            }
-            else {
-                $scope.thisweek_contest = data;
-            }
-
-        });
-    }
-}]);
+    } ]);
 
 angular.module("easylearncode.practise").controller("PractiseCtrl", ["$scope", function ($scope) {
     $scope.exercise = {
