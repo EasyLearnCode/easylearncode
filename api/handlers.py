@@ -2,7 +2,6 @@ __author__ = 'nampnq'
 
 from application.handlers import BaseHandler, user_required
 
-
 class GetThisWeekResultHandler(BaseHandler):
     @user_required
     def get(self):
