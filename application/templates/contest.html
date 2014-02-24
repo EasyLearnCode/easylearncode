@@ -1,61 +1,78 @@
 {% extends "main.html" %}
 {% block mediaCSS %}
     <link rel="stylesheet" href="/application/css/contest.css">
+    <link href='http://fonts.googleapis.com/css?family=Orbitron' rel='stylesheet' type='text/css'>
+    <link href="/application/css/hopscotch-0.1.1.css" rel="stylesheet">
 {% endblock %}
 {% block content %}
     {% raw %}
         <div class="container" data-ng-controller="ContestCtrl">
+            <div class="col-md-12 highlight"> <div><img width="100" style="float: left; margin-right: 5px" src="\application\img\Olympic-Flame.ico" /></div>
+                Xin chào mừng các bạn đến với trang thi đố vui hàng tuần. Hàng tuần sẽ có
+                5 câu hỏi từ dễ đến khó.
+                Trang thi với mục đích giúp các bạn rèn luyện tư duy lập trình. <br/>
+                Cuộc thi hiện đang ở tuần thứ: {{ thisweek_contest.week }}. <br/>
+                Bắt đầu từ: {{ start | date:'dd-MM-yyyy' }} 00:00 đến {{ end | date:'dd-MM-yyyy'}} 23:59
+                <div class="text-center">
+                    <button id="startTourBtn" class="btn btn-large btn-primary">Hướng dẫn</button>
+                </div>
+            </div>
             <div class="col-md-12 highlight">
                 <div class="row">
                     <div class="col-md-8">
-                        <timer end-time="endtime">{{days}} days, {{hours}} hours, {{minutes}} minutes, {{seconds}} seconds.</timer>
-                        <div class="profileSteps">
-                            <div class="profileStep profileStepPassive profileStepOne">
+                        <h4 class="text-warning" style="float: left; margin-right: 5px;" id="step-1">Mức độ: </h4>
+
+                        <div class="profileSteps" data-ng-repeat="i in [1,2,3,4,5]">
+                            <div ng-class="{profileStepActive:i<thisweek_contest.this_quiz_level.level, profileStepPassive:i>=thisweek_contest.this_quiz_level.level}"
+                                 class="profileStep profileStepOne">
                                 <div class="connect"></div>
-                                <div class="icon">5</div>
-                                <div class="info">Step Five</div>
+                                <div class="icon">{{ i }}</div>
                             </div>
-                            <div class="profileStep profileStepPassive profileStepOne">
-                                <div class="connect"></div>
-                                <div class="icon">4</div>
-                                <div class="info">Step Four</div>
-                            </div>
-                            <div class="profileStep profileStepPassive profileStepOne">
-                                <div class="connect"></div>
-                                <div class="icon">3</div>
-                                <div class="info">Step Three</div>
-                            </div>
-                            <div class="profileStep profileStepActive profileStepOne">
-                                <div class="connect"></div>
-                                <div class="icon">2</div>
-                                <div class="info">Step Two</div>
-                            </div>
-                            <div class="profileStep profileStepActive profileStepOne">
-                                <div class="connect"></div>
-                                <div class="icon">1</div>
-                                <div class="info">Step One</div>
-                            </div>
+
                         </div>
                         <div class="clearfix"></div>
                         <div class="panel panel-primary">
                             <div class="panel-heading">
-                                <h3 class="panel-title">Câu hỏi:</h3>
+                                <h3 class="panel-title" id="step-2">Câu hỏi:</h3>
                             </div>
-                            <div class="panel-body">
-                                {{ thisweek_contest.description }}
+                            <div class="panel-body"
+                                 ng-bind-html-unsafe="thisweek_contest.this_quiz_level.description_html">
+
                             </div>
                         </div>
                     </div>
                     <div class="col-md-4">
+
+                        <label class="label label-danger" id="step-3"><span class="clock">Còn lại:
+                        <timer end-time="endtime"> {{ days }} Ngày,
+                            {{ hours }} giờ,
+                            {{ minutes }} phút,
+                            {{ seconds }} giây
+                        </timer></span>
+                        </label>
+
                         <div class="panel panel-success">
                             <div class="panel-heading">
-                                <h3 class="panel-title">Bảng thành tích</h3>
+                                <h3 class="panel-title">Bảng thành tích tuần này</h3>
                             </div>
                             <div class="panel-body">
                                 <ul class="list-group">
                                     <li data-ng-repeat="player in thisweek_contest.top_player"
                                         class="list-group-item">{{ $index+1 }}. {{ player.username }}</li>
                                 </ul>
+                                <a class="btn btn-success" href="/contest/result">Xem chi tiết...</a>
+                            </div>
+                        </div>
+                        <div class="panel panel-success">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Thành tích của bạn</h3>
+                            </div>
+                            <div class="panel-body">
+                                <ul class="list-group">
+                                    <li data-ng-repeat="player in thisweek_contest.top_player"
+                                        class="list-group-item">{{ $index+1 }}. {{ player.username }}</li>
+                                </ul>
+                                <a class="btn btn-success" href="/contest/result">Xem chi tiết...</a>
                             </div>
                         </div>
                     </div>
@@ -63,10 +80,10 @@
 
             </div>
 
-            <div class="col-xs-12 col-md-12 highlight">
+            <div class="col-xs-12 col-md-12 highlight" id="step-4">
                 <tabset>
                     <tab data-ng-repeat="lang in langs" heading="{{ lang.name }}" active="lang.active">
-                        <div ui-ace="{ theme:'twilight',
+                        <div ui-ace="{ theme:'chrome',
   mode:lang.mode, onLoad: aceLoaded(lang)}" data-ng-model="lang.source">
                         </div>
                     </tab>
@@ -74,9 +91,9 @@
                 </tabset>
             </div>
             <div class="col-xs-12 col-md-12 highlight">
-                <button type="button" class="btn btn-success" data-ng-click="submitCode()">Nộp bài</button>
-                <button type="button" class="btn btn-info" data-ng-click="runCode()">Chạy thử</button>
-                <button type="button" class="btn btn-warning" data-ng-click="resetCode()">Làm lại</button>
+                <button type="button" class="btn btn-success" id="step-5" data-ng-click="submitCode()">Nộp bài</button>
+                <button type="button" class="btn btn-info" id="step-6" data-ng-click="runCode()">Chạy thử</button>
+                <button type="button" class="btn btn-warning" id="step-7" data-ng-click="resetCode()">Làm lại</button>
             </div>
 
             <div style="height: 50px; text-align: center;" data-ng-show="compiling" id="fountainTextG">
@@ -117,7 +134,7 @@
                     .
                 </div>
             </div>
-            <div class="col-xs-12 col-md-12 highlight">
+            <div class="col-xs-12 col-md-12 highlight" id="step-8">
                 <h3>Bảng kết quả</h3>
                 <table class="table">
                     <tr>
@@ -162,11 +179,12 @@
     {% endraw %}
 {% endblock %}
 {% block pluginJS %}
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js"></script>
     <script src="/application/js/libs/angularjs/ui-ace.min.js"></script>
     <script src="/application/js/libs/angularjs/ui-bootstrap-tpls-0.7.0.min.js"></script>
     <script src="/application/js/libs/angularjs/angular-timer.min.js"></script>
+    <script src="/application/js/hopscotch-0.1.2.min.js"></script>
+    <script src="/application/js/demo.js"></script>
 {% endblock %}
 {% block mediaJS %}
     <script>

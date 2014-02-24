@@ -8,13 +8,13 @@ import restful
 PREFIX = "/api/"
 
 _routes = [
-    RedirectRoute('/contest/get_thisweek_result', handlers.GetThisWeekResultHandler, name='get-thisweek-result',
+    RedirectRoute('/api/contest/get_thisweek_result', handlers.GetThisWeekResultHandler, name='get-thisweek-result',
                   strict_slash=True),
-    RedirectRoute('/run_code', handlers.RunCodeHandler, name='run-code', strict_slash=True),
-    RedirectRoute('/contest/get_thisweek_contest', handlers.GetThisweekContestHandler, name='get-thisweek-contest',
+    RedirectRoute('/api/run_code', handlers.RunCodeHandler, name='run-code', strict_slash=True),
+    RedirectRoute('/api/contest/get_thisweek_contest', handlers.GetThisweekContestHandler, name='get-thisweek-contest',
                   strict_slash=True),
-    RedirectRoute('/contest/submit', handlers.SubmitContestHandler, name='submit-contest', strict_slash=True),
-    RedirectRoute('/contest/get_lastweek_result', handlers.GetLastWeekResultHandler, name='get-lastweek-result',
+    RedirectRoute('/api/contest/submit', handlers.SubmitContestHandler, name='submit-contest', strict_slash=True),
+    RedirectRoute('/api/contest/get_lastweek_result', handlers.GetLastWeekResultHandler, name='get-lastweek-result',
                   strict_slash=True),
     RedirectRoute(r"{}<model>/<id>".format(PREFIX), handler=restful.RestfulHandler),
 

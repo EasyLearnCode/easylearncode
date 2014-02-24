@@ -7,16 +7,27 @@ class GetThisWeekResultHandler(BaseHandler):
     def get(self):
         from application.models import WeeklyQuiz
         import json
+        from google.appengine.ext import ndb
 
         test = WeeklyQuiz.get_this_week_contest()
         if test:
-            top_player = test.get_top_player(100)
+            top_player = test.get_players()
             test_key = test.key.urlsafe()
+            levels = []
+            for levelkey in test.level_keys:
+                level = levelkey.get()
+                level2 = level.to_dict()
+                level2.pop("level_keys", None)
+                level2.update({'description_html': level.description_html})
+                levels.append(level2)
+
             test = test.to_dict()
+            test.pop("level_keys", None)
             test.pop('start_date', None)
             test.pop('publish_date', None)
             test.update({'top_player': top_player})
             test.update({'test_key': test_key})
+            test.update({'levels': levels})
             self.response.headers["Content-Type"] = "application/json"
             self.response.write(json.dumps(test))
         else:
@@ -33,40 +44,8 @@ class SubmitContestHandler(BaseHandler):
 
         data = json.loads(self.request.body)
 
-        weeklyquiz = ndb.Key(urlsafe=data['key']).get()
-        deferred.defer(weeklyquiz.run_test_case, code=data['source'], lang=data['lang'], user_key=self.user_key)
-        # quiz_key = weeklyQuiz.key
-        # weeklyQuiz = weeklyQuiz.to_dict()
-        # data.update({'client_secret': config.get("HACKEREARTH_CLIENT_SECRET")})
-        # data.update({'async': 0})
-        # for testcase in weeklyQuiz['test_case']:
-        #     data.update({'input': testcase['input']})
-        #     form_data = urllib.urlencode(data)
-        #     result = urlfetch.fetch(url=config.get("HACKEREARTH_RUN_URL"),
-        #                             payload=form_data,
-        #                             method=urlfetch.POST)
-        #     if result and result.content:
-        #         compile_result = json.loads(result.content)
-        #         testcase['time_used'] = float(compile_result['run_status']['time_used']) or None
-        #         testcase['memory_used'] = int(compile_result['run_status']['memory_used']) or None
-        #         if compile_result['run_status'] and compile_result['run_status']['output'].split()[0] == testcase[
-        #             'output']:
-        #             testcase['result'] = True
-        #         else:
-        #             testcase['result'] = False
-        # avg_time = sum(
-        #     test['time_used'] or weeklyQuiz['limit_time'] for test in weeklyQuiz['test_case']) / len(
-        #     weeklyQuiz['test_case'])
-        # avg_memory = sum(
-        #     test['memory_used'] or weeklyQuiz['limit_memory'] for test in weeklyQuiz['test_case']) / len(
-        #     weeklyQuiz['test_case'])
-        # user_key = self.user_key
-        # result = True
-        # for test in weeklyQuiz['test_case']:
-        #     result = result and test['result']
-        # achievement = WeeklyQuizResult(user_key=user_key, test_key=quiz_key, result=result, time_used=avg_time,
-        #                                memory_used=avg_memory, language=data['lang'], code=data['source'])
-        # achievement.put()
+        weeklyquizlevel = ndb.Key(urlsafe=data['key']).get()
+        deferred.defer(weeklyquizlevel.run_test_case, code=data['source'], lang=data['lang'], user_key=self.user_key)
         self.response.headers["Content-Type"] = "application/json"
         self.response.write(json.dumps({'status': 1}))
 
@@ -94,23 +73,37 @@ class RunCodeHandler(BaseHandler):
             self.response.write("{status:'Server die!'}")
 
 
+def json_extras(obj):
+    from google.appengine.ext import ndb
+
+    if isinstance(obj, ndb.Key):
+        return obj.urlsafe()
+
+
 class GetThisweekContestHandler(BaseHandler):
     @user_required
     def get(self):
-        from application.models import WeeklyQuiz
+        from application.models import WeeklyQuiz, WeeklyQuizResult
         import json
 
         test = WeeklyQuiz.get_this_week_contest()
         if test:
-            top_player = test.get_top_player(5)
-            test_key = test.key.urlsafe()
+            test_key = test.key
+            top_player = WeeklyQuizResult.get_top_player(test_key)
+
+            this_quiz_level = test.get_this_contest_level(self.user_key)
             test = test.to_dict()
             test.pop('start_date', None)
             test.pop('publish_date', None)
             test.update({'top_player': top_player})
-            test.update({'test_key': test_key})
+            test.update({'test_key': test_key.urlsafe()})
+            test.update({'this_quiz_level': this_quiz_level[0].to_dict()})
+            test['this_quiz_level'].update({'description_html': this_quiz_level[0].description_html})
+            test['this_quiz_level'].update({'quiz_level_key': this_quiz_level[0].key.urlsafe()})
+            test['this_quiz_level'].update({'level': this_quiz_level[0].level})
             self.response.headers["Content-Type"] = "application/json"
-            self.response.write(json.dumps(test))
+            print test
+            self.response.write(json.dumps(test, default=json_extras))
         else:
             self.response.headers["Content-Type"] = "application/json"
             self.response.write(json.dumps({'status': 1}))
@@ -124,7 +117,7 @@ class GetLastWeekResultHandler(BaseHandler):
 
         test = WeeklyQuiz.get_last_week_contest()
         if test:
-            top_player = test.get_top_player(100)
+            top_player = test.get_players()
             test_key = test.key.urlsafe()
             test = test.to_dict()
             test.pop('start_date', None)

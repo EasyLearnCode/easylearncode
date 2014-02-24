@@ -194,42 +194,19 @@ class WeeklyQuizTest(ndb.Model):
     output = ndb.StringProperty()
 
 
-class WeeklyQuiz(ndb.Model):
+class WeeklyQuizLevel(ndb.Model):
+    level = ndb.IntegerProperty()
     description = ndb.StringProperty(indexed=False)
-    start_date = ndb.DateProperty()
-    publish_date = ndb.DateTimeProperty(auto_now_add=True)
     limit_memory = ndb.IntegerProperty(default=100)
     limit_time = ndb.FloatProperty(default=60)
     test_case = ndb.StructuredProperty(WeeklyQuizTest, repeated=True)
+    score = ndb.IntegerProperty()
 
-    @classmethod
-    def get_weeklyquizs(cls):
-        return cls.query().fetch();
+    @property
+    def description_html(self):
+        import markdown2
 
-    @classmethod
-    def get_this_week_contest(cls):
-        from datetime import datetime, timedelta
-
-        test = cls.query(cls.start_date >= (datetime.now() + timedelta(0 - datetime.now().weekday())).date(),
-                         cls.start_date <= (datetime.now() + timedelta(
-                             6 - datetime.now().weekday())).date()).get()
-        return test
-
-    def get_top_player(self, num):
-        top_player = WeeklyQuizResult.query(WeeklyQuizResult.test_key == self.key) \
-            .order(WeeklyQuizResult.time_used, WeeklyQuizResult.memory_used) \
-            .fetch(num)
-        top = []
-        for player in top_player:
-            username = player.user_key.get().email
-            player = player.to_dict()
-            player.update({'submit_time': str(player['submit_time'])})
-            player.pop('test_key', None)
-            player.pop('user_key', None)
-            player.update({'username': username})
-            top.append(player)
-        top_player = top
-        return top_player
+        return markdown2.markdown(self.description)
 
     def run_test_case(self, **kwargs):
 
@@ -263,10 +240,21 @@ class WeeklyQuiz(ndb.Model):
                     result = True
                     for test in test_result:
                         result = result and test['result']
+                    score = self.score
+                    if avg_memory > self.limit_memory or avg_time > self.limit_time or result == False:
+                        score = 0
+                    else:
+                        score -= (avg_time + avg_memory / 10)
+
                     quiz_result = WeeklyQuizResult(user_key=kwargs['user_key'],
-                                                   test_key=self.key, result=result,
+                                                   level_key=self.key,
+                                                   result=result,
                                                    time_used=avg_time,
-                                                   memory_used=avg_memory, language=kwargs['lang'], code=kwargs['code'])
+                                                   memory_used=avg_memory,
+                                                   language=kwargs['lang'],
+                                                   code=kwargs['code'],
+                                                   test_key=WeeklyQuiz.get_this_week_contest().key,
+                                                   score=score)
                     quiz_result.put()
                     logging.debug("Finshed run test case")
 
@@ -297,6 +285,61 @@ class WeeklyQuiz(ndb.Model):
         for rpc in rpcs:
             rpc.wait()
 
+
+class WeeklyQuiz(ndb.Model):
+    week = ndb.IntegerProperty()
+    start_date = ndb.DateProperty()
+    publish_date = ndb.DateTimeProperty(auto_now_add=True)
+    level_keys = ndb.KeyProperty(WeeklyQuizLevel, repeated=True)
+
+    @classmethod
+    def get_weeklyquizs(cls):
+        return cls.query().fetch();
+
+    @classmethod
+    def get_this_week_contest(cls):
+        from datetime import datetime, timedelta
+
+        test = cls.query(cls.start_date >= (datetime.now() + timedelta(0 - datetime.now().weekday())).date(),
+                         cls.start_date <= (datetime.now() + timedelta(
+                             6 - datetime.now().weekday())).date()).get()
+        return test
+
+    def get_this_contest_level(self, user_key):
+        result = WeeklyQuizResult.query(WeeklyQuizResult.user_key == user_key,
+                                        WeeklyQuizResult.test_key == self.key, WeeklyQuizResult.result == True).get()
+        if result:
+            maxLevel = filter(lambda x: x.level == result.level_key.get().level + 1,
+                              [level_key.get() for level_key in self.level_keys])
+            print maxLevel
+            if maxLevel:
+                return maxLevel
+            else:
+                return filter(lambda x: x.level == result.level_key.get().level,
+                              [level_key.get() for level_key in self.level_keys])
+        else:
+            return filter(lambda x: x.level == 1, [level_key.get() for level_key in self.level_keys])
+
+    def get_players(self):
+        top_player = WeeklyQuizResult.query(WeeklyQuizResult.test_key == self.key) \
+            .order() \
+            .fetch()
+        top = []
+        for player in top_player:
+            username = player.user_key.get().email
+            player = player.to_dict()
+            player.update({'submit_time': str(player['submit_time'])})
+            player.pop('test_key', None)
+            player.pop('user_key', None)
+            player.pop('level_key', None)
+            player.update({'username': username})
+            top.append(player)
+        top_player = top
+        return top_player
+
+
+
+
     @classmethod
     def get_last_week_contest(cls):
         from datetime import datetime, timedelta
@@ -309,6 +352,7 @@ class WeeklyQuiz(ndb.Model):
 
 class WeeklyQuizResult(ndb.Model):
     test_key = ndb.KeyProperty(WeeklyQuiz)
+    level_key = ndb.KeyProperty(WeeklyQuizLevel)
     user_key = ndb.KeyProperty(User)
     submit_time = ndb.DateTimeProperty(auto_now_add=True)
     result = ndb.BooleanProperty()
@@ -316,4 +360,14 @@ class WeeklyQuizResult(ndb.Model):
     memory_used = ndb.IntegerProperty()
     language = ndb.StringProperty()
     code = ndb.StringProperty(indexed=False)
+    score = ndb.IntegerProperty()
 
+    @classmethod
+    def get_top_player(cls, test_key):
+        from itertools import groupby
+
+        results = cls.query(cls.test_key == test_key).fetch()
+        score = []
+        for key, result in groupby(results, lambda x: x.user_key):
+            score.append({'user_key': key,'username':key.get().email, 'score': sum([x.score for x in result])})
+        return sorted(score, key=lambda k: k['score'], reverse=True)[:5]
