@@ -1,10 +1,12 @@
+@import "/application/css/animate.css";
 /* ==========================================================================
    Login Box styles
    ========================================================================== */
 
 /*Change Backgound image here */
 body{
-	background: transparent url(../img/login-bg-overlay.png) repeat;
+	/*background: transparent url(../img/login-bg-overlay.png) repeat;*/
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAAAAAAeW/F+AAABTklEQVQ4y4WSsU0FUBDD3v7rXmKnpOAXICGxQWL74XLmdrSr1qKmDh91l9OStJc2O4cU3jq9TsOQnBO0yfpMKAauDTlal1FyedCtNXfMZUpz4Wp9ATLuLg1NNOoWRl9rGhPaYMgh65VyL8EEm2JGQndie9zTZNKGrjfvDIx28trGkCtLY+UWaZvjGedSl9So5JJsDXnzWivQStaiSHuXVwfHDqm922nxUuWh0JImjRzqQFN4F7PkwMhi2mHTNn3huLAmpsmuJIHa+srZnTpKpBLtGnYPA01SyS5+ALQrPtMtJg1HE4yEHnjPNisV7kQbQ7ma9KVlIklvVEI9LlnuFeLRtOXadumMR9m7RFIv9eP9R1ovbTZ3/AXomVv5zmsC0zWfSf/9/h1P1mGIJazvllaXAEkQPVt6+KpX1bkbvV60Sq59IKIgLIRekqaB+wIq/l840gQKhwAAAABJRU5ErkJggg==);
 	min-height:100%;
 }
 .alert{
