@@ -1,0 +1,66 @@
+{% extends "main.html" %}
+{% block mediaCSS %}
+    <link href="/application/css/courses.css" rel="stylesheet">
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="row row-gap-medium">
+            <div class="col-md-12">
+                <div class="col-md-12 rainbow banner-row">
+                    <h2 class="h-slim">Full Courses</h2>
+
+                    <p class="caption">Includes videos, exercises, personalized support, and verified certificates. <a
+                            href="/success">Learn More</a></p>
+                </div>
+            </div>
+        </div>
+        {% raw %}
+            <div class="row row-gap-large">
+                <div class="col-md-3">
+                    <a data-ng-href="{{ '/course/'+course['key']}}">
+                        <img data-ng-src="{{ course['catalog_entry']['_image']['serving_url'] | imageSize:290:170}}"
+                             alt=""
+                             class="img-responsive img-bordered">
+                    </a>
+                </div>
+                <div class="col-md-7">
+                    <h2 class="h-slim">
+                        <a data-ng-href="{{ '/course/'+course['key']}}">{{ course['title']}}</a>
+                    <span data-ng-show="course['catalog_entry']['new_release'] && course['_available']"
+                          class="h4 badge-new">New</span>
+                        <span data-ng-cloak data-ng-hide="course['_available']" class="h4 badge-soon">Coming Soon</span>
+                    </h2>
+
+                    <h3 class="h-slim-top">
+                        {{ course['catalog_entry']['subtitle']}}
+                    </h3>
+
+                    <h3 class="h-slim-top">
+			<span class="text-muted"
+                  data-ng-if="course['catalog_entry']['paid_class'] && course['catalog_entry']['paid_class']['open_for_enrollment']">
+				<span class="glyphicon glyphicon-certificate"></span>
+				Subscription Available
+			</span>
+                    </h3>
+
+                    <p>{{ course['catalog_entry']['short_summary']}}</p>
+
+                    <div>
+                        <a data-ng-repeat-start="tag in catagoryTags" data-ng-href="#!{{ tag }}" class="text-muted"
+                           data-ng-click="scrollTop()">{{ tag }}</a>
+                        <span data-ng-repeat-end data-ng-if="!$last"> &middot; </span>
+                    </div>
+                </div>
+                <div class="col-md-2 ">
+                    <p class="caption text-right">
+                        <span class="icon-level" data-ng-class="levelClass()"></span><br>
+                        {{ prettyLevel }}
+                    </p>
+			<span data-ng-show="affiliateImageUrl">
+				<img data-ng-src="{{ affiliateImageUrl | imageSize:130:60}}" alt="" class="img-responsive pull-right">
+			</span>
+                </div>
+            </div>
+        {% endraw %}
+    </div>
+{% endblock %}
