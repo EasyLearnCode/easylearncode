@@ -1,0 +1,74 @@
+{% extends "main.html" %}
+{% block mediaCSS %}
+    <link rel="stylesheet" href="/application/css/dashboard.css">
+{% endblock %}
+{% block content %}
+    <div class="container" id="dashboard__container">
+        <div class="row">
+            <div class="col-md-7 pull-left">
+                <div id="dashboard__primary-content">
+
+                    <h2 class="ruled-header">
+                        Đang học
+                    </h2>
+
+                    <div class="dashboard__tracks cf">
+                        <div class="ui-card ui-card--solo frame-card frame-card--small ">
+
+                            <div class="frame-card__frame">
+                                <div class="goal-preview" id="preview-python">
+                                    <div class="curricula__item__logo-image curricula__item__logo--generic curricula__item__logo--python"></div>
+                                </div>
+                            </div>
+
+                            <div class="frame-card__seperator cf">
+                                <div class="in-progress-goal__progress-bar">
+                                    <div class="in-progress-goal__progress-juice" style="width: 1%"></div>
+                                </div>
+                            </div>
+
+                            <div class="frame-card__metadata cf">
+                                <div class="frame-card__metadata__indicator">
+                                    1%
+                                </div>
+                                <h3 class="frame-card__metadata__title">
+                                    Python
+                                </h3>
+
+                                <div class="frame-card__metadata__subtitle">
+                                    Last progress: 1 day ago
+                                </div>
+                            </div>
+
+                            <a href="/en/tracks/python/resume" class="frame-card__link"></a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-md-4" id="dashboard__groups-and-badges">
+                <div class="dashboard__groups-and-badges__module"> <h4 class="ruled-header">
+                    Danh hiệu
+                    <a href="/users/NamPNQ/achievements" class="ruled-header__link">View all</a>
+                </h4>
+                <h4>
+                    <a href="/users/nampnq/achievements/course-javascript-beginner-en-Bthev-mskY8">
+                        <div class="dashboard__badge" title="Build &quot;Rock, Paper, Scissors&quot;">
+                            <div class="ui-media">
+                                <div class="ui-media__image dashboard__badge__icon">
+                                    <div class="badge badge-30"></div>
+                                </div>
+                                <div class="ui-media__main dashboard__badge__info">
+                                    <b>Build "Rock, Paper, Scissors"</b>
+                                    <div class="ui-media__main dashboard__badge__timestamp">
+                                        Earned 11 months ago
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </h4></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
