@@ -20,12 +20,11 @@
                     {#                <span class="icon-bar"></span>#}
                     {#                <span class="icon-bar"></span>#}
                     {#            </button>#}
-                    <a class="navbar-brand" href="/">Easy Learn Code</a>
+                    <a class="navbar-brand" href="{% if user %}{{ uri_for("dashboard") }}{% else %}{{ uri_for("home") }}{% endif %}">Easy Learn Code</a>
                 </div>
                 <div class="navbar-collapse collapse" data-ng-controller="HeaderController">
                     <ul class="nav navbar-nav">
-                        <li ng-class="{ active: isActive('/')}"><a href="/">Trang chủ</a></li>
-                        <li ng-class="{ active: isActive('/info')}"><a href="/info">Học</a></li>
+                        <li ng-class="{ active: isActive('{{ uri_for("courses") }}')}"><a href="{{ uri_for("courses") }}">Các khóa học</a></li>
                         <li ng-class="{ active: isActive('{{ uri_for("contest") }}')}"><a
                                 href="{{ uri_for("contest") }}">Đố vui hàng tuần</a></li>
                         <li ng-class="{ active: isActive('{{ uri_for("game") }}')}"><a href="{{ uri_for("game") }}">Học
@@ -59,36 +58,91 @@
     {% block content %}
     {% endblock %}
     {% block footer %}
+{#        <div id="footer">#}
+{#            <div class="container">#}
+{#                <div class="collapse navbar-collapse" style="margin-top: 20px">#}
+{#                    <ul class="nav navbar-nav">#}
+{#                        <li><a href="http://developer.hackerearth.com"><span>HackerEarth</span></a></li>#}
+{#                    </ul>#}
+{#                    <ul class="nav navbar-nav navbar-right">#}
+{#                        {% if locale_iso %}#}
+{#                            <li class="dropdown btn-group dropup">#}
+{#                                <button type="button" class="btn btn-primary">{% trans %}Language{% endtrans %}#}
+{#                                    : {{ locale_language }}</button>#}
+{#                                <button type="button" class="btn btn-default dropdown-toggle"#}
+{#                                        data-toggle="dropdown">#}
+{#                                    <span class="caret"></span>#}
+{#                                    <span class="sr-only">Toggle Dropdown</span>#}
+{#                                </button>#}
+{#                                <ul class="dropdown-menu pull-right">#}
+{#                                    {% for l in locales %}#}
+{#                                        {% if locale_iso != l %}#}
+{#                                            <li><a href="{{ path_for_language }}&hl={{ l }}">{{ locales[l] }}</a></li>#}
+{#                                        {% endif %}#}
+{#                                    {% endfor %}#}
+{#                                </ul>#}
+{#                            </li>#}
+{#                        {% endif %}#}
+{#                        <li><a href="#"><span>© EasyLearnCode 2013</span></a></li>#}
+{#                    </ul>#}
+{#                    <ul class="clearfix"></ul>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
         <div id="footer">
-            <div class="container">
-                <div class="collapse navbar-collapse" style="margin-top: 20px">
-                    <ul class="nav navbar-nav">
-                        <li><a href="http://developer.hackerearth.com"><span>HackerEarth</span></a></li>
-                    </ul>
-                    <ul class="nav navbar-nav navbar-right">
-                        {% if locale_iso %}
-                            <li class="dropdown btn-group dropup">
-                                <button type="button" class="btn btn-primary">{% trans %}Language{% endtrans %}
-                                    : {{ locale_language }}</button>
-                                <button type="button" class="btn btn-default dropdown-toggle"
-                                        data-toggle="dropdown">
-                                    <span class="caret"></span>
-                                    <span class="sr-only">Toggle Dropdown</span>
-                                </button>
-                                <ul class="dropdown-menu pull-right">
-                                    {% for l in locales %}
-                                        {% if locale_iso != l %}
-                                            <li><a href="{{ path_for_language }}&hl={{ l }}">{{ locales[l] }}</a></li>
-                                        {% endif %}
-                                    {% endfor %}
-                                </ul>
-                            </li>
-                        {% endif %}
-                        <li><a href="#"><span>© EasyLearnCode 2013</span></a></li>
-                    </ul>
-                    <ul class="clearfix"></ul>
-                </div>
-            </div>
-        </div>
+	<div class="container">
+		<div class="row row-gap-huge"></div>
+		<div class="row">
+			<div class="col-md-3"></div>
+			<div class="col-md-2">
+				<h4>Information</h4>
+				<p class="caption">
+					<a href="#" id="how-it-works-footer-link">What We Offer</a>
+					<br>
+					<a href="#">Help and FAQ</a>
+					<br>
+					<a href="#">Feedback Program</a>
+				</p>
+			</div>
+			<div class="col-md-2">
+				<h4>Community</h4>
+				<p class="caption">
+					<a href="#">Blog</a>
+					<br>
+					<a href="#">Meetups</a>
+					<br>
+					<a href="#">News &amp; Media</a>
+				</p>
+			</div>
+			<div class="col-md-2">
+				<h4>EasyLearnCode</h4>
+				<p class="caption">
+					<a href="#">About</a>
+					<br>
+					<a href="#">Jobs</a>
+					<br>
+					<a href="#">Contact Us</a>
+					<br>
+					<a href="#">Legal</a>
+				</p>
+			</div>
+			<div class="col-md-3">
+				<h4>Follow us on</h4>
+				<a href="#"><span class="sprite sprite-social sprite-facebook"></span></a>
+				<a href="#"><span class="sprite sprite-social sprite-twitter"></span></a>
+				<a href="#"><span class="sprite sprite-social sprite-gplus"></span></a>
+				<a href="#"><span class="sprite sprite-social sprite-linkedin"></span></a>
+				<div class="row row-gap-medium">
+					<div class="col-md-12 text-muted">© 2014 EasyLearnCode</div>
+				</div>
+			</div>
+		</div>
+		<div class="row row-gap-huge"></div>
+	</div>
+
+
+
+
+	</div>
     {% endblock %}
 {% endblock %}
