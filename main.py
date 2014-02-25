@@ -36,7 +36,7 @@ if not app.debug:
     for status_int in app.config['error_templates']:
         app.error_handlers[status_int] = handle_error
 
-routes.add_routes(app)
-application_routes.add_routes(app)
 admin_routes.add_routes(app)
 api_routes.add_routes(app)
+routes.add_routes(app)
+application_routes.add_routes(app)
