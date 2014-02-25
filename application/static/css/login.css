@@ -75,7 +75,7 @@ body{
 	text-align: center;
 	-webkit-box-shadow: inset 1px 3px 8px #999;
 	-moz-box-shadow: inset 1px 3px 8px #999;
-	box-shadow: inset 1px 3px 8px #9999;
+	box-shadow: inset 1px 3px 8px #999;
 	margin: -80px auto 0;
 
 }
@@ -186,7 +186,7 @@ label.checkbox input{
     margin: 5px auto;
     color:#FFF;
     text-shadow: 1px 1px 1px #333;
-    width:90%
+    width:90%;
     -webkit-box-shadow:  0px 0px 10px #FFF;
 	-moz-box-shadow:  0px 0px 10px #FFF;
 	box-shadow: 0px 0px 10px #FFF;
