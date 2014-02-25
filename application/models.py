@@ -167,7 +167,7 @@ class ExerciseCheckpoint(ndb.Model):
     instruction_html = ndb.StringProperty()
     name = ndb.StringProperty()
     test_functions = ndb.StringProperty()
-    index = ndb.StringProperty()
+    index = ndb.IntegerProperty()
     timestamp = ndb.DateTimeProperty(auto_now_add=True)
 
 
