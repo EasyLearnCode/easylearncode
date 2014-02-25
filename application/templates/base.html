@@ -58,13 +58,13 @@
     ga('create', '{{ google_analytics_code }}');
     ga('send', 'pageview');
 </script>
-{% if locale_language_id != "en" %}
-    {% if locale_iso.language == "pt" and locale_iso.territory == "BR" %}
-        <script src="/application/js/libs/jquery_validation/localization/messages_{{ locale_iso.language }}_{{ locale_iso.territory }}.js"></script>
-    {% else %}
-        <script src="/application/js/libs/jquery_validation/localization/messages_{{ locale_language_id }}.js"></script>
-    {% endif %}
-{% endif %}
+{#{% if locale_language_id != "en" %}#}
+{#    {% if locale_iso.language == "pt" and locale_iso.territory == "BR" %}#}
+{#        <script src="/application/js/libs/jquery_validation/localization/messages_{{ locale_iso.language }}_{{ locale_iso.territory }}.js"></script>#}
+{#    {% else %}#}
+{#        <script src="/application/js/libs/jquery_validation/localization/messages_{{ locale_language_id }}.js"></script>#}
+{#    {% endif %}#}
+{#{% endif %}#}
 {% block mediaJS %}{% endblock %}
 </body>
 </html>
