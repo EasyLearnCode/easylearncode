@@ -49,6 +49,9 @@ handlers:
 - url: /admin/img
   static_dir: admin/static/img
 
+- url: /admin/font
+  static_dir: admin/static/font
+
 - url: /admin.*
   script: main.app
   login: admin
@@ -121,3 +124,9 @@ error_handlers:
 
   - error_code: timeout
     file: application/templates/errors/timeout.html
+
+pagespeed:
+  enabled_rewriters:
+  - MinifyCss
+  disabled_rewriters:
+  - LazyloadImages
