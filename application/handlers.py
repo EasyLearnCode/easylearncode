@@ -1516,8 +1516,7 @@ class HomeRequestHandler(RegisterBaseHandler):
         if not self.user:
             params.update({'body_class': 'homepage'})
             return self.render_template('welcome.html', **params)
-        params.update({'angular_app_name': 'easylearncode.home'})
-        return self.render_template('home.html', **params)
+        self.redirect_to('dashboard')
 
 
 class ContestHandler(BaseHandler):
@@ -1551,6 +1550,7 @@ class ResultContestHandler(BaseHandler):
         params.update({'angular_app_name': "easylearncode.contest_result"})
         return self.render_template("contest_result.html", **params)
 
+
 class PractiseHandler(BaseHandler):
     @user_required
     def get(self):
@@ -1558,9 +1558,42 @@ class PractiseHandler(BaseHandler):
         params.update({'angular_app_name': "easylearncode.practise"})
         return self.render_template("practise.html", **params)
 
+
 class InfoHandler(BaseHandler):
     @user_required
     def get(self):
         params = {}
         params.update({'angular_app_name': "easylearncode.info"})
         return self.render_template("info.html", **params)
+
+
+class DashboardHandler(BaseHandler):
+    @user_required
+    def get(self):
+        params = {}
+        params.update({'angular_app_name': "easylearncode.dashboard"})
+        return self.render_template("dashboard.html", **params)
+
+
+class CoursesHandler(BaseHandler):
+    @user_required
+    def get(self):
+        params = {}
+        params.update({'angular_app_name': 'easylearncode.courses'})
+        return self.render_template("courses.html", **params)
+
+
+class CoursePracticeHandler(BaseHandler):
+    @user_required
+    def get(self, course_id):
+        params = {}
+        params.update({'angular_app_name': 'easylearncode.course_paractice_detail'})
+        return self.render_template("course_practice_detail.html", **params)
+
+
+class CourseLearnHandler(BaseHandler):
+    @user_required
+    def get(self, course_id):
+        params = {}
+        params.update({'angular_app_name': 'easylearncode.course_learn_detail'})
+        return self.render_template("course_learn_detail.html", **params)
