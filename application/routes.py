@@ -38,8 +38,13 @@ _routes = [
     RedirectRoute('/learn', handlers.LearnHandler, name="learn", strict_slash=True),
     RedirectRoute('/practise', handlers.PractiseHandler, name="learn", strict_slash=True),
     RedirectRoute('/contest/result', handlers.ResultContestHandler, name='result-contest', strict_slash=True),
+    RedirectRoute('/info', handlers.InfoHandler, name='info', strict_slash=True),
+    RedirectRoute('/dashboard', handlers.DashboardHandler, name='dashboard', strict_slash=True),
+    RedirectRoute('/courses', handlers.CoursesHandler, name='courses', strict_slash=True),
+    RedirectRoute('/course/practice/<course_id>', handlers.CoursePracticeHandler, name='course-practice', strict_slash=True),
+    RedirectRoute('/course/learn/<course_id>', handlers.CourseLearnHandler, name='course-learn', strict_slash=True),
     RedirectRoute('/', handlers.HomeRequestHandler, name='home', strict_slash=True),
-    RedirectRoute('/info', handlers.InfoHandler, name='info', strict_slash=True)
+
 ]
 
 
