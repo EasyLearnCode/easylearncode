@@ -8,6 +8,7 @@
 
 .ace_editor {
     height: 200px;
+    font-size: 16px !important;
 }
 
 #fountainTextG {
@@ -209,11 +210,14 @@
     }
 
 }
+div .profileSteps{
+    margin-top: 5px;
+    margin-left: 80px;
+}
 div.profileStep {
 	position:relative;
-	float:right;
+	float:left;
 	width:100px;height:40px;
-    left: -200px;
 }
 div.profileStep .connect {
 	position:absolute;
@@ -252,4 +256,10 @@ div.profileStepPassive .connect {
 div.profileStepPassive .icon {
 	background-color:#ffffff;
     color:#24d4ec;
+}
+.clock
+{
+    font-family: 'Orbitron', sans-serif;
+    font-size: 13px;
+    padding: 10px;
 }

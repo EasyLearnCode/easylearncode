@@ -8,14 +8,47 @@
                         <div class="panel-heading">Kết quả tuần</div>
                         <div class="panel-body">
                             <span>Chọn tuần:</span>
+
                             <div class="list-group col-md-12">
-                                <a href="#" class="list-group-item" ng-class="{active:currentWeek}" data-ng-click="getThisResult()">Tuần này</a>
-                                <a href="#" class="list-group-item" ng-class="{active:!currentWeek}" data-ng-click="getLastResult()">Tuần trước</a>
+                                <a href="#" class="list-group-item" ng-class="{active:currentWeek}"
+                                   data-ng-click="getThisResult()">Tuần này</a>
+                                <a href="#" class="list-group-item" ng-class="{active:!currentWeek}"
+                                   data-ng-click="getLastResult()">Tuần trước</a>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-xs-8 col-md-8 highlight" >
+                <div class="col-xs-8 col-md-8 highlight">
+                    <div style="min-height:300px;" class="well">
+                        <ul class="nav nav-tabs" style="margin-bottom: 15px;">
+                            <li class="active"><a href="#question1" data-toggle="tab">Câu 1</a></li>
+                            <li class=""><a href="#question2" data-toggle="tab">Câu 2</a></li>
+                            <li class=""><a href="#question3" data-toggle="tab">Câu 3</a></li>
+                            <li class=""><a href="#question4" data-toggle="tab">Câu 4</a></li>
+                            <li class=""><a href="#question5" data-toggle="tab">Câu 5</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div ng-bind-html-unsafe="thisweek_contest.levels[0].description_html"
+                                 class="tab-pane fade active in" id="question1">
+
+                            </div>
+                            <div ng-bind-html-unsafe="thisweek_contest.levels[1].description_html" class="tab-pane fade"
+                                 id="question2">
+
+                            </div>
+                            <div ng-bind-html-unsafe="thisweek_contest.levels[2].description_html" class="tab-pane fade"
+                                 id="question3">
+
+                            </div>
+                            <div class="tab-pane fade" id="question4">
+
+                            </div>
+                            <div class="tab-pane fade" id="question5">
+
+                            </div>
+                        </div>
+
+                    </div>
                     <div class="well" style="min-height:500px">
                         <h2 class="text-center">Bảng trạng nguyên</h2>
                         <table class="table table-bordered table-condensed table-hover">

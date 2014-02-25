@@ -234,9 +234,11 @@ angular.module("services.utility").factory("libraryLoader", ["$q", "$rootScope",
 angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "$http", "csrf_token", function ($scope, $http, csrf_token) {
     var curr = new Date(); // get current date
     curr.setHours(0, 0, 0, 0);
-    var first = curr.getDate() - curr.getDay(); // First day is the day of the month - the day of the week
-    var last = first + 8;
+    var first = curr.getDate() - (curr.getDay() + 6) % 7; // First day is the day of the month - the day of the week
+    var last = first + 7;
     $scope.endtime = new Date(curr.setDate(last)).getTime();
+    $scope.start = new Date(curr.setDate(first));
+    $scope.end = new Date(curr.setDate(last));
     $scope.langs = [
         {
             name: 'Python',
@@ -262,7 +264,7 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "$h
         }
     ]
 
-    $http.get('/contest/get_thisweek_contest').success(function (data) {
+    $http.get('/api/contest/get_thisweek_contest').success(function (data) {
         if (data.status == 1) {
             //$scope.error = "Chưa có đề thi";
             //alert("hi");
@@ -304,11 +306,11 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "$h
     $scope.submitCode = function () {
         angular.forEach($scope.langs, function (lang) {
             if (lang.active) {
-                $http.post('/contest/submit', {"key": $scope.thisweek_contest.test_key, "source": lang.source,
+                $http.post('/api/contest/submit', {"key": $scope.thisweek_contest.this_quiz_level.quiz_level_key, "source": lang.source,
                     "_csrf_token": csrf_token, "lang": lang.lang}).success(function (data) {
-                    if (data.status == 1) {
-                        window.location = "/contest/result"
-                    }
+                        if (data.status == 1) {
+                            window.location = "/contest"
+                        }
 
                 });
             }
@@ -321,17 +323,29 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "$h
             if (lang.active) {
                 $scope.compiling = true;
                 $scope.compile_result = new Array();
-                angular.forEach($scope.thisweek_contest.test_case, function (test) {
-                    $http.post('/run_code', {"_csrf_token": csrf_token, input: test.input, "lang": lang.lang, "source": lang.source}).success(function (data, status, headers, config) {
-                        $scope.compile_result.push(
-                            {
-                                'result': data.run_status.output.trim() == test.output.trim(),
-                                'time': data.run_status.time_used,
-                                'memory': data.run_status.memory_used,
-                                'error': data.compile_status
-                            }
-                        );
-                        if ($scope.compile_result.length == $scope.thisweek_contest.test_case.length) {
+                angular.forEach($scope.thisweek_contest.this_quiz_level.test_case, function (test) {
+                    $http.post('/api/run_code', {"_csrf_token": csrf_token, input: test.input, "lang": lang.lang, "source": lang.source}).success(function (data, status, headers, config) {
+                        if (data.run_status.output) {
+                            $scope.compile_result.push(
+                                {
+                                    'result': data.run_status.output.trim() == test.output.trim(),
+                                    'time': data.run_status.time_used,
+                                    'memory': data.run_status.memory_used,
+                                    'error': data.compile_status
+                                }
+                            );
+                        } else {
+                            $scope.compile_result.push(
+                                {
+
+                                    'result': false,
+                                    'time': 0,
+                                    'memory': 0,
+                                    'error': data.compile_status
+                                }
+                            );
+                        }
+                        if ($scope.compile_result.length == $scope.thisweek_contest.this_quiz_level.test_case.length) {
                             $scope.compiling = false;
                         }
                     }).error(function (data, status, headers, config) {
@@ -579,9 +593,8 @@ angular.module("easylearncode.learn").run(function () {
     }]);
 
 angular.module("easylearncode.contest_result").controller('ContestResultCtrl', ['$scope', '$http', 'csrf_token', function ($scope, $http, csrf_token) {
-    $http.get('/contest/get_thisweek_result').success(function (data) {
+    $http.get('/api/contest/get_thisweek_result').success(function (data) {
         if (data.status == 1) {
-
         }
         else {
             $scope.thisweek_contest = data;
@@ -591,9 +604,8 @@ angular.module("easylearncode.contest_result").controller('ContestResultCtrl', [
     $scope.getThisResult = function () {
         $scope.currentWeek = true;
         $scope.thisweek_contest = new Array();
-        $http.get('/contest/get_thisweek_result').success(function (data) {
+        $http.get('/api/contest/get_thisweek_result').success(function (data) {
             if (data.status == 1) {
-
             }
             else {
                 $scope.thisweek_contest = data;
@@ -605,7 +617,7 @@ angular.module("easylearncode.contest_result").controller('ContestResultCtrl', [
     $scope.getLastResult = function () {
         $scope.currentWeek = false;
         $scope.thisweek_contest = new Array();
-        $http.get('/contest/get_lastweek_result').success(function (data) {
+        $http.get('/api/contest/get_lastweek_result').success(function (data) {
             if (data.status == 1) {
 
             }
