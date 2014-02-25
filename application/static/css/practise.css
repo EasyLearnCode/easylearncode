@@ -7,7 +7,7 @@
 }
 .ace_editor {
     height: 600px;
-    font-size: 14px;
+    font-size: 14px !important;
 }
 .wrap_introduction
 {
