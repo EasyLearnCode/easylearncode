@@ -187,6 +187,8 @@ class Course(ndb.Model):
     img = ndb.BlobProperty()
     description = ndb.StringProperty(indexed=False)
     excercise_keys = ndb.KeyProperty(Exercise, repeated=True)
+    lesson_keys = ndb.KeyProperty('Lesson', repeated=True)
+    user_keys = ndb.KeyProperty(User, repeated=True)
 
 
 class WeeklyQuizTest(ndb.Model):
@@ -317,3 +319,39 @@ class WeeklyQuizResult(ndb.Model):
     language = ndb.StringProperty()
     code = ndb.StringProperty(indexed=False)
 
+
+class Lesson(ndb.Model):
+    name = ndb.StringProperty(required=True)
+    description = ndb.StringProperty()
+    lecture_keys = ndb.KeyProperty('Lecture', repeated=True)
+
+
+class Lecture(ndb.Model):
+    name = ndb.StringProperty(required=True)
+    description = ndb.StringProperty()
+    image = ndb.BlobProperty()
+    time = ndb.IntegerProperty()
+    question_keys = ndb.KeyProperty('Question', repeated=True)
+
+
+class QuizAnswer(ndb.Model):
+    title = ndb.StringProperty()
+    is_true = ndb.BooleanProperty()
+
+
+class Quiz(ndb.Model):
+    question = ndb.StringProperty()
+    answers = ndb.StructuredProperty(QuizAnswer, repeated=True)
+    time = ndb.IntegerProperty()
+
+
+class Question(ndb.Model):
+    quiz_keys = ndb.KeyProperty('Quiz', repeated=True)
+    test_keys = ndb.KeyProperty('Test', repeated=True)
+    score = ndb.IntegerProperty()
+
+
+class Test(ndb.Model):
+    description = ndb.StringProperty(indexed=False)
+    test_script = ndb.StringProperty(indexed=False)
+    time = ndb.IntegerProperty()
