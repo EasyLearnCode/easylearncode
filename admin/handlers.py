@@ -26,3 +26,11 @@ class GetWeeklyQuizHandler(BaseHandler):
             tests_result.append(test)
         self.response.headers["Content-Type"] = "application/json"
         self.response.write(json.dumps(tests_result))
+
+
+class AdminCourseHandler(BaseHandler):
+
+    def get(self):
+        params = {}
+        params.update({'angular_app_name':'easylearncode.admin.course'})
+        return self.render_template('/admin/course.html',**params)
