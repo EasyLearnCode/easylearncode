@@ -165,7 +165,7 @@ class ExerciseCheckpoint(ndb.Model):
     hint_html = ndb.StringProperty()
     instruction = ndb.StringProperty()
     instruction_html = ndb.StringProperty()
-    name = ndb.StringProperty()
+    title = ndb.StringProperty()
     test_functions = ndb.StringProperty()
     index = ndb.IntegerProperty()
     timestamp = ndb.DateTimeProperty(auto_now_add=True)
@@ -173,7 +173,7 @@ class ExerciseCheckpoint(ndb.Model):
 
 class Exercise(ndb.Model):
     author = ndb.UserProperty()
-    name = ndb.StringProperty()
+    title = ndb.StringProperty()
     description = ndb.StringProperty()
     checkpoints = ndb.StructuredProperty(ExerciseCheckpoint)
     index = ndb.StringProperty()
@@ -183,7 +183,7 @@ class Exercise(ndb.Model):
 class Course(ndb.Model):
     created = ndb.DateTimeProperty(auto_now_add=True)
     updated = ndb.DateTimeProperty(auto_now=True)
-    name = ndb.StringProperty()
+    title = ndb.StringProperty()
     img = ndb.BlobProperty()
     description = ndb.StringProperty(indexed=False)
     excercise_keys = ndb.KeyProperty(Exercise, repeated=True)
@@ -376,13 +376,13 @@ class WeeklyQuizResult(ndb.Model):
     
     
 class Lesson(ndb.Model):
-    name = ndb.StringProperty(required=True)
+    title = ndb.StringProperty(required=True)
     description = ndb.StringProperty()
     lecture_keys = ndb.KeyProperty('Lecture', repeated=True)
 
 
 class Lecture(ndb.Model):
-    name = ndb.StringProperty(required=True)
+    title = ndb.StringProperty(required=True)
     description = ndb.StringProperty()
     image = ndb.BlobProperty()
     time = ndb.IntegerProperty()
