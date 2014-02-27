@@ -399,6 +399,11 @@ angular.module("easylearncode.home").controller('HomeCarouselCtrl', ['$scope', f
 }]);
 
 angular.module("easylearncode.learn").run(function () {
+    $('#myTab a:first').tab('show');
+    $('#myTab a').click(function (e) {
+      e.preventDefault()
+      $(this).tab('show')
+    })
 }).controller('LearnCtrl', ['$scope', '$http', '$location', function ($scope, $http, $location) {
         var lecture_id=$location.search()['lecture_id'];
         $http.get('/api/Lecture/'+lecture_id).success(function(data){
@@ -511,6 +516,10 @@ angular.module("easylearncode.learn").run(function () {
             });
         };
 
+        $scope.reSet = function(){
+            $scope.code = "";
+        }
+
 
         $scope.jsrepl.loadLanguage("python", function () {
         });
@@ -575,7 +584,7 @@ angular.module("easylearncode.learn").run(function () {
         $scope.config = {
             width: 700,
             height: 380,
-            autoHide: false,
+            autoHide: true,
             autoHideTime: 3000,
             autoPlay: false,
             responsive: false,
@@ -653,25 +662,31 @@ angular.module("easylearncode.practise").controller("PractiseCtrl", ["$scope", f
 
 angular.module("easylearncode.info").controller('InfoCtrl', ['$scope', '$http', '$location', function ($scope, $http, $location){
      var course_id =$location.search()['course_id'];
-    /*$scope.sections = [
+    $scope.course_name = "Python";
+    $scope.course_description = "Khóa học ngôn ngữ lập trình pyhton";
+    $scope.sections = [
         {
-        name: 'Những tiết học căn bản đầu tiên về python',
+        name: 'Kiến thức cơ bản về python',
         units: [
-            {time: '10:00', description: 'Giới thiệu về chương trình, loại dữ liệu và giá trị.', src: "/learn"},
-            {time: '10:00', description: 'Số nhị phân.', src: "/learn"},
-            {time: '10:00', description: 'List trong Python', src: "/learn"},
+            {time: '10:00', description: 'Giới thiệu về chương trình, loại dữ liệu và giá trị.', src: "/course/learn/viewer"},
+            {time: '10:00', description: 'Số nhị phân.', src: "/course/learn/viewer#!?lecture_id='+lecture_key"},
+            {time: '10:00', description: 'List trong Python', src: "/course/learn/viewer#!?lecture_id='+lecture_key"},
+            {time: '10:00', description: 'Vòng lặp for trong python', src: "/course/learn/viewer#!?lecture_id='+lecture_key"},
+            {time: '10:00', description: 'Vòng lặp while trong python', src: "/course/learn/viewer#!?lecture_id='+lecture_key"},
+            {time: '10:00', description: 'Chuỗi trong python', src: "/course/learn/viewer#!?lecture_id='+lecture_key"},
+            {time: '10:00', description: 'Viết một chương trình đơn giản với python', src: "/course/learn/viewer#!?lecture_id='+lecture_key"},
         ]
         },
         {
         name: 'Những tiết học căn bản đầu tiên về python2',
         units: [
-            {time: '10:00', description: 'Giới thiệu về chương trình, loại dữ liệu và giá trị.', src: "/learn"},
-            {time: '10:00', description: 'Số nhị phân.', src: "/learn"},
-            {time: '10:00', description: 'List trong Python', src: "/learn"},
+            {time: '10:00', description: 'Giới thiệu về chương trình, loại dữ liệu và giá trị.', src: "/course/learn/viewer#!?lecture_id='+lecture_key"},
+            {time: '10:00', description: 'Số nhị phân.', src: "/course/learn/viewer#!?lecture_id='+lecture_key"},
+            {time: '10:00', description: 'List trong Python', src: "/course/learn/viewer#!?lecture_id='+lecture_key"},
         ]
         }
-    ];*/
-     $http({method: 'GET', url: '/api/Course/'+course_id}).
+    ];
+    /* $http({method: 'GET', url: '/api/Course/'+course_id}).
         success(function(data, status, headers, config) {
           $scope.course_name = data.name;
           $scope.course_description = data.description;
@@ -693,8 +708,10 @@ angular.module("easylearncode.info").controller('InfoCtrl', ['$scope', '$http', 
         error(function(data, status, headers, config) {
           // called asynchronously if an error occurs
           // or server returns response with an error status.
-        });
+        });*/
+
     $scope.toggle = function (section) {
         section.toggle = !section.toggle;
+        section.status = section.toggle?"Ẩn":"Hiện";
     }
 }]);
