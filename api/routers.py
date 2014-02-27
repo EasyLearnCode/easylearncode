@@ -16,8 +16,7 @@ _routes = [
     RedirectRoute('/api/contest/submit', handlers.SubmitContestHandler, name='submit-contest', strict_slash=True),
     RedirectRoute('/api/contest/get_lastweek_result', handlers.GetLastWeekResultHandler, name='get-lastweek-result',
                   strict_slash=True),
-    RedirectRoute(r"{}<model>/<id>".format(PREFIX), handler=restful.RestfulHandler),
-
+    RedirectRoute(r"{}<model>/<id>".format(PREFIX), handler=restful.RestfulHandler)
 ]
 
 
