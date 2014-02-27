@@ -1,6 +1,4 @@
 {% extends "main.html" %}
-<<<<<<< Updated upstream
-=======
 {% block mediaCSS %}
     <link rel="stylesheet" type="text/css" href="/application/css/style.css">
 {% endblock %}
@@ -144,36 +142,14 @@
 
             &nbsp;
             &nbsp;
->>>>>>> Stashed changes
 
-{% block content %}
-    <div class="container">
-        <div class="page-header">
-            <h1>
-                <small class="pull-right" title="Connected Accounts"><span class="fa fa-google-plus"></span>
-                    <span class="fa fa-twitter"></span>
-                </small>
-                Nam Phạm Ngọc Quang
-            </h1>
+            <span class="stat-count" style="font-weight: 700;font-size: 26px;color: #333">0</span>
+            day streak
+
+            <div class="last-coded">
+                Last coded <span class="last-coded-time">4 months ago</span>
+            </div>
         </div>
-<<<<<<< Updated upstream
-        <form method="POST" action="." novalidate="">
-            <div class="row">
-                <div class="col-md-4 col-sm-6">
-                    <input id="csrf_token" name="csrf_token" type="hidden"
-                           value="20131125163511##34acd82d9ef691113bee2c537f6c2b55b91abdab">
-
-                    <div class="form-group ">
-                        <label class="control-label" for="username">Username</label>
-                        <input id="username" class="form-control" name="username" type="text" value="nampnq"
-                               readonly="readonly">
-                    </div>
-                    <div class="form-group ">
-                        <label class="control-label" for="name">Name</label>
-                        <input autofocus="" class="form-control" id="name" name="name" type="text"
-                               value="Nam Phạm Ngọc Quang">
-
-=======
     </div>
     <div class="row">
         <div class="col-md-8">
@@ -261,20 +237,9 @@
                                 </div>
 
                             </a>
->>>>>>> Stashed changes
 
                         </div>
 
-<<<<<<< Updated upstream
-
-                    <div class="form-group ">
-                        <label class="control-label" for="email">Email</label>
-                        <input class="form-control" id="email" name="email" type="email" value="nampnq@gmail.com">
-
-
-                    </div>
-
-=======
                         <div class="track-progress module neutral cell" data-percent="0.10067114093959731">
 
                             <a href="/en/tracks/javascript-original/resume" class="plain-text-link track-link">
@@ -314,38 +279,12 @@
                             </a>
 
                         </div>
->>>>>>> Stashed changes
+
+                    </div>
 
                 </div>
-                <div class="col-md-2 col-sm-3">
-                    <div class="form-group">
-                        <label class="control-label">Avatar</label>
 
-                        <div>
-                            <img class="img-thumbnail"
-                                 src="//gravatar.com/avatar/7cf19173e360b0e328de258ea52c1f9a?d=identicon&amp;r=x&amp;s=170"
-                                 alt="Avatar of Nam Phạm Ngọc Quang">
-                        </div>
-                        <p class="help-block">
-                            Change on
-                            <a href="//gravatar.com" target="_blank">Gravatar</a>
-                        </p>
-                    </div>
-                </div>
             </div>
-<<<<<<< Updated upstream
-            <div class="row">
-                <div class="col-md-6 col-sm-9">
-                    <div class="controls">
-                        <button type="submit" class="btn btn-primary btn-block btn-loading"
-                                data-loading-text="Updating Profile..">
-                            Update Profile
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </form>
-=======
         </div>
         <div class="col-md-4">
             <div class="dashboard__groups-and-badges__module">
@@ -379,8 +318,82 @@
     </div>
     </div>
     </div>
->>>>>>> Stashed changes
     </div>
+
+
+
+    {#    <div class="container" data-ng-controller = "UserProfileCtrl">#}
+    {#        <div class="page-header">#}
+    {#            <h1>#}
+    {#                <small class="pull-right" title="Connected Accounts"><span class="fa fa-google-plus"></span>#}
+    {#                    <span class="fa fa-twitter"></span>#}
+    {#                </small>#}
+    {#                {{ name }} {{ lastname }}#}
+    {#            </h1>#}
+    {#        </div>#}
+    {#        <form method="POST" action="." novalidate="">#}
+    {#            <div class="row">#}
+    {#                <div class="col-md-4 col-sm-6">#}
+    {#                    <input id="csrf_token" name="csrf_token" type="hidden"#}
+    {#                           value="20131125163511##34acd82d9ef691113bee2c537f6c2b55b91abdab">#}
+    {##}
+    {#                    <div class="form-group ">#}
+    {#                        <label class="control-label" for="username">Username</label>#}
+    {#                        <input id="username" class="form-control" name="username" type="text" value="{{ username }}"#}
+    {#                               readonly="readonly">#}
+    {#                    </div>#}
+    {#                    <div class="form-group ">#}
+    {#                        <label class="control-label" for="name">Name</label>#}
+    {#                        <input autofocus="" class="form-control" id="name" name="name" type="text"#}
+    {#                               value="{{ name }}">#}
+    {##}
+    {##}
+    {#                    </div>#}
+    {##}
+    {##}
+    {#                    <div class="form-group ">#}
+    {#                        <label class="control-label" for="email">Email</label>#}
+    {#                        <input class="form-control" id="email" name="email" type="email" value="{{ email }}">#}
+    {##}
+    {##}
+    {#                    </div>#}
+    {##}
+    {##}
+    {#                </div>#}
+    {#                <div class="col-md-2 col-sm-3">#}
+    {#                    <div class="form-group">#}
+    {#                        <label class="control-label">Avatar</label>#}
+    {##}
+    {#                        <div>#}
+    {#                            <img class="img-thumbnail"#}
+    {#                                 src="//gravatar.com/avatar/7cf19173e360b0e328de258ea52c1f9a?d=identicon&amp;r=x&amp;s=170"#}
+    {#                                 alt="Avatar of Nam Phạm Ngọc Quang">#}
+    {#                        </div>#}
+    {#                        <p class="help-block">#}
+    {#                            Change on#}
+    {#                            <a href="//gravatar.com" target="_blank">Gravatar</a>#}
+    {#                        </p>#}
+    {#                    </div>#}
+    {#                </div>#}
+    {#            </div>#}
+    {#            <div class="row">#}
+    {#                <div class="col-md-6 col-sm-9">#}
+    {#                    <div class="controls">#}
+    {#                        <button type="submit" class="btn btn-primary btn-block btn-loading"#}
+    {#                                data-loading-text="Updating Profile.." data-ng-click="UpdateProflie()">#}
+    {#                            Update Profile#}
+    {#                        </button>#}
+    {#                    </div>#}
+    {#                </div>#}
+    {#            </div>#}
+    {#        </form>#}
+    {#    </div>#}
+{% endblock %}
+{% block mediaJS %}
+    <script>
+        angular.module('services.utility').constant('csrf_token', '{{ csrf_token() }}');
+        angular.module('services.utility').constant('userInfo', {{ userInfo }});
+    </script>
 {% endblock %}
 {#{% block header_title %}#}
 {#        {% trans %}Edit Profile{% endtrans %}#}
