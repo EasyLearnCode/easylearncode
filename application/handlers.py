@@ -1526,6 +1526,19 @@ class ContestHandler(BaseHandler):
         params.update({'angular_app_name': "easylearncode.contest"})
         return self.render_template("contest.html", **params)
 
+class EditProfileBasicInfoHandler(BaseHandler):
+    @user_required
+    def get(self):
+        params = {}
+        params.update({'angular_app_name': "easylearncode.contest"})
+        return self.render_template("editprofile_basic_info.html", **params)
+
+class EditProfileSettingsHandler(BaseHandler):
+    @user_required
+    def get(self):
+        params = {}
+        params.update({'angular_app_name': "easylearncode.contest"})
+        return self.render_template("editprofile_basic_info.html", **params)
 
 class GameHandler(BaseHandler):
     @user_required

@@ -26,6 +26,8 @@ _routes = [
                   strict_slash=True),
     RedirectRoute('/contact/', handlers.ContactHandler, name='contact', strict_slash=True),
     RedirectRoute('/settings/profile', handlers.EditProfileHandler, name='edit-profile', strict_slash=True),
+    RedirectRoute('/settings/profile/basic_info', handlers.EditProfileBasicInfoHandler, name='edit-profile1', strict_slash=True),
+    RedirectRoute('/settings/profile/settings', handlers.EditProfileSettingsHandler, name='edit-profile2', strict_slash=True),
     RedirectRoute('/settings/password', handlers.EditPasswordHandler, name='edit-password', strict_slash=True),
     RedirectRoute('/settings/email', handlers.EditEmailHandler, name='edit-email', strict_slash=True),
     RedirectRoute('/password-reset/', handlers.PasswordResetHandler, name='password-reset', strict_slash=True),
