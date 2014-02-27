@@ -2,14 +2,18 @@ __author__ = 'nampnq'
 
 from application.handlers import BaseHandler, user_required
 
-class GetThisWeekResultHandler(BaseHandler):
+
+class GetWeekResultHandler(BaseHandler):
     @user_required
-    def get(self):
+    def get(self, week_id):
         from application.models import WeeklyQuiz
         import json
-        from google.appengine.ext import ndb
-
-        test = WeeklyQuiz.get_this_week_contest()
+        if week_id == "current":
+            test = WeeklyQuiz.get_this_week_contest()
+        else:
+            from google.appengine.ext import ndb
+            test = ndb.Key(urlsafe=week_id).get()
+        quizs = WeeklyQuiz.get_quizs_last()
         if test:
             top_player = test.get_players()
             test_key = test.key.urlsafe()
@@ -28,6 +32,7 @@ class GetThisWeekResultHandler(BaseHandler):
             test.update({'top_player': top_player})
             test.update({'test_key': test_key})
             test.update({'levels': levels})
+            test.update({'quizs': quizs})
             self.response.headers["Content-Type"] = "application/json"
             self.response.write(json.dumps(test))
         else:
@@ -90,12 +95,13 @@ class GetThisweekContestHandler(BaseHandler):
         if test:
             test_key = test.key
             top_player = WeeklyQuizResult.get_top_player(test_key)
-
+            result_last_week = WeeklyQuizResult.get_result_last_week(self.user_key)
             this_quiz_level = test.get_this_contest_level(self.user_key)
             test = test.to_dict()
             test.pop('start_date', None)
             test.pop('publish_date', None)
             test.update({'top_player': top_player})
+            test.update({'result_last_week': result_last_week})
             test.update({'test_key': test_key.urlsafe()})
             test.update({'this_quiz_level': this_quiz_level[0].to_dict()})
             test['this_quiz_level'].update({'description_html': this_quiz_level[0].description_html})
@@ -109,23 +115,3 @@ class GetThisweekContestHandler(BaseHandler):
             self.response.write(json.dumps({'status': 1}))
 
 
-class GetLastWeekResultHandler(BaseHandler):
-    @user_required
-    def get(self):
-        from application.models import WeeklyQuiz
-        import json
-
-        test = WeeklyQuiz.get_last_week_contest()
-        if test:
-            top_player = test.get_players()
-            test_key = test.key.urlsafe()
-            test = test.to_dict()
-            test.pop('start_date', None)
-            test.pop('publish_date', None)
-            test.update({'top_player': top_player})
-            test.update({'test_key': test_key})
-            self.response.headers["Content-Type"] = "application/json"
-            self.response.write(json.dumps(test))
-        else:
-            self.response.headers["Content-Type"] = "application/json"
-            self.response.write(json.dumps({'status': 1}))
