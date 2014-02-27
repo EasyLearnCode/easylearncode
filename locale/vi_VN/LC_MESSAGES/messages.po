@@ -19,7 +19,14 @@ msgstr ""
 "Generated-By: Babel 1.3\n"
 
 msgid " I agree to something I will never read"
+<<<<<<< Updated upstream
 msgstr "Tôi đồng ý với các điều khoản trên."
+=======
+msgstr ""
+
+msgid " View all "
+msgstr "Xem tất cả"
+>>>>>>> Stashed changes
 
 msgid "%prog [options]"
 msgstr ""

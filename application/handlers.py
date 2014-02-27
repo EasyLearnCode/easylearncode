@@ -1078,84 +1078,26 @@ class EditProfileHandler(BaseHandler):
 
         params = {}
         if self.user:
-            user_info = models.User.get_by_id(long(self.user_id))
-            self.form.username.data = user_info.username
-            self.form.name.data = user_info.name
-            self.form.last_name.data = user_info.last_name
-            self.form.country.data = user_info.country
-            self.form.tz.data = user_info.tz
-            providers_info = user_info.get_social_providers_info()
-            if not user_info.password:
-                params['local_account'] = False
-            else:
-                params['local_account'] = True
-            params['used_providers'] = providers_info['used']
-            params['unused_providers'] = providers_info['unused']
-            params['country'] = user_info.country
-            params['tz'] = user_info.tz
-
+            user_info = models.User.get_by_id(long(self.user_id)).to_dict()
+            user_info['updated'] = None
+            user_info['created'] = None
+            params['userInfo'] = json.dumps(user_info)
+        params['angular_app_name'] = "easylearncode.user_profile"
         return self.render_template('edit_profile.html', **params)
 
     def post(self):
         """ Get fields from POST dict """
+        user_info = models.User.get_by_id(long(self.user_id))
+        import json
 
-        if not self.form.validate():
-            return self.get()
-        username = self.form.username.data.lower()
-        name = self.form.name.data.strip()
-        last_name = self.form.last_name.data.strip()
-        country = self.form.country.data
-        tz = self.form.tz.data
-
-        try:
-            user_info = models.User.get_by_id(long(self.user_id))
-
-            try:
-                message = ''
-                # update username if it has changed and it isn't already taken
-                if username != user_info.username:
-                    user_info.unique_properties = ['username', 'email']
-                    uniques = [
-                        'User.username:%s' % username,
-                        'User.auth_id:own:%s' % username,
-                    ]
-                    # Create the unique username and auth_id.
-                    success, existing = Unique.create_multi(uniques)
-                    if success:
-                        # free old uniques
-                        Unique.delete_multi(
-                            ['User.username:%s' % user_info.username, 'User.auth_id:own:%s' % user_info.username])
-                        # The unique values were created, so we can save the user.
-                        user_info.username = username
-                        user_info.auth_ids[0] = 'own:%s' % username
-                        message += _('Your new username is <strong>{}</strong>').format(username)
-
-                    else:
-                        message += _(
-                            'The username <strong>{}</strong> is already taken. Please choose another.').format(
-                            username)
-                        # At least one of the values is not unique.
-                        self.add_message(message, 'danger')
-                        return self.get()
-                user_info.name = name
-                user_info.last_name = last_name
-                user_info.country = country
-                user_info.tz = tz
-                user_info.put()
-                message += " " + _('Thanks, your settings have been saved.')
-                self.add_message(message, 'success')
-                return self.get()
-
-            except (AttributeError, KeyError, ValueError), e:
-                logging.error('Error updating profile: ' + e)
-                message = _('Unable to update profile. Please try again later.')
-                self.add_message(message, 'danger')
-                return self.get()
-
-        except (AttributeError, TypeError), e:
-            login_error_message = _('Sorry you are not logged in.')
-            self.add_message(login_error_message, 'danger')
-            self.redirect_to('login')
+        data = json.loads(self.request.body)
+        user_info.username = data.get('username')
+        user_info.name = data.get('name')
+        user_info.last_name = data.get('lastname')
+        user_info.password = data.get('password')
+        user_info.put()
+        self.response.headers['Content-type'] = 'application/json'
+        self.response.write(json.dumps({'status': 'ok'}))
 
     @webapp2.cached_property
     def form(self):
@@ -1163,6 +1105,65 @@ class EditProfileHandler(BaseHandler):
         f.country.choices = self.countries_tuple
         f.tz.choices = self.tz
         return f
+
+
+class ChangePasswordHander(BaseHandler):
+    def post(self):
+        """ Get fields from POST dict """
+        import json
+        data = json.loads(self.request.body)
+        current_password = data.get('currentpassword').strip()
+        password = data.get('newpassword').strip()
+
+        try:
+            user_info = models.User.get_by_id(long(self.user_id))
+            auth_id = "own:%s" % user_info.username
+
+            # Password to SHA512
+            current_password = utils.hashing(current_password, self.app.config.get('salt'))
+            try:
+                user = models.User.get_by_auth_password(auth_id, current_password)
+                # Password to SHA512
+                password = utils.hashing(password, self.app.config.get('salt'))
+                user.password = security.generate_password_hash(password, length=12)
+                user.put()
+
+                # send email
+                subject = self.app.config.get('app_name') + " Account Password Changed"
+
+                # load email's template
+                template_val = {
+                    "app_name": self.app.config.get('app_name'),
+                    "first_name": user.name,
+                    "username": user.username,
+                    "email": user.email,
+                    "reset_password_url": self.uri_for("password-reset", _full=True)
+                }
+                email_body_path = "emails/password_changed.txt"
+                email_body = self.jinja2.render_template(email_body_path, **template_val)
+                email_url = self.uri_for('taskqueue-send-email')
+                taskqueue.add(url=email_url, params={
+                    'to': user.email,
+                    'subject': subject,
+                    'body': email_body,
+                    'sender': self.app.config.get('contact_sender'),
+                })
+
+                #Login User
+                self.auth.get_user_by_password(user.auth_ids[0], password)
+                self.response.headers['Content-type'] = 'application/json'
+                self.response.write(json.dumps({'status': 'ok'}))
+                return
+            except (InvalidAuthIdError, InvalidPasswordError), e:
+                # Returns error message to self.response.write in
+                # the BaseHandler.dispatcher
+                self.response.headers['Content-type'] = 'application/json'
+                self.response.write(json.dumps({'status': 'fail'}))
+                return
+        except (AttributeError, TypeError), e:
+            self.response.headers['Content-type'] = 'application/json'
+            self.response.write(json.dumps({'status': 'fail'}))
+            return
 
 
 class EditPasswordHandler(BaseHandler):
@@ -1526,6 +1527,19 @@ class ContestHandler(BaseHandler):
         params.update({'angular_app_name': "easylearncode.contest"})
         return self.render_template("contest.html", **params)
 
+class EditProfileBasicInfoHandler(BaseHandler):
+    @user_required
+    def get(self):
+        params = {}
+        params.update({'angular_app_name': "easylearncode.contest"})
+        return self.render_template("editprofile_basic_info.html", **params)
+
+class EditProfileSettingsHandler(BaseHandler):
+    @user_required
+    def get(self):
+        params = {}
+        params.update({'angular_app_name': "easylearncode.contest"})
+        return self.render_template("editprofile_basic_info.html", **params)
 
 class GameHandler(BaseHandler):
     @user_required
