@@ -29,19 +29,23 @@
                         </div>
                             <div id="list">
                                 <a class="list-group-item" data-ng-show="section.toggle" data-ng-class="'bouncy-slide-top'" data-ng-repeat="unit in section.units" href="{{ unit.src }}">
-                                <span class="badge">{{ unit.time }}:00</span>
+                                <span class="badge">{{ unit.time }}</span>
                                   <img src="/application/img/video-play-48.png" width="32" style="margin-right:10px" /> {{ unit.description }}
                                 </a>
                             </div>
                             <a class="list-group-item" ng-click="toggle(section)">
-                                <img src="/application/img/toggle_icon.png" width="24" style="margin-right:10px" /> Chuyển đổi
+                                <img src="/application/img/toggle_icon.png" width="24" style="margin-right:10px" /> {{ section.status }}
                             </a>
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <h3>Tác giả</h3>
+                <div class="panel panel-default">
+                  <div class="panel-heading">Thông tin tác giả</div>
+                  <div class="panel-body">
                     <div><img class="img-circle" width="70px" height="70px" src="/application/img/computer.jpg"> Tên tác giả </div>
                     <div>Giới thiệu về tác giả</div>
+                  </div>
+                </div>
                 </div>
             </div>
         </div>

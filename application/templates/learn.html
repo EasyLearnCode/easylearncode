@@ -2,6 +2,7 @@
 {% block mediaCSS %}
     <link rel="stylesheet" href="/application/css/learn.css">
     <link rel="stylesheet" type="text/css" href="/application/css/videogular/quiz.css">
+    <!--<link rel="stylesheet" type="text/css" href="/application/css/expandable_menu/expandable_menu.css">-->
 {% endblock %}
 {% block content %}
     {% raw %}
@@ -10,15 +11,26 @@
                 <div class="col-xs-8">
                     <div class="panel panel-primary">
                         <div class="panel-heading">
-                            <h3 class="panel-title"><a href="#modal" class="second"><i class="fa fa-laptop fa-lg"></i>{{ lecture_name }}</a></h3>
+                            <span class="pull-left"> <h3 class="panel-title"><a class="second"><i class="fa fa-laptop fa-lg"></i>{{ lecture_name }}</a></h3></span>
+                            <span class="pull-right">
+                                <div class="btn-group">
+                              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                1/10 <span class="fa fa-toggle-down"></span>
+                              </button>
+                              <ul class="dropdown-menu">
+
+                              </ul>
+                            </div>
+                            </span>
+                            <div class="clearfix"></div>
                         </div>
-                        <div class="panel-body">
+                        <div class="panel-body" id="video-content">
                             <div class="tab-pane active" id="video">
                                 <videogular
                                     vg-player-ready="onPlayerReady" vg-complete="onCompleteVideo" vg-update-time="onUpdateTime" vg-update-size="onUpdateSize" vg-update-volume="onUpdateVolume" vg-update-state="onUpdateState"
                                     vg-width="config.width" vg-height="config.height" vg-theme="config.theme.url" vg-autoplay="config.autoPlay" vg-stretch="config.stretch.value" vg-responsive="config.responsive">
                                     <video preload='metadata'>
-                                        <source type="video/youtube" src="http://www.youtube.com/watch?v=nOEw9iiopwI" />
+                                        <source type="video/youtube" src="http://www.youtube.com/watch?v=vfzfwPo6MZ4" />
                                         <!-- <source src="http://www.videogular.com/assets/videos/videogular.mp4" type="video/mp4">
                                         <source src="http://www.videogular.com/assets/videos/videogular.webm" type="video/webm"> -->
 
@@ -54,16 +66,23 @@
                         </div>
                     </div>
                     <ul class="nav nav-tabs">
-                      <li class="active"><a href="#home" data-toggle="tab">Home</a></li>
-                      <li><a href="#profile" data-toggle="tab">Profile</a></li>
-                      <li><a href="#messages" data-toggle="tab">Messages</a></li>
-                      <li><a href="#settings" data-toggle="tab">Settings</a></li>
+                      <li class="active"><a href="#home" data-toggle="tab"><span class="glyphicon glyphicon-info-sign"></span> Tóm tắt</a></li>
+                      <li><a href="#profile" data-toggle="tab"><span class="glyphicon glyphicon-question-sign"></span> Hỏi đáp</a></li>
+                      <li><a href="#messages" data-toggle="tab"><span class="glyphicon glyphicon-download"></span> Tải về</a></li>
                     </ul>
-                    <div class="tab-content">
-                      <div class="tab-pane active" id="home">...</div>
-                      <div class="tab-pane" id="profile">...</div>
-                      <div class="tab-pane" id="messages">...</div>
-                      <div class="tab-pane" id="settings">...</div>
+                    <div class="tab-content border_info">
+                      <div class="tab-pane fade active" id="home">Tóm tắt bài giảng</div>
+                      <div class="tab-pane fade" id="profile">
+                          <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+                            <div id="gplus-cm"></div>
+                            <script type="text/javascript">
+                              jQuery(document).ready(function($) {
+                                $('#gplus-cm').html('<div class="g-comments" data-width="700" data-href="http://ngochan.vietnamcode.info" data-first_party_property="BLOGGER" data-view_type="FILTERED_POSTMOD">Loading Google+ Comments ...</div>');
+                              });
+                            </script>
+                            <script async type="text/javascript" src="http://apis.google.com/js/plusone.js?callback=gpcb"></script>
+                      </div>
+                      <div class="tab-pane fade" id="messages">Tải về</div>
                     </div>
                 </div>
                 <div class="col-xs-4">
@@ -79,7 +98,7 @@
                             <button type="button" class="btn btn-success" ng-click="runCode()"><span
                                     class="glyphicon glyphicon-play"></span> Chạy code
                             </button>
-                            <button type="button" class="btn btn-default" ng-clik="reSet()"><span
+                            <button type="button" class="btn btn-default" ng-click="reSet()"><span
                                     class="glyphicon glyphicon-remove"></span> Làm lại
                             </button>
                             <button type="button" class="btn btn-default pull-right"><span
