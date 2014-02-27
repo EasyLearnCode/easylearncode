@@ -1,46 +1,92 @@
 {% extends "main.html" %}
 {% block mediaCSS %}
     <link rel="stylesheet" href="/application/css/learn.css">
-    <link rel="stylesheet" href="/application/css/video-js.min.css">
-    <link rel="stylesheet" href="/application/css/videojs.imageOverlay.css">
+    <link rel="stylesheet" type="text/css" href="/application/css/videogular/quiz.css">
 {% endblock %}
 {% block content %}
     {% raw %}
-        <div class="container">
-            <div class="row highlight" data-ng-controller="LearnCtrl">
+        <div class="container"  data-ng-controller="LearnCtrl">
+            <div class="row highlight">
                 <div class="col-xs-8">
                     <div class="panel panel-primary">
                         <div class="panel-heading">
-                            <h3 class="panel-title"><a href="#modal" class="second">Bài 1: Toán tử và biểu thức</a></h3>
+                            <h3 class="panel-title"><a href="#modal" class="second"><i class="fa fa-laptop fa-lg"></i>{{ lecture_name }}</a></h3>
                         </div>
                         <div class="panel-body">
                             <div class="tab-pane active" id="video">
-                                <video id="video-content" src="" class="video-js vjs-default-skin aligncenter"
-                                       preload="auto" width="100%" height="405"></video>
+                                <videogular
+                                    vg-player-ready="onPlayerReady" vg-complete="onCompleteVideo" vg-update-time="onUpdateTime" vg-update-size="onUpdateSize" vg-update-volume="onUpdateVolume" vg-update-state="onUpdateState"
+                                    vg-width="config.width" vg-height="config.height" vg-theme="config.theme.url" vg-autoplay="config.autoPlay" vg-stretch="config.stretch.value" vg-responsive="config.responsive">
+                                    <video preload='metadata'>
+                                        <source type="video/youtube" src="http://www.youtube.com/watch?v=nOEw9iiopwI" />
+                                        <!-- <source src="http://www.videogular.com/assets/videos/videogular.mp4" type="video/mp4">
+                                        <source src="http://www.videogular.com/assets/videos/videogular.webm" type="video/webm"> -->
+
+                                        <track kind="captions" src="assets/subs/pale-blue-dot.vtt" srclang="en" label="English" default></track>
+                                    </video>
+                                    <vg-youtube></vg-youtube>
+                                    <vg-quiz vg-data='config.plugins.quiz.data' vg-quiz-submit="onQuizSubmit" vg-quiz-skip="onQuizSkip" vg-quiz-continue="onQuizContinue" vg-quiz-show-explanation="onQuizShowExplanation"></vg-quiz>
+                                    <vg-poster-image vg-url='config.plugins.poster.url' vg-stretch="config.stretch.value"></vg-poster-image>
+                                    <vg-buffering></vg-buffering>
+                                    <vg-overlay-play vg-play-icon="config.theme.playIcon"></vg-overlay-play>
+
+                                    <vg-controls vg-autohide="config.autoHide" vg-autohide-time="config.autoHideTime" style="height: 50px;">
+                                        <vg-play-pause-button vg-play-icon="config.theme.playIcon" vg-pause-icon="config.theme.pauseIcon"></vg-play-pause-button>
+                                        <vg-timeDisplay>{{ currentTime }}</vg-timeDisplay>
+                                        <vg-scrubBar>
+                                            <vg-scrubbarcurrenttime></vg-scrubbarcurrenttime>
+                                        </vg-scrubBar>
+                                        <vg-timeDisplay>{{ totalTime }}</vg-timeDisplay>
+                                        <vg-volume>
+                                            <vg-mutebutton
+                                                vg-volume-level-3-icon="config.theme.volumeLevel3Icon"
+                                                vg-volume-level-2-icon="config.theme.volumeLevel2Icon"
+                                                vg-volume-level-1-icon="config.theme.volumeLevel1Icon"
+                                                vg-volume-level-0-icon="config.theme.volumeLevel0Icon"
+                                                vg-mute-icon="config.theme.muteIcon">
+                                            </vg-mutebutton>
+                                            <vg-volumebar></vg-volumebar>
+                                        </vg-volume>
+                                        <vg-fullscreenButton vg-enter-full-screen-icon="config.theme.enterFullScreenIcon" vg-exit-full-screen-icon="config.theme.exitFullScreenIcon"></vg-fullscreenButton>
+                                    </vg-controls>
+                                </videogular>
                             </div>
                         </div>
+                    </div>
+                    <ul class="nav nav-tabs">
+                      <li class="active"><a href="#home" data-toggle="tab">Home</a></li>
+                      <li><a href="#profile" data-toggle="tab">Profile</a></li>
+                      <li><a href="#messages" data-toggle="tab">Messages</a></li>
+                      <li><a href="#settings" data-toggle="tab">Settings</a></li>
+                    </ul>
+                    <div class="tab-content">
+                      <div class="tab-pane active" id="home">...</div>
+                      <div class="tab-pane" id="profile">...</div>
+                      <div class="tab-pane" id="messages">...</div>
+                      <div class="tab-pane" id="settings">...</div>
                     </div>
                 </div>
                 <div class="col-xs-4">
                     <div class="panel panel-success">
                         <div class="panel-heading">
-                            <h3 class="panel-title"> Thực hành
+                            <h3 class="panel-title"> <i class="fa fa-terminal fa-lg"></i>Thực hành
                             </h3>
                         </div>
                         <div class="panel-body">
-                            <div ui-ace="{ theme:'twilight',
+                            <div ui-ace="{ theme:'chrome',
                         mode:lang.mode}" data-ng-model="code" id="code-content"></div>
                             </br>
                             <button type="button" class="btn btn-success" ng-click="runCode()"><span
                                     class="glyphicon glyphicon-play"></span> Chạy code
                             </button>
-                            <button type="button" class="btn btn-warning" ng-clik="reSet()"><span
+                            <button type="button" class="btn btn-default" ng-clik="reSet()"><span
                                     class="glyphicon glyphicon-remove"></span> Làm lại
                             </button>
                             <button type="button" class="btn btn-default pull-right"><span
                                     class="glyphicon glyphicon-fullscreen"></span> Phóng to
                             </button>
-                            <textarea class="form-control" cols="200" rows="8" data-ng-model="kq"> >> </textarea>
+
+                            <textarea class="form-control result_box" cols="200" rows="8" data-ng-model="kq" style="margin-top: 20px"> >> </textarea>
                         </div>
                     </div>
                 </div>
@@ -51,10 +97,14 @@
 {% block pluginJS %}
     <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js"></script>
     <script src="/application/js/libs/angularjs/ui-ace.min.js"></script>
+    <script src="/application/js/libs/angularjs/angular-sanitize.min.js"></script>
     <script src="/application/js/libs/angularjs/ui-bootstrap-tpls-0.7.0.min.js"></script>
-    <script src="/application/js/libs/video-plugin/video.js"></script>
-    <script src="/application/js/libs/video-plugin/vjs.youtube.js"></script>
-    <script src="/application/js/libs/video-plugin/videojs.imageOverlay.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
+    <script src="/application/js/libs/videogular/videogular.js"></script>
+	<script src="/application/js/libs/videogular/plugins/controls.js"></script>
+	<script src="/application/js/libs/videogular/plugins/overlay-play.js"></script>
+	<script src="/application/js/libs/videogular/plugins/buffering.js"></script>
+	<script src="/application/js/libs/videogular/plugins/poster.js"></script>
+	<script src="/application/js/libs/videogular/plugins/youtube.js"></script>
+	<script src="/application/js/libs/videogular/plugins/quiz.js"></script>
     <script src="/application/js/libs/jsrepl/jsrepl.js" id="jsrepl-script"></script>
 {% endblock %}
