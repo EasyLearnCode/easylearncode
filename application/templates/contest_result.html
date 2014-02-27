@@ -4,53 +4,39 @@
         <div class="container" data-ng-controller='ContestResultCtrl'>
             <div class="row">
                 <div class="col-xs-3 col-md-3 highlight">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">Kết quả tuần</div>
+                    <div class="panel panel-default" style="position: fixed">
+                        <div class="panel-heading">Kết quả 5 tuần thi gần đây</div>
                         <div class="panel-body">
                             <span>Chọn tuần:</span>
 
                             <div class="list-group col-md-12">
-                                <a href="#" class="list-group-item" ng-class="{active:currentWeek}"
-                                   data-ng-click="getThisResult()">Tuần này</a>
-                                <a href="#" class="list-group-item" ng-class="{active:!currentWeek}"
-                                   data-ng-click="getLastResult()">Tuần trước</a>
+                                <a data-ng-repeat="quiz in thisweek_contest.quizs" class="list-group-item"
+                                   ng-class="{active:currentWeek==quiz.week}"
+                                   data-ng-click="getThisResult(quiz.test_key)">Tuần {{ quiz.week }}</a>
+
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-xs-8 col-md-8 highlight">
                     <div style="min-height:300px;" class="well">
+                        <h2 class="text-center text-info">Các câu hỏi trong tuần</h2>
                         <ul class="nav nav-tabs" style="margin-bottom: 15px;">
-                            <li class="active"><a href="#question1" data-toggle="tab">Câu 1</a></li>
-                            <li class=""><a href="#question2" data-toggle="tab">Câu 2</a></li>
-                            <li class=""><a href="#question3" data-toggle="tab">Câu 3</a></li>
-                            <li class=""><a href="#question4" data-toggle="tab">Câu 4</a></li>
-                            <li class=""><a href="#question5" data-toggle="tab">Câu 5</a></li>
+                            <li data-ng-repeat="level in thisweek_contest.levels"
+                                ng-class="{active:$index==0}"><a href="#question{{ $index+1 }}" data-toggle="tab">Câu
+                                {{ $index+1 }}</a></li>
                         </ul>
                         <div class="tab-content">
-                            <div ng-bind-html-unsafe="thisweek_contest.levels[0].description_html"
-                                 class="tab-pane fade active in" id="question1">
 
-                            </div>
-                            <div ng-bind-html-unsafe="thisweek_contest.levels[1].description_html" class="tab-pane fade"
-                                 id="question2">
-
-                            </div>
-                            <div ng-bind-html-unsafe="thisweek_contest.levels[2].description_html" class="tab-pane fade"
-                                 id="question3">
-
-                            </div>
-                            <div class="tab-pane fade" id="question4">
-
-                            </div>
-                            <div class="tab-pane fade" id="question5">
-
+                            <div data-ng-repeat="level in thisweek_contest.levels" class="tab-pane fade"
+                                 id="question{{ $index+1 }}" ng-class="{active:$index==0,in:$index==0}"
+                                 ng-bind-html="level.description_html|to_trusted">
                             </div>
                         </div>
 
                     </div>
                     <div class="well" style="min-height:500px">
-                        <h2 class="text-center">Bảng trạng nguyên</h2>
+                        <h2 class="text-center text-success">Bảng trạng nguyên</h2>
                         <table class="table table-bordered table-condensed table-hover">
                             <tr class="success">
                                 <th>STT</th>

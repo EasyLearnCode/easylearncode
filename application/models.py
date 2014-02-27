@@ -340,16 +340,13 @@ class WeeklyQuiz(ndb.Model):
         return top_player
 
 
-
-
     @classmethod
-    def get_last_week_contest(cls):
-        from datetime import datetime, timedelta
-
-        test = cls.query(cls.start_date >= (datetime.now() + timedelta(-7 - datetime.now().weekday())).date(),
-                         cls.start_date <= (datetime.now() + timedelta(
-                             -1 - datetime.now().weekday())).date()).get()
-        return test
+    def get_quizs_last(cls):
+        results = cls.query().fetch()
+        quizs = []
+        for result in results:
+            quizs.append({'test_key': result.key.urlsafe(), 'week': result.week})
+        return sorted(quizs, key=lambda k: k['week'], reverse=True)[:5]
 
 
 class WeeklyQuizResult(ndb.Model):
@@ -371,9 +368,18 @@ class WeeklyQuizResult(ndb.Model):
         results = cls.query(cls.test_key == test_key).fetch()
         score = []
         for key, result in groupby(results, lambda x: x.user_key):
-            score.append({'user_key': key,'username':key.get().email, 'score': sum([x.score for x in result])})
+            score.append({'user_key': key, 'username': key.get().email, 'score': sum([x.score for x in result])})
         return sorted(score, key=lambda k: k['score'], reverse=True)[:5]
-    
+
+    @classmethod
+    def get_result_last_week(cls, user_key):
+        from itertools import groupby
+
+        results = cls.query(cls.user_key == user_key).fetch()
+        score = []
+        for key, result in groupby(results, lambda x: x.test_key):
+            score.append({'test_key': key, 'week': key.get().week, 'score': sum([x.score for x in result])})
+        return sorted(score, key=lambda k: k['score'], reverse=True)[:5]    
     
 class Lesson(ndb.Model):
     title = ndb.StringProperty(required=True)

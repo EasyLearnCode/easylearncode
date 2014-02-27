@@ -7,12 +7,16 @@
 {% block content %}
     {% raw %}
         <div class="container" data-ng-controller="ContestCtrl">
-            <div class="col-md-12 highlight"> <div><img width="100" style="float: left; margin-right: 5px" src="\application\img\Olympic-Flame.ico" /></div>
-                Xin chào mừng các bạn đến với trang thi đố vui hàng tuần. Hàng tuần sẽ có
-                5 câu hỏi từ dễ đến khó.
-                Trang thi với mục đích giúp các bạn rèn luyện tư duy lập trình. <br/>
+            <div class="col-md-12 highlight">
+                <div><img width="100" style="float: left; margin-right: 5px" src="\application\img\Olympic-Flame.ico"/>
+                </div>
+                Xin chào mừng các bạn đến với phân hệ thi đố vui hàng tuần. Đây là nơi để các bạn luyện tập lập trình và
+                tư duy thuật toán thông qua việc giải các bài tập có
+                dạng tương tự như các bài thi học sinh giỏi tin học. Chúng tôi hy vọng qua việc tham gia cuộc thi, các
+                bạn sẽ tìm thấy sự hứng thú trong việc học tin học, nâng cao được trình độ của mình,
+                đồng thời cũng có thể giao lưu, học tập dược từ các bạn khác!<br/>
                 Cuộc thi hiện đang ở tuần thứ: {{ thisweek_contest.week }}. <br/>
-                Bắt đầu từ: {{ start | date:'dd-MM-yyyy' }} 00:00 đến {{ end | date:'dd-MM-yyyy'}} 23:59
+                Bắt đầu từ: {{ start | date:'dd-MM-yyyy' }} 00:00 đến {{ end | date:'dd-MM-yyyy' }} 23:59
                 <div class="text-center">
                     <button id="startTourBtn" class="btn btn-large btn-primary">Hướng dẫn</button>
                 </div>
@@ -31,12 +35,12 @@
 
                         </div>
                         <div class="clearfix"></div>
-                        <div class="panel panel-primary">
+                        <div class="panel panel-danger">
                             <div class="panel-heading">
                                 <h3 class="panel-title" id="step-2">Câu hỏi:</h3>
                             </div>
                             <div class="panel-body"
-                                 ng-bind-html-unsafe="thisweek_contest.this_quiz_level.description_html">
+                                 ng-bind-html="thisweek_contest.this_quiz_level.description_html|to_trusted">
 
                             </div>
                         </div>
@@ -58,7 +62,9 @@
                             <div class="panel-body">
                                 <ul class="list-group">
                                     <li data-ng-repeat="player in thisweek_contest.top_player"
-                                        class="list-group-item">{{ $index+1 }}. {{ player.username }}</li>
+                                        class="list-group-item">
+                                        <span class="badge">{{ player.score  }} Điểm</span>
+                                        {{ $index+1 }}. {{ player.username }}</li>
                                 </ul>
                                 <a class="btn btn-success" href="/contest/result">Xem chi tiết...</a>
                             </div>
@@ -69,10 +75,12 @@
                             </div>
                             <div class="panel-body">
                                 <ul class="list-group">
-                                    <li data-ng-repeat="player in thisweek_contest.top_player"
-                                        class="list-group-item">{{ $index+1 }}. {{ player.username }}</li>
+                                    <li data-ng-repeat="week in thisweek_contest.result_last_week"
+                                        class="list-group-item">
+                                        <span class="badge">{{ week.score  }} Điểm</span>
+                                        {{ $index+1 }}. Tuần {{ week.week }}</li>
                                 </ul>
-                                <a class="btn btn-success" href="/contest/result">Xem chi tiết...</a>
+
                             </div>
                         </div>
                     </div>

@@ -68,6 +68,11 @@
         }
     ])
 })();
+angular.module("easylearncode.core").filter('to_trusted', ['$sce', function($sce){
+        return function(text) {
+            return $sce.trustAsHtml(text);
+        };
+    }]);
 angular.module("services.utility").factory("validator", [
     function () {
         var a = {
@@ -237,8 +242,8 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "$h
     var first = curr.getDate() - (curr.getDay() + 6) % 7; // First day is the day of the month - the day of the week
     var last = first + 7;
     $scope.endtime = new Date(curr.setDate(last)).getTime();
-    $scope.start = new Date(curr.setDate(first));
-    $scope.end = new Date(curr.setDate(last));
+    $scope.start = new Date((new Date()).getFullYear(), (new Date()).getMonth(), (new Date).getDate() - (((new Date()).getDay() + 6) % 7));
+    $scope.end = new Date((new Date()).getFullYear(), (new Date()).getMonth(), (new Date).getDate() - ((((new Date()).getDay() + 6) % 7) - 6));
     $scope.langs = [
         {
             name: 'Python',
@@ -511,37 +516,26 @@ angular.module("easylearncode.learn").run(function () {
 
     }]);
 
-angular.module("easylearncode.contest_result").controller('ContestResultCtrl', ['$scope', '$http', 'csrf_token', function ($scope, $http, csrf_token) {
-    $http.get('/api/contest/get_thisweek_result').success(function (data) {
+angular.module("easylearncode.contest_result").controller('ContestResultCtrl', ['$scope', '$http', 'csrf_token', '$location', function ($scope, $http, csrf_token, $location) {
+    $http.get('/api/contest/week_result/current').success(function (data) {
         if (data.status == 1) {
         }
         else {
             $scope.thisweek_contest = data;
+            $scope.currentWeek = $scope.thisweek_contest.week;
         }
 
     });
-    $scope.getThisResult = function () {
+
+    $scope.getThisResult = function (key) {
         $scope.currentWeek = true;
         $scope.thisweek_contest = new Array();
-        $http.get('/api/contest/get_thisweek_result').success(function (data) {
+        $http.get('/api/contest/week_result/'+key).success(function (data) {
             if (data.status == 1) {
             }
             else {
                 $scope.thisweek_contest = data;
-            }
-
-        });
-    }
-    $scope.currentWeek = true;
-    $scope.getLastResult = function () {
-        $scope.currentWeek = false;
-        $scope.thisweek_contest = new Array();
-        $http.get('/api/contest/get_lastweek_result').success(function (data) {
-            if (data.status == 1) {
-
-            }
-            else {
-                $scope.thisweek_contest = data;
+                $scope.currentWeek = $scope.thisweek_contest.week;
             }
 
         });
