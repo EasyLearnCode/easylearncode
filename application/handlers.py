@@ -1570,7 +1570,7 @@ class PractiseHandler(BaseHandler):
     def get(self):
         params = {}
         params.update({'angular_app_name': "easylearncode.practise"})
-        return self.render_template("practise.html", **params)
+        return self.render_template("practice.html", **params)
 
 
 class InfoHandler(BaseHandler):
@@ -1599,10 +1599,18 @@ class CoursesHandler(BaseHandler):
 
 class CoursePracticeHandler(BaseHandler):
     @user_required
-    def get(self, course_id):
+    def get(self):
         params = {}
         params.update({'angular_app_name': 'easylearncode.course_paractice_detail'})
-        return self.render_template("course_practice_detail.html", **params)
+        return self.render_template("info.html", **params)
+
+
+class CoursePracticeViewerHandler(BaseHandler):
+    @user_required
+    def get(self):
+        params = {}
+        params.update({'angular_app_name': 'easylearncode.course_paractice_viewer'})
+        return self.render_template("practice.html", **params)
 
 
 class CourseLearnHandler(BaseHandler):
