@@ -34,6 +34,10 @@ builtins:
 
 handlers:
 
+- url: /quanly/.*
+  script: google.appengine.ext.admin.application
+  login: admin
+
 - url: /remote_api
   script: remote_api.app
   login: admin
