@@ -9,17 +9,51 @@
         <div class="container"  data-ng-controller="LearnCtrl">
             <div class="row highlight">
                 <div class="col-xs-8">
+                    <div class="lesson_info overlay" ng-show="show"></div>
+                    <div class="panel-group" id="accordion">
                     <div class="panel panel-primary">
                         <div class="panel-heading">
-                            <span class="pull-left"> <h3 class="panel-title"><a class="second"><i class="fa fa-laptop fa-lg"></i>{{ lecture_name }}</a></h3></span>
+                            <span class="pull-left"> <h3 class="panel-title"><a class="second"><i class="fa fa-laptop fa-lg"></i> {{ lecture.title }}</a></h3></span>
                             <span class="pull-right">
-                                <div class="btn-group">
-                              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                                1/10 <span class="fa fa-toggle-down"></span>
-                              </button>
-                              <ul class="dropdown-menu">
-
-                              </ul>
+                               <a class="btn btn-default" ng-click="show=!show" ng-class="{show:show}">
+                                {{ selectedIndex }}/10 <i class="fa fa-toggle-down"></i></a>
+                                <div class="lesson_info popover fade bottom" ng-init="show=false" ng-class="{in:show}" style="display: block;top: 40px;left: 450px;width: 330px;"><div class="arrow"></div><h3 class="popover-title" style="display: none;"></h3><div class="popover-content">
+                              <div class="panel panel-default">
+                                <div class="panel-heading">
+                                  <h4 class="panel-title">
+                                      <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                                        Phần 1: Kiến thức cơ bản về python
+                                      </a>
+                                    </h4>
+                                </div>
+                                <div id="collapseOne" class="panel-collapse collapse in">
+                                  <div class="panel-body">
+                                    <ul class="list-group" data-ng-repeat="l in lectures">
+                                      <li ng-click=goLecture(l,$index) class="list-group-item list-group-item-info" hover-class add-class="list-group-item-success" remove-class="list-group-item-info"><i class="fa fa-arrow-circle-o-right"></i>{{l.title}}</li>
+                                    </ul>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="panel panel-default">
+                                <div class="panel-heading">
+                                  <h4 class="panel-title">
+                                      <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
+                                        Phần 2: Python Nâng Cao
+                                      </a>
+                                    </h4>
+                                </div>
+                                <div id="collapseTwo" class="panel-collapse collapse in">
+                                  <div class="panel-body">
+                                    <ul class="list-group">
+                                      <li class="list-group-item list-group-item-info"><i class="fa fa-arrow-circle-o-right"></i> N?i dung 1</li>
+                                      <li class="list-group-item list-group-item-info"><i class="fa fa-arrow-circle-o-right"></i> N?i dung 1</li>
+                                      <li class="list-group-item list-group-item-info"><i class="fa fa-arrow-circle-o-right"></i> N?i dung 1</li>
+                                      <li class="list-group-item list-group-item-info"><i class="fa fa-arrow-circle-o-right"></i> N?i dung 1</li>
+                                    </ul>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
                             </div>
                             </span>
                             <div class="clearfix"></div>
@@ -30,8 +64,8 @@
                                     vg-player-ready="onPlayerReady" vg-complete="onCompleteVideo" vg-update-time="onUpdateTime" vg-update-size="onUpdateSize" vg-update-volume="onUpdateVolume" vg-update-state="onUpdateState"
                                     vg-width="config.width" vg-height="config.height" vg-theme="config.theme.url" vg-autoplay="config.autoPlay" vg-stretch="config.stretch.value" vg-responsive="config.responsive">
                                     <video preload='metadata'>
-                                        <source type="video/youtube" src="http://www.youtube.com/watch?v=vfzfwPo6MZ4" />
-                                        <!-- <source src="http://www.videogular.com/assets/videos/videogular.mp4" type="video/mp4">
+                                        <source type="video/youtube" src="www.youtube.com/watch?v=vfzfwPo6MZ4"  />
+                                        <!-- <source www.youtube.com/watch?v=vfzfwPo6MZ4 src="http://www.videogular.com/assets/videos/videogular.mp4" type="video/mp4">
                                         <source src="http://www.videogular.com/assets/videos/videogular.webm" type="video/webm"> -->
 
                                         <track kind="captions" src="assets/subs/pale-blue-dot.vtt" srclang="en" label="English" default></track>
@@ -64,20 +98,20 @@
                                 </videogular>
                             </div>
                         </div>
-                    </div>
+                    </div></div>
                     <ul class="nav nav-tabs">
                       <li class="active"><a href="#home" data-toggle="tab"><span class="glyphicon glyphicon-info-sign"></span> Tóm tắt</a></li>
-                      <li><a href="#profile" data-toggle="tab"><span class="glyphicon glyphicon-question-sign"></span> Hỏi đáp</a></li>
-                      <li><a href="#messages" data-toggle="tab"><span class="glyphicon glyphicon-download"></span> Tải về</a></li>
+                      <li><a href="#profile" data-toggle="tab"><span class="glyphicon glyphicon-question-sign"></span>Hỏi đáp</a></li>
+                      <li><a href="#messages" data-toggle="tab"><span class="glyphicon glyphicon-download"></span>Tải về</a></li>
                     </ul>
                     <div class="tab-content border_info">
-                      <div class="tab-pane fade active" id="home">Tóm tắt bài giảng</div>
+                      <div class="tab-pane fade active" id="home">{{ lecture.description }}</div>
                       <div class="tab-pane fade" id="profile">
                           <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
                             <div id="gplus-cm"></div>
                             <script type="text/javascript">
                               jQuery(document).ready(function($) {
-                                $('#gplus-cm').html('<div class="g-comments" data-width="700" data-href="http://ngochan.vietnamcode.info" data-first_party_property="BLOGGER" data-view_type="FILTERED_POSTMOD">Loading Google+ Comments ...</div>');
+                                $('#gplus-cm').html('<div class="g-comments" data-width="700" data-href="http://localhost:8080/course/learn/viewer#!?lecture_id={{ lecture_id }}" data-first_party_property="BLOGGER" data-view_type="FILTERED_POSTMOD">Loading Google+ Comments ...</div>');
                               });
                             </script>
                             <script async type="text/javascript" src="http://apis.google.com/js/plusone.js?callback=gpcb"></script>

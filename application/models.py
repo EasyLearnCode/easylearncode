@@ -391,6 +391,7 @@ class Lecture(ndb.Model):
     title = ndb.StringProperty(required=True)
     description = ndb.StringProperty()
     image = ndb.BlobProperty()
+    youtube_id = ndb.StringProperty()
     time = ndb.IntegerProperty()
     question_keys = ndb.KeyProperty('Question', repeated=True)
 
