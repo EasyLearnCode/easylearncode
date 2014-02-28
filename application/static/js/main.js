@@ -924,3 +924,63 @@ angular.module("easylearncode.info").controller('InfoCtrl', ['$scope', '$http', 
         section.status = section.toggle?"Ẩn":"Hiện";
     }
 }]);
+angular.module("easylearncode.courses",["easylearncode.core"]);
+angular.module("easylearncode.course_paractice_detail",["ui.bootstrap", "easylearncode.core", "ngAnimate"]).controller('InfoCtrl', ['$scope', '$http', '$location', function ($scope, $http, $location){
+     var course_id =$location.search()['course_id'];
+    $scope.course_name = "Python";
+    $scope.course_description = "Khóa học ngôn ngữ lập trình pyhton";
+    $scope.sections = [
+        {
+        name: 'Cú pháp python',
+        units: [
+            {time: '02:00', description: 'Cú pháp trong python', src: "/course/practice/viewer#!?exercise_id=cs101"},
+            {time: '05:00', description: 'Thực hành tính một phép tính cơ bản', src: "/course/practice/viewer#!?exercise_id=cs101"},
+        ]
+        },
+        {
+        name: 'Chuỗi và cách in ra màn hình',
+        units: [
+            {time: '02:00', description: 'Chuỗi và cách in ra màn hình', src: "/course/practice/viewer#!?exercise_id=cs101"},
+            {time: '05:00', description: 'Ngày và giờ', src: "/course/practice/viewer#!?exercise_id=cs101"},
+        ]
+        }
+    ];
+    $scope.toggle = function (section) {
+        section.toggle = !section.toggle;
+        section.status = section.toggle?"Ẩn":"Hiện";
+    }
+}]);
+angular.module("easylearncode.course_paractice_viewer",["ui.bootstrap", "ui.ace",'easylearncode.core'])
+    .controller("PracticeCtrl", ["$scope","$sce","$timeout", function ($scope, $sce, $timeout) {
+    $scope.exercise = {
+        lang: 'python',
+        source: 'print "Hello World"'
+    };
+
+    $scope.updateVisualaztionUrl=function(){
+        src = "http://pythontutor.com/iframe-embed.html#code="+encodeURIComponent($scope.exercise.source)+"&cumulative=false&heapPrimitives=false&drawParentPointers=false&textReferences=false&showOnlyOutputs=false&py=2&curInstr=0&codeDivWidth=350&codeDivHeight=400";
+        $("#visualaztionModal .modal-body").find("iframe").remove();
+        var iframe = $('<iframe src="' + src + '" frameborder="0" width="800" height="500"></iframe>');
+        $("#visualaztionModal .modal-body").append(iframe);
+    }
+
+    }])
+    .directive('hoverClass', function() {
+      return {
+        restrict: 'A',
+        scope: {
+          addClass: '@',
+          removeClass: '@'
+        },
+        link: function(scope, element) {
+          element.on('mouseenter', function() {
+            element.addClass(scope.addClass);
+            element.removeClass(scope.removeClass);
+          });
+          element.on('mouseleave', function() {
+            element.addClass(scope.removeClass);
+            element.removeClass(scope.addClass);
+          });
+        }
+      };
+    });
