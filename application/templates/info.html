@@ -33,7 +33,7 @@
                                   <img src="/application/img/video-play-48.png" width="32" style="margin-right:10px" /> {{ unit.description }}
                                 </a>
                             </div>
-                            <a class="list-group-item" ng-click="toggle(section)">
+                            <a class="list-group-item" ng-click="toggle(section)" ng-init="section.status='Hiện'">
                                 <img src="/application/img/toggle_icon.png" width="24" style="margin-right:10px" /> {{ section.status }}
                             </a>
                     </div>
