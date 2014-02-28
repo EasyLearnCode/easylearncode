@@ -29,7 +29,7 @@ def json_extras(obj):
     if hasattr(obj, "get_result"):  # RPC
         return obj.get_result()
     if hasattr(obj, "strftime"):  # datetime
-        return obj.strftime("%Y-%m-%dT%H:%M:%S.") + str(obj.microsecond / 1000) + "Z"
+        return obj.isoformat()
     if isinstance(obj, ndb.GeoPt):
         return {"lat": obj.lat, "lon": obj.lon}
     if isinstance(obj, ndb.Key):
