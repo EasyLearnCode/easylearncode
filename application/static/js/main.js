@@ -578,11 +578,88 @@ angular.module("easylearncode.learn").run(function () {
       e.preventDefault()
       $(this).tab('show')
     })
-}).controller('LearnCtrl', ['$scope', '$http', '$location', function ($scope, $http, $location) {
-        var lecture_id=$location.search()['lecture_id'];
-        $http.get('/api/Lecture/'+lecture_id).success(function(data){
+}).controller('LearnCtrl', ['$scope', '$http', '$location', '$sce', function ($scope, $http, $location, $sce) {
+        $scope.lecture_id=$location.search()['lecture_id'];
+        /*$http.get('/api/Lecture/'+lecture_id).success(function(data){
             $scope.lecture_name = data.name;
-        })
+        })*/
+        $scope.lectures = [
+        {
+            title: "Giới thiệu về chương trình, loại dữ liệu và giá trị",
+            description: "Viết một chương trình cơ bản. Khái niệm cơ bản của các kiểu dữ liệu, các biến và các báo cáo có điều kiện",
+            time: 689,
+            youtube_id:'vfzfwPo6MZ4'
+        },
+        {
+            title: "Số nhị phân",
+            description: "Hiểu được thế nào là số đại diện.Giới thiệu số nhị phân",
+            time: 114,
+            youtube_id: '8vxI2F-Gu4E'
+        },
+        {
+            title: "Danh sách (List) trong python",
+            description: "Hiểu được cơ bản về list trong python",
+            time: 701,
+            youtube_id: 'QK0wgGPcVxg'
+        },
+        {
+            title: "Vòng lặp for trong python",
+            description: "Vòng lặp for cơ bản trong python",
+            time: 615,
+            youtube_id: 'l4kopWpjq9E'
+        },
+        {
+            title: "Vòng lặp while trong python",
+            description: "Một vòng lặp while có thể làm một điều tương tự như một vòng lặp for",
+            time: 320,
+            youtube_id: 'KfePraaexho'
+        },
+        {
+            title: "Kiểu chuỗi trong python",
+            description: "Thử nghiệm và xem chúng ta làm gì được với chuỗi",
+            time: 838,
+            youtube_id: 'iZAtkS0F-Zo'
+        },
+        {
+            title: "Viết một chương trình đơn giản",
+            description: "Viết một chương trình đơn giản với vòng lặp for",
+            time: 689,
+            youtube_id:'ZyYp1V84Xqc'
+        },
+        {
+            title: "Chạy chương trình từng bước",
+            description: "Từng bước xem những gì xảy ra khi người dùng thử nhập vào một giá trị",
+            time: 563,
+            youtube_id:'dn9XjHz33O8'
+        },
+        {
+            title: "lưu đồ hoạt động của chương trình",
+            description: "Lưu đồ hoạt động của chương trình",
+            time: 689,
+            youtube_id:'EiR6cf8Towc'
+        },
+        {
+            title: "Python 3 không tương thích với python 2",
+            description: "Hiểu dduocj lý do tại sao các chương trình ví dụ sẽ không chạy trong Python 3 và làm thế nào để sửa chữa nó.",
+            time: 322,
+            youtube_id: 'WT-gS-8p7KA'
+        },
+        {
+            title: "Định nghĩa hàm Python",
+            description: "Định nghĩa hàm trong python",
+            time: 552,
+            youtube_id: 'JwO_25S_eWE'
+        }
+    ];
+        $scope.selectedIndex = 1;
+        $scope.lecture = $scope.lectures[$scope.lecture_id];
+        $scope.goLecture = function(lecture, index){
+            $scope.youtubeUrl = $sce.trustAsResourceUrl("http://www.youtube.com/watch?v=" + lecture.youtube_id);
+            $scope.lecture.title = lecture.title;
+            $scope.lecture.description = lecture.description;
+            $scope.show = false;
+            $scope.selectedIndex = index+1;
+        }
         $scope.lang =
         {
             name: 'Python',
@@ -777,7 +854,7 @@ angular.module("easylearncode.learn").run(function () {
             },
             plugins: {
                 poster: {
-                    url: "assets/images/videogular.png"
+                    url: "http://upload.wikimedia.org/wikipedia/commons/4/4a/Python3-powered_hello-world.svg"
                 },
                 quiz: {
                     data: [{
@@ -798,8 +875,27 @@ angular.module("easylearncode.learn").run(function () {
                 }
             }
         };
+        $scope.youtubeUrl = $sce.trustAsResourceUrl("http://www.youtube.com/watch?v=vfzfwPo6MZ4");
 
-    }]);
+    }]).directive('hoverClass', function () {
+    return {
+        restrict$scop: 'A',
+        scope: {
+            addClass: '@',
+            removeClass: '@'
+        },
+        link: function (scope, element) {
+            element.on('mouseenter', function() {
+                element.addClass(scope.addClass);
+                element.removeClass(scope.removeClass);
+            });
+            element.on('mouseleave', function() {
+                element.addClass(scope.removeClass);
+                element.removeClass(scope.addClass);
+            });
+        }
+    };
+});
 
 angular.module("easylearncode.contest_result").controller('ContestResultCtrl', ['$scope', '$http', 'csrf_token', '$location', function ($scope, $http, csrf_token, $location) {
     $http.get('/api/contest/week_result/current').success(function (data) {
@@ -877,17 +973,21 @@ angular.module("easylearncode.info").controller('InfoCtrl', ['$scope', '$http', 
         {
         name: 'Kiến thức cơ bản về python',
         units: [
-            {time: '10:00', description: 'Giới thiệu về chương trình, loại dữ liệu và giá trị.', src: "/course/learn/viewer"},
-            {time: '10:00', description: 'Số nhị phân.', src: "/course/learn/viewer#!?lecture_id='+lecture_key"},
-            {time: '10:00', description: 'List trong Python', src: "/course/learn/viewer#!?lecture_id='+lecture_key"},
-            {time: '10:00', description: 'Vòng lặp for trong python', src: "/course/learn/viewer#!?lecture_id='+lecture_key"},
-            {time: '10:00', description: 'Vòng lặp while trong python', src: "/course/learn/viewer#!?lecture_id='+lecture_key"},
-            {time: '10:00', description: 'Chuỗi trong python', src: "/course/learn/viewer#!?lecture_id='+lecture_key"},
-            {time: '10:00', description: 'Viết một chương trình đơn giản với python', src: "/course/learn/viewer#!?lecture_id='+lecture_key"},
+            {time: '15:00', description: 'Giới thiệu về chương trình, loại dữ liệu và giá trị.', src: "/course/learn/viewer#!?lecture_id=0"},
+            {time: '15:00', description: 'Số nhị phân.', src: "/course/learn/viewer#!?lecture_id=1"},
+            {time: '15:00', description: 'List trong Python', src: "/course/learn/viewer#!?lecture_id=2"},
+            {time: '15:00', description: 'Vòng lặp for trong python', src: "/course/learn/viewer#!?lecture_id=3"},
+            {time: '15:00', description: 'Vòng lặp while trong python', src: "/course/learn/viewer#!?lecture_id=4"},
+            {time: '15:00', description: 'Chuỗi trong python', src: "/course/learn/viewer#!?lecture_id=5"},
+            {time: '15:00', description: 'Viết một chương trình đơn giản với python', src: "/course/learn/viewer#!?lecture_id=6"},
+            {time: '15:00', description: 'Chạy từng bước chương trình', src: "/course/learn/viewer#!?lecture_id=7"},
+            {time: '15:00', description: 'Lưu đồ hoạt động của chương trình', src: "/course/learn/viewer#!?lecture_id=8"},
+            {time: '15:00', description: 'Python 3 không tương thích với python 2', src: "/course/learn/viewer#!?lecture_id=9"},
+            {time: '15:00', description: 'Định nghĩa hàm Python', src: "/course/learn/viewer#!?lecture_id=10"}
         ]
         },
         {
-        name: 'Những tiết học căn bản đầu tiên về python2',
+        name: 'Python Nâng cao',
         units: [
             {time: '10:00', description: 'Giới thiệu về chương trình, loại dữ liệu và giá trị.', src: "/course/learn/viewer#!?lecture_id='+lecture_key"},
             {time: '10:00', description: 'Số nhị phân.', src: "/course/learn/viewer#!?lecture_id='+lecture_key"},
