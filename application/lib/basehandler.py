@@ -3,7 +3,9 @@
 # standard library imports
 import logging
 import re
+
 import pytz
+
 # related third party imports
 import webapp2
 from webapp2_extras import jinja2
@@ -81,8 +83,10 @@ class BaseHandler(webapp2.RequestHandler):
             # csrf protection
             if self.request.method == "POST" and not self.request.path.startswith('/taskqueue'):
                 import json
+
                 token = self.session.get('_csrf_token')
-                client_csrf_token = self.request.get('_csrf_token') or json.loads(self.request.body).get('_csrf_token')
+                client_csrf_token = self.request.get('_csrf_token') or json.loads(self.request.body).get(
+                    '_csrf_token') or self.request.headers.get("X-CSRFToken", None)
                 if not token or token != client_csrf_token:
                     self.abort(403)
 
@@ -303,9 +307,9 @@ class BaseHandler(webapp2.RequestHandler):
             'query_string': self.request.query_string,
             'path_for_language': self.path_for_language,
             'is_mobile': self.is_mobile,
-            'locale_iso': locale_iso, # babel locale object
-            'locale_language': language.capitalize() + " (" + territory.capitalize() + ")", # babel locale object
-            'locale_language_id': language_id, # babel locale object
+            'locale_iso': locale_iso,  # babel locale object
+            'locale_language': language.capitalize() + " (" + territory.capitalize() + ")",  # babel locale object
+            'locale_language_id': language_id,  # babel locale object
             'locales': self.locales,
             'provider_uris': self.provider_uris,
             'provider_info': self.provider_info,
