@@ -1,0 +1,18 @@
+<div ng-show="!form.submitted">
+    <form name="myForm" id="myForm" style="margin: 0px !important;">
+        <div class="modal-header">
+            <h3>{{ form.form_name }}</h3>
+        </div>
+        <div class="modal-body">
+            <div ng-repeat="field in form.form_fields">
+                <field-directive field="field">
+
+                </field-directive>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-disabled="!myForm.$valid" ng-click="ok()">OK</button>
+            <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+        </div>
+    </form>
+</div
