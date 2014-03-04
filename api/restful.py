@@ -3,12 +3,13 @@ import datetime
 import logging
 import json
 
+from application.models import Course
+
 from google.appengine import api
 from google.appengine.ext import ndb
-from webapp2_extras import auth
 
 from util import AppError, LoginError, BreakError
-from util import as_json
+from util import as_json, parse_body
 from application.handlers import BaseHandler
 
 
@@ -16,9 +17,9 @@ class _ConfigDefaults(object):
     # store total model count in metadata field HEAD query
     METADATA = False
     # list of valid models, None means anything goes
-    DEFINED_MODELS = None
+    DEFINED_MODELS = {"courses": Course}
     RESTRICT_TO_DEFINED_MODELS = True
-    PROTECTED_MODEL_NAMES = ["(?i)(mesh|messages|files|events|admin|proxy|user)",
+    PROTECTED_MODEL_NAMES = ["(?i)(mesh|messages|files|events|admin|proxy)",
                              "(?i)tailbone.*"]
     post_put_hook = None
 
@@ -252,7 +253,7 @@ def parse_id(id, model, data_id=None):
             key = ndb.Key(urlsafe=id)
         except:
             key = ndb.Key(model, id)
-        if model != key.kind().lower():
+        if model != key.kind():
             raise AppError("Key kind must match id kind: {} != {}.".format(model, key.kind()))
         return key
     return None
@@ -559,6 +560,8 @@ class RestfulHandler(BaseHandler):
         if key:
             m.key = key
         if model != "users":
+            if not hasattr(m, 'owners'):
+                m.owners = []
             if len(m.owners) == 0:
                 m.owners.append(u)
 
@@ -586,21 +589,21 @@ class RestfulHandler(BaseHandler):
         return self._get(model, id)
 
     @as_json
-    def post(self, *args):
-        return self.set_or_create(*args)
+    def post(self, *args, **kwargs):
+        return self.set_or_create(*args, **kwargs)
 
     @as_json
-    def patch(self, *args):
+    def patch(self, *args, **kwargs):
         # TODO: implement this differently to do partial update
-        return self.set_or_create(*args)
+        return self.set_or_create(*args, **kwargs)
 
     @as_json
-    def put(self, *args):
-        return self.set_or_create(*args)
+    def put(self, *args, **kwargs):
+        return self.set_or_create(*args, **kwargs)
 
     @as_json
-    def delete(self, *args):
-        return self._delete(*args)
+    def delete(self, *args, **kwargs):
+        return self._delete(*args, **kwargs)
 
 
 def get_model(urlsafekey):
