@@ -1,6 +1,11 @@
 from webapp2_extras.appengine.auth.models import User
 from google.appengine.ext import ndb
 
+class ModelUtils(object):
+    def to_dict(self, *args, **kwargs):
+        result = super(ModelUtils, self).to_dict(*args, **kwargs)
+        result["Id"] = self.key.urlsafe()
+        return result
 
 class User(User):
     """
@@ -84,14 +89,14 @@ class User(User):
         return result
 
 
-class LogVisit(ndb.Model):
+class LogVisit(ModelUtils, ndb.Model):
     user = ndb.KeyProperty(kind=User)
     uastring = ndb.StringProperty()
     ip = ndb.StringProperty()
     timestamp = ndb.StringProperty()
 
 
-class LogEmail(ndb.Model):
+class LogEmail(ModelUtils, ndb.Model):
     sender = ndb.StringProperty(
         required=True)
     to = ndb.StringProperty(
@@ -102,7 +107,7 @@ class LogEmail(ndb.Model):
     when = ndb.DateTimeProperty()
 
 
-class SocialUser(ndb.Model):
+class SocialUser(ModelUtils, ndb.Model):
     PROVIDERS_INFO = {# uri is for OpenID only (not OAuth)
                       'google': {'name': 'google', 'label': 'Google', 'uri': 'gmail.com'},
                       'github': {'name': 'github', 'label': 'Github', 'uri': ''},
@@ -158,7 +163,7 @@ class SocialUser(ndb.Model):
         return [k for k, v in SocialUser.PROVIDERS_INFO.items() if v['uri']]
 
 
-class ExerciseCheckpoint(ndb.Model):
+class ExerciseCheckpoint(ModelUtils, ndb.Model):
     entry = ndb.StringProperty()
     entry_html = ndb.StringProperty()
     hint = ndb.StringProperty()
@@ -171,7 +176,7 @@ class ExerciseCheckpoint(ndb.Model):
     timestamp = ndb.DateTimeProperty(auto_now_add=True)
 
 
-class Exercise(ndb.Model):
+class Exercise(ModelUtils, ndb.Model):
     author = ndb.UserProperty()
     title = ndb.StringProperty()
     description = ndb.StringProperty()
@@ -180,7 +185,7 @@ class Exercise(ndb.Model):
     timestamp = ndb.DateTimeProperty(auto_now_add=True)
 
 
-class Course(ndb.Model):
+class Course(ModelUtils, ndb.Model):
     created = ndb.DateTimeProperty(auto_now_add=True)
     updated = ndb.DateTimeProperty(auto_now=True)
     title = ndb.StringProperty()
@@ -191,12 +196,12 @@ class Course(ndb.Model):
     user_keys = ndb.KeyProperty(User, repeated=True)
 
 
-class WeeklyQuizTest(ndb.Model):
+class WeeklyQuizTest(ModelUtils, ndb.Model):
     input = ndb.StringProperty()
     output = ndb.StringProperty()
 
 
-class WeeklyQuizLevel(ndb.Model):
+class WeeklyQuizLevel(ModelUtils, ndb.Model):
     level = ndb.IntegerProperty()
     description = ndb.StringProperty(indexed=False)
     limit_memory = ndb.IntegerProperty(default=100)
@@ -288,7 +293,7 @@ class WeeklyQuizLevel(ndb.Model):
             rpc.wait()
 
 
-class WeeklyQuiz(ndb.Model):
+class WeeklyQuiz(ModelUtils, ndb.Model):
     week = ndb.IntegerProperty()
     start_date = ndb.DateProperty()
     publish_date = ndb.DateTimeProperty(auto_now_add=True)
@@ -349,7 +354,7 @@ class WeeklyQuiz(ndb.Model):
         return sorted(quizs, key=lambda k: k['week'], reverse=True)[:5]
 
 
-class WeeklyQuizResult(ndb.Model):
+class WeeklyQuizResult(ModelUtils, ndb.Model):
     test_key = ndb.KeyProperty(WeeklyQuiz)
     level_key = ndb.KeyProperty(WeeklyQuizLevel)
     user_key = ndb.KeyProperty(User)
@@ -379,15 +384,15 @@ class WeeklyQuizResult(ndb.Model):
         score = []
         for key, result in groupby(results, lambda x: x.test_key):
             score.append({'test_key': key, 'week': key.get().week, 'score': sum([x.score for x in result])})
-        return sorted(score, key=lambda k: k['score'], reverse=True)[:5]    
-    
-class Lesson(ndb.Model):
+        return sorted(score, key=lambda k: k['score'], reverse=True)[:5]
+
+class Lesson(ModelUtils, ndb.Model):
     title = ndb.StringProperty(required=True)
     description = ndb.StringProperty()
     lecture_keys = ndb.KeyProperty('Lecture', repeated=True)
 
 
-class Lecture(ndb.Model):
+class Lecture(ModelUtils, ndb.Model):
     title = ndb.StringProperty(required=True)
     description = ndb.StringProperty()
     image = ndb.BlobProperty()
@@ -396,24 +401,24 @@ class Lecture(ndb.Model):
     question_keys = ndb.KeyProperty('Question', repeated=True)
 
 
-class QuizAnswer(ndb.Model):
+class QuizAnswer(ModelUtils, ndb.Model):
     title = ndb.StringProperty()
     is_true = ndb.BooleanProperty()
 
 
-class Quiz(ndb.Model):
+class Quiz(ModelUtils, ndb.Model):
     question = ndb.StringProperty()
     answers = ndb.StructuredProperty(QuizAnswer, repeated=True)
     time = ndb.IntegerProperty()
 
 
-class Question(ndb.Model):
+class Question(ModelUtils, ndb.Model):
     quiz_keys = ndb.KeyProperty('Quiz', repeated=True)
     test_keys = ndb.KeyProperty('Test', repeated=True)
     score = ndb.IntegerProperty()
 
 
-class Test(ndb.Model):
+class Test(ModelUtils, ndb.Model):
     description = ndb.StringProperty(indexed=False)
     test_script = ndb.StringProperty(indexed=False)
     time = ndb.IntegerProperty()
