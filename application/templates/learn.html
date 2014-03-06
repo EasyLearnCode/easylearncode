@@ -2,140 +2,176 @@
 {% block mediaCSS %}
     <link rel="stylesheet" href="/application/css/learn.css">
     <link rel="stylesheet" type="text/css" href="/application/css/videogular/quiz.css">
+    <link href="/application/css/hopscotch-0.1.1.css" rel="stylesheet">
     <!--<link rel="stylesheet" type="text/css" href="/application/css/expandable_menu/expandable_menu.css">-->
 {% endblock %}
 {% block content %}
     {% raw %}
-        <div class="container"  data-ng-controller="LearnCtrl">
+        <div class="container" data-ng-controller="LearnCtrl">
+            <div class="row">
+                <div class="alert alert-info alert-dismissable">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    <button id="startTourBtn" class="btn btn-large btn-primary">Hướng dẫn</button>
+                </div>
+            </div>
             <div class="row highlight">
                 <div class="col-xs-8">
                     <div class="lesson_info overlay" ng-show="show"></div>
                     <div class="panel-group" id="accordion">
-                    <div class="panel panel-primary">
-                        <div class="panel-heading">
-                            <span class="pull-left"> <h3 class="panel-title"><a class="second"><i class="fa fa-laptop fa-lg"></i> {{ lecture.title }}</a></h3></span>
-                            <span class="pull-right">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <span class="pull-left" id="step-1"> <h3 class="panel-title"><a class="second"><i
+                                        class="fa fa-laptop fa-lg"></i> {{ lecture.title }}</a></h3></span>
+                            <span class="pull-right" id="step-2">
                                <a class="btn btn-default" ng-click="show=!show" ng-class="{show:show}">
-                                {{ selectedIndex }}/10 <i class="fa fa-toggle-down"></i></a></span>
-                                <div class="lesson_info popover fade bottom" ng-init="show=false" ng-class="{in:show}" ng-show="show" style="display: block; top: 40px;left: 450px;width: 330px;"><div class="arrow"></div><h3 class="popover-title" style="display: none;"></h3><div class="popover-content">
-                              <div class="panel panel-default">
-                                <div class="panel-heading">
-                                  <h4 class="panel-title">
-                                      <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
-                                        Ph?n 1: Ki?n th?c c? b?n v? python
-                                      </a>
-                                    </h4>
-                                </div>
-                                <div id="collapseOne" class="panel-collapse collapse in">
-                                  <div class="panel-body">
-                                    <ul class="list-group" data-ng-repeat="l in lectures">
-                                      <li  class="list-group-item list-group-item-info" hover-class add-class="list-group-item-success" remove-class="list-group-item-info"><i class="fa fa-arrow-circle-o-right"></i>{{l.title}}</li>
-                                    </ul>
-                                  </div>
-                                </div>
-                              </div>
-                              <div class="panel panel-default">
-                                <div class="panel-heading">
-                                  <h4 class="panel-title">
-                                      <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
-                                        Ph?n 2: Python Nâng Cao
-                                      </a>
-                                    </h4>
-                                </div>
-                                <div id="collapseTwo" class="panel-collapse collapse in">
-                                  <div class="panel-body">
-                                    <ul class="list-group">
-                                      </ul>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            </div>
-                            </span>
-                            <div class="clearfix"></div>
-                        </div>
-                        <div class="panel-body" id="video-content">
-                            <div class="tab-pane active" id="video">
-                                <videogular
-                                    vg-player-ready="onPlayerReady" vg-complete="onCompleteVideo" vg-update-time="onUpdateTime" vg-update-size="onUpdateSize" vg-update-volume="onUpdateVolume" vg-update-state="onUpdateState"
-                                    vg-width="config.width" vg-height="config.height" vg-theme="config.theme.url" vg-autoplay="config.autoPlay" vg-stretch="config.stretch.value" vg-responsive="config.responsive">
-                                    <video preload='metadata'>
-                                        <source type="video/youtube" src="www.youtube.com/watch?v=vfzfwPo6MZ4"  />
-                                        <!-- <source www.youtube.com/watch?v=vfzfwPo6MZ4 src="http://www.videogular.com/assets/videos/videogular.mp4" type="video/mp4">
-                                        <source src="http://www.videogular.com/assets/videos/videogular.webm" type="video/webm"> -->
+                                   {{ selectedIndex }}/10 <i class="fa fa-toggle-down"></i></a></span>
 
-                                        <track kind="captions" src="assets/subs/pale-blue-dot.vtt" srclang="en" label="English" default></track>
-                                    </video>
-                                    <vg-youtube></vg-youtube>
-                                    <vg-quiz vg-data='config.plugins.quiz.data' vg-quiz-submit="onQuizSubmit" vg-quiz-skip="onQuizSkip" vg-quiz-continue="onQuizContinue" vg-quiz-show-explanation="onQuizShowExplanation"></vg-quiz>
-                                    <vg-poster-image vg-url='config.plugins.poster.url' vg-stretch="config.stretch.value"></vg-poster-image>
-                                    <vg-buffering></vg-buffering>
-                                    <vg-overlay-play vg-play-icon="config.theme.playIcon"></vg-overlay-play>
+                                <div class="lesson_info popover fade bottom" ng-init="show=false" ng-class="{in:show}"
+                                     ng-show="show" style="display: block; top: 40px;left: 450px;width: 330px;">
+                                    <div class="arrow"></div>
+                                    <h3 class="popover-title" style="display: none;"></h3>
 
-                                    <vg-controls vg-autohide="config.autoHide" vg-autohide-time="config.autoHideTime" style="height: 50px;">
-                                        <vg-play-pause-button vg-play-icon="config.theme.playIcon" vg-pause-icon="config.theme.pauseIcon"></vg-play-pause-button>
-                                        <vg-timeDisplay>{{ currentTime }}</vg-timeDisplay>
-                                        <vg-scrubBar>
-                                            <vg-scrubbarcurrenttime></vg-scrubbarcurrenttime>
-                                        </vg-scrubBar>
-                                        <vg-timeDisplay>{{ totalTime }}</vg-timeDisplay>
-                                        <vg-volume>
-                                            <vg-mutebutton
-                                                vg-volume-level-3-icon="config.theme.volumeLevel3Icon"
-                                                vg-volume-level-2-icon="config.theme.volumeLevel2Icon"
-                                                vg-volume-level-1-icon="config.theme.volumeLevel1Icon"
-                                                vg-volume-level-0-icon="config.theme.volumeLevel0Icon"
-                                                vg-mute-icon="config.theme.muteIcon">
-                                            </vg-mutebutton>
-                                            <vg-volumebar></vg-volumebar>
-                                        </vg-volume>
-                                        <vg-fullscreenButton vg-enter-full-screen-icon="config.theme.enterFullScreenIcon" vg-exit-full-screen-icon="config.theme.exitFullScreenIcon"></vg-fullscreenButton>
-                                    </vg-controls>
-                                </videogular>
+                                    <div class="popover-content">
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                <h4 class="panel-title">
+                                                    <a data-toggle="collapse" data-parent="#accordion"
+                                                       href="#collapseOne">
+                                                        phần 1: Kiến thức cơ bản
+                                                    </a>
+                                                </h4>
+                                            </div>
+                                            <div id="collapseOne" class="panel-collapse collapse in">
+                                                <div class="panel-body">
+                                                    <ul class="list-group" data-ng-repeat="l in lectures">
+                                                        <li ng-click="goLecture(l, $index)"
+                                                            class="list-group-item list-group-item-info" hover-class
+                                                            add-class="list-group-item-success"
+                                                            remove-class="list-group-item-info"><i
+                                                                class="fa fa-arrow-circle-o-right"></i>{{ l.title }}
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                <h4 class="panel-title">
+                                                    <a data-toggle="collapse" data-parent="#accordion"
+                                                       href="#collapseTwo">
+                                                        Ph?n 2: Python Nâng Cao{{ youtubeUrl }}
+                                                    </a>
+                                                </h4>
+                                            </div>
+                                            <div id="collapseTwo" class="panel-collapse collapse in">
+                                                <div class="panel-body">
+                                                    <ul class="list-group">
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                </span>
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="panel-body" id="video-content">
+                                <div class="tab-pane active" id="video">
+                                </div>
                             </div>
                         </div>
-                    </div></div>
-                    <ul class="nav nav-tabs">
-                      <li class="active"><a href="#home" data-toggle="tab"><span class="glyphicon glyphicon-info-sign"></span> Tóm tắt</a></li>
-                      <li><a href="#profile" data-toggle="tab"><span class="glyphicon glyphicon-question-sign"></span> Hỏi đáp</a></li>
-                      <li><a href="#messages" data-toggle="tab"><span class="glyphicon glyphicon-download"></span> Tải về</a></li>
+                        <div class="pull-left"> Đánh giá:
+                            <rating value="rate" max="max" readonly="isReadonly" on-hover="hoveringOver(value)"
+                                    on-leave="overStar = null"></rating>
+                            <span class="label"
+                                  ng-class="{'label-warning': percent<30, 'label-info': percent>=30 && percent<70, 'label-success': percent>=70}"
+                                  ng-show="overStar && !isReadonly">{{ percent }}%</span></div>
+                        <div class="pull-right">
+                            <img src="https://cdn1.iconfinder.com/data/icons/sweetsocial/32/youtube.png" ng-click="ViewOnYoutube()" alt="Xem tại trang youtube" title="Xem tại trang youtube"/>
+                        </div>
+                    </div>
+                    <ul class="nav nav-tabs" id="myTab">
+                        <li class="active"><a href="#home" data-toggle="tab"><span
+                                class="glyphicon glyphicon-info-sign"></span> Tóm tắt</a></li>
+                        <li><a href="#profile" data-toggle="tab"><span class="glyphicon glyphicon-question-sign"></span>
+                            Hỏi đáp</a></li>
+                        <li><a href="#messages" data-toggle="tab"><span class="glyphicon glyphicon-download"></span>
+                            Chia sẻ</a></li>
                     </ul>
                     <div class="tab-content border_info">
-                      <div class="tab-pane fade active" id="home">{{ lecture.description }}</div>
-                      <div class="tab-pane fade" id="profile">
-                          <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+                        <div class="tab-pane fade active" id="home">{{ lecture.description }}</div>
+                        <div class="tab-pane fade" id="profile">
                             <div id="gplus-cm"></div>
+                            <script async type="text/javascript"
+                                    src="http://apis.google.com/js/plusone.js?callback=gpcb"></script>
+                        </div>
+                        <div class="tab-pane fade" id="messages">
+                            <!-- Place this tag where you want the share button to render. -->
+                            <div class="g-plus" data-action="share" data-href="http://easylearncode.appspot.com/"
+                                 data-annotation="bubble"></div>
+                            <!-- Place this tag after the last share tag. -->
                             <script type="text/javascript">
-                              jQuery(document).ready(function($) {
-                                $('#gplus-cm').html('<div class="g-comments" data-width="700" data-href="http://localhost:8080/course/learn/viewer#!?lecture_id={{ lecture_id }}" data-first_party_property="BLOGGER" data-view_type="FILTERED_POSTMOD">Loading Google+ Comments ...</div>');
-                              });
+                                (function () {
+                                    var po = document.createElement('script');
+                                    po.type = 'text/javascript';
+                                    po.async = true;
+                                    po.src = 'https://apis.google.com/js/platform.js';
+                                    var s = document.getElementsByTagName('script')[0];
+                                    s.parentNode.insertBefore(po, s);
+                                })();
                             </script>
-                            <script async type="text/javascript" src="http://apis.google.com/js/plusone.js?callback=gpcb"></script>
-                      </div>
-                      <div class="tab-pane fade" id="messages">Tải về</div>
+                            <a href="https://twitter.com/share" class="twitter-share-button" data-lang="en"
+                               data-url="http://easylearncode.appspot.com/">Tweet</a>
+                            <script>!function (d, s, id) {
+                                var js, fjs = d.getElementsByTagName(s)[0];
+                                if (!d.getElementById(id)) {
+                                    js = d.createElement(s);
+                                    js.id = id;
+                                    js.src = "https://platform.twitter.com/widgets.js";
+                                    fjs.parentNode.insertBefore(js, fjs);
+                                }
+                            }(document, "script", "twitter-wjs");</script>
+                            <div id="fb-root"></div>
+                            <script>(function (d, s, id) {
+                                var js, fjs = d.getElementsByTagName(s)[0];
+                                if (d.getElementById(id)) return;
+                                js = d.createElement(s);
+                                js.id = id;
+                                js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=294482573994222";
+                                fjs.parentNode.insertBefore(js, fjs);
+                            }(document, 'script', 'facebook-jssdk'));</script>
+                            <div class="fb-share-button" data-href="http://easylearncode.appspot.com/"
+                                 data-type="button_count"></div>
+                            <script src="//platform.linkedin.com/in.js" type="text/javascript">
+                                lang: en_US
+                            </script>
+                            <script type="IN/Share" data-url="http://easylearncode.appspot.com/"
+                                    data-counter="right"></script>
+                        </div>
                     </div>
                 </div>
                 <div class="col-xs-4">
-                    <div class="panel panel-success">
+                    <div class="panel panel-success" id="step-4">
                         <div class="panel-heading">
-                            <h3 class="panel-title"> <i class="fa fa-terminal fa-lg"></i>Thực hành
+                            <h3 class="panel-title"><i class="fa fa-terminal fa-lg"></i>Thực hành
                             </h3>
                         </div>
                         <div class="panel-body">
                             <div ui-ace="{ theme:'chrome',
                         mode:lang.mode}" data-ng-model="code" id="code-content"></div>
                             </br>
-                            <button type="button" class="btn btn-success" ng-click="runCode()"><span
+                            <button type="button" class="btn btn-success" ng-click="runCode()" id="step-5"><span
                                     class="glyphicon glyphicon-play"></span> Chạy code
                             </button>
-                            <button type="button" class="btn btn-default" ng-click="reSet()"><span
+                            <button type="button" class="btn btn-default" ng-click="reSet()" id="step-6"><span
                                     class="glyphicon glyphicon-remove"></span> Làm lại
                             </button>
-                            <button type="button" class="btn btn-default pull-right"><span
+                            <button type="button" class="btn btn-default pull-right" id="step-7"><span
                                     class="glyphicon glyphicon-fullscreen"></span> Phóng to
                             </button>
 
-                            <textarea class="form-control result_box" cols="200" rows="8" data-ng-model="kq" style="margin-top: 20px"> >> </textarea>
+                            <textarea class="form-control result_box" cols="200" rows="8" id="step-8" data-ng-model="kq"
+                                      style="margin-top: 20px"> >> </textarea>
                         </div>
                     </div>
                 </div>
@@ -149,11 +185,13 @@
     <script src="/application/js/libs/angularjs/angular-sanitize.min.js"></script>
     <script src="/application/js/libs/angularjs/ui-bootstrap-tpls-0.7.0.min.js"></script>
     <script src="/application/js/libs/videogular/videogular.js"></script>
-	<script src="/application/js/libs/videogular/plugins/controls.js"></script>
-	<script src="/application/js/libs/videogular/plugins/overlay-play.js"></script>
-	<script src="/application/js/libs/videogular/plugins/buffering.js"></script>
-	<script src="/application/js/libs/videogular/plugins/poster.js"></script>
-	<script src="/application/js/libs/videogular/plugins/youtube.js"></script>
-	<script src="/application/js/libs/videogular/plugins/quiz.js"></script>
+    <script src="/application/js/libs/videogular/plugins/controls.js"></script>
+    <script src="/application/js/libs/videogular/plugins/overlay-play.js"></script>
+    <script src="/application/js/libs/videogular/plugins/buffering.js"></script>
+    <script src="/application/js/libs/videogular/plugins/poster.js"></script>
+    <script src="/application/js/libs/videogular/plugins/youtube.js"></script>
+    <script src="/application/js/libs/videogular/plugins/quiz.js"></script>
     <script src="/application/js/libs/jsrepl/jsrepl.js" id="jsrepl-script"></script>
+    <script src="/application/js/hopscotch-0.1.2.min.js"></script>
+    <script src="/application/js/intro_learn_page.js"></script>
 {% endblock %}

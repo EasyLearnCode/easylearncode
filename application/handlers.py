@@ -1619,3 +1619,10 @@ class CourseLearnHandler(BaseHandler):
         params = {}
         params.update({'angular_app_name': 'easylearncode.info'})
         return self.render_template("info.html", **params)
+
+class VisualizationHandler(BaseHandler):
+    @user_required
+    def get(self):
+        params = {}
+        params.update({'angular_app_name': 'easylearncode.visualization'})
+        return self.render_template("visualization.html", **params)

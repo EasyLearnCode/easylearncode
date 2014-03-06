@@ -17,8 +17,8 @@ angular.module("info.vietnamcode.nampnq.videogular.plugins.youtube", [])
         }
     ])
     .directive(
-        "vgYoutube", ["VG_EVENTS", "VG_STATES", "$rootScope", "$window",
-            function(VG_EVENTS, VG_STATES, $rootScope, $window) {
+        "vgYoutube", ["VG_EVENTS", "VG_STATES", "$rootScope", "$window", "$timeout",
+            function(VG_EVENTS, VG_STATES, $rootScope, $window, $timeout) {
                 return {
                     restrict: "E",
                     require: "^videogular",
@@ -54,13 +54,6 @@ angular.module("info.vietnamcode.nampnq.videogular.plugins.youtube", [])
                             vgOverPlayElementScope.currentIcon = vgOverPlayElementScope.playIcon;
                             API.videoElement.remove();
                             API.videoElement = angular.element("#youtube_player_" + scope.vgYoutubePlayerId);
-                            //Overwrite method onPlayerReady in videogularElementScope
-                            videogularElementScope.onPlayerReady = function() {
-                                videogularElementScope.doPlayerReady();
-                            };
-
-                            //Call method onVideoReady in videogularElementScope
-                            videogularElementScope.onVideoReady();
                             //Define some property, method for player
                             API.videoElement[0].__defineGetter__("currentTime", function() {
                                 return scope.ytplayer.getCurrentTime();
@@ -101,8 +94,14 @@ angular.module("info.vietnamcode.nampnq.videogular.plugins.youtube", [])
                                     target: API.videoElement[0]
                                 })
                             }, 600);
+                            //Overwrite method onPlayerReady in videogularElementScope
 
+                            videogularElementScope.onPlayerReady = function() {
+                                videogularElementScope.doPlayerReady();
+                            };
 
+                            //Call method onVideoReady in videogularElementScope
+                            videogularElementScope.onVideoReady();
                         }
                         scope.loadYoutube = function() {
                             var videogularElementScope = API.elementScope.scope().$$childHead,
@@ -160,7 +159,7 @@ angular.module("info.vietnamcode.nampnq.videogular.plugins.youtube", [])
                             if (value) {
                                 console.log("Api loaded..");
                                 if (result.method === 'youtube')
-                                    scope.loadYoutube();
+                                    $timeout(function(){scope.loadYoutube()});
                             }
                         })
                         scope.removeHtmlMediaElementListener = function(htmlMediaElement) {

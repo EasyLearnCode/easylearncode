@@ -419,7 +419,7 @@ div.hopscotch-bubble .hopscotch-bubble-close {
   color: #000;
   background: transparent url(/application/img/sprite-green-0.3.png) -192px -92px no-repeat;
   display: block;
-  padding: 8px;
+  padding: 12px;
   position: absolute;
   text-decoration: none;
   text-indent: -9999px;
@@ -440,7 +440,7 @@ div.hopscotch-bubble .hopscotch-bubble-number {
   font-size: 17px;
   font-weight: bold;
   line-height: 31px;
-  padding: 0 10px 0 0;
+  padding: 0 0px 0 0;
   text-align: center;
   width: 30px;
   height: 30px;

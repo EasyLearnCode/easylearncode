@@ -47,6 +47,7 @@ _routes = [
     RedirectRoute('/course/practice/viewer', handlers.CoursePracticeViewerHandler, name="course-practice-viewer", strict_slash=True),
     #RedirectRoute('/course/learn/<course_id>', handlers.CourseLearnHandler, name='course-learn', strict_slash=True),
     RedirectRoute('/course/learn', handlers.CourseLearnHandler, name='course-learn', strict_slash=True),
+    RedirectRoute('/visualization', handlers.VisualizationHandler, name='visualization', strict_slash=True),
     RedirectRoute('/', handlers.HomeRequestHandler, name='home', strict_slash=True),
 
 ]

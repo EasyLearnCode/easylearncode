@@ -1,0 +1,152 @@
+{% extends "main.html" %}
+{% block mediaCSS %}
+    <link href="/application/css/visualization.css" rel="stylesheet" type="text/css"/>
+{% endblock %}
+{% block content %}
+    {% raw %}
+        <div class="container" data-ng-controller="VisualizationCtrl">
+            <!-- Modal -->
+            <div class="modal fade" id="visualaztionModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog visualization">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title" id="myModalLabel">Visualiaztion</h4>
+                        </div>
+                        <div class="modal-body">
+                            <iframe width="800" height="500" frameborder="0"></iframe>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+             <div class="modal fade" id="resultModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog visualization">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title" id="myModalLabel">Kết quả</h4>
+                        </div>
+                        <div class="modal-body result_box">
+                            {{ result }}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 highlight">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="panel panel-primary">
+                                <div class="panel-heading">
+                            <span class="pull-left">
+                                <h3 class="panel-title"><i class="fa fa-terminal fa-lg"></i> Code window</h3>
+                            </span>
+
+                            <span class="pull-right">
+
+                                <a class="btn btn-success" ng-click="runCode()" data-target="#resultModal" data-toggle="modal">
+                                    <i class="fa fa-play" ></i> Run</a>
+                                <a class="btn btn-default" data-target="#visualaztionModal" data-toggle="modal"
+                                   ng-click="updateVisualaztionUrl()"><i class="fa fa-code"></i> Visualization</a>
+                                <a class="btn btn-default">
+                                    <i class="fa fa-laptop"></i> Full Screen</a>
+                            </span>
+
+                                    <div class="clearfix"></div>
+                                </div>
+                                <div>
+
+                                </div>
+                                <div class="panel-body">
+                                    <div ui-ace="{theme:'chrome', mode:exercise.lang}" data-ng-model="exercise.source">
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-md-4">
+                            <div class="lesson_info overlay" ng-show="show"></div>
+                            <div class="panel panel-success">
+                                <div class="panel-heading">
+                                <span class="pull-left"><h3 class="panel-title"><i class="fa fa-tasks fa-lg"></i> Python
+                                    syntax</h3></span>
+                            <span class="pull-right">
+                                <a class="btn btn-default" ng-click="show=!show" ng-class="{show:show}">
+                                    1/10 <i class="fa fa-toggle-down"></i></a>
+                                <div class="lesson_info popover fade bottom" ng-init="show=false" ng-class="{in:show}"
+                                     style="display: block;top: 40px;left: 77px;width: 330px;">
+                                    <div class="arrow"></div>
+                                    <h3 class="popover-title" style="display: none;"></h3>
+
+                                    <div class="popover-content">
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                <h4 class="panel-title">
+                                                    <a data-toggle="collapse" data-parent="#accordion"
+                                                       href="#collapseOne">
+                                                        Biến và các kiểu dữ liệu
+                                                    </a>
+                                                </h4>
+                                            </div>
+                                            <div id="collapseOne" class="panel-collapse collapse in">
+                                                <div class="panel-body">
+                                                    <ul class="list-group">
+                                                        <li class="list-group-item list-group-item-info" hover-class
+                                                            add-class="list-group-item-success"
+                                                            remove-class="list-group-item-info"><i
+                                                                class="fa fa-arrow-circle-o-right"></i> Chào thế giới
+                                                        </li>
+                                                        <li class="list-group-item list-group-item-info" hover-class
+                                                            add-class="list-group-item-success"
+                                                            remove-class="list-group-item-info"><i
+                                                                class="fa fa-arrow-circle-o-right"></i> Biến
+                                                        </li>
+                                                        <li class="list-group-item list-group-item-info" hover-class
+                                                            add-class="list-group-item-success"
+                                                            remove-class="list-group-item-info"><i
+                                                                class="fa fa-arrow-circle-o-right"></i> Kiểu boolean
+                                                        </li>
+                                                        <li class="list-group-item list-group-item-info" hover-class
+                                                            add-class="list-group-item-success"
+                                                            remove-class="list-group-item-info"><i
+                                                                class="fa fa-arrow-circle-o-right"></i> Tổng kết
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </span>
+
+                                    <div class="clearfix"></div>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="wrap_introduction">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4" style="height: 300px"></div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    {% endraw %}
+{% endblock %}
+{% block pluginJS %}
+    <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js"></script>
+    <script src="/application/js/libs/angularjs/ui-ace.min.js"></script>
+    <script src="/application/js/libs/angularjs/ui-bootstrap-tpls-0.7.0.min.js"></script>
+    <script src="/application/js/libs/jsrepl/jsrepl.js" id="jsrepl-script"></script>
+{% endblock %}
