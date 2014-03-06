@@ -4,6 +4,7 @@ from webapp2_extras.routes import RedirectRoute
 
 import handlers
 import restful
+import files
 
 PREFIX = "/api/"
 
@@ -14,8 +15,8 @@ _routes = [
     RedirectRoute('/api/contest/get_thisweek_contest', handlers.GetThisweekContestHandler, name='get-thisweek-contest',
                   strict_slash=True),
     RedirectRoute('/api/contest/submit', handlers.SubmitContestHandler, name='submit-contest', strict_slash=True),
+    RedirectRoute('/api/files/<model>/<id>/<property>', handler=files.FileHandler, name='blog-upload-download', strict_slash=True),
     RedirectRoute(r"{}<model:[^/]+><:/?><id:(.*)>".format(PREFIX), handler=restful.RestfulHandler),
-
 ]
 
 
