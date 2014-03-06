@@ -10,8 +10,7 @@ from google.appengine.ext import ndb
 import webapp2
 
 from application.config import config
-
-
+from google.appengine.ext.ndb import blobstore
 HAS_PIL = True
 try:
     import PIL
@@ -20,8 +19,10 @@ try:
 except:
     HAS_PIL = False
 
-DEBUG = os.environ.get("SERVER_SOFTWARE", "").startswith("Dev")
 re_image = re.compile(r"image/(png|jpeg|jpg|webp|gif|bmp|tiff|ico)", re.IGNORECASE)
+
+
+DEBUG = os.environ.get("SERVER_SOFTWARE", "").startswith("Dev")
 
 
 def json_extras(obj):
@@ -42,15 +43,12 @@ def json_extras(obj):
             item["$class"] = obj.kind()
             return item
         return obj.urlsafe()
-    if isinstance(obj, ndb.BlobProperty):
-        d = {}
-        for prop in ["content_type", "creation", "filename", "size"]:
-            d[prop] = getattr(obj, prop)
-        key = obj.key()
-        if HAS_PIL and re_image.match(obj.content_type):
-            d["image_url"] = get_serving_url_async(key)
-        d["Id"] = str(key)
-        return d
+    if isinstance(obj, ndb.BlobKey):
+        blob_info = blobstore.BlobInfo.get(obj)
+        if HAS_PIL and re_image.match(blob_info.content_type):
+            return get_serving_url_async(blob_info.key())
+        else:
+            return None
     return None
 
 
