@@ -5,7 +5,7 @@
             <div class="row">
                 <div class="col-xs-3 col-md-3 highlight">
                     <div class="panel panel-default" style="position: fixed">
-                        <div class="panel-heading">Kết quả 5 tuần thi gần đây</div>
+                        <div class="panel-heading">Các tuần thi</div>
                         <div class="panel-body">
                             <span>Chọn tuần:</span>
 
@@ -14,6 +14,18 @@
                                    ng-class="{active:currentWeek==quiz.week}"
                                    data-ng-click="getThisResult(quiz.test_key)">Tuần {{ quiz.week }}</a>
 
+                            </div>
+                            <div>
+                                Tháng:
+                                <select>
+                                    <option ng-repeat="i in [1,2,3,4,5,6,7,8,9,10,11,12]"
+                                            value="{{ i }}">{{ i }}</option>
+                                </select>
+                                Năm:
+                                <select>
+                                    <option ng-repeat="i in [2014,2015,2016,2017,2018,2019,2020]" value="{{ i }}">{{ i }}</option>
+                                </select>
+                                <button class="btn btn-primary">Chọn</button>
                             </div>
                         </div>
                     </div>
@@ -36,7 +48,7 @@
 
                     </div>
                     <div class="well" style="min-height:500px">
-                        <h2 class="text-center text-success">Bảng trạng nguyên</h2>
+                        <h2 class="text-center text-success">Bảng thành tích</h2>
                         <table class="table table-bordered table-condensed table-hover">
                             <tr class="success">
                                 <th>STT</th>
