@@ -189,7 +189,7 @@ class Course(ModelUtils, ndb.Model):
     created = ndb.DateTimeProperty(auto_now_add=True)
     updated = ndb.DateTimeProperty(auto_now=True)
     title = ndb.StringProperty()
-    img = ndb.BlobProperty()
+    img = ndb.BlobKeyProperty()
     description = ndb.StringProperty(indexed=False)
     excercise_keys = ndb.KeyProperty(Exercise, repeated=True)
     lesson_keys = ndb.KeyProperty('Lesson', repeated=True)
@@ -395,7 +395,7 @@ class Lesson(ModelUtils, ndb.Model):
 class Lecture(ModelUtils, ndb.Model):
     title = ndb.StringProperty(required=True)
     description = ndb.StringProperty()
-    image = ndb.BlobProperty()
+    image = ndb.BlobKeyProperty()
     youtube_id = ndb.StringProperty()
     time = ndb.IntegerProperty()
     question_keys = ndb.KeyProperty('Question', repeated=True)
