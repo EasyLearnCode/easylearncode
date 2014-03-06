@@ -659,6 +659,7 @@ angular.module("easylearncode.learn").run(function () {
             $scope.lecture.description = lecture.description;
             $scope.show = false;
             $scope.selectedIndex = index+1;
+            $scope.lecture_id=index;
         }
         $scope.lang =
         {
@@ -1049,7 +1050,25 @@ angular.module("easylearncode.course_paractice_detail",["ui.bootstrap", "easylea
         section.toggle = !section.toggle;
         section.status = section.toggle?"Ẩn":"Hiện";
     }
-}]);
+}]).directive('hoverClass', function() {
+      return {
+        restrict: 'A',
+        scope: {
+          addClass: '@',
+          removeClass: '@'
+        },
+        link: function(scope, element) {
+          element.on('mouseenter', function() {
+            element.addClass(scope.addClass);
+            element.removeClass(scope.removeClass);
+          });
+          element.on('mouseleave', function() {
+            element.addClass(scope.removeClass);
+            element.removeClass(scope.addClass);
+          });
+        }
+      };
+    });
 angular.module("easylearncode.course_paractice_viewer",["ui.bootstrap", "ui.ace",'easylearncode.core'])
     .controller("PracticeCtrl", ["$scope","$sce","$timeout", function ($scope, $sce, $timeout) {
     $scope.exercise = {
