@@ -463,6 +463,8 @@
             angular.module('services.utility').constant('csrf_token', '{{ csrf_token() }}');
         </script>
 		<!-- end: JavaScript-->
+    {% block mediaJS %}
+    {% endblock %}
 	
 </body>
 </html>

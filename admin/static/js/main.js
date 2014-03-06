@@ -27,10 +27,34 @@ angular.module("easylearncode.admin.core", ["ngResource", "services.utility", "a
 
     }]).run(function run($http, csrf_token) {
         $http.defaults.headers.post['X-CSRFToken'] = csrf_token;
-    });
+    })
+    .directive('ngFileSelect', [ '$parse', '$http', '$timeout', function ($parse, $http, $timeout) {
+        return function (scope, elem, attr) {
+            var fn = $parse(attr['ngFileSelect']);
+            elem.bind('change', function (evt) {
+                var files = [], fileList, i;
+                fileList = evt.target.files;
+                if (fileList != null) {
+                    for (i = 0; i < fileList.length; i++) {
+                        files.push(fileList.item(i));
+                    }
+                }
+                $timeout(function () {
+                    fn(scope, {
+                        $files: files,
+                        $event: evt
+                    });
+                });
+            });
+            elem.bind('click', function () {
+                this.value = null;
+            });
+        };
+    } ]);
+;
 angular.module("easylearncode.admin.home", ["easylearncode.admin.core"]);
 angular.module("easylearncode.admin.course", ["easylearncode.admin.core"])
-    .controller("CourseAdminCtrl", ["$scope", "api", "$modal", function ($scope, api, $modal) {
+    .controller("CourseAdminCtrl", ["$scope", "api", "$modal", "$http" , function ($scope, api, $modal, $http) {
         $scope.courses = api.Model.query({type: 'courses', page_size: 10, order: '-created'});
         var addForm = {
             "form_id": 1,
@@ -81,10 +105,10 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core"])
             });
 
         };
-        $scope.showEditModal = function(course){
+        $scope.showEditModal = function (course) {
             var editForm = $.extend(true, {}, addForm);
             editForm["form_name"] = "Edit Course";
-            _.each(editForm.form_fields,function(field){
+            _.each(editForm.form_fields, function (field) {
                 field.field_value = course[field.field_title];
             });
             var modalInstance = $modal.open({
@@ -101,9 +125,9 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core"])
                 _.each(addForm.form_fields, function (ele) {
                     course_tmp[ele.field_title] = ele.field_value;
                 });
-                api.Model.save({type: 'courses',id:course.Id}, course_tmp, function (data) {
+                api.Model.save({type: 'courses', id: course.Id}, course_tmp, function (data) {
                     //$scope.courses.push(data);
-                    course = _.extend(course,course_tmp);
+                    course = _.extend(course, course_tmp);
                     $scope.$apply();
                 })
             }, function () {
@@ -112,15 +136,29 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core"])
         }
         var ModalInstanceCtrl = function ($scope, $modalInstance, form) {
 
-                $scope.form = form;
+            $scope.form = form;
 
-                $scope.ok = function (data) {
-                    $modalInstance.close($scope.form);
-                };
-
-                $scope.cancel = function () {
-                    $modalInstance.dismiss('cancel');
-                };
+            $scope.ok = function (data) {
+                $modalInstance.close($scope.form);
             };
+
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
+            };
+        };
+        $scope.uploadFile = function (files, course) {
+            $http.get('/api/files/course/' + course.Id + '/img').success(function (data) {
+                var fd = new FormData();
+                fd.append("file", files[0]);
+                $http.post(data.upload_url, fd, {
+                    withCredentials: true,
+                    headers: {'Content-Type': undefined },
+                    transformRequest: angular.identity
+                }).success(function(data){
+                    course.img = data.image_url;
+                }).error();
+            })
+
+        };
 
     }])

@@ -30,6 +30,7 @@
         <th>Title</th>
         <th>Created</th>
         <th>Description</th>
+        <th>Image</th>
     </tr>
     </thead>
     <tbody>
@@ -38,6 +39,10 @@
         <td>{{ course.title }}</td>
         <td class="center">{{ course.created }}</td>
         <td class="center">{{ course.description }}</td>
+        <td class="center">
+            <div><img ng-src="{{ course.img }}=s150"></div>
+            <div><input type="file" name="file" ng-file-select="uploadFile($files, course)"/></div>
+        </td>
         <td class="center">
             <a class="btn btn-success" href="#">
                 <i class="icon-zoom-in icon-white"></i>
@@ -58,4 +63,5 @@
     <!--/span-->
 
     </div><!--/row-->
+
 {% endblock %}
