@@ -6,10 +6,12 @@
     {% raw %}
         <div data-ng-controller="InfoCtrl" class="container">
             <div class="page">
-                <div  class="jumbotron headlogo">
-                    <div >
+                <div class="jumbotron headlogo">
+                    <div>
                         <img class="img-circle pull-right logo-img" src="/application/img/python.jpg">
+
                         <h1>{{ course_name }}</h1>
+
                         <p>{{ course_description }}</p>
                     </div>
                     <p><a class="btn btn-success btn-lg">Bắt đầu</a></p>
@@ -20,32 +22,53 @@
                     <div class="list-group" data-ng-repeat="section in sections">
                         <div class="list-group-item" style="height:100px;">
                             <p>
-                                <div><img src="/application/img/badges_WebsiteIsland1_Stage1.png" width="60" style="float:left; margin-right:10px;" /></div>
-                                <div>
-                                    <h3 class="list-group-item-heading">Phần {{ $index+1 }}: </h3>
-                                    <p class="list-group-item-text">{{ section.name }}</p>
-                                </div>
+
+                            <div><img src="/application/img/badges_WebsiteIsland1_Stage1.png" width="60"
+                                      style="float:left; margin-right:10px;"/></div>
+                            <div>
+                                <h3 class="list-group-item-heading">Phần {{ $index+1 }}: </h3>
+
+                                <p class="list-group-item-text">{{ section.name }}</p>
+                            </div>
                             </p>
                         </div>
-                            <div id="list">
-                                <a class="list-group-item" data-ng-show="section.toggle" data-ng-class="'bouncy-slide-top'" data-ng-repeat="unit in section.units" href="{{ unit.src }}">
-                                <span class="badge">{{ unit.time }}</span>
-                                  <img src="/application/img/video-play-48.png" width="32" style="margin-right:10px" /> {{ unit.description }}
-                                </a>
-                            </div>
-                            <a class="list-group-item" ng-click="toggle(section)" ng-init="section.status='Hiện'">
-                                <img src="/application/img/toggle_icon.png" width="24" style="margin-right:10px" /> {{ section.status }}
+                        <div id="list">
+                            <a class="list-group-item" data-ng-show="section.toggle" data-ng-class="'bouncy-slide-top'"
+                               data-ng-repeat="unit in section.units" href="{{ unit.src }}"><span class="icon-level icon-level-1 pull-right"></span><br>
+                                 <span class="badge">{{ unit.time }}</span>
+                                <img src="/application/img/video-play-48.png" width="32"
+                                     style="margin-right:10px"/> {{ unit.description }}
                             </a>
+                        </div>
+                        <a class="list-group-item" ng-click="toggle(section)" ng-init="section.status='Hiện'">
+                            <img src="/application/img/toggle_icon.png" width="24"
+                                 style="margin-right:10px"/> {{ section.status }}
+                        </a>
                     </div>
                 </div>
                 <div class="col-md-4">
-                <div class="panel panel-default">
-                  <div class="panel-heading">Thông tin tác giả</div>
-                  <div class="panel-body">
-                    <div><img class="img-circle" width="70px" height="70px" src="/application/img/computer.jpg"> Tên tác giả </div>
-                    <div>Giới thiệu về tác giả</div>
-                  </div>
-                </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Thông tin tác giả</div>
+                        <div class="panel-body">
+                            <div><img class="img-circle" width="70px" height="70px" src="/application/img/computer.jpg">
+
+                                <h3>Khan Academy</h3></div>
+                            <div style="text-align: justify">Khan Academy (Học viện Khan) là một tổ chức giáo dục trực
+                                tuyến phi lợi nhuận được sáng lập bởi Sal Khan. Khan Academy hoạt động với mục tiêu tạo
+                                ra sự thay đổi tốt đẹp cho nền giáo dục bằng cách “Cung cấp một nền giáo dục với đẳng
+                                cấp quốc tế, hoàn toàn miễn phí, cho bất kỳ ai, ở bất kỳ nơi đâu”.
+
+                                Khan Academy tính đến thời điểm tháng 1/2013 đã có trên 213 triệu bài giảng được thực
+                                hiện. Qủa là một con số khổng lồ, và nó vẫn đang không ngừng gia tăng từng ngày.
+
+                                Bài giảng trên Khan Academy thường thiết kế ngắn khoảng tầm trên dưới 10 phút, rất đơn
+                                giản, sinh động, trực quan, dễ hiểu và cực kỳ thú vị.
+
+                                Chúng tôi đã dùng lại các video dạy học python của trang này để dạy các bạn trong khóa
+                                học này. Các video chúng tôi đã làm phụ đề tiếng việt.
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

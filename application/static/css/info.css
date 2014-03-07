@@ -116,3 +116,43 @@
 .toggle.ng-leave-active{
     opacity: 0;
 }
+
+.icon-level {
+    display: inline-block;
+    height: 15px;
+    width: 12px;
+    margin-left: 30px;
+    background-color: #dcdcdc;
+    position: relative
+}
+
+.icon-level:before,.icon-level:after {
+    position: absolute;
+    bottom: 0;
+    content: "";
+    display: block;
+    width: 12px;
+    background-color: inherit
+}
+
+.icon-level:before {
+    height: 12px;
+    left: -15px
+}
+
+.icon-level:after {
+    height: 8px;
+    left: -30px
+}
+
+.icon-level.icon-level-3 {
+    background-color: #9cc2d2
+}
+
+.icon-level.icon-level-2:before,.icon-level.icon-level-2:after {
+    background-color: #9cc2d2
+}
+
+.icon-level.icon-level-1:after {
+    background-color: #9cc2d2
+}
