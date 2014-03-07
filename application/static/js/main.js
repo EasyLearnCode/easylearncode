@@ -448,7 +448,7 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "$h
             //$scope.error = "Chưa có đề thi";
             //alert("hi");
             $(function () {
-                $('#myModal1').modal();
+                //$('#myModal1').modal();
             });
         }
         else {
