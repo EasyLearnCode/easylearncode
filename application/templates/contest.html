@@ -76,10 +76,10 @@
                             </div>
                             <div class="panel-body">
                                 <ul class="list-group">
-                                    <li data-ng-repeat="week in thisweek_contest.result_last_week"
+                                    <li data-ng-repeat="i in thisweek_contest.result_last_week"
                                         class="list-group-item">
-                                        <span class="badge">{{ week.score }} Điểm</span>
-                                        {{ $index+1 }}. Tuần {{ week.week }}</li>
+                                        <span class="badge">{{ i.score }} Điểm</span>
+                                        {{ $index+1 }}. Tuần {{ i.week }}</li>
                                 </ul>
 
                             </div>
@@ -101,11 +101,11 @@
             </div>
             <div class="col-xs-12 col-md-12 highlight">
                 <a id="step-5" class="btn pull-right" data-ng-click="submitCode()">
-                    <img rel="tooltip" data-placement="bottom" title="Submit" width="50" src="/application/img/quiz/submit.png"/> </a>
-                <a id="step-6" class="btn" data-ng-click="runCode()">
-                    <img rel="tooltip" data-placement="bottom" title="Check" width="50" src="/application/img/quiz/check.png"/> </a>
+                    <i rel="tooltip" data-placement="bottom" title="Nộp bài" class="fa fa-upload fa-1"></i> </a>
+                <a  id="step-6" class="btn" data-ng-click="runCode()">
+                    <i rel="tooltip" data-placement="bottom" title="Kiểm tra" class="fa fa-check fa-2"></i> </a>
                 <a id="step-7" class="btn" data-ng-click="resetCode()">
-                    <img rel="tooltip" data-placement="bottom" title="Reset" width="50" src="/application/img/quiz/reset.png"/> </a>
+                    <i rel="tooltip" data-placement="bottom" title="Làm lại" class="fa fa-refresh fa-3"></i></a>
             </div>
 
             <div style="height: 50px; text-align: center;" data-ng-show="compiling" id="fountainTextG">
