@@ -57,7 +57,7 @@
     angular.module("easylearncode.contest", ["ui.bootstrap", "ui.ace", "easylearncode.core", "timer"]);
     angular.module("easylearncode.home", ["ui.bootstrap", "easylearncode.core"]);
     angular.module("easylearncode.game", ["easylearncode.core"]);
-    angular.module("easylearncode.learn", ["ui.bootstrap", "ui.ace", "easylearncode.core","com.2fdevs.videogular", "com.2fdevs.videogular.plugins.controls","com.2fdevs.videogular.plugins.overlayplay","com.2fdevs.videogular.plugins.buffering","com.2fdevs.videogular.plugins.poster","info.vietnamcode.nampnq.videogular.plugins.youtube","info.vietnamcode.nampnq.videogular.plugins.quiz"]);
+    angular.module("easylearncode.learn", ["ui.bootstrap", "ui.ace", "easylearncode.core", "com.2fdevs.videogular", "com.2fdevs.videogular.plugins.controls", "com.2fdevs.videogular.plugins.overlayplay", "com.2fdevs.videogular.plugins.buffering", "com.2fdevs.videogular.plugins.poster", "info.vietnamcode.nampnq.videogular.plugins.youtube", "info.vietnamcode.nampnq.videogular.plugins.quiz"]);
     angular.module("easylearncode.practise", ["ui.bootstrap", "ui.ace", "easylearncode.core"]);
     angular.module("easylearncode.info", ["ui.bootstrap", "easylearncode.core", "ngAnimate"]);
     angular.module("easylearncode.user_profile", ["easylearncode.core"]);
@@ -69,11 +69,11 @@
         }
     ])
 })();
-angular.module("easylearncode.core").filter('to_trusted', ['$sce', function($sce){
-        return function(text) {
-            return $sce.trustAsHtml(text);
-        };
-    }]);
+angular.module("easylearncode.core").filter('to_trusted', ['$sce', function ($sce) {
+    return function (text) {
+        return $sce.trustAsHtml(text);
+    };
+}]);
 angular.module("services.utility").factory("validator", [
     function () {
         var a = {
@@ -225,12 +225,12 @@ angular.module("services.utility").factory("libraryLoader", ["$q", "$rootScope",
                         cache: !0,
                         url: f
                     }).success(function () {
-                        j.resolve();
-                        $rootScope.$apply()
-                    }).error(function () {
-                        j.reject();
-                        $rootScope.$apply()
-                    }), d = j.promise);
+                            j.resolve();
+                            $rootScope.$apply()
+                        }).error(function () {
+                            j.reject();
+                            $rootScope.$apply()
+                        }), d = j.promise);
                     return d
                 }))
             }
@@ -491,7 +491,7 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "$h
                             window.location = "/contest"
                         }
 
-                });
+                    });
             }
         });
     }
@@ -528,14 +528,14 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "$h
                             $scope.compiling = false;
                         }
                     }).error(function (data, status, headers, config) {
-                        $scope.compile_result.push(
-                            {
-                                'result': false,
-                                'time': 0,
-                                'memory': 0,
-                                'error': 'Disconnect from server...Please try again'
-                            });
-                    });
+                            $scope.compile_result.push(
+                                {
+                                    'result': false,
+                                    'time': 0,
+                                    'memory': 0,
+                                    'error': 'Disconnect from server...Please try again'
+                                });
+                        });
                 });
 
 
@@ -573,94 +573,82 @@ angular.module("easylearncode.home").controller('HomeCarouselCtrl', ['$scope', f
 }]);
 
 angular.module("easylearncode.learn").run(function () {
-    $('#myTab a:first').tab('show');
-    $('#myTab a').click(function (e) {
-      e.preventDefault()
-      $(this).tab('show')
-    })
-}).controller('LearnCtrl', ['$scope', '$http', '$location', '$sce', function ($scope, $http, $location, $sce) {
-        $scope.lecture_id=$location.search()['lecture_id'];
+    $('#myTab a:last').tab('show');
+}).controller('LearnCtrl', ['$scope', '$http', '$location', '$sce', '$compile','$window', function ($scope, $http, $location, $sce, $compile, $window) {
+        $scope.lecture_id = $location.search()['lecture_id'];
         /*$http.get('/api/Lecture/'+lecture_id).success(function(data){
-            $scope.lecture_name = data.name;
-        })*/
+         $scope.lecture_name = data.name;
+         })*/
         $scope.lectures = [
-        {
-            title: "Giới thiệu về chương trình, loại dữ liệu và giá trị",
-            description: "Viết một chương trình cơ bản. Khái niệm cơ bản của các kiểu dữ liệu, các biến và các báo cáo có điều kiện",
-            time: 689,
-            youtube_id:'vfzfwPo6MZ4'
-        },
-        {
-            title: "Số nhị phân",
-            description: "Hiểu được thế nào là số đại diện.Giới thiệu số nhị phân",
-            time: 114,
-            youtube_id: '8vxI2F-Gu4E'
-        },
-        {
-            title: "Danh sách (List) trong python",
-            description: "Hiểu được cơ bản về list trong python",
-            time: 701,
-            youtube_id: 'QK0wgGPcVxg'
-        },
-        {
-            title: "Vòng lặp for trong python",
-            description: "Vòng lặp for cơ bản trong python",
-            time: 615,
-            youtube_id: 'l4kopWpjq9E'
-        },
-        {
-            title: "Vòng lặp while trong python",
-            description: "Một vòng lặp while có thể làm một điều tương tự như một vòng lặp for",
-            time: 320,
-            youtube_id: 'KfePraaexho'
-        },
-        {
-            title: "Kiểu chuỗi trong python",
-            description: "Thử nghiệm và xem chúng ta làm gì được với chuỗi",
-            time: 838,
-            youtube_id: 'iZAtkS0F-Zo'
-        },
-        {
-            title: "Viết một chương trình đơn giản",
-            description: "Viết một chương trình đơn giản với vòng lặp for",
-            time: 689,
-            youtube_id:'ZyYp1V84Xqc'
-        },
-        {
-            title: "Chạy chương trình từng bước",
-            description: "Từng bước xem những gì xảy ra khi người dùng thử nhập vào một giá trị",
-            time: 563,
-            youtube_id:'dn9XjHz33O8'
-        },
-        {
-            title: "lưu đồ hoạt động của chương trình",
-            description: "Lưu đồ hoạt động của chương trình",
-            time: 689,
-            youtube_id:'EiR6cf8Towc'
-        },
-        {
-            title: "Python 3 không tương thích với python 2",
-            description: "Hiểu dduocj lý do tại sao các chương trình ví dụ sẽ không chạy trong Python 3 và làm thế nào để sửa chữa nó.",
-            time: 322,
-            youtube_id: 'WT-gS-8p7KA'
-        },
-        {
-            title: "Định nghĩa hàm Python",
-            description: "Định nghĩa hàm trong python",
-            time: 552,
-            youtube_id: 'JwO_25S_eWE'
-        }
-    ];
+            {
+                title: "Giới thiệu về chương trình, loại dữ liệu và giá trị",
+                description: "Viết một chương trình cơ bản. Khái niệm cơ bản của các kiểu dữ liệu, các biến và các báo cáo có điều kiện",
+                time: 689,
+                youtube_id: 'vfzfwPo6MZ4'
+            },
+            {
+                title: "Số nhị phân",
+                description: "Hiểu được thế nào là số đại diện.Giới thiệu số nhị phân",
+                time: 114,
+                youtube_id: '8vxI2F-Gu4E'
+            },
+            {
+                title: "Danh sách (List) trong python",
+                description: "Hiểu được cơ bản về list trong python",
+                time: 701,
+                youtube_id: 'QK0wgGPcVxg'
+            },
+            {
+                title: "Vòng lặp for trong python",
+                description: "Vòng lặp for cơ bản trong python",
+                time: 615,
+                youtube_id: 'l4kopWpjq9E'
+            },
+            {
+                title: "Vòng lặp while trong python",
+                description: "Một vòng lặp while có thể làm một điều tương tự như một vòng lặp for",
+                time: 320,
+                youtube_id: 'KfePraaexho'
+            },
+            {
+                title: "Kiểu chuỗi trong python",
+                description: "Thử nghiệm và xem chúng ta làm gì được với chuỗi",
+                time: 838,
+                youtube_id: 'iZAtkS0F-Zo'
+            },
+            {
+                title: "Viết một chương trình đơn giản",
+                description: "Viết một chương trình đơn giản với vòng lặp for",
+                time: 689,
+                youtube_id: 'ZyYp1V84Xqc'
+            },
+            {
+                title: "Chạy chương trình từng bước",
+                description: "Từng bước xem những gì xảy ra khi người dùng thử nhập vào một giá trị",
+                time: 563,
+                youtube_id: 'dn9XjHz33O8'
+            },
+            {
+                title: "lưu đồ hoạt động của chương trình",
+                description: "Lưu đồ hoạt động của chương trình",
+                time: 689,
+                youtube_id: 'EiR6cf8Towc'
+            },
+            {
+                title: "Python 3 không tương thích với python 2",
+                description: "Hiểu dduocj lý do tại sao các chương trình ví dụ sẽ không chạy trong Python 3 và làm thế nào để sửa chữa nó.",
+                time: 322,
+                youtube_id: 'WT-gS-8p7KA'
+            },
+            {
+                title: "Định nghĩa hàm Python",
+                description: "Định nghĩa hàm trong python",
+                time: 552,
+                youtube_id: 'JwO_25S_eWE'
+            }
+        ];
         $scope.selectedIndex = 1;
         $scope.lecture = $scope.lectures[$scope.lecture_id];
-        $scope.goLecture = function(lecture, index){
-            $scope.youtubeUrl = $sce.trustAsResourceUrl("http://www.youtube.com/watch?v=" + lecture.youtube_id);
-            $scope.lecture.title = lecture.title;
-            $scope.lecture.description = lecture.description;
-            $scope.show = false;
-            $scope.selectedIndex = index+1;
-            $scope.lecture_id=index;
-        }
         $scope.lang =
         {
             name: 'Python',
@@ -730,7 +718,8 @@ angular.module("easylearncode.learn").run(function () {
 
         $scope.outputCallback = function (output, cls) {
             if (output) {
-                $scope.kq = '>>> '+ output;
+                $scope.kq = '>>> ' + output;
+                console.log(output);
             }
         };
 
@@ -768,7 +757,7 @@ angular.module("easylearncode.learn").run(function () {
             });
         };
 
-        $scope.reSet = function(){
+        $scope.reSet = function () {
             $scope.code = "";
         }
 
@@ -783,55 +772,68 @@ angular.module("easylearncode.learn").run(function () {
         $scope.isCompleted = false;
         $scope.API = null;
 
-        $scope.onPlayerReady = function(API) {
+        $scope.onPlayerReady = function (API) {
             $scope.API = API;
         };
 
-        $scope.onCompleteVideo = function() {
+        $scope.onCompleteVideo = function () {
             $scope.isCompleted = true;
         };
 
-        $scope.onUpdateState = function(state) {
+        $scope.onUpdateState = function (state) {
             $scope.state = state;
         };
 
-        $scope.onUpdateTime = function(currentTime, totalTime) {
+        $scope.onUpdateTime = function (currentTime, totalTime) {
             $scope.currentTime = currentTime;
             $scope.totalTime = totalTime;
-            angular.forEach(codes, function(code) {
-              if(code.time < currentTime){
-                  if($scope.state == 'play')
-                  $scope.code = code.code;
-              }
+            angular.forEach(codes, function (code) {
+                if (code.time < currentTime) {
+                    if ($scope.state == 'play')
+                        $scope.code = code.code;
+                }
             });
         };
 
-        $scope.onUpdateVolume = function(newVol) {
+        $scope.onUpdateVolume = function (newVol) {
             $scope.volume = newVol;
         };
 
-        $scope.onUpdateSize = function(width, height) {
+        $scope.onUpdateSize = function (width, height) {
             $scope.config.width = width;
             $scope.config.height = height;
         };
 
-        $scope.onQuizSubmit = function(data) {
+        $scope.onQuizSubmit = function (data) {
             return {
-                result:true,
-                description:"Correct"
+                result: true,
+                description: "Correct"
             }
         }
 
-        $scope.stretchModes = [{
-            label: "None",
-            value: "none"
-        }, {
-            label: "Fit",
-            value: "fit"
-        }, {
-            label: "Fill",
-            value: "fill"
-        }];
+        $scope.stretchModes = [
+            {
+                label: "None",
+                value: "none"
+            },
+            {
+                label: "Fit",
+                value: "fit"
+            },
+            {
+                label: "Fill",
+                value: "fill"
+            }
+        ];
+        $scope.goLecture = function (lecture, index) {
+            $scope.youtubeUrl = $sce.trustAsResourceUrl("http://www.youtube.com/watch?v=" + lecture.youtube_id);
+            $scope.lecture.title = lecture.title;
+            $scope.lecture.description = lecture.description;
+            $scope.show = false;
+            $scope.selectedIndex = index + 1;
+            $scope.lecture_id = index;
+            $('#video').html($compile("<videogular id=\"khung-video\"\r\n                                    vg-player-ready=\"onPlayerReady\" vg-complete=\"onCompleteVideo\" vg-update-time=\"onUpdateTime\" vg-update-size=\"onUpdateSize\" vg-update-volume=\"onUpdateVolume\" vg-update-state=\"onUpdateState\"\r\n                                    vg-width=\"config.width\" vg-height=\"config.height\" vg-theme=\"config.theme.url\" vg-autoplay=\"config.autoPlay\" vg-stretch=\"config.stretch.value\" vg-responsive=\"config.responsive\">\r\n                                    <video preload='metadata' id=\"video_content\">\r\n                                        <source type=\"video/youtube\" src=\"" + $scope.youtubeUrl + "\"  />\r\n                                        <!-- <source www.youtube.com/watch?v=vfzfwPo6MZ4 src=\"http://www.videogular.com/assets/videos/videogular.mp4\" type=\"video/mp4\">\r\n                                        <source src=\"http://www.videogular.com/assets/videos/videogular.webm\" type=\"video/webm\"> -->\r\n\r\n                                        <track kind=\"captions\" src=\"assets/subs/pale-blue-dot.vtt\" srclang=\"en\" label=\"English\" default></track>\r\n                                    </video>\r\n                                    <vg-youtube></vg-youtube>\r\n                                    <vg-quiz vg-data='config.plugins.quiz.data' vg-quiz-submit=\"onQuizSubmit\" vg-quiz-skip=\"onQuizSkip\" vg-quiz-continue=\"onQuizContinue\" vg-quiz-show-explanation=\"onQuizShowExplanation\"></vg-quiz>\r\n                                    <vg-poster-image vg-url='config.plugins.poster.url' vg-stretch=\"config.stretch.value\"></vg-poster-image>\r\n                                    <vg-buffering></vg-buffering>\r\n                                    <vg-overlay-play vg-play-icon=\"config.theme.playIcon\"></vg-overlay-play>\r\n\r\n                                    <vg-controls vg-autohide=\"config.autoHide\" vg-autohide-time=\"config.autoHideTime\" style=\"height: 50px;\">\r\n                                        <vg-play-pause-button vg-play-icon=\"config.theme.playIcon\" vg-pause-icon=\"config.theme.pauseIcon\"></vg-play-pause-button>\r\n                                        <vg-timeDisplay>{{ currentTime }}</vg-timeDisplay>\r\n                                        <vg-scrubBar>\r\n                                            <vg-scrubbarcurrenttime></vg-scrubbarcurrenttime>\r\n                                        </vg-scrubBar>\r\n                                        <vg-timeDisplay>{{ totalTime }}</vg-timeDisplay>\r\n                                        <vg-volume>\r\n                                            <vg-mutebutton\r\n                                                vg-volume-level-3-icon=\"config.theme.volumeLevel3Icon\"\r\n                                                vg-volume-level-2-icon=\"config.theme.volumeLevel2Icon\"\r\n                                                vg-volume-level-1-icon=\"config.theme.volumeLevel1Icon\"\r\n                                                vg-volume-level-0-icon=\"config.theme.volumeLevel0Icon\"\r\n                                                vg-mute-icon=\"config.theme.muteIcon\">\r\n                                            </vg-mutebutton>\r\n                                            <vg-volumebar></vg-volumebar>\r\n                                        </vg-volume>\r\n                                        <vg-fullscreenButton vg-enter-full-screen-icon=\"config.theme.enterFullScreenIcon\" vg-exit-full-screen-icon=\"config.theme.exitFullScreenIcon\"></vg-fullscreenButton>\r\n                                    </vg-controls>\r\n                                </videogular>")($scope));
+        }
 
         $scope.config = {
             width: 700,
@@ -858,45 +860,74 @@ angular.module("easylearncode.learn").run(function () {
                     url: "http://upload.wikimedia.org/wikipedia/commons/4/4a/Python3-powered_hello-world.svg"
                 },
                 quiz: {
-                    data: [{
-                        "time": "164",
-                        "question_id": "70d70be689d73e08687496a6d12b2b0d",
-                        "html": "<div style=\"position:absolute;\">Select the restaurant(s) that serve Canadian cuisine for a price of $$$.\n\n<small>\n<pre>Georgie Porgie\n87%\n$$$\nCanadian,Pub Food\n\nSilver Spoon\n97%\n$$$$\nCanadian\n\nCoffee Cafe\n77%\n$$\nCoffee/Tea,Diner\n</pre>\n</small>\n</div>\n<div class=\"quiz-option\" style=\"position:absolute; left: 470px; top: 50px;\">\n<input dir=\"auto\" class=\"quiz-input\" type=\"checkbox\" name=\"answer[70d70be689d73e08687496a6d12b2b0d][]\" id=\"gensym_52be3ad71a1f5\" value=\"d5c5ec0ff53ebf35958c5ba02c30ce24\"><label for=\"gensym_52be3ad71a1f5\" style=\"cursor:pointer;\">Georgie Porgie</label>\n</div>\n<div class=\"quiz-option\" style=\"position:absolute; left: 470px; top: 140px; /* width:370px; */ /* height:80px; */ \">\n<input dir=\"auto\" class=\"quiz-input\" type=\"checkbox\" name=\"answer[70d70be689d73e08687496a6d12b2b0d][]\" id=\"gensym_52be3ad71a71f\" value=\"cfc6db592e488051decbce17bd7b98b8\"><label for=\"gensym_52be3ad71a71f\" style=\"cursor:pointer;\">Silver Spoon</label>\n</div>\n<div class=\"quiz-option\" style=\"position:absolute; left: 470px; top: 230px; /* width:370px; */ /* height:80px; */ \">\n<input dir=\"auto\" class=\"quiz-input\" type=\"checkbox\" name=\"answer[70d70be689d73e08687496a6d12b2b0d][]\" id=\"gensym_52be3ad71ac52\" value=\"b387d47429de02592f973814b393e51d\"><label for=\"gensym_52be3ad71ac52\" style=\"cursor:pointer;\">Coffee Cafe</label>\n</div>",
-                        "background": "color",
-                        "background_src": "white",
-                        "post_answer_url": "https:\/\/class.coursera.org\/programming2-001\/quiz\/video_quiz_attempt?method=post_question_answer&quiz_id=20&preview=0&question_id=70d70be689d73e08687496a6d12b2b0d"
-                    }, {
-                        "time": "180",
-                        "question_id": "9326a7b17e15cfc69f8e46f9357bf6c5",
-                        "html": "<div dir=\"auto\" class=\"quiz-question-text\" style=\"position:absolute;\">\n<small>\n<pre>def is_palindrome_v3(s):\n    i = 0\n    j = len(s) - 1\n    while i &lt; j and s[i] == s[j]:\n        i = i + 1\n        j = j - 1\n\n    return j &lt;= i\n</pre>\n</small>\nIf <code>s</code> refers to a single-character string such as 'x', when the return statement is reached, which of the following expressions evaluates to <code>True</code>?</div>\n<div class=\"quiz-option\" style=\"position:absolute; left:40px; top: 250px; /* width:370px; */ /* height:80px; */ \">\n<input dir=\"auto\" class=\"quiz-input\" type=\"radio\" name=\"answer[9326a7b17e15cfc69f8e46f9357bf6c5][]\" id=\"gensym_52bed85054bc8\" value=\"ad32510af7c53e2fa6cce4d764c09800\"><label for=\"gensym_52bed85054bc8\" style=\"cursor:pointer;\"><code>i == 0 and j == -1</code> </label>\n</div>\n<div class=\"quiz-option\" style=\"position:absolute; left:40px; top: 320px; /* width:370px; */ /* height:80px; */ \">\n<input dir=\"auto\" class=\"quiz-input\" type=\"radio\" name=\"answer[9326a7b17e15cfc69f8e46f9357bf6c5][]\" id=\"gensym_52bed85055221\" value=\"8d53ca2fa487cfbb4479ce2bf7f2e295\"><label for=\"gensym_52bed85055221\" style=\"cursor:pointer;\"><code>i == 0 and j == 0</code> </label>\n</div>\n<div class=\"quiz-option\" style=\"position:absolute; left:430px; top: 250px; /* width:380px; */ /* height:80px; */ \">\n<input dir=\"auto\" class=\"quiz-input\" type=\"radio\" name=\"answer[9326a7b17e15cfc69f8e46f9357bf6c5][]\" id=\"gensym_52bed850558b5\" value=\"94023160fe66f684740c119a18e39a9e\"><label for=\"gensym_52bed850558b5\" style=\"cursor:pointer;\"><code>i == 0 and j == 1</code> </label>\n</div>\n<div class=\"quiz-option\" style=\"position:absolute; left:430px; top: 320px; /* width:380px; */ /* height:80px; */ \">\n<input dir=\"auto\" class=\"quiz-input\" type=\"radio\" name=\"answer[9326a7b17e15cfc69f8e46f9357bf6c5][]\" id=\"gensym_52bed85055eba\" value=\"ff8f062afa22c18eb5c2d4c557bcd44b\"><label for=\"gensym_52bed85055eba\" style=\"cursor:pointer;\"><code>i == 1 and j == 0</code> </label>\n</div>",
-                        "background": "color",
-                        "background_src": "white",
-                        "post_answer_url": "https:\/\/class.coursera.org\/programming2-001\/quiz\/video_quiz_attempt?method=post_question_answer&quiz_id=18&preview=0&question_id=9326a7b17e15cfc69f8e46f9357bf6c5"
-                    }]
+                    data: [
+                        {
+                            "time": "164",
+                            "question_id": "70d70be689d73e08687496a6d12b2b0d",
+                            "html": "<div style=\"position:absolute;\">Select the restaurant(s) that serve Canadian cuisine for a price of $$$.\n\n<small>\n<pre>Georgie Porgie\n87%\n$$$\nCanadian,Pub Food\n\nSilver Spoon\n97%\n$$$$\nCanadian\n\nCoffee Cafe\n77%\n$$\nCoffee/Tea,Diner\n</pre>\n</small>\n</div>\n<div class=\"quiz-option\" style=\"position:absolute; left: 470px; top: 50px;\">\n<input dir=\"auto\" class=\"quiz-input\" type=\"checkbox\" name=\"answer[70d70be689d73e08687496a6d12b2b0d][]\" id=\"gensym_52be3ad71a1f5\" value=\"d5c5ec0ff53ebf35958c5ba02c30ce24\"><label for=\"gensym_52be3ad71a1f5\" style=\"cursor:pointer;\">Georgie Porgie</label>\n</div>\n<div class=\"quiz-option\" style=\"position:absolute; left: 470px; top: 140px; /* width:370px; */ /* height:80px; */ \">\n<input dir=\"auto\" class=\"quiz-input\" type=\"checkbox\" name=\"answer[70d70be689d73e08687496a6d12b2b0d][]\" id=\"gensym_52be3ad71a71f\" value=\"cfc6db592e488051decbce17bd7b98b8\"><label for=\"gensym_52be3ad71a71f\" style=\"cursor:pointer;\">Silver Spoon</label>\n</div>\n<div class=\"quiz-option\" style=\"position:absolute; left: 470px; top: 230px; /* width:370px; */ /* height:80px; */ \">\n<input dir=\"auto\" class=\"quiz-input\" type=\"checkbox\" name=\"answer[70d70be689d73e08687496a6d12b2b0d][]\" id=\"gensym_52be3ad71ac52\" value=\"b387d47429de02592f973814b393e51d\"><label for=\"gensym_52be3ad71ac52\" style=\"cursor:pointer;\">Coffee Cafe</label>\n</div>",
+                            "background": "color",
+                            "background_src": "white",
+                            "post_answer_url": "https:\/\/class.coursera.org\/programming2-001\/quiz\/video_quiz_attempt?method=post_question_answer&quiz_id=20&preview=0&question_id=70d70be689d73e08687496a6d12b2b0d"
+                        },
+                        {
+                            "time": "180",
+                            "question_id": "9326a7b17e15cfc69f8e46f9357bf6c5",
+                            "html": "<div dir=\"auto\" class=\"quiz-question-text\" style=\"position:absolute;\">\n<small>\n<pre>def is_palindrome_v3(s):\n    i = 0\n    j = len(s) - 1\n    while i &lt; j and s[i] == s[j]:\n        i = i + 1\n        j = j - 1\n\n    return j &lt;= i\n</pre>\n</small>\nIf <code>s</code> refers to a single-character string such as 'x', when the return statement is reached, which of the following expressions evaluates to <code>True</code>?</div>\n<div class=\"quiz-option\" style=\"position:absolute; left:40px; top: 250px; /* width:370px; */ /* height:80px; */ \">\n<input dir=\"auto\" class=\"quiz-input\" type=\"radio\" name=\"answer[9326a7b17e15cfc69f8e46f9357bf6c5][]\" id=\"gensym_52bed85054bc8\" value=\"ad32510af7c53e2fa6cce4d764c09800\"><label for=\"gensym_52bed85054bc8\" style=\"cursor:pointer;\"><code>i == 0 and j == -1</code> </label>\n</div>\n<div class=\"quiz-option\" style=\"position:absolute; left:40px; top: 320px; /* width:370px; */ /* height:80px; */ \">\n<input dir=\"auto\" class=\"quiz-input\" type=\"radio\" name=\"answer[9326a7b17e15cfc69f8e46f9357bf6c5][]\" id=\"gensym_52bed85055221\" value=\"8d53ca2fa487cfbb4479ce2bf7f2e295\"><label for=\"gensym_52bed85055221\" style=\"cursor:pointer;\"><code>i == 0 and j == 0</code> </label>\n</div>\n<div class=\"quiz-option\" style=\"position:absolute; left:430px; top: 250px; /* width:380px; */ /* height:80px; */ \">\n<input dir=\"auto\" class=\"quiz-input\" type=\"radio\" name=\"answer[9326a7b17e15cfc69f8e46f9357bf6c5][]\" id=\"gensym_52bed850558b5\" value=\"94023160fe66f684740c119a18e39a9e\"><label for=\"gensym_52bed850558b5\" style=\"cursor:pointer;\"><code>i == 0 and j == 1</code> </label>\n</div>\n<div class=\"quiz-option\" style=\"position:absolute; left:430px; top: 320px; /* width:380px; */ /* height:80px; */ \">\n<input dir=\"auto\" class=\"quiz-input\" type=\"radio\" name=\"answer[9326a7b17e15cfc69f8e46f9357bf6c5][]\" id=\"gensym_52bed85055eba\" value=\"ff8f062afa22c18eb5c2d4c557bcd44b\"><label for=\"gensym_52bed85055eba\" style=\"cursor:pointer;\"><code>i == 1 and j == 0</code> </label>\n</div>",
+                            "background": "color",
+                            "background_src": "white",
+                            "post_answer_url": "https:\/\/class.coursera.org\/programming2-001\/quiz\/video_quiz_attempt?method=post_question_answer&quiz_id=18&preview=0&question_id=9326a7b17e15cfc69f8e46f9357bf6c5"
+                        }
+                    ]
                 }
             }
         };
         $scope.youtubeUrl = $sce.trustAsResourceUrl("http://www.youtube.com/watch?v=vfzfwPo6MZ4");
+        $scope.goLecture($scope.lectures[0], 0);
+
+        $scope.rate = 7;
+        $scope.max = 10;
+        $scope.isReadonly = false;
+
+        $scope.hoveringOver = function (value) {
+            $scope.overStar = value;
+            $scope.percent = 100 * (value / $scope.max);
+        };
+
+        $scope.ratingStates = [
+            {stateOn: 'glyphicon-ok-sign', stateOff: 'glyphicon-ok-circle'},
+            {stateOn: 'glyphicon-star', stateOff: 'glyphicon-star-empty'},
+            {stateOn: 'glyphicon-heart', stateOff: 'glyphicon-ban-circle'},
+            {stateOn: 'glyphicon-heart'},
+            {stateOff: 'glyphicon-off'}
+        ];
+
+        $scope.ViewOnYoutube = function () {
+            $window.open($scope.youtubeUrl+'#t='+$scope.currentTime);
+            $scope.state='pause';
+        }
+
+
+        $('#gplus-cm').html('<div class="g-comments" data-width="700" data-href="'+location.toString()+'" data-first_party_property="BLOGGER" data-view_type="FILTERED_POSTMOD">Loading Google+ Comments ...</div>');
 
     }]).directive('hoverClass', function () {
-    return {
-        restrict$scop: 'A',
-        scope: {
-            addClass: '@',
-            removeClass: '@'
-        },
-        link: function (scope, element) {
-            element.on('mouseenter', function() {
-                element.addClass(scope.addClass);
-                element.removeClass(scope.removeClass);
-            });
-            element.on('mouseleave', function() {
-                element.addClass(scope.removeClass);
-                element.removeClass(scope.addClass);
-            });
-        }
-    };
-});
+        return {
+            restrict$scop: 'A',
+            scope: {
+                addClass: '@',
+                removeClass: '@'
+            },
+            link: function (scope, element) {
+                element.on('mouseenter', function () {
+                    element.addClass(scope.addClass);
+                    element.removeClass(scope.removeClass);
+                });
+                element.on('mouseleave', function () {
+                    element.addClass(scope.removeClass);
+                    element.removeClass(scope.addClass);
+                });
+            }
+        };
+    });
 
 angular.module("easylearncode.contest_result").controller('ContestResultCtrl', ['$scope', '$http', 'csrf_token', '$location', function ($scope, $http, csrf_token, $location) {
     $http.get('/api/contest/week_result/current').success(function (data) {
@@ -912,7 +943,7 @@ angular.module("easylearncode.contest_result").controller('ContestResultCtrl', [
     $scope.getThisResult = function (key) {
         $scope.currentWeek = true;
         $scope.thisweek_contest = new Array();
-        $http.get('/api/contest/week_result/'+key).success(function (data) {
+        $http.get('/api/contest/week_result/' + key).success(function (data) {
             if (data.status == 1) {
             }
             else {
@@ -920,8 +951,9 @@ angular.module("easylearncode.contest_result").controller('ContestResultCtrl', [
                 $scope.currentWeek = $scope.thisweek_contest.week;
             }
 
-        });}
-    }]);
+        });
+    }
+}]);
 angular.module("easylearncode.user_profile")
     .controller('UserProfileCtrl', ['$scope', '$http', 'userInfo', 'csrf_token', function ($scope, $http, userInfo, csrf_token) {
         $scope.showSuccessAlert = false;
@@ -931,7 +963,7 @@ angular.module("easylearncode.user_profile")
         $scope.changeEditMode = function () {
             $scope.edit_mode = true;
         }
-        $scope.changeEditPass = function(){
+        $scope.changeEditPass = function () {
             $scope.change_pass_mode = true;
         }
         $scope.cancelEditMode = function () {
@@ -944,9 +976,9 @@ angular.module("easylearncode.user_profile")
                 $scope.showSuccessAlert = true;
             })
         }
-        $scope.savepass = function(){
-            $http.post('/setting/profile/change_password', {_csrf_token: csrf_token, currentpass: $scope.userInfo.currentpassword, newpass:$scope.userInfo.newpassword}).success(function(){
-                if (data.status == "ok"){
+        $scope.savepass = function () {
+            $http.post('/setting/profile/change_password', {_csrf_token: csrf_token, currentpass: $scope.userInfo.currentpassword, newpass: $scope.userInfo.newpassword}).success(function () {
+                if (data.status == "ok") {
                     $scope.change_pass_mode = false;
                     $scope.showSuccessAlert = true;
                 }
@@ -966,140 +998,219 @@ angular.module("easylearncode.practise").controller("PractiseCtrl", ["$scope", f
     };
 }]);
 
-angular.module("easylearncode.info").controller('InfoCtrl', ['$scope', '$http', '$location', function ($scope, $http, $location){
-     var course_id =$location.search()['course_id'];
+angular.module("easylearncode.info").controller('InfoCtrl', ['$scope', '$http', '$location', function ($scope, $http, $location) {
+    var course_id = $location.search()['course_id'];
     $scope.course_name = "Python";
     $scope.course_description = "Khóa học ngôn ngữ lập trình pyhton";
     $scope.sections = [
         {
-        name: 'Kiến thức cơ bản về python',
-        units: [
-            {time: '15:00', description: 'Giới thiệu về chương trình, loại dữ liệu và giá trị.', src: "/course/learn/viewer#!?lecture_id=0"},
-            {time: '15:00', description: 'Số nhị phân.', src: "/course/learn/viewer#!?lecture_id=1"},
-            {time: '15:00', description: 'List trong Python', src: "/course/learn/viewer#!?lecture_id=2"},
-            {time: '15:00', description: 'Vòng lặp for trong python', src: "/course/learn/viewer#!?lecture_id=3"},
-            {time: '15:00', description: 'Vòng lặp while trong python', src: "/course/learn/viewer#!?lecture_id=4"},
-            {time: '15:00', description: 'Chuỗi trong python', src: "/course/learn/viewer#!?lecture_id=5"},
-            {time: '15:00', description: 'Viết một chương trình đơn giản với python', src: "/course/learn/viewer#!?lecture_id=6"},
-            {time: '15:00', description: 'Chạy từng bước chương trình', src: "/course/learn/viewer#!?lecture_id=7"},
-            {time: '15:00', description: 'Lưu đồ hoạt động của chương trình', src: "/course/learn/viewer#!?lecture_id=8"},
-            {time: '15:00', description: 'Python 3 không tương thích với python 2', src: "/course/learn/viewer#!?lecture_id=9"},
-            {time: '15:00', description: 'Định nghĩa hàm Python', src: "/course/learn/viewer#!?lecture_id=10"}
-        ]
+            name: 'Kiến thức cơ bản về python',
+            units: [
+                {time: '15:00', description: 'Giới thiệu về chương trình, loại dữ liệu và giá trị.', src: "/course/learn/viewer#!?lecture_id=0"},
+                {time: '15:00', description: 'Số nhị phân.', src: "/course/learn/viewer#!?lecture_id=1"},
+                {time: '15:00', description: 'List trong Python', src: "/course/learn/viewer#!?lecture_id=2"},
+                {time: '15:00', description: 'Vòng lặp for trong python', src: "/course/learn/viewer#!?lecture_id=3"},
+                {time: '15:00', description: 'Vòng lặp while trong python', src: "/course/learn/viewer#!?lecture_id=4"},
+                {time: '15:00', description: 'Chuỗi trong python', src: "/course/learn/viewer#!?lecture_id=5"},
+                {time: '15:00', description: 'Viết một chương trình đơn giản với python', src: "/course/learn/viewer#!?lecture_id=6"},
+                {time: '15:00', description: 'Chạy từng bước chương trình', src: "/course/learn/viewer#!?lecture_id=7"},
+                {time: '15:00', description: 'Lưu đồ hoạt động của chương trình', src: "/course/learn/viewer#!?lecture_id=8"},
+                {time: '15:00', description: 'Python 3 không tương thích với python 2', src: "/course/learn/viewer#!?lecture_id=9"},
+                {time: '15:00', description: 'Định nghĩa hàm Python', src: "/course/learn/viewer#!?lecture_id=10"}
+            ]
         },
         {
-        name: 'Python Nâng cao',
-        units: [
-            {time: '10:00', description: 'Giới thiệu về chương trình, loại dữ liệu và giá trị.', src: "/course/learn/viewer#!?lecture_id='+lecture_key"},
-            {time: '10:00', description: 'Số nhị phân.', src: "/course/learn/viewer#!?lecture_id='+lecture_key"},
-            {time: '10:00', description: 'List trong Python', src: "/course/learn/viewer#!?lecture_id='+lecture_key"},
-        ]
+            name: 'Python Nâng cao',
+            units: [
+                {time: '10:00', description: 'Giới thiệu về chương trình, loại dữ liệu và giá trị.', src: "/course/learn/viewer#!?lecture_id='+lecture_key"},
+                {time: '10:00', description: 'Số nhị phân.', src: "/course/learn/viewer#!?lecture_id='+lecture_key"},
+                {time: '10:00', description: 'List trong Python', src: "/course/learn/viewer#!?lecture_id='+lecture_key"},
+            ]
         }
     ];
     /* $http({method: 'GET', url: '/api/Course/'+course_id}).
-        success(function(data, status, headers, config) {
-          $scope.course_name = data.name;
-          $scope.course_description = data.description;
-          $scope.sections = new Array();
-          angular.forEach(data.lesson_keys,function(lesson_key){
-              $http.get('/api/Lesson/'+lesson_key).success(function(data){
-                  data.units = new Array();
-                  var d = data;
-                  angular.forEach(data.lecture_keys, function(lecture_key){
-                      $http.get('/api/Lecture/'+lecture_key).success(function(data){
-                          data.src='/course/learn/viewer#!?lecture_id='+lecture_key;
-                          d.units.push(data);
-                      })
-                  })
-                  $scope.sections.push(data);
-              })
-          })
-        }).
-        error(function(data, status, headers, config) {
-          // called asynchronously if an error occurs
-          // or server returns response with an error status.
-        });*/
+     success(function(data, status, headers, config) {
+     $scope.course_name = data.name;
+     $scope.course_description = data.description;
+     $scope.sections = new Array();
+     angular.forEach(data.lesson_keys,function(lesson_key){
+     $http.get('/api/Lesson/'+lesson_key).success(function(data){
+     data.units = new Array();
+     var d = data;
+     angular.forEach(data.lecture_keys, function(lecture_key){
+     $http.get('/api/Lecture/'+lecture_key).success(function(data){
+     data.src='/course/learn/viewer#!?lecture_id='+lecture_key;
+     d.units.push(data);
+     })
+     })
+     $scope.sections.push(data);
+     })
+     })
+     }).
+     error(function(data, status, headers, config) {
+     // called asynchronously if an error occurs
+     // or server returns response with an error status.
+     });*/
 
     $scope.toggle = function (section) {
         section.toggle = !section.toggle;
-        section.status = section.toggle?"Ẩn":"Hiện";
+        section.status = section.toggle ? "Ẩn" : "Hiện";
     }
 }]);
-angular.module("easylearncode.courses",["easylearncode.core"]);
-angular.module("easylearncode.course_paractice_detail",["ui.bootstrap", "easylearncode.core", "ngAnimate"]).controller('InfoCtrl', ['$scope', '$http', '$location', function ($scope, $http, $location){
-     var course_id =$location.search()['course_id'];
+angular.module("easylearncode.courses", ["easylearncode.core"]);
+angular.module("easylearncode.course_paractice_detail", ["ui.bootstrap", "easylearncode.core", "ngAnimate"]).controller('InfoCtrl', ['$scope', '$http', '$location', function ($scope, $http, $location) {
+    var course_id = $location.search()['course_id'];
     $scope.course_name = "Python";
     $scope.course_description = "Khóa học ngôn ngữ lập trình pyhton";
     $scope.sections = [
         {
-        name: 'Cú pháp python',
-        units: [
-            {time: '02:00', description: 'Cú pháp trong python', src: "/course/practice/viewer#!?exercise_id=cs101"},
-            {time: '05:00', description: 'Thực hành tính một phép tính cơ bản', src: "/course/practice/viewer#!?exercise_id=cs101"},
-        ]
+            name: 'Cú pháp python',
+            units: [
+                {time: '02:00', description: 'Cú pháp trong python', src: "/course/practice/viewer#!?exercise_id=cs101"},
+                {time: '05:00', description: 'Thực hành tính một phép tính cơ bản', src: "/course/practice/viewer#!?exercise_id=cs101"},
+            ]
         },
         {
-        name: 'Chuỗi và cách in ra màn hình',
-        units: [
-            {time: '02:00', description: 'Chuỗi và cách in ra màn hình', src: "/course/practice/viewer#!?exercise_id=cs101"},
-            {time: '05:00', description: 'Ngày và giờ', src: "/course/practice/viewer#!?exercise_id=cs101"},
-        ]
+            name: 'Chuỗi và cách in ra màn hình',
+            units: [
+                {time: '02:00', description: 'Chuỗi và cách in ra màn hình', src: "/course/practice/viewer#!?exercise_id=cs101"},
+                {time: '05:00', description: 'Ngày và giờ', src: "/course/practice/viewer#!?exercise_id=cs101"},
+            ]
         }
     ];
     $scope.toggle = function (section) {
         section.toggle = !section.toggle;
-        section.status = section.toggle?"Ẩn":"Hiện";
+        section.status = section.toggle ? "Ẩn" : "Hiện";
     }
-}]).directive('hoverClass', function() {
-      return {
-        restrict: 'A',
-        scope: {
-          addClass: '@',
-          removeClass: '@'
-        },
-        link: function(scope, element) {
-          element.on('mouseenter', function() {
-            element.addClass(scope.addClass);
-            element.removeClass(scope.removeClass);
-          });
-          element.on('mouseleave', function() {
-            element.addClass(scope.removeClass);
-            element.removeClass(scope.addClass);
-          });
-        }
-      };
-    });
-angular.module("easylearncode.course_paractice_viewer",["ui.bootstrap", "ui.ace",'easylearncode.core'])
-    .controller("PracticeCtrl", ["$scope","$sce","$timeout", function ($scope, $sce, $timeout) {
-    $scope.exercise = {
-        lang: 'python',
-        source: 'print "Hello World"'
-    };
+}]);
+angular.module("easylearncode.course_paractice_viewer", ["ui.bootstrap", "ui.ace", 'easylearncode.core'])
+    .controller("PracticeCtrl", ["$scope", "$sce", "$timeout", function ($scope, $sce, $timeout) {
+        $scope.exercise = {
+            lang: 'python',
+            source: 'print "Hello World"'
+        };
 
-    $scope.updateVisualaztionUrl=function(){
-        src = "http://pythontutor.com/iframe-embed.html#code="+encodeURIComponent($scope.exercise.source)+"&cumulative=false&heapPrimitives=false&drawParentPointers=false&textReferences=false&showOnlyOutputs=false&py=2&curInstr=0&codeDivWidth=350&codeDivHeight=400";
-        $("#visualaztionModal .modal-body").find("iframe").remove();
-        var iframe = $('<iframe src="' + src + '" frameborder="0" width="800" height="500"></iframe>');
-        $("#visualaztionModal .modal-body").append(iframe);
-    }
+        $scope.updateVisualaztionUrl = function () {
+            src = "http://pythontutor.com/iframe-embed.html#code=" + encodeURIComponent($scope.exercise.source) + "&cumulative=false&heapPrimitives=false&drawParentPointers=false&textReferences=false&showOnlyOutputs=false&py=2&curInstr=0&codeDivWidth=350&codeDivHeight=400";
+            $("#visualaztionModal .modal-body").find("iframe").remove();
+            var iframe = $('<iframe src="' + src + '" frameborder="0" width="800" height="500"></iframe>');
+            $("#visualaztionModal .modal-body").append(iframe);
+        }
 
     }])
-    .directive('hoverClass', function() {
-      return {
-        restrict: 'A',
-        scope: {
-          addClass: '@',
-          removeClass: '@'
-        },
-        link: function(scope, element) {
-          element.on('mouseenter', function() {
-            element.addClass(scope.addClass);
-            element.removeClass(scope.removeClass);
-          });
-          element.on('mouseleave', function() {
-            element.addClass(scope.removeClass);
-            element.removeClass(scope.addClass);
-          });
+    .directive('hoverClass', function () {
+        return {
+            restrict: 'A',
+            scope: {
+                addClass: '@',
+                removeClass: '@'
+            },
+            link: function (scope, element) {
+                element.on('mouseenter', function () {
+                    element.addClass(scope.addClass);
+                    element.removeClass(scope.removeClass);
+                });
+                element.on('mouseleave', function () {
+                    element.addClass(scope.removeClass);
+                    element.removeClass(scope.addClass);
+                });
+            }
+        };
+    });
+
+
+angular.module("easylearncode.visualization", ["ui.bootstrap", "ui.ace", 'easylearncode.core'])
+    .controller("VisualizationCtrl", ["$scope", "$sce", "$timeout", function ($scope, $sce, $timeout) {
+        $scope.exercise = {
+            lang: 'python',
+            source: 'print "Hello World"'
+        };
+
+        $scope.updateVisualaztionUrl = function () {
+            src = "http://pythontutor.com/iframe-embed.html#code=" + encodeURIComponent($scope.exercise.source) + "&cumulative=false&heapPrimitives=false&drawParentPointers=false&textReferences=false&showOnlyOutputs=false&py=2&curInstr=0&codeDivWidth=350&codeDivHeight=400";
+            $("#visualaztionModal .modal-body").find("iframe").remove();
+            var iframe = $('<iframe src="' + src + '" frameborder="0" width="800" height="500"></iframe>');
+            $("#visualaztionModal .modal-body").append(iframe);
         }
-      };
+
+        $scope.inputCallback = function (callback) {
+            $scope.jqconsole.Input(function (result) {
+                var e;
+                try {
+                    callback(result);
+                } catch (_error) {
+
+                }
+            });
+        };
+
+        $scope.outputCallback = function (output, cls) {
+            if (output) {
+                $scope.result = output;
+                $scope.$apply();
+            }
+        };
+
+        $scope.errorCallback = function (e) {
+        };
+
+        $scope.timeoutCallback = function () {
+        };
+
+        $scope.resultCallback = function (result) {
+            console.log(result);
+        };
+        $scope.jsrepl = new JSREPL({
+            input: $scope.inputCallback,
+            output: $scope.outputCallback,
+            result: $scope.resultCallback,
+            error: $scope.errorCallback,
+            timeout: {
+                time: 30000,
+                callback: $scope.timeoutCallback
+            }
+        });
+
+
+        $scope.runCode = function () {
+            console.log($scope.jsrepl);
+            dataObj = {
+                command: $scope.exercise.source,
+                testScript: '',
+                type: 'evalUser'
+            };
+            $scope.jsrepl.sandbox.post({
+                type: 'engine.EasyLearnCode_Eval',
+                data: dataObj
+            });
+
+        };
+
+        $scope.reSet = function () {
+            $scope.source = "";
+        }
+
+
+        $scope.jsrepl.loadLanguage("python", function () {
+        });
+
+    }])
+    .directive('hoverClass', function () {
+        return {
+            restrict: 'A',
+            scope: {
+                addClass: '@',
+                removeClass: '@'
+            },
+            link: function (scope, element) {
+                element.on('mouseenter', function () {
+                    element.addClass(scope.addClass);
+                    element.removeClass(scope.removeClass);
+                });
+                element.on('mouseleave', function () {
+                    element.addClass(scope.removeClass);
+                    element.removeClass(scope.addClass);
+                });
+            }
+        };
     });
