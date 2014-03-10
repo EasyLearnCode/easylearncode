@@ -6,6 +6,12 @@
     {% raw %}
         <div class="container" data-ng-controller="VisualizationCtrl">
             <!-- Modal -->
+            <div class="row">
+                <div class="alert alert-info alert-dismissable">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    <button id="startTourBtn" class="btn btn-large btn-primary">Hướng dẫn</button>
+                </div>
+            </div>
             <div class="modal fade" id="visualaztionModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
                  aria-hidden="true">
                 <div class="modal-dialog visualization">
@@ -23,7 +29,7 @@
                     </div>
                 </div>
             </div>
-            <div class="modal fade" id="resultModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+             <div class="modal fade" id="resultModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
                  aria-hidden="true">
                 <div class="modal-dialog visualization">
                     <div class="modal-content">
@@ -67,7 +73,8 @@
 
                                 </div>
                                 <div class="panel-body">
-                                    <div ui-ace="{theme:'chrome', mode:exercise.lang}" data-ng-model="exercise.source">
+                                    <div ui-ace="{theme:'chrome', mode:exercise[1].lang}"
+                                         data-ng-model="exercise[1].source">
                                     </div>
                                 </div>
                             </div>
@@ -132,12 +139,10 @@
                                 </div>
                                 <div class="panel-body">
                                     <div class="list-group">
-                                        <a href="#" class="list-group-item active">
-                                            Chào thế giới
-                                        </a>
-                                        <a href="#" class="list-group-item">Tính tổng 2 số</a>
+                                        <a href="#" class="list-group-item">Chào thế giới</a>
+                                        <a href="#" class="list-group-item active">Tính tổng 2 số</a>
+                                        <a href="#" class="list-group-item">Tìm min</a>
                                         <a href="#" class="list-group-item">Tìm ước chung lớn nhất</a>
-                                        <a href="#" class="list-group-item">Tính giai thừa</a>
                                         <a href="#" class="list-group-item">Giải phương trình bậc 2</a>
                                     </div>
                                 </div>
