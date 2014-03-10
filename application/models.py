@@ -173,16 +173,22 @@ class ExerciseCheckpoint(ModelUtils, ndb.Model):
     title = ndb.StringProperty()
     test_functions = ndb.StringProperty()
     index = ndb.IntegerProperty()
-    timestamp = ndb.DateTimeProperty(auto_now_add=True)
+    created = ndb.DateTimeProperty(auto_now_add=True)
+
+
+class ExerciseProject(ModelUtils, ndb.Model):
+    title = ndb.StringProperty()
+    checkpoints = ndb.StructuredProperty(ExerciseCheckpoint)
+    index = ndb.IntegerProperty()
+    created = ndb.DateTimeProperty(auto_now_add=True)
 
 
 class Exercise(ModelUtils, ndb.Model):
     author = ndb.UserProperty()
     title = ndb.StringProperty()
     description = ndb.StringProperty()
-    checkpoints = ndb.StructuredProperty(ExerciseCheckpoint)
-    index = ndb.StringProperty()
-    timestamp = ndb.DateTimeProperty(auto_now_add=True)
+    index = ndb.IntegerProperty()
+    created = ndb.DateTimeProperty(auto_now_add=True)
 
 
 class Course(ModelUtils, ndb.Model):
@@ -191,7 +197,7 @@ class Course(ModelUtils, ndb.Model):
     title = ndb.StringProperty()
     img = ndb.BlobKeyProperty()
     description = ndb.StringProperty(indexed=False)
-    excercise_keys = ndb.KeyProperty(Exercise, repeated=True)
+    exercise_keys = ndb.KeyProperty(Exercise, repeated=True)
     lesson_keys = ndb.KeyProperty('Lesson', repeated=True)
     user_keys = ndb.KeyProperty(User, repeated=True)
 
