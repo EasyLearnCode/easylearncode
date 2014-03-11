@@ -1,11 +1,13 @@
 from webapp2_extras.appengine.auth.models import User
 from google.appengine.ext import ndb
 
+
 class ModelUtils(object):
     def to_dict(self, *args, **kwargs):
         result = super(ModelUtils, self).to_dict(*args, **kwargs)
         result["Id"] = self.key.urlsafe()
         return result
+
 
 class User(User):
     """
@@ -172,14 +174,14 @@ class ExerciseCheckpoint(ModelUtils, ndb.Model):
     instruction_html = ndb.StringProperty()
     title = ndb.StringProperty()
     test_functions = ndb.StringProperty()
-    index = ndb.IntegerProperty()
+    index = ndb.FloatProperty()
     created = ndb.DateTimeProperty(auto_now_add=True)
 
 
 class ExerciseProject(ModelUtils, ndb.Model):
     title = ndb.StringProperty()
     checkpoints = ndb.StructuredProperty(ExerciseCheckpoint)
-    index = ndb.IntegerProperty()
+    index = ndb.FloatProperty()
     created = ndb.DateTimeProperty(auto_now_add=True)
 
 
@@ -187,7 +189,7 @@ class Exercise(ModelUtils, ndb.Model):
     author = ndb.UserProperty()
     title = ndb.StringProperty()
     description = ndb.StringProperty()
-    index = ndb.IntegerProperty()
+    index = ndb.FloatProperty()
     created = ndb.DateTimeProperty(auto_now_add=True)
 
 
@@ -208,12 +210,12 @@ class WeeklyQuizTest(ModelUtils, ndb.Model):
 
 
 class WeeklyQuizLevel(ModelUtils, ndb.Model):
-    level = ndb.IntegerProperty()
+    level = ndb.FloatProperty()
     description = ndb.StringProperty(indexed=False)
-    limit_memory = ndb.IntegerProperty(default=100)
+    limit_memory = ndb.FloatProperty(default=100)
     limit_time = ndb.FloatProperty(default=60)
     test_case = ndb.StructuredProperty(WeeklyQuizTest, repeated=True)
-    score = ndb.IntegerProperty()
+    score = ndb.FloatProperty()
 
     @property
     def description_html(self):
@@ -300,7 +302,7 @@ class WeeklyQuizLevel(ModelUtils, ndb.Model):
 
 
 class WeeklyQuiz(ModelUtils, ndb.Model):
-    week = ndb.IntegerProperty()
+    week = ndb.FloatProperty()
     start_date = ndb.DateProperty()
     publish_date = ndb.DateTimeProperty(auto_now_add=True)
     level_keys = ndb.KeyProperty(WeeklyQuizLevel, repeated=True)
@@ -367,10 +369,10 @@ class WeeklyQuizResult(ModelUtils, ndb.Model):
     submit_time = ndb.DateTimeProperty(auto_now_add=True)
     result = ndb.BooleanProperty()
     time_used = ndb.FloatProperty()
-    memory_used = ndb.IntegerProperty()
+    memory_used = ndb.FloatProperty()
     language = ndb.StringProperty()
     code = ndb.StringProperty(indexed=False)
-    score = ndb.IntegerProperty()
+    score = ndb.FloatProperty()
 
     @classmethod
     def get_top_player(cls, test_key):
@@ -392,18 +394,24 @@ class WeeklyQuizResult(ModelUtils, ndb.Model):
             score.append({'test_key': key, 'week': key.get().week, 'score': sum([x.score for x in result])})
         return sorted(score, key=lambda k: k['score'], reverse=True)[:5]
 
+
 class Lesson(ModelUtils, ndb.Model):
-    title = ndb.StringProperty(required=True)
+    author = ndb.UserProperty()
+    title = ndb.StringProperty()
     description = ndb.StringProperty()
+    index = ndb.FloatProperty()
+    created = ndb.DateTimeProperty(auto_now_add=True)
     lecture_keys = ndb.KeyProperty('Lecture', repeated=True)
 
 
 class Lecture(ModelUtils, ndb.Model):
     title = ndb.StringProperty(required=True)
     description = ndb.StringProperty()
-    image = ndb.BlobKeyProperty()
+    img = ndb.BlobKeyProperty()
     youtube_id = ndb.StringProperty()
-    time = ndb.IntegerProperty()
+    time = ndb.FloatProperty()
+    index = ndb.FloatProperty()
+    created = ndb.DateTimeProperty(auto_now_add=True)
     question_keys = ndb.KeyProperty('Question', repeated=True)
 
 
@@ -415,16 +423,16 @@ class QuizAnswer(ModelUtils, ndb.Model):
 class Quiz(ModelUtils, ndb.Model):
     question = ndb.StringProperty()
     answers = ndb.StructuredProperty(QuizAnswer, repeated=True)
-    time = ndb.IntegerProperty()
+    time = ndb.FloatProperty()
 
 
 class Question(ModelUtils, ndb.Model):
     quiz_keys = ndb.KeyProperty('Quiz', repeated=True)
     test_keys = ndb.KeyProperty('Test', repeated=True)
-    score = ndb.IntegerProperty()
+    score = ndb.FloatProperty()
 
 
 class Test(ModelUtils, ndb.Model):
     description = ndb.StringProperty(indexed=False)
     test_script = ndb.StringProperty(indexed=False)
-    time = ndb.IntegerProperty()
+    time = ndb.FloatProperty()
