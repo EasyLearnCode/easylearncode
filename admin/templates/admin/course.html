@@ -31,7 +31,7 @@
         <th>Created</th>
         <th>Description</th>
         <th>Image</th>
-        <th>Lession</th>
+        <th>Lesson</th>
         <th>Exercise</th>
     </tr>
     </thead>
@@ -44,7 +44,9 @@
             <div><img ng-src="{{ course.img }}=s150"></div>
             <div><input type="file" name="file" ng-file-select="uploadFile($files, course)"/></div>
         </td>
-        <td class="center"></td>
+        <td class="center"><a class="btn btn-success" ng-href="#!/lessons/{{ course.Id }}">
+                <i class="icon-zoom-in icon-white"></i>
+            </a></td>
         <td class="center"><a class="btn btn-success" ng-href="#!/exercise/{{ course.Id }}">
                 <i class="icon-zoom-in icon-white"></i>
             </a></td>
@@ -122,10 +124,174 @@
     </div><!--/row-->
      {% endraw %}
     </script>
+    <script type="text/ng-template" id="template/angular/admin/courses/lesson.html">
+     {% raw %}
+        <h2>Lesson manage of course {{ course.title }}</h2>
+        <div class="row-fluid sortable">
+        <div class="box span12">
+    <div class="box-header" data-original-title>
+        <h2><i class="icon-user"></i><span class="break"></span>Lessons</h2>
+        <div class="box-icon">
+            <a href="#" class="btn-setting"><i class="icon-wrench"></i></a>
+            <a href="#" ng-click="showAddModal()" ><i class="icon-plus"></i></a>
+            <a href="#" class="btn-minimize"><i class="icon-chevron-up"></i></a>
+            <a href="#" class="btn-close"><i class="icon-remove"></i></a>
+        </div>
+    </div>
+    <div class="box-content">
+    <table class="table table-striped table-bordered bootstrap-datatable">
+    <thead>
+    <tr>
+        <th>Title</th>
+        <th>Created</th>
+        <th>Description</th>
+        <th>Author</th>
+        <th>Lectures</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="lesson in course.lesson_keys">
+        <td>{{ lesson.title }}</td>
+        <td class="center">{{ lesson.created }}</td>
+        <td class="center">{{ lesson.description }}</td>
+        <td class="center">{{ lesson.author }}</td>
+        <td class="center"><a class="btn btn-success" ng-href="#!/lessons/lectures/{{ lesson.Id }}">
+                <i class="icon-zoom-in icon-white"></i>
+            </a></td>
+        <td class="center">
+            <a class="btn btn-info" ng-click="showEditModal(lesson)" >
+                <i class="icon-edit icon-white"></i>
+            </a>
+            <a class="btn btn-danger" ng-click="delete(lesson)">
+                <i class="icon-trash icon-white"></i>
+            </a>
+        </td>
+    </tr>
+    </tbody>
+    </table>
+    </div>
+    </div>
+    <!--/span-->
 
-    <script type="text/ng-template" id="myModalContent.html">
-            <form-directive form="form"></form-directive>
+    </div><!--/row-->
+     {% endraw %}
     </script>
 
+    <script type="text/ng-template" id="template/angular/admin/courses/lessons/lecture.html">
+     {% raw %}
+        <h2>Lecture manage of lesson {{ lesson.title }}</h2>
+        <div class="row-fluid sortable">
+        <div class="box span12">
+    <div class="box-header" data-original-title>
+        <h2><i class="icon-user"></i><span class="break"></span>Lecture</h2>
+        <div class="box-icon">
+            <a href="#" class="btn-setting"><i class="icon-wrench"></i></a>
+            <a href="#" ng-click="showAddModal()" ><i class="icon-plus"></i></a>
+            <a href="#" class="btn-minimize"><i class="icon-chevron-up"></i></a>
+            <a href="#" class="btn-close"><i class="icon-remove"></i></a>
+        </div>
+    </div>
+    <div class="box-content">
+    <table class="table table-striped table-bordered bootstrap-datatable">
+    <thead>
+    <tr>
+        <th>Title</th>
+        <th>Created</th>
+        <th>Description</th>
+        <th>Video</th>
+        <th>Time</th>
+        <th>Image</th>
+        <th>Question<th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="lecture in lesson.lecture_keys">
+        <td>{{ lecture.title }}</td>
+        <td class="center">{{ lecture.created | date:'medium' }}</td>
+        <td class="center">{{ lecture.description }}</td>
+        <td class="center">{{ lecture.youtube_id }}</td>
+        <td class="center">{{ lecture.time }}</td>
+        <td class="center">
+            <div><img ng-src="{{ course.img }}=s150"></div>
+            <div><input type="file" name="file" ng-file-select="uploadFile($files, lecture)"/></div>
+        </td>
+        <td class="center"><a class="btn btn-success" ng-href="#!/lessons/lectures/questions/{{ lecture.Id }}">
+                <i class="icon-zoom-in icon-white"></i>
+            </a></td>
+        <td class="center">
+            <a class="btn btn-info" ng-click="showEditModal(lecture)" >
+                <i class="icon-edit icon-white"></i>
+            </a>
+            <a class="btn btn-danger" ng-click="delete(lecture)">
+                <i class="icon-trash icon-white"></i>
+            </a>
+        </td>
+    </tr>
+    </tbody>
+    </table>
+    </div>
+    </div>
+    <!--/span-->
+
+    </div><!--/row-->
+     {% endraw %}
+    </script>
+
+    <script type="text/ng-template" id="template/angular/admin/courses/lessons/lectures/question.html">
+     {% raw %}
+        <h2>Question manage of lecture {{ lecture.title }}</h2>
+        <div class="row-fluid sortable">
+        <div class="box span12">
+    <div class="box-header" data-original-title>
+        <h2><i class="icon-user"></i><span class="break"></span>Exercise</h2>
+
+        <div class="box-icon">
+            <a href="#" class="btn-setting"><i class="icon-wrench"></i></a>
+            <a href="#" ng-click="showAddModal()" ><i class="icon-plus"></i></a>
+            <a href="#" class="btn-minimize"><i class="icon-chevron-up"></i></a>
+            <a href="#" class="btn-close"><i class="icon-remove"></i></a>
+        </div>
+    </div>
+    <div class="box-content">
+    <table class="table table-striped table-bordered bootstrap-datatable">
+    <thead>
+    <tr>
+        <th>Title</th>
+        <th>Created</th>
+        <th>Description</th>
+        <th>Project</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="exercise in course.exercise_keys">
+        <td>{{ exercise.title }}</td>
+        <td class="center">{{ exercise.created }}</td>
+        <td class="center">{{ exercise.description }}</td>
+        <td class="center"><a class="btn btn-success" ng-href="#!/exercise/project/{{ exercise.Id }}">
+                <i class="icon-zoom-in icon-white"></i>
+            </a></td>
+        <td class="center">
+            <a class="btn btn-info" ng-click="showEditModal(exercise)" >
+                <i class="icon-edit icon-white"></i>
+            </a>
+            <a class="btn btn-danger" ng-click="delete(exercise)">
+                <i class="icon-trash icon-white"></i>
+            </a>
+        </td>
+    </tr>
+    </tbody>
+    </table>
+    </div>
+    </div>
+    <!--/span-->
+
+    </div><!--/row-->
+     {% endraw %}
+    </script>
+
+    <script type="text/ng-template" id="myModalContent.html">
+        <form-directive form="form"></form-directive>
+    </script>
 
 {% endblock %}

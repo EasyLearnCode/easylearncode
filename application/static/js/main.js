@@ -1264,13 +1264,19 @@ angular.module("easylearncode.course_paractice_viewer", ["ui.bootstrap", "ui.ace
 
 angular.module("easylearncode.visualization", ["ui.bootstrap", "ui.ace", 'easylearncode.core'])
     .controller("VisualizationCtrl", ["$scope", "$sce", "$timeout", function ($scope, $sce, $timeout) {
-        $scope.exercise = {
-            lang: 'python',
-            source: 'print "Hello World"'
-        };
+        $scope.exercise = [
+            {
+                lang: 'python',
+                source: 'print "Hello World"'
+            },
+            {
+                lang: 'python',
+                source:'def Tinhtong(a, b): \r\n\treturn a + b \r\nprint Tinhtong(12, 33)'
+            }
+        ];
 
         $scope.updateVisualaztionUrl = function () {
-            src = "http://pythontutor.com/iframe-embed.html#code=" + encodeURIComponent($scope.exercise.source) + "&cumulative=false&heapPrimitives=false&drawParentPointers=false&textReferences=false&showOnlyOutputs=false&py=2&curInstr=0&codeDivWidth=350&codeDivHeight=400";
+            src = "http://pythontutor.com/iframe-embed.html#code=" + encodeURIComponent($scope.exercise[1].source) + "&cumulative=false&heapPrimitives=false&drawParentPointers=false&textReferences=false&showOnlyOutputs=false&py=2&curInstr=0&codeDivWidth=350&codeDivHeight=400";
             $("#visualaztionModal .modal-body").find("iframe").remove();
             var iframe = $('<iframe src="' + src + '" frameborder="0" width="800" height="500"></iframe>');
             $("#visualaztionModal .modal-body").append(iframe);
@@ -1318,7 +1324,7 @@ angular.module("easylearncode.visualization", ["ui.bootstrap", "ui.ace", 'easyle
         $scope.runCode = function () {
             console.log($scope.jsrepl);
             dataObj = {
-                command: $scope.exercise.source,
+                command: $scope.exercise[1].source,
                 testScript: '',
                 type: 'evalUser'
             };
