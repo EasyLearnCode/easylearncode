@@ -13,8 +13,9 @@ class GetWeekResultHandler(BaseHandler):
         else:
             from google.appengine.ext import ndb
             test = ndb.Key(urlsafe=week_id).get()
-        quizs = WeeklyQuiz.get_quizs_last()
+
         if test:
+            quizs = WeeklyQuiz.get_quizs_last()
             top_player = test.get_players()
             test_key = test.key.urlsafe()
             levels = []
