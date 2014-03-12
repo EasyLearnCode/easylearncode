@@ -1,11 +1,13 @@
 from webapp2_extras.appengine.auth.models import User
 from google.appengine.ext import ndb
 
+
 class ModelUtils(object):
     def to_dict(self, *args, **kwargs):
         result = super(ModelUtils, self).to_dict(*args, **kwargs)
         result["Id"] = self.key.urlsafe()
         return result
+
 
 class User(User):
     """
@@ -210,7 +212,7 @@ class WeeklyQuizTest(ModelUtils, ndb.Model):
 class WeeklyQuizLevel(ModelUtils, ndb.Model):
     level = ndb.IntegerProperty()
     description = ndb.StringProperty(indexed=False)
-    limit_memory = ndb.IntegerProperty(default=100)
+    limit_memory = ndb.IntegerProperty(default=1000)
     limit_time = ndb.FloatProperty(default=60)
     test_case = ndb.StructuredProperty(WeeklyQuizTest, repeated=True)
     score = ndb.IntegerProperty()
@@ -359,6 +361,14 @@ class WeeklyQuiz(ModelUtils, ndb.Model):
             quizs.append({'test_key': result.key.urlsafe(), 'week': result.week})
         return sorted(quizs, key=lambda k: k['week'], reverse=True)[:5]
 
+    @classmethod
+    def get_week_in_month(cls, month, year):
+        results = cls.query(cls.start_date.mouth == month, cls.start_date.year == year).fetch()
+        quizs = []
+        for result in results:
+            quizs.append({'test_key': result.key.urlsafe(), 'week': result.week})
+        return sorted(quizs, key=lambda k: k['week'], reverse=True)
+
 
 class WeeklyQuizResult(ModelUtils, ndb.Model):
     test_key = ndb.KeyProperty(WeeklyQuiz)
@@ -391,6 +401,7 @@ class WeeklyQuizResult(ModelUtils, ndb.Model):
         for key, result in groupby(results, lambda x: x.test_key):
             score.append({'test_key': key, 'week': key.get().week, 'score': sum([x.score for x in result])})
         return sorted(score, key=lambda k: k['score'], reverse=True)[:5]
+
 
 class Lesson(ModelUtils, ndb.Model):
     title = ndb.StringProperty(required=True)
