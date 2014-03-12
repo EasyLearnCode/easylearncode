@@ -58,7 +58,6 @@
     angular.module("easylearncode.home", ["ui.bootstrap", "easylearncode.core"]);
     angular.module("easylearncode.game", ["easylearncode.core"]);
     angular.module("easylearncode.learn", ["ui.bootstrap", "ui.ace", "easylearncode.core", "com.2fdevs.videogular", "com.2fdevs.videogular.plugins.controls", "com.2fdevs.videogular.plugins.overlayplay", "com.2fdevs.videogular.plugins.buffering", "com.2fdevs.videogular.plugins.poster", "info.vietnamcode.nampnq.videogular.plugins.youtube", "info.vietnamcode.nampnq.videogular.plugins.quiz"]);
-    angular.module("easylearncode.practise", ["ui.bootstrap", "ui.ace", "easylearncode.core"]);
     angular.module("easylearncode.info", ["ui.bootstrap", "easylearncode.core", "ngAnimate"]);
     angular.module("easylearncode.user_profile", ["easylearncode.core"]);
     angular.module("easylearncode.contest_result", ["easylearncode.core"]);
@@ -225,12 +224,12 @@ angular.module("services.utility").factory("libraryLoader", ["$q", "$rootScope",
                         cache: !0,
                         url: f
                     }).success(function () {
-                            j.resolve();
-                            $rootScope.$apply()
-                        }).error(function () {
-                            j.reject();
-                            $rootScope.$apply()
-                        }), d = j.promise);
+                        j.resolve();
+                        $rootScope.$apply()
+                    }).error(function () {
+                        j.reject();
+                        $rootScope.$apply()
+                    }), d = j.promise);
                     return d
                 }))
             }
@@ -487,11 +486,11 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "$h
             if (lang.active) {
                 $http.post('/api/contest/submit', {"key": $scope.thisweek_contest.this_quiz_level.quiz_level_key, "source": lang.source,
                     "_csrf_token": csrf_token, "lang": lang.lang}).success(function (data) {
-                        if (data.status == 1) {
-                            window.location = "/contest"
-                        }
+                    if (data.status == 1) {
+                        window.location = "/contest"
+                    }
 
-                    });
+                });
             }
         });
     }
@@ -528,14 +527,14 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "$h
                             $scope.compiling = false;
                         }
                     }).error(function (data, status, headers, config) {
-                            $scope.compile_result.push(
-                                {
-                                    'result': false,
-                                    'time': 0,
-                                    'memory': 0,
-                                    'error': 'Disconnect from server...Please try again'
-                                });
-                        });
+                        $scope.compile_result.push(
+                            {
+                                'result': false,
+                                'time': 0,
+                                'memory': 0,
+                                'error': 'Disconnect from server...Please try again'
+                            });
+                    });
                 });
 
 
@@ -574,7 +573,7 @@ angular.module("easylearncode.home").controller('HomeCarouselCtrl', ['$scope', f
 
 angular.module("easylearncode.learn").run(function () {
     $('#myTab a:last').tab('show');
-}).controller('LearnCtrl', ['$scope', '$http', '$location', '$sce', '$compile','$window', function ($scope, $http, $location, $sce, $compile, $window) {
+}).controller('LearnCtrl', ['$scope', '$http', '$location', '$sce', '$compile', '$window', function ($scope, $http, $location, $sce, $compile, $window) {
         $scope.lecture_id = $location.search()['lecture_id'];
         /*$http.get('/api/Lecture/'+lecture_id).success(function(data){
          $scope.lecture_name = data.name;
@@ -902,32 +901,32 @@ angular.module("easylearncode.learn").run(function () {
         ];
 
         $scope.ViewOnYoutube = function () {
-            $window.open($scope.youtubeUrl+'#t='+$scope.currentTime);
-            $scope.state='pause';
+            $window.open($scope.youtubeUrl + '#t=' + $scope.currentTime);
+            $scope.state = 'pause';
         }
 
 
-        $('#gplus-cm').html('<div class="g-comments" data-width="700" data-href="'+location.toString()+'" data-first_party_property="BLOGGER" data-view_type="FILTERED_POSTMOD">Loading Google+ Comments ...</div>');
+        $('#gplus-cm').html('<div class="g-comments" data-width="700" data-href="' + location.toString() + '" data-first_party_property="BLOGGER" data-view_type="FILTERED_POSTMOD">Loading Google+ Comments ...</div>');
 
     }]).directive('hoverClass', function () {
-        return {
-            restrict$scop: 'A',
-            scope: {
-                addClass: '@',
-                removeClass: '@'
-            },
-            link: function (scope, element) {
-                element.on('mouseenter', function () {
-                    element.addClass(scope.addClass);
-                    element.removeClass(scope.removeClass);
-                });
-                element.on('mouseleave', function () {
-                    element.addClass(scope.removeClass);
-                    element.removeClass(scope.addClass);
-                });
-            }
-        };
-    });
+    return {
+        restrict$scop: 'A',
+        scope: {
+            addClass: '@',
+            removeClass: '@'
+        },
+        link: function (scope, element) {
+            element.on('mouseenter', function () {
+                element.addClass(scope.addClass);
+                element.removeClass(scope.removeClass);
+            });
+            element.on('mouseleave', function () {
+                element.addClass(scope.removeClass);
+                element.removeClass(scope.addClass);
+            });
+        }
+    };
+});
 
 angular.module("easylearncode.contest_result").controller('ContestResultCtrl', ['$scope', '$http', 'csrf_token', '$location', function ($scope, $http, csrf_token, $location) {
     $http.get('/api/contest/week_result/current').success(function (data) {
@@ -990,13 +989,6 @@ angular.module("easylearncode.user_profile")
             return text ? md5.createHash(text.toString().toLowerCase()) : text;
         };
     } ]);
-
-angular.module("easylearncode.practise").controller("PractiseCtrl", ["$scope", function ($scope) {
-    $scope.exercise = {
-        lang: 'python',
-        source: 'print "Hello World"'
-    };
-}]);
 
 angular.module("easylearncode.info").controller('InfoCtrl', ['$scope', '$http', '$location', function ($scope, $http, $location) {
     var course_id = $location.search()['course_id'];
@@ -1084,19 +1076,170 @@ angular.module("easylearncode.course_paractice_detail", ["ui.bootstrap", "easyle
     }
 }]);
 angular.module("easylearncode.course_paractice_viewer", ["ui.bootstrap", "ui.ace", 'easylearncode.core'])
-    .controller("PracticeCtrl", ["$scope", "$sce", "$timeout", function ($scope, $sce, $timeout) {
-        $scope.exercise = {
-            lang: 'python',
-            source: 'print "Hello World"'
-        };
-
-        $scope.updateVisualaztionUrl = function () {
-            src = "http://pythontutor.com/iframe-embed.html#code=" + encodeURIComponent($scope.exercise.source) + "&cumulative=false&heapPrimitives=false&drawParentPointers=false&textReferences=false&showOnlyOutputs=false&py=2&curInstr=0&codeDivWidth=350&codeDivHeight=400";
-            $("#visualaztionModal .modal-body").find("iframe").remove();
-            var iframe = $('<iframe src="' + src + '" frameborder="0" width="800" height="500"></iframe>');
-            $("#visualaztionModal .modal-body").append(iframe);
+    .controller("PracticeCtrl", ["$scope", "$sce", "$timeout", "exercise", function ($scope, $sce, $timeout, exercise) {
+        var jqconsole = $('#console').jqconsole('  >> EasyLearnCode Python Compiler v0.1 <<\n', '>>>');
+        $scope.exercise = exercise;
+        $scope.jsreplReady = false;
+        $scope.isEditorFullScreen = false;
+        $scope.showAlert = false;
+        $scope.showConsole = false;
+        $scope.aceLoaded = function (_editor) {
+            $scope.editor = _editor;
         }
+        $scope.toggleFullScreen = function () {
+            $scope.isEditorFullScreen = !$scope.isEditorFullScreen;
+            if ($scope.isEditorFullScreen) {
+                angular.element('body').css({'overflow': 'hidden'});
+            } else {
+                angular.element('body').css({'overflow': 'auto'});
+            }
+            $timeout(function () {
+                $scope.editor.resize()
+            }, 10);
+        }
+        $scope.runCode = function () {
+            $scope.showConsole = true;
+            jqconsole.Reset();
+            dataObj = {
+                command: $scope.source,
+                testScript: '',
+                type: 'evalUser'
+            };
+            jsrepl.sandbox.post({
+                type: 'engine.EasyLearnCode_Eval',
+                data: dataObj
+            });
+        }
+        $scope.alert = {
+            type: 'success', msg: 'Well done! You <a href="#">successfully</a> read this important alert message.'
+        }
+        $scope.changeCurrentCheckpoint = function (checkpoint) {
+            $scope.current_checkpoint = checkpoint;
+            $scope.source = $scope.current_checkpoint.default_files[0].content;
+            $scope.show = false;
+        }
+        $scope.changeCurrentCheckpoint(exercise.projects[0].checkpoints[0]);
+        $scope.inputCallback = function (callback) {
+            jqconsole.Input(function (result) {
+                var e;
+                try {
+                    callback(result);
+                } catch (_error) {
 
+                }
+            });
+
+        };
+        $scope.outputCallback = function (output, cls) {
+            if (output) {
+                jqconsole.Write(output, cls);
+            }
+        };
+        $scope.resultCallback = function (result) {
+            var code, error_msg, isSuccess, output, resultObj, result_val, _ref;
+            if (result && typeof result === 'object') {
+                resultObj = result;
+                result_val = resultObj.result;
+                code = resultObj.code;
+                output = resultObj.output;
+                if (result_val) {
+                    if (result_val[-1] !== '\n') {
+                        result = result_val + '\n';
+                    }
+                } else {
+                    result = '';
+                }
+                error_msg = null;
+                isSuccess = false;
+                if (resultObj.type === 'evalSolution') {
+                    if (result_val === 'true' || result_val === 'True') {
+                        isSuccess = true;
+                    } else if (result_val !== 'false' && result_val !== 'False') {
+                        error_msg = result_val;
+                    }
+                    if (isSuccess) {
+                        setTimeout(function () {
+                            $('.console-chrome').addClass('finished');
+                        }, 1000);
+                        $scope.$apply(function () {
+                            if (($scope.get_current_project().index + 1) <= 2) {
+                                $scope.notification = "Chúc mừng bạn đã hoàn thành ví dụ " + ($scope.get_current_project().index + 1);
+                            }
+                            else
+                                $scope.notification = "Chúc mừng bạn đã hoàn thành xong các ví dụ. Giờ bạn có thể nhấn tiếp tục để đăng nhập hệ thống và bắt đầu các khóa học của chúng tôi!";
+                        });
+                        //return this.ShowCongratulations();
+                    } else {
+                        //this.exercises_fail_detail[this.Exercises[this.Exercises.CurrentLang][this.Exercises.CurrentExercise].ExerciseID] += 1;
+                        //return this.ShowRetryAnswerPrompt(msg);
+                        $scope.jqconsole.Write('<span style="color: crimson">Bạn đã nhập sai! <br><span style="color: #F80">' + utf8_decode(result_val) + '</span></span>', 'log', false);
+                    }
+                } else if (resultObj.type === 'evalUser') {
+                    if (result) {
+                        $scope.jqconsole.Write('==> ' + result, 'output');
+                    }
+                    result = result_val;
+                    if (!result) {
+                        result = '';
+                    }
+                    if (!code) {
+                        code = '';
+                    }
+                    if (!output) {
+                        output = '';
+                    }
+                    result = JSON.stringify(result);
+                    code = JSON.stringify(code);
+                    output = JSON.stringify(output);
+                    command = 'easylearncode_validate(' + result + ', ' + code + ', ' + output + ')';
+                    command = command.replace(/#{/g, '\\#{');
+                    dataObj = {
+                        command: command,
+                        testScript: $scope.get_current_checkpoint().test_functions,
+                        type: 'evalSolution'
+                    };
+                    jsrepl.sandbox.post({
+                        type: 'engine.EasyLearnCode_Eval',
+                        data: dataObj
+                    });
+                }
+            } else if (result) {
+                $scope.jqconsole.Write('==> ' + result, 'output');
+            }
+        };
+        $scope.errorCallback = function (e) {
+            $scope.jqconsole.Write(e, 'error');
+
+        };
+        $scope.timeoutCallback = function () {
+
+        }
+        $scope.nextExercise = function () {
+            $('.console-chrome').removeClass('finished');
+            if ($scope.get_current_project().index + 1 == $scope.get_current_project().checkpoints_count) {
+                window.location.pathname = '/register/';
+            } else {
+                $scope.jqconsole.Reset();
+                $scope.get_current_project().index += 1;
+                $scope.jqconsole.Write($scope.get_current_checkpoint().entry_html + $scope.get_current_checkpoint().instruction_html, 'log', false);
+            }
+
+        }
+        var jsrepl = new JSREPL({
+            input: $scope.inputCallback,
+            output: $scope.outputCallback,
+            result: $scope.resultCallback,
+            error: $scope.errorCallback,
+            timeout: {
+                time: 30000,
+                callback: $scope.timeoutCallback
+            }
+        });
+        jsrepl.loadLanguage("python", function () {
+            $scope.$apply(function () {
+                $scope.jsreplReady = true;
+            })
+        });
     }])
     .directive('hoverClass', function () {
         return {
