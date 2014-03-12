@@ -105,7 +105,7 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core"])
                 {
                     "field_id": 2,
                     "field_title": "description",
-                    "field_type": "textarea",
+                    "field_type": "textfield",
                     "field_value": "",
                     "field_required": true
                 }
@@ -190,8 +190,8 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core"])
                     headers: {'Content-Type': undefined },
                     transformRequest: angular.identity
                 }).success(function (data) {
-                        course.img = data.image_url;
-                    }).error();
+                    course.img = data.image_url;
+                }).error();
             })
 
         };
@@ -555,3 +555,223 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core"])
         $scope.lecture = api.Model.get({type: 'lectures', id: $routeParams.lectureId, recurse: true});
 
     }]);
+angular.module("easylearncode.admin.quiz", ["easylearncode.admin.core"])
+    .config(["$locationProvider", "$routeProvider", function ($locationProvider, $routeProvider) {
+        $routeProvider
+            .when("/",
+            {
+                templateUrl: "template/angular/admin/quiz/quizs.html",
+                controller: "QuizAdminCtrl"
+            })
+            .when("/level/:quizId",
+            {
+                templateUrl: "template/angular/admin/quiz/levels.html",
+                controller: "LevelAdminCtrl"
+            })
+            .otherwise({redirectTo: "/"})
+    }])
+    .controller("QuizAdminCtrl", ["$scope", "api", "$modal", "$http" , function ($scope, api, $modal, $http) {
+        $scope.quizs = api.Model.query({type: 'quizs', page_size: 10, order: '-week'});
+        var addForm = {
+            "form_id": 1,
+            "form_name": "Add Quiz",
+            "form_fields": [
+                {
+                    "field_id": 1,
+                    "field_title": "week",
+                    "field_type": "textfield",
+                    "field_value": "",
+                    "field_required": true
+                },
+                {
+                    "field_id": 2,
+                    "field_title": "start_date",
+                    "field_type": "date",
+                    "field_value": "",
+                    "field_required": true
+                }
+            ]
+        }
+        $scope.delete = function (quiz) {
+
+            api.Model.delete({type: 'quizs', id: quiz.Id}, function () {
+                $scope.quizs = _.without($scope.quizs, quiz);
+            });
+        }
+        $scope.showAddModal = function () {
+            var modalInstance = $modal.open({
+                templateUrl: 'myModalContent.html',
+                controller: ModalInstanceCtrl,
+                resolve: {
+                    form: function () {
+                        return addForm;
+                    }
+                }
+            });
+            modalInstance.result.then(function (addForm) {
+                quiz = {}
+                _.each(addForm.form_fields, function (ele) {
+                    if(ele.field_type == "date"){
+                        ele.field_value = new Date(ele.field_value);
+                    }
+                    if(ele.field_title == "week"){
+                        ele.field_value = parseInt(ele.field_value);
+                    }
+                    quiz[ele.field_title] = ele.field_value;
+                });
+                api.Model.save({type: 'quizs'}, quiz, function (data) {
+                    $scope.quizs.push(data);
+                })
+            }, function () {
+                console.log('Modal dismissed at: ' + new Date());
+            });
+
+        };
+        $scope.showEditModal = function (quiz) {
+            var editForm = $.extend(true, {}, addForm);
+            editForm["form_name"] = "Edit Quiz";
+            _.each(editForm.form_fields, function (field) {
+                field.field_value = quiz[field.field_title];
+            });
+            var modalInstance = $modal.open({
+                templateUrl: 'myModalContent.html',
+                controller: ModalInstanceCtrl,
+                resolve: {
+                    form: function () {
+                        return editForm;
+                    }
+                }
+            });
+            modalInstance.result.then(function (addForm) {
+                quiz_tmp = {}
+                _.each(addForm.form_fields, function (ele) {
+                    if(ele.field_type == "date"){
+                        ele.field_value = new Date(ele.field_value);
+                    }
+                    if(ele.field_title == "week"){
+                        ele.field_value = parseInt(ele.field_value);
+                    }
+                    quiz_tmp[ele.field_title] = ele.field_value;
+                });
+                api.Model.save({type: 'quizs', id: quiz.Id}, quiz_tmp, function (data) {
+                    quiz = _.extend(quiz, quiz_tmp);
+                    $scope.$apply();
+                })
+            }, function () {
+                console.log('Modal dismissed at: ' + new Date());
+            });
+        }
+        var ModalInstanceCtrl = function ($scope, $modalInstance, form) {
+
+            $scope.form = form;
+
+            $scope.ok = function (data) {
+                $modalInstance.close($scope.form);
+            };
+
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
+            };
+        };
+
+    }])
+    .controller("LevelAdminCtrl", ["$scope", "api", "$routeParams", '$modal', function ($scope, api, $routeParams, $modal) {
+        //console.log($routeParams)
+        $scope.quiz = api.Model.get({type: 'quizs', id: $routeParams.quizId, recurse: true});
+        var addForm = {
+            "form_id": 1,
+            "form_name": "Add Course",
+            "form_fields": [
+                {
+                    "field_id": 1,
+                    "field_title": "title",
+                    "field_type": "textfield",
+                    "field_value": "",
+                    "field_required": true
+                },
+                {
+                    "field_id": 2,
+                    "field_title": "description",
+                    "field_type": "textfield",
+                    "field_value": "",
+                    "field_required": true
+                }
+            ]
+        }
+        $scope.delete = function (course) {
+
+            api.Model.delete({type: 'courses', id: course.Id}, function () {
+                $scope.courses = _.without($scope.courses, course);
+            });
+        }
+        $scope.showAddModal = function () {
+            var modalInstance = $modal.open({
+                templateUrl: 'myModalContent.html',
+                controller: ModalInstanceCtrl,
+                resolve: {
+                    form: function () {
+                        return addForm;
+                    }
+                }
+            });
+            modalInstance.result.then(function (addForm) {
+                course = {}
+                _.each(addForm.form_fields, function (ele) {
+                    course[ele.field_title] = ele.field_value;
+                });
+                api.Model.save({type: 'exercises'}, course, function (data) {
+                    api.Model.get({type: 'courses', id: $routeParams.courseId}, function (course) {
+                        course.exercise_keys.push(data.Id);
+                        api.Model.save({type: 'courses', id: course.Id}, course, function () {
+                            $scope.course.exercise_keys.push(data);
+                        });
+                    });
+
+                })
+            }, function () {
+                console.log('Modal dismissed at: ' + new Date());
+            });
+
+        };
+        $scope.showEditModal = function (course) {
+            var editForm = $.extend(true, {}, addForm);
+            editForm["form_name"] = "Edit Course";
+            _.each(editForm.form_fields, function (field) {
+                field.field_value = course[field.field_title];
+            });
+            var modalInstance = $modal.open({
+                templateUrl: 'myModalContent.html',
+                controller: ModalInstanceCtrl,
+                resolve: {
+                    form: function () {
+                        return editForm;
+                    }
+                }
+            });
+            modalInstance.result.then(function (addForm) {
+                course_tmp = {}
+                _.each(addForm.form_fields, function (ele) {
+                    course_tmp[ele.field_title] = ele.field_value;
+                });
+                api.Model.save({type: 'courses', id: course.Id}, course_tmp, function (data) {
+                    //$scope.courses.push(data);
+                    course = _.extend(course, course_tmp);
+                    $scope.$apply();
+                })
+            }, function () {
+                console.log('Modal dismissed at: ' + new Date());
+            });
+        }
+        var ModalInstanceCtrl = function ($scope, $modalInstance, form) {
+
+            $scope.form = form;
+
+            $scope.ok = function (data) {
+                $modalInstance.close($scope.form);
+            };
+
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
+            };
+        };
+    }])
