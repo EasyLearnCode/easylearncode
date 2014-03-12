@@ -6,23 +6,6 @@
     {% raw %}
         <div class="container" data-ng-controller="PracticeCtrl">
             <!-- Modal -->
-            <div class="modal fade" id="visualaztionModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-                 aria-hidden="true">
-                <div class="modal-dialog visualaztion">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                            <h4 class="modal-title" id="myModalLabel">Visualaztion</h4>
-                        </div>
-                        <div class="modal-body">
-                            <iframe width="800" height="500" frameborder="0"></iframe>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
             <div class="row">
                 <div class="col-md-12 highlight">
                     <div class="row">
@@ -35,11 +18,9 @@
 
                             <span class="pull-right">
 
-                                <a class="btn btn-success">
-                                    <i class="fa fa-play"></i> Run</a>
-                                <a class="btn btn-default" data-target="#visualaztionModal" data-toggle="modal"
-                                   ng-click="updateVisualaztionUrl()"><i class="fa fa-code"></i> Visualaztion</a>
-                                <a class="btn btn-default">
+                                <a class="btn btn-success" ng-click="runCode()" ng-disabled="!jsreplReady" ng-class="{'run-btn-full-screen':isEditorFullScreen}">
+                                    <i class="fa fa-play" ></i> Run</a>
+                                <a class="btn btn-default" ng-click="toggleFullScreen()" ng-class="{'full-btn-full-screen':isEditorFullScreen}">
                                     <i class="fa fa-laptop"></i> Full Screen</a>
                             </span>
 
@@ -49,7 +30,10 @@
 
                                 </div>
                                 <div class="panel-body">
-                                    <div ui-ace="{theme:'chrome', mode:exercise.lang}" data-ng-model="exercise.source">
+                                    <div id="console" ng-show="showConsole" ng-class="{'full-screen':isEditorFullScreen}"></div>
+                                    <alert ng-show="showAlert" type="alert.type" close="showAlert=false" class="console-alert"><span ng-bind-html="alert.msg|to_trusted"></span></alert>
+                                    <div ui-ace="{theme:'chrome', mode:exercise.language, onLoad: aceLoaded}"
+                                         data-ng-model="source" ng-class="{'editor-full-screen':isEditorFullScreen}" >
                                     </div>
                                 </div>
                             </div>
@@ -59,53 +43,43 @@
                             <div class="lesson_info overlay" ng-show="show"></div>
                             <div class="panel panel-success">
                                 <div class="panel-heading">
-                                <span class="pull-left"><h3 class="panel-title"><i class="fa fa-tasks fa-lg"></i> Python
-                                    syntax</h3></span>
+                                    <span class="pull-left"><h3 class="panel-title"><i
+                                            class="fa fa-tasks fa-lg"></i> {{ exercise.name }}</h3></span>
                             <span class="pull-right">
                                 <a class="btn btn-default" ng-click="show=!show" ng-class="{show:show}">
                                     1/10 <i class="fa fa-toggle-down"></i></a>
                                 <div class="lesson_info popover fade bottom" ng-init="show=false" ng-class="{in:show}"
+                                     ng-show="show"
                                      style="display: block;top: 40px;left: 77px;width: 330px;">
                                     <div class="arrow"></div>
                                     <h3 class="popover-title" style="display: none;"></h3>
 
                                     <div class="popover-content">
-                                        <div class="panel panel-default">
+                                        <div class="panel panel-default" ng-repeat="project in exercise.projects">
                                             <div class="panel-heading">
                                                 <h4 class="panel-title">
                                                     <a data-toggle="collapse" data-parent="#accordion"
                                                        href="#collapseOne">
-                                                        Biến và các kiểu dữ liệu
+                                                        {{ project.name }}
                                                     </a>
                                                 </h4>
                                             </div>
                                             <div id="collapseOne" class="panel-collapse collapse in">
                                                 <div class="panel-body">
-                                                    <ul class="list-group">
+                                                    <ul class="list-group"
+                                                        ng-repeat="checkpoint in project.checkpoints">
                                                         <li class="list-group-item list-group-item-info" hover-class
                                                             add-class="list-group-item-success"
-                                                            remove-class="list-group-item-info"><i
-                                                                class="fa fa-arrow-circle-o-right"></i> Chào thế giới
-                                                        </li>
-                                                        <li class="list-group-item list-group-item-info" hover-class
-                                                            add-class="list-group-item-success"
-                                                            remove-class="list-group-item-info"><i
-                                                                class="fa fa-arrow-circle-o-right"></i> Biến
-                                                        </li>
-                                                        <li class="list-group-item list-group-item-info" hover-class
-                                                            add-class="list-group-item-success"
-                                                            remove-class="list-group-item-info"><i
-                                                                class="fa fa-arrow-circle-o-right"></i> Kiểu boolean
-                                                        </li>
-                                                        <li class="list-group-item list-group-item-info" hover-class
-                                                            add-class="list-group-item-success"
-                                                            remove-class="list-group-item-info"><i
-                                                                class="fa fa-arrow-circle-o-right"></i> Tổng kết
+                                                            remove-class="list-group-item-info"
+                                                            ng-click="changeCurrentCheckpoint(checkpoint);"><i
+                                                                class="fa fa-arrow-circle-o-right"
+                                                                ></i> {{ checkpoint.name }}
                                                         </li>
                                                     </ul>
                                                 </div>
                                             </div>
                                         </div>
+                                        <h5>Exercise by @Abc</h5>
                                     </div>
                                 </div>
                             </span>
@@ -113,22 +87,58 @@
                                     <div class="clearfix"></div>
                                 </div>
                                 <div class="panel-body">
-                                    <div class="wrap_introduction">
-                                        <div class="article__header">
-                                            <h2>Chào mừng bạn!</h2>
-                                        </div>
-                                        <div class="article__content">
-                                            <p>Python là một ngôn ngữ lập trình rất dễ học. Bạn có thể sử dụng nó để viết ứng dụng web, games...</p>
+                                    <div class="lesson-checkpoint__wrapper">
+                                        <div class="lesson-checkpoint nano has-scrollbar">
+                                            <div class="nano__content content">
+                                                <div class="lesson-checkpoint__inner">
+                                                    <div class="article__inner">
+                                                        <div class="article__header">
+                                                            <div class="lesson-checkpoint__name">{{ current_checkpoint.name }}</div>
+                                                        </div>
+                                                        <div class="article__content"
+                                                             ng-bind-html="current_checkpoint.entry_html|to_trusted">
 
-                                            <p>Bạn đã sẵn sàng học Python? Nhấn nút Run để tiếp tục!</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="lesson-checkpoint__instructions">
+                                                        <div class="article__inner lesson-checkpoint__instructions__header">
+                                                            <div class="block-label--light-blue">Instructions</div>
+                                                        </div>
+                                                        <div class="article__inner">
+                                                            <p ng-bind-html="current_checkpoint.instruction_html|to_trusted"></p>
 
+                                                            <div ng-if="current_checkpoint.hint_html" class="ui-accordian ui-accordian--lesson transition--max-height"
+                                                                 ng-class="{'is-expanded':isExpanded,'largeHeight':isExpanded,'smallHeight':!isExpanded}"
+                                                                 ng-init="isExpanded = false">
+                                                                <div class="ui-accordian__inner">
+                                                                    <a href="#" class="ui-accordian__trigger ui-media" ng-click="isExpanded = !isExpanded">
+                                                                        <div class="ui-media__image new-icon--small new-icon--center new-icon--circle--blue">
+                                                                            ?
+                                                                        </div>
+                                                                        <div class="ui-media__main">
+                                                                            <span class="is-hidden-if-is-expanded"
+                                                                                  ><b>Stuck?</b> Get a hint!</span>
+                                                                            <span class="is-shown-if-is-expanded--inline"
+                                                                                  ><b>Hint</b></span>
+                                                                        </div>
+                                                                    </a>
+
+                                                                    <div class="ui-accordian__content has-markdown"
+                                                                         ng-bind-html="current_checkpoint.hint_html|to_trusted">
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
 
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-4" style="height: 300px"></div>
                     </div>
 
                 </div>
@@ -141,4 +151,212 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js"></script>
     <script src="/application/js/libs/angularjs/ui-ace.min.js"></script>
     <script src="/application/js/libs/angularjs/ui-bootstrap-tpls-0.7.0.min.js"></script>
+{% endblock %}
+{% block mediaJS %}
+    <script>
+    angular.module('services.utility').constant("exercise",
+            {% raw %}
+                {
+                    "_id": "4fd55e66b280710003045fb5",
+                    "name": "Tip Calculator",
+                    "projects": [
+                        {
+                            "id": "4fd55e66b280710003045fb6",
+                            "author": {
+                                "_id": "4f04f1847057120003006c12",
+                                "handle": "Eric Weinstein",
+                                "profile_image_url": "http://s3.amazonaws.com/codecademy-production/profile_thumbnail/50b7d7b3cf6c0f9b11000087_795211733.jpg",
+                                "self_url": "/v1/users/4f04f1847057120003006c12"
+                            },
+                            "checkpoints": [
+                                {
+                                    "_id": "4fd55e6703a5f100030463ce",
+                                    "index": 0,
+                                    "code_reset": true,
+                                    "default_files": [
+                                        {
+                                            "filename": "script.py",
+                                            "content": "# Assign the variable meal the value 44.50 on line 3!\n\n"
+                                        }
+                                    ],
+                                    "entry": "Now let's apply the concepts from the previous section to a real world example.\n\nYou've finished eating at a restaurant, and received this bill:\n\n* **Cost of meal**: $44.50\n* **Restaurant tax**: 6.75%\n* **Tip**: 15%\n\nYou'll apply the tip to the overall cost of the meal (including tax).",
+                                    "entry_html": "\u003Cp\u003ENow let\u0026#39;s apply the concepts from the previous section to a real world example.\u003C/p\u003E\n\n\u003Cp\u003EYou\u0026#39;ve finished eating at a restaurant, and received this bill:\u003C/p\u003E\n\n\u003Cul\u003E\n\u003Cli\u003E\u003Cstrong\u003ECost of meal\u003C/strong\u003E: $44.50\u003C/li\u003E\n\u003Cli\u003E\u003Cstrong\u003ERestaurant tax\u003C/strong\u003E: 6.75%\u003C/li\u003E\n\u003Cli\u003E\u003Cstrong\u003ETip\u003C/strong\u003E: 15%\u003C/li\u003E\n\u003C/ul\u003E\n\n\u003Cp\u003EYou\u0026#39;ll apply the tip to the overall cost of the meal (including tax).\u003C/p\u003E\n",
+                                    "external_resources": ["https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"],
+                                    "hint": "Don't use any dollar signs (`$`)\u2014just the numerical cost of the meal, `44.50`.\n\nRemember, we can assign a value to a variable like so:\n\n```python\nvariable_name = 10\n```",
+                                    "hint_html": "\u003Cp\u003EDon\u0026#39;t use any dollar signs (\u003Ccode\u003E$\u003C/code\u003E)\u2014just the numerical cost of the meal, \u003Ccode\u003E44.50\u003C/code\u003E.\u003C/p\u003E\n\n\u003Cp\u003ERemember, we can assign a value to a variable like so:\u003C/p\u003E\n\n\u003Cpre\u003E\u003Ccode class=\"python\"\u003Evariable_name = 10\n\u003C/code\u003E\u003C/pre\u003E\n",
+                                    "instruction": "First, let's declare the variable `meal` and assign it the value `44.50`.\n",
+                                    "instruction_html": "\u003Cp\u003EFirst, let\u0026#39;s declare the variable \u003Ccode\u003Emeal\u003C/code\u003E and assign it the value \u003Ccode\u003E44.50\u003C/code\u003E.\u003C/p\u003E\n",
+                                    "name": "The Meal",
+                                    "test_functions": "try:\n\tmeal\nexcept NameError:\n\treturn \"Did you declare a variable called meal?\"\n\nif error:\n\treturn \"Your code looks a bit off. Check the Hint if you need help! Your code threw the following error: \" + str(error)\n\nif meal != 44.50:\n\treturn \"It looks like meal is set to %s instead of 44.50.\" % str(meal)\n\t\nreturn True\n",
+                                    "cached_invalid_answers": ["[{\"filename\":\"script.py\",\"content\":\"# Assign the variable meal the value 44.50 on line 3!\\n\\nmeal = 44.50\\nRest_tax = .0675 * meal\\noverall = meal + rest_tax\\ntip_over = .15 * overall\\nmeal_tot = overall + tip_over\\n\\n\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Assign the variable meal the value 44.50 on line 3!\\n\\nfloat meal = 44.50\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Assign the variable meal the value 44.50 on line 3!\\nmean = 44.50\\n\\n\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Assign the variable meal the value 44.50 on line 3!\\n\\nmeal = 44.50\\ntax = 6.75%\\ntip = 15%\\n\\ncost = meal + tax + tip\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Assign the variable meal the value 44.50 on line 3!\\n\\nmeal=44.50\\ntax=6.75\\ntip=15\\n\\ntotal_tax=meal*(1+(tax/100))\\ntotal_tip=total_tax*(tip/100)\\ntotal=total_tax+total_tip\\n\\nprint \\\"Total \\\" total_tax\\nprint \\\"Tip \\\" total_tip\\nprint \\\"Total with tip \\\" total\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Assign the variable meal the value 44.50 on line 3!\\n\\nmeal=44.50\\ntax=6.75\\ntip=15\\n\\ntotal_tax=meal*(1+(tax/100))\\ntotal_tip=total_tax*(tip/100)\\ntotal=total_tax+total_tip\\n\\nprint \\\"Total \\\" total_meal\\nprint \\\"Tip \\\" total_tip\\nprint \\\"Total with tip \\\" total\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Assign the variable meal the value 44.50 on line 3!\\nmean = 44.50\\n\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Assign the variable meal the value 44.50 on line 3!\\nmeal = 10\\n\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Assign the variable meal the value 44.50 on line 3!\\nmean;\\nmean = 44.50;\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Assign the variable meal the value 44.50 on line 3!\\n\\nmean = 44.50;\"}]"],
+                                    "cached_valid_answers": ["[{\"filename\":\"script.py\",\"content\":\"# Assign the variable meal the value 44.50 on li\\nmeal=44.50\\n\\n\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Assign the variable meal the value 44.50 on line 3!\\nmeal=44.50\\n\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Assign the variable meal the value 44.50 on line 3!\\nmeal = 44.50\\n\\n\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Assign the variable meal the value 44.50 on line 3!\\n\\nmeal = 44.50\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Assign the variable meal the value 44.50 on line 3!\\n\\nmeal = 44.50\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Assign the variable meal the value 44.50 on line 3!\\n\\nmeal = 44.5\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Assign the variable meal the value 44.50 on line 3!\\n\\nmeal = 44.50\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Assign the variable meal the value 44.50 on line 3!\\n\\nmeal = 44.50\\n\\ntax = 6.65 / 100\\n\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Assign the variable meal the value 44.50 on line 3!\\n\\nmeal = 44.50\\n\\n\\n\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Assign the variable meal the value 44.50 on line 3!\\nmeal = 44.50\\n\"}]"],
+                                    "completed": true,
+                                    "latest_files": [
+                                        {
+                                            "filename": "script.py",
+                                            "content": "#Assign the variable meal the value 44.50 on line 3!\n\nmeal=44.50"
+                                        }
+                                    ],
+                                    "preview_button": false,
+                                    "is_current_checkpoint": true
+                                },
+                                {
+                                    "_id": "4fd55e80b280710003046062",
+                                    "index": 1,
+                                    "code_reset": true,
+                                    "default_files": [
+                                        {
+                                            "filename": "script.py",
+                                            "content": "meal = 44.50\n"
+                                        }
+                                    ],
+                                    "entry": "Good! Now let's create a variable for the tax percentage.\n\nThe tax on your receipt is 6.75%. You'll have to divide 6.75 by 100 in order to get the decimal form of the percentage. (See the Hint if you would like further explanation.)",
+                                    "entry_html": "\u003Cp\u003EGood! Now let\u0026#39;s create a variable for the tax percentage.\u003C/p\u003E\n\n\u003Cp\u003EThe tax on your receipt is 6.75%. You\u0026#39;ll have to divide 6.75 by 100 in order to get the decimal form of the percentage. (See the Hint if you would like further explanation.)\u003C/p\u003E\n",
+                                    "external_resources": ["https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"],
+                                    "hint": "If you want to figure out the decimal form of 6.75%, then, you have to divide 6.75 by 100, which equals 0.0675.",
+                                    "hint_html": "\u003Cp\u003EIf you want to figure out the decimal form of 6.75%, then, you have to divide 6.75 by 100, which equals 0.0675.\u003C/p\u003E\n",
+                                    "instruction": "Create the variable `tax` and set it equal to the decimal value of 6.75%.\n",
+                                    "instruction_html": "\u003Cp\u003ECreate the variable \u003Ccode\u003Etax\u003C/code\u003E and set it equal to the decimal value of 6.75%.\u003C/p\u003E\n",
+                                    "name": "The Tax",
+                                    "test_functions": "try:\n\ttax\nexcept NameError:\n\treturn \"Did you create a variable called tax?\"\n\nif error:\n\treturn \"Your code looks a bit off. Check the Hint if you need help! Your code threw the following error: \" + str(error)\n\nif tax != 0.0675:\n\treturn \"It looks like tax is %s instead of 0.0675.\" % str(tax)\n\t\nreturn True\n",
+                                    "cached_invalid_answers": ["[{\"filename\":\"script.py\",\"content\":\"meal = 44.50\\ntax = 6.75%\"}]", "[{\"filename\":\"script.py\",\"content\":\"meal = 44.50\\ntax = 675\"}]", "[{\"filename\":\"script.py\",\"content\":\"meal = 44.50\\n\\ntax = 6.75*100\\n\"}]", "[{\"filename\":\"script.py\",\"content\":\"meal = 44.50\\n\\ntax = 6.75\\n\"}]", "[{\"filename\":\"script.py\",\"content\":\"meal = 44.50\\ntax = 6.75%\"}]", "[{\"filename\":\"script.py\",\"content\":\"meal = 44.50\\n\\ntax = 0.675\\n\"}]", "[{\"filename\":\"script.py\",\"content\":\"meal = 44.50\\ntax=6.75%\"}]", "[{\"filename\":\"script.py\",\"content\":\"meal = 44.50\\ntax = 6.75%\"}]", "[{\"filename\":\"script.py\",\"content\":\"meal = 44.50\\ntax = 6.75%\"}]", "[{\"filename\":\"script.py\",\"content\":\"meal = 44.50\\ntax = 6.75%\"}]"],
+                                    "cached_valid_answers": ["[{\"filename\":\"script.py\",\"content\":\"meal = 44.50\\ntax = .0675\"}]", "[{\"filename\":\"script.py\",\"content\":\"meal = 44.50\\ntax = .0675\"}]", "[{\"filename\":\"script.py\",\"content\":\"meal = 44.50\\ntax = 6.75 / 100\"}]", "[{\"filename\":\"script.py\",\"content\":\"meal = 44.50\\ntax = 6.75 / 100\"}]", "[{\"filename\":\"script.py\",\"content\":\"meal = 44.50\\n\\ntax = 6.75 / 100\"}]", "[{\"filename\":\"script.py\",\"content\":\"meal = 44.50\\ntax = 0.0675\"}]", "[{\"filename\":\"script.py\",\"content\":\"meal = 44.50\\ntax = .0675\"}]", "[{\"filename\":\"script.py\",\"content\":\"meal = 44.50\\ntax = 0.0675\"}]", "[{\"filename\":\"script.py\",\"content\":\"meal = 44.50\\ntax = 0.0675\"}]", "[{\"filename\":\"script.py\",\"content\":\"meal = 44.50\\ntax = 6.75 / 100\"}]"],
+                                    "completed": true,
+                                    "latest_files": [
+                                        {
+                                            "filename": "script.py",
+                                            "content": "meal = 44.50\ntax = 6.75/100"
+                                        }
+                                    ],
+                                    "preview_button": false,
+                                    "is_current_checkpoint": false
+                                },
+                                {
+                                    "_id": "4fd55e81fd55260003046724",
+                                    "index": 2,
+                                    "code_reset": true,
+                                    "default_files": [
+                                        {
+                                            "filename": "script.py",
+                                            "content": "# You're almost there! Assign the tip variable on line 5.\n\nmeal = 44.50\ntax = 0.0675\n"
+                                        }
+                                    ],
+                                    "entry": "Nice work! You received good service, so you'd like to leave a 15% tip on top of the cost of the meal, including tax.\n\nBefore we compute the tip for your bill, let's set a variable for the tip. Again, we need to get the decimal form of the tip, so we divide 15.0 by 100.\n\n",
+                                    "entry_html": "\u003Cp\u003ENice work! You received good service, so you\u0026#39;d like to leave a 15% tip on top of the cost of the meal, including tax.\u003C/p\u003E\n\n\u003Cp\u003EBefore we compute the tip for your bill, let\u0026#39;s set a variable for the tip. Again, we need to get the decimal form of the tip, so we divide 15.0 by 100.\u003C/p\u003E\n",
+                                    "external_resources": ["https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"],
+                                    "hint": "Try doing 15.0 / 100 (or you can type `0.15` directly).",
+                                    "hint_html": "\u003Cp\u003ETry doing 15.0 / 100 (or you can type \u003Ccode\u003E0.15\u003C/code\u003E directly).\u003C/p\u003E\n",
+                                    "instruction": "Set the variable `tip` to decimal value of 15% on line 5.",
+                                    "instruction_html": "\u003Cp\u003ESet the variable \u003Ccode\u003Etip\u003C/code\u003E to decimal value of 15% on \u003Ca href=\"javascript:void(0)\" class=\"line-no\" data-from=\"5\" data-to=\"\"\u003Eline 5\u003C/a\u003E.\u003C/p\u003E\n",
+                                    "name": "The Tip",
+                                    "test_functions": "try:\n\ttip\nexcept NameError:\n\treturn \"Did you create a variable called tip?\"\n\nif error:\n\treturn \"Your code looks a bit off. Check the Hint if you need help! Your code threw the following error: \" + str(error)\n\nif tip != 0.15:\n\treturn \"It looks like tip is set to %s intead of 0.15.\" % str(tip)\n\nreturn True\n",
+                                    "cached_invalid_answers": ["[{\"filename\":\"script.py\",\"content\":\"# You're almost there! Assign the tip variable on line 5.\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 0.015\"}]", "[{\"filename\":\"script.py\",\"content\":\"# You're almost there! Assign the tip variable on line 5.\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 15 / 100\\n\"}]", "[{\"filename\":\"script.py\",\"content\":\"# You're almost there! Assign the tip variable on line 5.\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 15 / 100\"}]", "[{\"filename\":\"script.py\",\"content\":\"# You're almost there! Assign the tip variable on line 5.\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 15 / 100\"}]", "[{\"filename\":\"script.py\",\"content\":\"# You're almost there! Assign the tip variable on line 5.\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 15 / 100\"}]", "[{\"filename\":\"script.py\",\"content\":\"# You're almost there! Assign the tip variable on line 5.\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip0.15\\nprint tip\\n\\nmeal = meal + meal * tax \\nprint meal \\n\\ntotal = meal + meal * 0.15\\nprint % total \\n\\n\"}]", "[{\"filename\":\"script.py\",\"content\":\"# You're almost there! Assign the tip variable on line 5.\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 0.15\\nprint tip\\n\\nmeal = meal + meal * tax \\nprint meal \\n\\ntotal = meal + meal * 0.15\\nprint % total \\n\\n\"}]", "[{\"filename\":\"script.py\",\"content\":\"# You're almost there! Assign the tip variable on line 5.\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = %.15\\nprint tip\\n\\nmeal = meal + meal * tax \\nprint meal \\n\\ntotal = meal + meal * 0.15\\nprint % total \\n\\n\"}]", "[{\"filename\":\"script.py\",\"content\":\"# You're almost there! Assign the tip variable on line 5.\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = .15\\nprint tip\\n\\nmeal = meal + meal * tax \\nprint meal \\n\\ntotal = meal + meal * 0.15\\nprint % total \\n\\n\"}]", "[{\"filename\":\"script.py\",\"content\":\"# You're almost there! Assign the tip variable on line 5.\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip .15\\nprint tip\\n\\nmeal = meal + meal * tax \\nprint meal \\n\\ntotal = meal + meal * 0.15\\nprint % total \\n\\n\"}]"],
+                                    "cached_valid_answers": ["[{\"filename\":\"script.py\",\"content\":\"# You're almost there! Assign the tip variable on line 5.\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 0.15\"}]", "[{\"filename\":\"script.py\",\"content\":\"# You're almost there! Assign the tip variable on line 5.\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = .15\"}]", "[{\"filename\":\"script.py\",\"content\":\"# You're almost there! Assign the tip variable on line 5.\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 15.0 / 100\\n\"}]", "[{\"filename\":\"script.py\",\"content\":\"# You're almost there! Assign the tip variable on line 5.\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 0.15\"}]", "[{\"filename\":\"script.py\",\"content\":\"# You're almost there! Assign the tip variable on line 5.\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 15.0 / 100\"}]", "[{\"filename\":\"script.py\",\"content\":\"# You're almost there! Assign the tip variable on line 5.\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 15.0/ 100\"}]", "[{\"filename\":\"script.py\",\"content\":\"# You're almost there! Assign the tip variable on line 5.\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 0.15\"}]", "[{\"filename\":\"script.py\",\"content\":\"# You're almost there! Assign the tip variable on line 5.\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 15.0 / 100\"}]", "[{\"filename\":\"script.py\",\"content\":\"# You're almost there! Assign the tip variable on line 5.\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = .15\"}]", "[{\"filename\":\"script.py\",\"content\":\"# You're almost there! Assign the tip variable on line 5.\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 0.15\"}]"],
+                                    "completed": true,
+                                    "latest_files": [
+                                        {
+                                            "filename": "script.py",
+                                            "content": "#You're almost there! Assign the variable tip on line 5.\n\nmeal = 44.50\ntax = 0.0675\ntip=0.15"
+                                        }
+                                    ],
+                                    "preview_button": false,
+                                    "is_current_checkpoint": false
+                                },
+                                {
+                                    "_id": "4fd55e81f72d500003046266",
+                                    "index": 3,
+                                    "code_reset": true,
+                                    "default_files": [
+                                        {
+                                            "filename": "script.py",
+                                            "content": "# Reassign meal on line 7!\n\nmeal = 44.50\ntax = 0.0675\ntip = 0.15\n\n"
+                                        }
+                                    ],
+                                    "entry": "Okay! We've got the three variables we need to perform our calculation, and we know some arithmetic operators that can help us out.\n\nWe saw in Lesson 1 that we can reassign variables. For example, we could say `spam = 7`, then later change our minds and say `spam = 3`.\n\n",
+                                    "entry_html": "\u003Cp\u003EOkay! We\u0026#39;ve got the three variables we need to perform our calculation, and we know some arithmetic operators that can help us out.\u003C/p\u003E\n\n\u003Cp\u003EWe saw in Lesson 1 that we can reassign variables. For example, we could say \u003Ccode\u003Espam = 7\u003C/code\u003E, then later change our minds and say \u003Ccode\u003Espam = 3\u003C/code\u003E.\u003C/p\u003E\n",
+                                    "external_resources": ["https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"],
+                                    "hint": "Let's see: `meal * tax` will give you the number of tax dollars to put on your bill, and `meal` + that number will give you the cost of the meal + tax!\n\nThe interpreter will evaluate the right-hand side of the equation first. It will ask itself, \"What's `meal` * `tax`?\" Once it does this and gets the result (about 3.00), it will ask itself, \"What's `meal` + this number?\" (44.50 + about 3.00 = about 47.50.) Finally, it'll move to the left-hand side of the equation and say, \"Oh man, I should totally reassign `meal` (which was 44.50) to this new value of about 47.50.\" And that's how `meal` gets reassigned!",
+                                    "hint_html": "\u003Cp\u003ELet\u0026#39;s see: \u003Ccode\u003Emeal * tax\u003C/code\u003E will give you the number of tax dollars to put on your bill, and \u003Ccode\u003Emeal\u003C/code\u003E + that number will give you the cost of the meal + tax!\u003C/p\u003E\n\n\u003Cp\u003EThe interpreter will evaluate the right-hand side of the equation first. It will ask itself, \u0026quot;What\u0026#39;s \u003Ccode\u003Emeal\u003C/code\u003E * \u003Ccode\u003Etax\u003C/code\u003E?\u0026quot; Once it does this and gets the result (about 3.00), it will ask itself, \u0026quot;What\u0026#39;s \u003Ccode\u003Emeal\u003C/code\u003E + this number?\u0026quot; (44.50 + about 3.00 = about 47.50.) Finally, it\u0026#39;ll move to the left-hand side of the equation and say, \u0026quot;Oh man, I should totally reassign \u003Ccode\u003Emeal\u003C/code\u003E (which was 44.50) to this new value of about 47.50.\u0026quot; And that\u0026#39;s how \u003Ccode\u003Emeal\u003C/code\u003E gets reassigned!\u003C/p\u003E\n",
+                                    "instruction": "On line 7, reassign `meal` to the value of itself + itself * tax. And yes, you're allowed to reassign a variable in terms of itself!\n\nWe're only calculating the cost of meal and tax here. We'll get to the tip soon.",
+                                    "instruction_html": "\u003Cp\u003EOn \u003Ca href=\"javascript:void(0)\" class=\"line-no\" data-from=\"7\" data-to=\"\"\u003Eline 7\u003C/a\u003E, reassign \u003Ccode\u003Emeal\u003C/code\u003E to the value of itself + itself * tax. And yes, you\u0026#39;re allowed to reassign a variable in terms of itself!\u003C/p\u003E\n\n\u003Cp\u003EWe\u0026#39;re only calculating the cost of meal and tax here. We\u0026#39;ll get to the tip soon.\u003C/p\u003E\n",
+                                    "name": "Reassign in a Single Line",
+                                    "test_functions": "if error:\n\treturn \"Your code looks a bit off. Check the Hint if you need help! Your code threw the following error: \" + str(error)\n\ncorrect_answer = 44.50 * 1.0675\n\ntry:\n    if meal != correct_answer:\n    \treturn \"It looks like meal is %s instead of %s.\" % (str(meal), str(correct_answer))\nexcept NameError as ne:\n    return \"Make sure you didn't delete any of the code from the previous exercises! Your code caused the following NameError: \" + str(ne)\nexcept Exception as e:\n    return \"Your code caused the following error: \" + str(e)\n\nreturn True\n",
+                                    "cached_invalid_answers": ["[{\"filename\":\"script.py\",\"content\":\"# Reassign meal on line 7!\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 0.15\\n\\nmeal = itself + itself * tax\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Reassign meal on line 7!\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 0.15\\n\\nmeal = itself+itself*tax\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Reassign meal on line 7!\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 0.15\\n\\nmeal = itself + itself*tax\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Reassign meal on line 7!\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 0.15\\n\\nmeal = meal * tax\\n\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Reassign meal on line 7!\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 0.15\\n\\nmeal=meal+meal*tax+meal*tip\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Reassign meal on line 7!\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 0.15\\n\\nmeal = meal * tax\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Reassign meal on line 7!\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 0.15\\n\\nmeal += tax\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Reassign meal on line 7!\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 0.15\\n\\nmeal = meal + meal + tax\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Reassign meal on line 7!\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 0.15\\n\\nmeal = meal * tax\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Reassign meal on line 7!\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 0.15\\n\\nmeal = itself + itself * tax\"}]"],
+                                    "cached_valid_answers": ["[{\"filename\":\"script.py\",\"content\":\"# Reassign meal on line 7!\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 0.15\\n\\nmeal = meal + meal * tax\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Reassign meal on line 7!\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 0.15\\n\\nmeal = meal + meal * tax\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Reassign meal on line 7!\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 0.15\\n\\nmeal = meal + meal * tax\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Reassign meal on line 7!\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 0.15\\n\\nmeal = meal+meal*tax\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Reassign meal on line 7!\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 0.15\\n\\nmeal = meal + meal*tax\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Reassign meal on line 7!\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 0.15\\nmeal=meal+meal*tax\\n\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Reassign meal on line 7!\\n\\nmeal = meal + meal * tax\\ntax = 0.0675\\ntip = 0.15\\n\\n\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Reassign meal on line 7!\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 0.15\\n\\nmeal=meal+meal*tax\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Reassign meal on line 7!\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 0.15\\n\\nmeal = meal + meal * tax\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Reassign meal on line 7!\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 0.15\\n\\nmeal = meal + meal*tax\"}]"],
+                                    "completed": true,
+                                    "latest_files": [
+                                        {
+                                            "filename": "script.py",
+                                            "content": "#Reassign meal on line 7!\n\nmeal = 44.50\ntax = 0.0675\ntip = 0.15\n\nmeal = meal+meal*tax"
+                                        }
+                                    ],
+                                    "preview_button": false,
+                                    "is_current_checkpoint": false
+                                },
+                                {
+                                    "_id": "4fd55e82d7fc680003044d2b",
+                                    "index": 4,
+                                    "code_reset": true,
+                                    "default_files": [
+                                        {
+                                            "filename": "script.py",
+                                            "content": "# Assign the variable total on line 8!\n\nmeal = 44.50\ntax = 0.0675\ntip = 0.15\n\nmeal = meal + meal * tax\n\n\nprint(\"%.2f\" % total)"
+                                        }
+                                    ],
+                                    "entry": "Now that `meal` has the cost of the food plus tax, let's introduce on line 8 a new variable, `total`, equal to the new `meal` + `meal` * `tip`.\n\nThe code on line 10 formats and prints to the console the value of total with exactly two numbers after the decimal. (We'll learn about string formatting, the console, and print in Unit 2!)",
+                                    "entry_html": "\u003Cp\u003ENow that \u003Ccode\u003Emeal\u003C/code\u003E has the cost of the food plus tax, let\u0026#39;s introduce on \u003Ca href=\"javascript:void(0)\" class=\"line-no\" data-from=\"8\" data-to=\"\"\u003Eline 8\u003C/a\u003E a new variable, \u003Ccode\u003Etotal\u003C/code\u003E, equal to the new \u003Ccode\u003Emeal\u003C/code\u003E + \u003Ccode\u003Emeal\u003C/code\u003E * \u003Ccode\u003Etip\u003C/code\u003E.\u003C/p\u003E\n\n\u003Cp\u003EThe code on \u003Ca href=\"javascript:void(0)\" class=\"line-no\" data-from=\"10\" data-to=\"\"\u003Eline 10\u003C/a\u003E formats and prints to the console the value of total with exactly two numbers after the decimal. (We\u0026#39;ll learn about string formatting, the console, and print in Unit 2!)\u003C/p\u003E\n",
+                                    "external_resources": ["https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"],
+                                    "hint": null,
+                                    "hint_html": null,
+                                    "instruction": "Assign the variable `total` to the sum of `meal` + `meal` * `tip` on line 8. Now you have the total cost of your meal!",
+                                    "instruction_html": "\u003Cp\u003EAssign the variable \u003Ccode\u003Etotal\u003C/code\u003E to the sum of \u003Ccode\u003Emeal\u003C/code\u003E + \u003Ccode\u003Emeal\u003C/code\u003E * \u003Ccode\u003Etip\u003C/code\u003E on \u003Ca href=\"javascript:void(0)\" class=\"line-no\" data-from=\"8\" data-to=\"\"\u003Eline 8\u003C/a\u003E. Now you have the total cost of your meal!\u003C/p\u003E\n",
+                                    "name": "The Total",
+                                    "test_functions": "try:\n\ttotal\nexcept NameError:\n\treturn \"Did you create a variable called total?\"\n\nif not CC.printed(\"54.63\"):\n\treturn \"It looks like the printed output is %s instead of 54.63. Double check the instructions!\" % CC.prints()[0]\n\nif error:\n\treturn \"Your code looks a bit off. Check the Hint if you need help! Your code threw the following error: \" + str(error)\n\t\nreturn True\n",
+                                    "cached_invalid_answers": ["[{\"filename\":\"script.py\",\"content\":\"# Assign the variable total on line 8!\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 0.15\\n\\nmeal = meal + meal * tax\\ntotal = meal + meal * tax\\n\\nprint(\\\"%.2f\\\" % total)\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Assign the variable total on line 8!\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 0.15\\n\\nmeal = meal + meal * tax\\ntotal = meal * tip\\n\\nprint(\\\"%.2f\\\" % total)\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Assign the variable total on line 8!\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 0.15\\n\\nmeal = meal * (1 + tax)\\ntotal=meal\\n\\nprint(\\\"%.2f\\\" % total)\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Assign the variable total on line 8!\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 0.15\\n\\nmeal = meal + meal * tax\\ntotal = meal + meal * tip\\n\\nprint(\\\"%.100f\\\" % total)\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Assign the variable total on line 8!\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 0.15\\n\\nmeal = meal + meal * tax\\ntotal = meal + meal * tip\\n\\nprint(\\\"%.3f\\\" % total)\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Assign the variable total on line 8!\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 0.15\\n\\nmeal = meal + meal * tax\\ntotal = meal + meal + tip \\n\\nprint(\\\"%.2f\\\" % total)\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Assign the variable total on line 8!\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 0.15\\n\\nmeal = meal + meal * tip * tax\\ntotal = meal\\n\\nprint(\\\"%.2f\\\" % total)\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Assign the variable total on line 8!\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 0.15\\n\\nmeal = meal + meal * tip\\ntotal = meal\\n\\nprint(\\\"%.2f\\\" % total)\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Assign the variable total on line 8!\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 0.15\\n\\nmeal = meal + meal * tax\\ntotal = meal\\n\\nprint(\\\"%.2f\\\" % total)\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Assign the variable total on line 8!\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 0.15\\n\\nmeal = meal + meal * tax\\ntotal=meal+(meal*tax)\\n\\nprint(\\\"%.2f\\\" % total)\"}]"],
+                                    "cached_valid_answers": ["[{\"filename\":\"script.py\",\"content\":\"# Assign the variable total on line 8!\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 0.15\\n\\nmeal = meal + meal * tax\\ntotal = meal + meal * tip\\n\\nprint(\\\"%.2f\\\" % total)\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Assign the variable total on line 8!\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 0.15\\n\\nmeal = meal + meal * tax\\ntotal = meal + meal * tip\\n\\nprint(\\\"%.2f\\\" % total)\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Assign the variable total on line 8!\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 0.15\\n\\nmeal = meal + meal * tax\\ntotal = meal + meal * tip\\n\\nprint(\\\"%.2f\\\" % total)\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Assign the variable total on line 8!\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 0.15\\n\\nmeal = meal + meal * tax\\ntotal = meal + meal * tip\\n\\nprint(\\\"%.2f\\\" % total)\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Assign the variable total on line 8!\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 0.15\\n\\nmeal = meal + meal * tax\\ntotal = meal + meal*tip\\n\\nprint(\\\"%.2f\\\" % total)\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Assign the variable total on line 8!\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 0.15\\n\\nmeal = meal + meal * tax\\ntotal= meal+meal*tip\\n\\nprint(\\\"%.2f\\\" % total)\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Assign the variable total on line 8!\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 0.15\\n\\nmeal = meal + meal * tax\\ntotal = meal + meal * tip\\n\\nprint(\\\"%.2f\\\" % total)\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Assign the variable total on line 8!\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 0.15\\n\\nmeal = meal + meal * tax\\n\\ntotal=meal+meal*tip\\nprint(\\\"%.2f\\\" % total)\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Assign the variable total on line 8!\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 0.15\\n\\nmeal = meal + meal * tax\\ntotal=meal+meal*tip\\n\\nprint(\\\"%.2f\\\" % total)\"}]", "[{\"filename\":\"script.py\",\"content\":\"# Assign the variable total on line 8!\\n\\nmeal = 44.50\\ntax = 0.0675\\ntip = 0.15\\n\\nmeal = meal + meal * tax\\ntotal = meal + meal * tip\\n\\nprint(\\\"%.2f\\\" % total)\"}]"],
+                                    "completed": true,
+                                    "latest_files": [
+                                        {
+                                            "filename": "script.py",
+                                            "content": "#Assign the variable total on line 8!\n\nmeal = 44.50\ntax = 0.0675\ntip = 0.15\n\nmeal = meal + meal * tax\ntotal = meal+meal*tip\n\nprint(\"%.2f\" % total)"
+                                        }
+                                    ],
+                                    "preview_button": false,
+                                    "is_current_checkpoint": false
+                                }
+                            ],
+                            "description": "You've just finished a delicious meal and now have to pay the bill. With Python, you can correctly calculate the cost of your meal, plus tax and tip!",
+                            "name": "Paying the bill",
+                            "checkpoints_count": 5,
+                            "completed_checkpoints_count": 5,
+                            "is_current_project": true,
+                            "index": 0,
+                            "completed": true,
+                            "continue_to_course": {
+                                "name": "Strings \u0026 Console Output",
+                                "url": "http://www.codecademy.com/courses/python-beginner-sRXwR/?curriculum_id=4f89dab3d788890003000096"
+                            }
+                        }
+                    ],
+                    "mode": "cli",
+                    "language": "python",
+                    "is_php": false,
+                    "return_to": {
+                        "name": "Python",
+                        "url": "http://www.codecademy.com/tracks/python?jump_to=4fd55e66b280710003045fb5"
+                    },
+                    "project_index": 0,
+                    "course_progress_percentage": 100,
+                    "course_exercises_index": 1,
+                    "course_exercises_total": 5,
+                    "continue_to_course": {
+                        "name": "Strings \u0026 Console Output",
+                        "url": "http://www.codecademy.com/courses/python-beginner-sRXwR/?curriculum_id=4f89dab3d788890003000096"
+                    }
+                }
+            {% endraw %}
+    );
+    </script>
+    <script src="/application/js/libs/jqconsole.min.js" charset="UTF-8"></script>
+    <script src="/application/js/libs/jsrepl/jsrepl.js" id="jsrepl-script"></script>
 {% endblock %}
