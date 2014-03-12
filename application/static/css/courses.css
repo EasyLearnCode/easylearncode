@@ -1,0 +1,91 @@
+h1.h-slim,h2.h-slim,h3.h-slim,h4.h-slim,h5.h-slim,h6.h-slim,.h1.h-slim,.h2.h-slim,.h3.h-slim,.h4.h-slim,.h5.h-slim,.h6.h-slim {
+    margin: 0
+}
+
+h1.h-slim-top,h2.h-slim-top,h3.h-slim-top,h4.h-slim-top,h5.h-slim-top,h6.h-slim-top,.h1.h-slim-top,.h2.h-slim-top,.h3.h-slim-top,.h4.h-slim-top,.h5.h-slim-top,.h6.h-slim-top {
+    margin-top: 0
+}
+p.text-large {
+    font-size: 16px
+}
+
+.row.row-gap-small {
+    margin-top: 15px
+}
+
+.row.row-gap-medium {
+    margin-top: 30px
+}
+
+.row.row-gap-large {
+    margin-top: 45px
+}
+
+.row.row-gap-huge {
+    margin-top: 60px
+}
+.banner-row {
+    padding-top: 15px;
+    padding-bottom: 15px
+}
+
+.rainbow {
+    background-image: -webkit-gradient(linear,0 top,100% top,from(#dfeaf1),to(#e7f1df));
+    background-image: -webkit-linear-gradient(left,color-stop(#dfeaf1 0),color-stop(#e7f1df 100%));
+    background-image: -moz-linear-gradient(left,#dfeaf1 0,#e7f1df 100%);
+    background-image: linear-gradient(to right,#dfeaf1 0,#e7f1df 100%);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffdfeaf1', endColorstr='#ffe7f1df', GradientType=1)
+}
+.badge-new {
+    color: #fff;
+    background-color: #de8b3e;
+    padding: 2px 4px;
+    border-radius: 2px
+}
+
+.badge-soon {
+    color: #fff;
+    background-color: #6599ba;
+    padding: 2px 4px;
+    border-radius: 2px
+}
+.icon-level {
+    display: inline-block;
+    height: 15px;
+    width: 12px;
+    margin-left: 30px;
+    background-color: #dcdcdc;
+    position: relative
+}
+
+.icon-level:before,.icon-level:after {
+    position: absolute;
+    bottom: 0;
+    content: "";
+    display: block;
+    width: 12px;
+    background-color: inherit
+}
+
+.icon-level:before {
+    height: 12px;
+    left: -15px
+}
+
+.icon-level:after {
+    height: 8px;
+    left: -30px
+}
+
+.icon-level.icon-level-3 {
+    background-color: #9cc2d2
+}
+
+.icon-level.icon-level-2:before,.icon-level.icon-level-2:after {
+    background-color: #9cc2d2
+}
+
+.icon-level.icon-level-1:after {
+    background-color: #9cc2d2
+}

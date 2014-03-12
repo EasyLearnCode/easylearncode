@@ -1,0 +1,80 @@
+{% extends "main.html" %}
+{% block content %}
+    {% raw %}
+        <div class="container" data-ng-controller='ContestResultCtrl'>
+            <div class="row">
+                <div class="col-xs-3 col-md-3 highlight">
+                    <div class="panel panel-default" style="position: fixed">
+                        <div class="panel-heading">Các tuần thi</div>
+                        <div class="panel-body">
+                            <span>Chọn tuần:</span>
+
+                            <div class="list-group col-md-12">
+                                <a data-ng-repeat="quiz in thisweek_contest.quizs" class="list-group-item"
+                                   ng-class="{active:currentWeek==quiz.week}"
+                                   data-ng-click="getThisResult(quiz.test_key)">Tuần {{ quiz.week }}</a>
+
+                            </div>
+                            <div>
+                                Tháng:
+                                <select>
+                                    <option ng-repeat="i in [1,2,3,4,5,6,7,8,9,10,11,12]"
+                                            value="{{ i }}">{{ i }}</option>
+                                </select>
+                                Năm:
+                                <select>
+                                    <option ng-repeat="i in [2014,2015,2016,2017,2018,2019,2020]" value="{{ i }}">{{ i }}</option>
+                                </select>
+                                <button class="btn btn-primary">Chọn</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-8 col-md-8 highlight">
+                    <div style="min-height:300px;" class="well">
+                        <h2 class="text-center text-info">Các câu hỏi trong tuần</h2>
+                        <ul class="nav nav-tabs" style="margin-bottom: 15px;">
+                            <li data-ng-repeat="level in thisweek_contest.levels"
+                                ng-class="{active:$index==0}"><a href="#question{{ $index+1 }}" data-toggle="tab">Câu
+                                {{ $index+1 }}</a></li>
+                        </ul>
+                        <div class="tab-content">
+
+                            <div data-ng-repeat="level in thisweek_contest.levels" class="tab-pane fade"
+                                 id="question{{ $index+1 }}" ng-class="{active:$index==0,in:$index==0}"
+                                 ng-bind-html="level.description_html|to_trusted">
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="well" style="min-height:500px">
+                        <h2 class="text-center text-success">Bảng thành tích</h2>
+                        <table class="table table-bordered table-condensed table-hover">
+                            <tr class="success">
+                                <th>STT</th>
+                                <th>Họ tên</th>
+                                <th>Kết quả</th>
+                                <th>Thời gian biên dịch</th>
+                                <th>Bộ nhớ sử dụng</th>
+                                <th>Ngày giờ nộp</th>
+                            </tr>
+                            <tr data-ng-repeat="player in thisweek_contest.top_player">
+                                <td>{{ $index+1 }}</td>
+                                <td>{{ player.username }}</td>
+                                <td>{{ player.result }}</td>
+                                <td>{{ player.time_used }}</td>
+                                <td>{{ player.memory_used }}</td>
+                                <td>{{ player.submit_time }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endraw %}
+{% endblock %}
+{% block mediaJS %}
+    <script>
+        angular.module('services.utility').constant('csrf_token', '{{ csrf_token() }}');
+    </script>
+{% endblock %}

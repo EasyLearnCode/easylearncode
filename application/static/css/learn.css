@@ -1,0 +1,73 @@
+.highlight {
+    background-color: #F7F7F9;
+    border: 1px solid #E1E1E8;
+    border-radius: 4px;
+    margin-bottom: 14px;
+    padding: 9px 14px;
+}
+
+.ace_editor {
+    height: 200px;
+    font-size: 14px !important;
+}
+
+.result_box {
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
+}
+
+.border_info {
+    background-color: #ffffff;
+    border: 1px solid #E1E1E8;
+    border-radius: 4px;
+    margin-bottom: 14px;
+    padding: 9px 14px;
+    border-top: none;
+}
+
+.lesson_info.popover > .popover-content {
+    padding: 0px !important;
+}
+
+.lesson_info .panel-body {
+    padding: 0;
+}
+
+.lesson_info .list-group {
+    margin: 0px !important;
+}
+
+.lesson_info .list-group-item {
+    border: none;
+    border-radius: 0px;
+    padding-left: 25px;
+    cursor: pointer;
+}
+
+.lesson_info .list-group-item > i {
+    margin-right: 10px;
+}
+
+.lesson_info.popover.bottom > .arrow {
+    left: 90% !important;
+}
+
+.lesson_info a:hover {
+    text-decoration: none;
+}
+
+.lesson_info.overlay {
+    background-color: white;
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    opacity: 0.5;
+    z-index: 99;
+}
+
+.show {
+    z-index: 100;
+    position: relative;
+}
+

@@ -1,0 +1,292 @@
+msgid " I agree to something I will never read"
+msgstr ""
+
+msgid "%prog [options]"
+msgstr ""
+
+#, python-format
+msgid "%r is not callable"
+msgstr ""
+
+#, python-format
+msgid "%s option does not take a value"
+msgstr ""
+
+#, python-format
+msgid "%s option requires %d arguments"
+msgstr ""
+
+#, python-format
+msgid "%s option requires an argument"
+msgstr ""
+
+#, python-format
+msgid "%s: error: %s\n"
+msgstr ""
+
+msgid "'required' is an invalid argument for positionals"
+msgstr ""
+
+msgid ".__call__() not defined"
+msgstr ""
+
+msgid ""
+"<a href=\"http://browsehappy.com/\">Upgrade to a different browser</a>\n"
+"    \tor <a href=\"http://www.google.com/chromeframe/?redirect=true\">\n"
+"    \tinstall Google Chrome Frame</a> to experience this site."
+msgstr ""
+
+msgid "Already have an account? "
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Change password"
+msgstr ""
+
+msgid "Change your email"
+msgstr ""
+
+msgid "Change your password"
+msgstr ""
+
+msgid "Confirm Password"
+msgstr ""
+
+msgid "Contact"
+msgstr ""
+
+msgid "Current Password"
+msgstr ""
+
+msgid "Don't have an account?"
+msgstr ""
+
+msgid "Email"
+msgstr ""
+
+msgid "Enter a new email address"
+msgstr ""
+
+msgid "Enter your"
+msgstr ""
+
+msgid "Forgot password?"
+msgstr ""
+
+msgid "Forgot your password?"
+msgstr ""
+
+msgid "Good Password"
+msgstr ""
+
+msgid "Insecure Password"
+msgstr ""
+
+msgid "Logout"
+msgstr ""
+
+msgid "Message"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+msgid "New Email"
+msgstr ""
+
+msgid "New Password"
+msgstr ""
+
+msgid "Options"
+msgstr ""
+
+msgid "Or Sign in using:"
+msgstr ""
+
+msgid "Password"
+msgstr ""
+
+msgid "Reset password"
+msgstr ""
+
+msgid "Search User"
+msgstr ""
+
+msgid "Secure Page"
+msgstr ""
+
+msgid "Secure Password"
+msgstr ""
+
+msgid "Send Message"
+msgstr ""
+
+msgid "Short Password"
+msgstr ""
+
+msgid "Sign In"
+msgstr ""
+
+msgid "Sign Up"
+msgstr ""
+
+msgid "Usage"
+msgstr ""
+
+#, python-format
+msgid "Usage: %s\n"
+msgstr ""
+
+msgid "User Details"
+msgstr ""
+
+msgid "User List"
+msgstr ""
+
+msgid "Username"
+msgstr ""
+
+msgid "Username or Email"
+msgstr ""
+
+msgid "Users Geolocation"
+msgstr ""
+
+msgid "Your browser is <em>ancient!</em>"
+msgstr ""
+
+#, python-format
+msgid "ambiguous option: %s (%s?)"
+msgstr ""
+
+#, python-format
+msgid "ambiguous option: %s could match %s"
+msgstr ""
+
+#, python-format
+msgid "argument \"-\" with mode %r"
+msgstr ""
+
+#, python-format
+msgid "argument %s is required"
+msgstr ""
+
+#, python-format
+msgid "can't open '%s': %s"
+msgstr ""
+
+msgid "cannot have multiple subparser arguments"
+msgstr ""
+
+#, python-format
+msgid "cannot merge actions - two groups are named %r"
+msgstr ""
+
+msgid "complex"
+msgstr ""
+
+#, python-format
+msgid "conflicting option string(s): %s"
+msgstr ""
+
+#, python-format
+msgid "dest= is required for options like %r"
+msgstr ""
+
+#, python-format
+msgid "expected %s argument(s)"
+msgstr ""
+
+msgid "expected at least one argument"
+msgstr ""
+
+msgid "expected at most one argument"
+msgstr ""
+
+msgid "expected one argument"
+msgstr ""
+
+msgid "floating-point"
+msgstr ""
+
+#, python-format
+msgid "ignored explicit argument %r"
+msgstr ""
+
+msgid "integer"
+msgstr ""
+
+#, python-format
+msgid "invalid %s value: %r"
+msgstr ""
+
+#, python-format
+msgid "invalid choice: %r (choose from %s)"
+msgstr ""
+
+#, python-format
+msgid "invalid conflict_resolution value: %r"
+msgstr ""
+
+#, python-format
+msgid "invalid option string %r: must start with a character %r"
+msgstr ""
+
+msgid "long integer"
+msgstr ""
+
+msgid "mutually exclusive arguments must be optional"
+msgstr ""
+
+#, python-format
+msgid "no such option: %s"
+msgstr ""
+
+#, python-format
+msgid "not allowed with argument %s"
+msgstr ""
+
+#, python-format
+msgid "one of the arguments %s is required"
+msgstr ""
+
+#, python-format
+msgid "option %s: invalid %s value: %r"
+msgstr ""
+
+#, python-format
+msgid "option %s: invalid choice: %r (choose from %s)"
+msgstr ""
+
+msgid "optional arguments"
+msgstr ""
+
+msgid "positional arguments"
+msgstr ""
+
+msgid "show program's version number and exit"
+msgstr ""
+
+msgid "show this help message and exit"
+msgstr ""
+
+msgid "too few arguments"
+msgstr ""
+
+#, python-format
+msgid "unexpected option string: %s"
+msgstr ""
+
+#, python-format
+msgid "unknown parser %r (choices: %s)"
+msgstr ""
+
+#, python-format
+msgid "unrecognized arguments: %s"
+msgstr ""
+
+msgid "usage: "
+msgstr ""
+

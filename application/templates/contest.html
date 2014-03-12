@@ -1,0 +1,209 @@
+{% extends "main.html" %}
+{% block mediaCSS %}
+    <link rel="stylesheet" href="/application/css/contest.css">
+    <link href='http://fonts.googleapis.com/css?family=Orbitron' rel='stylesheet' type='text/css'>
+    <link href="/application/css/hopscotch-0.1.1.css" rel="stylesheet">
+{% endblock %}
+{% block content %}
+    {% raw %}
+        <div class="container" data-ng-controller="ContestCtrl">
+            <div class="col-md-12 highlight">
+                <div><img width="100" alt="logo" style="float: left; margin-right: 5px"
+                          src="\application\img\Olympic-Flame.ico"/>
+                </div>
+                Xin chào mừng các bạn đến với phân hệ thi đố vui hàng tuần. Đây là nơi để các bạn luyện tập lập trình và
+                tư duy thuật toán thông qua việc giải các bài tập có
+                dạng tương tự như các bài thi học sinh giỏi tin học. Chúng tôi hy vọng qua việc tham gia cuộc thi, các
+                bạn sẽ tìm thấy sự hứng thú trong việc học tin học, nâng cao được trình độ của mình,
+                đồng thời cũng có thể giao lưu, học tập dược từ các bạn khác!<br/>
+                Cuộc thi hiện đang ở tuần thứ: {{ thisweek_contest.week }}. <br/>
+                Bắt đầu từ: {{ start | date:'dd-MM-yyyy' }} 00:00 đến {{ end | date:'dd-MM-yyyy' }} 23:59
+                <a class="pull-right btn" id="startTourBtn"><img rel="tooltip" data-placement="bottom" title="Help" alt="help"
+                                                                 src="/application/img/quiz/help.png"
+                                                                 width="50"/> </a>
+            </div>
+            <div class="col-md-12 highlight">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h4 class="text-warning" style="float: left; margin-right: 5px;" id="step-1">Mức độ: </h4>
+
+                        <div class="profileSteps" data-ng-repeat="i in [1,2,3,4,5]">
+                            <div ng-class="{profileStepActive:i<thisweek_contest.this_quiz_level.level, profileStepPassive:i>=thisweek_contest.this_quiz_level.level}"
+                                 class="profileStep profileStepOne">
+                                <div class="connect"></div>
+                                <div class="icon">{{ i }}</div>
+                            </div>
+
+                        </div>
+                        <div class="clearfix"></div>
+                        <div class="panel panel-danger">
+                            <div class="panel-heading">
+                                <h3 class="panel-title" id="step-2">Câu hỏi:</h3>
+                            </div>
+                            <div class="panel-body"
+                                 ng-bind-html="thisweek_contest.this_quiz_level.description_html|to_trusted">
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+
+                        <label class="label label-danger" id="step-3"><span class="clock">Còn lại:
+                        <timer end-time="endtime"> {{ days }} Ngày,
+                            {{ hours }} giờ,
+                            {{ minutes }} phút,
+                            {{ seconds }} giây
+                        </timer></span>
+                        </label>
+
+                        <div class="panel panel-success">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Thành tích tuần này</h3>
+                            </div>
+                            <div class="panel-body">
+                                <ul class="list-group">
+                                    <li data-ng-repeat="player in thisweek_contest.top_player"
+                                        class="list-group-item">
+                                        <span class="badge">{{ player.score }} Điểm</span>
+                                        {{ $index+1 }}. {{ player.username }}</li>
+                                </ul>
+                                <a class="btn btn-success" href="/contest/result">Xem chi tiết...</a>
+                            </div>
+                        </div>
+                        <div class="panel panel-success">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Thành tích của bạn</h3>
+                            </div>
+                            <div class="panel-body">
+                                <ul class="list-group">
+                                    <li data-ng-repeat="i in thisweek_contest.result_last_week"
+                                        class="list-group-item">
+                                        <span class="badge">{{ i.score }} Điểm</span>
+                                        {{ $index+1 }}. Tuần {{ i.week }}</li>
+                                </ul>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-xs-12 col-md-12 highlight" id="step-4">
+                <tabset>
+                    <tab data-ng-repeat="lang in langs" heading="{{ lang.name }}" active="lang.active">
+                        <div ui-ace="{ theme:'chrome',
+  mode:lang.mode, onLoad: aceLoaded(lang)}" data-ng-model="lang.source">
+                        </div>
+                    </tab>
+
+                </tabset>
+            </div>
+            <div class="col-xs-12 col-md-12 highlight">
+                <a id="step-5" class="btn pull-right" data-ng-click="submitCode()">
+                    <i rel="tooltip" data-placement="bottom" title="Nộp bài" class="fa fa-upload fa-1"></i> </a>
+                <a  id="step-6" class="btn" data-ng-click="runCode()">
+                    <i rel="tooltip" data-placement="bottom" title="Kiểm tra" class="fa fa-check fa-2"></i> </a>
+                <a id="step-7" class="btn" data-ng-click="resetCode()">
+                    <i rel="tooltip" data-placement="bottom" title="Làm lại" class="fa fa-refresh fa-3"></i></a>
+            </div>
+
+            <div style="height: 50px; text-align: center;" data-ng-show="compiling" id="fountainTextG">
+                <div id="fountainTextG_1" class="fountainTextG">
+                    C
+                </div>
+                <div id="fountainTextG_2" class="fountainTextG">
+                    o
+                </div>
+                <div id="fountainTextG_3" class="fountainTextG">
+                    m
+                </div>
+                <div id="fountainTextG_4" class="fountainTextG">
+                    p
+                </div>
+                <div id="fountainTextG_5" class="fountainTextG">
+                    i
+                </div>
+                <div id="fountainTextG_6" class="fountainTextG">
+                    l
+                </div>
+                <div id="fountainTextG_7" class="fountainTextG">
+                    i
+                </div>
+                <div id="fountainTextG_8" class="fountainTextG">
+                    n
+                </div>
+                <div id="fountainTextG_9" class="fountainTextG">
+                    g
+                </div>
+                <div id="fountainTextG_10" class="fountainTextG">
+                    .
+                </div>
+                <div id="fountainTextG_11" class="fountainTextG">
+                    .
+                </div>
+                <div id="fountainTextG_12" class="fountainTextG">
+                    .
+                </div>
+            </div>
+            <div class="col-xs-12 col-md-12 highlight" id="step-8">
+                <h3>Kết quả chạy thử</h3>
+                <table class="table">
+                    <tr>
+                        <td>#STT</td>
+                        <td>Kết quả</td>
+                        <td>Thời gian(s)</td>
+                        <td>Bộ nhớ(KiB)</td>
+                        <td>Lỗi</td>
+                    </tr>
+                    <tr data-ng-repeat="result in compile_result">
+                        <td>{{ $index+1 }}</td>
+                        <td>{{ result.result }}</td>
+                        <td>{{ result.time }}</td>
+                        <td>{{ result.memory }}</td>
+                        <td>{{ result.error }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div data-backdrop='static' data-keyboard='false' class="modal fade" id="myModal1" tabindex="-1" role="dialog"
+             aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Thông báo</h4>
+                    </div>
+                    <div class="modal-body">
+                        Chưa có đề thi. Xin vui lòng quay lại sau!
+                    </div>
+                    <div class="modal-footer">
+                        <a href="/" class="btn btn-primary btn-lg">OK</a>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+        <!-- Modal -->
+
+
+    {% endraw %}
+{% endblock %}
+{% block pluginJS %}
+    <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js"></script>
+    <script src="/application/js/libs/angularjs/ui-ace.min.js"></script>
+    <script src="/application/js/libs/angularjs/ui-bootstrap-tpls-0.7.0.min.js"></script>
+    <script src="/application/js/libs/angularjs/angular-timer.min.js"></script>
+    <script src="/application/js/hopscotch-0.1.2.min.js"></script>
+    <script src="/application/js/demo.js"></script>
+{% endblock %}
+{% block mediaJS %}
+    <script>
+        angular.module('services.utility').constant('csrf_token', '{{ csrf_token() }}');
+        $(function () {
+            $("[rel='tooltip']").tooltip();
+        });
+
+    </script>
+{% endblock %}
