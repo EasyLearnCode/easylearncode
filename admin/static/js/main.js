@@ -72,6 +72,21 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core"])
                 templateUrl: "template/angular/admin/courses/exercise.html",
                 controller: "ExerciseAdminCtrl"
             })
+            .when("/lessons/:courseId",
+            {
+                templateUrl: "template/angular/admin/courses/lesson.html",
+                controller: "LessonAdminCtrl"
+            })
+            .when("/lessons/lectures/:lessonId",
+            {
+                templateUrl: "template/angular/admin/courses/lessons/lecture.html",
+                controller: "LectureAdminCtrl"
+            })
+            .when("/lessons/lectures/questions/:lectureId",
+            {
+                templateUrl: "template/angular/admin/courses/lessons/lectures/question.html",
+                controller: "QuestionAdminCtrl"
+            })
             .otherwise({redirectTo: "/"})
     }])
     .controller("CourseAdminCtrl", ["$scope", "api", "$modal", "$http" , function ($scope, api, $modal, $http) {
@@ -175,8 +190,8 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core"])
                     headers: {'Content-Type': undefined },
                     transformRequest: angular.identity
                 }).success(function (data) {
-                    course.img = data.image_url;
-                }).error();
+                        course.img = data.image_url;
+                    }).error();
             })
 
         };
@@ -227,9 +242,9 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core"])
                     course[ele.field_title] = ele.field_value;
                 });
                 api.Model.save({type: 'exercises'}, course, function (data) {
-                    api.Model.get({type: 'courses', id: $routeParams.courseId}, function(course){
+                    api.Model.get({type: 'courses', id: $routeParams.courseId}, function (course) {
                         course.exercise_keys.push(data.Id);
-                        api.Model.save({type: 'courses', id: course.Id},course,function(){
+                        api.Model.save({type: 'courses', id: course.Id}, course, function () {
                             $scope.course.exercise_keys.push(data);
                         });
                     });
@@ -282,3 +297,261 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core"])
             };
         };
     }])
+    .controller("LessonAdminCtrl", ["$scope", "api", "$routeParams", '$modal', function ($scope, api, $routeParams, $modal) {
+        $scope.course = api.Model.get({type: 'courses', id: $routeParams.courseId, recurse: true});
+        var addForm = {
+            "form_id": 1,
+            "form_name": "Add Lesson",
+            "form_fields": [
+                {
+                    "field_id": 1,
+                    "field_title": "title",
+                    "field_type": "textfield",
+                    "field_value": "",
+                    "field_required": true
+                },
+                {
+                    "field_id": 2,
+                    "field_title": "description",
+                    "field_type": "textfield",
+                    "field_value": "",
+                    "field_required": true
+                }
+            ]
+        }
+
+        $scope.delete = function (lesson) {
+            api.Model.get({type: 'courses', id: $routeParams.courseId}, function (course) {
+                api.Model.delete({type: 'lessons', id: lesson.Id}, function () {
+                    course.lesson_keys.pop(lesson.Id);
+                    $scope.course.lesson_keys.pop(lesson);
+                    api.Model.save({type: 'courses', id: course.Id}, course, function () {
+                    });
+                });
+            });
+        }
+
+        $scope.showAddModal = function () {
+            var modalInstance = $modal.open({
+                templateUrl: 'myModalContent.html',
+                controller: ModalInstanceCtrl,
+                resolve: {
+                    form: function () {
+                        return addForm;
+                    }
+                }
+            });
+            modalInstance.result.then(function (addForm) {
+                lesson = {}
+                _.each(addForm.form_fields, function (ele) {
+                    lesson[ele.field_title] = ele.field_value;
+                });
+                api.Model.save({type: 'lessons'}, lesson, function (data) {
+                    api.Model.get({type: 'courses', id: $routeParams.courseId}, function (course) {
+                        course.lesson_keys.push(data.Id);
+                        api.Model.save({type: 'courses', id: course.Id}, course, function () {
+                            $scope.course.lesson_keys.push(data);
+                        });
+                    });
+
+                })
+            }, function () {
+                console.log('Modal dismissed at: ' + new Date());
+            });
+
+        };
+        $scope.showEditModal = function (lesson) {
+            var editForm = $.extend(true, {}, addForm);
+            editForm["form_name"] = "Edit Lesson";
+            _.each(editForm.form_fields, function (field) {
+                field.field_value = lesson[field.field_title];
+            });
+            var modalInstance = $modal.open({
+                templateUrl: 'myModalContent.html',
+                controller: ModalInstanceCtrl,
+                resolve: {
+                    form: function () {
+                        return editForm;
+                    }
+                }
+            });
+            modalInstance.result.then(function (addForm) {
+                lesson_tmp = {}
+                _.each(addForm.form_fields, function (ele) {
+                    lesson_tmp[ele.field_title] = ele.field_value;
+                });
+                api.Model.save({type: 'lessons', id: lesson.Id}, lesson_tmp, function (data) {
+                    //$scope.courses.push(data);
+                    lesson = _.extend(lesson, lesson_tmp);
+                    $scope.$apply();
+                })
+            }, function () {
+                console.log('Modal dismissed at: ' + new Date());
+            });
+        }
+        var ModalInstanceCtrl = function ($scope, $modalInstance, form) {
+
+            $scope.form = form;
+
+            $scope.ok = function (data) {
+                $modalInstance.close($scope.form);
+            };
+
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
+            };
+        };
+    }])
+    .controller("LectureAdminCtrl", ["$scope", "api", "$routeParams", '$modal', '$http', function ($scope, api, $routeParams, $modal, $http) {
+        $scope.lesson = api.Model.get({type: 'lessons', id: $routeParams.lessonId, recurse: true});
+        var addForm = {
+            "form_id": 1,
+            "form_name": "Add Lecture",
+            "form_fields": [
+                {
+                    "field_id": 1,
+                    "field_title": "title",
+                    "field_type": "textfield",
+                    "field_value": "",
+                    "field_required": true
+                },
+                {
+                    "field_id": 2,
+                    "field_title": "description",
+                    "field_type": "textarea",
+                    "field_value": "",
+                    "field_required": true
+                },
+                {
+                    "field_id": 3,
+                    "field_title": "youtube_id",
+                    "field_type": "textfield",
+                    "field_value": "",
+                    "field_required": true
+                },
+                {
+                    "field_id": 4,
+                    "field_title": "time",
+                    "field_type": "textfield",
+                    "field_value": "",
+                    "field_required": true
+                }
+            ]
+        }
+
+        $scope.delete = function (lecture) {
+            api.Model.get({type: 'lessons', id: $routeParams.lessonId}, function (lesson) {
+                api.Model.delete({type: 'lectures', id: lecture.Id}, function () {
+                    lesson.lecture_keys.pop(lecture.Id);
+                    $scope.lesson.lecture_keys.pop(lecture);
+                    api.Model.save({type: 'lessons', id: lesson.Id}, lesson, function () {
+                    });
+                });
+            });
+        }
+
+        $scope.showAddModal = function () {
+            var modalInstance = $modal.open({
+                templateUrl: 'myModalContent.html',
+                controller: ModalInstanceCtrl,
+                resolve: {
+                    form: function () {
+                        return addForm;
+                    }
+                }
+            });
+            modalInstance.result.then(function (addForm) {
+                lecture = {}
+                _.each(addForm.form_fields, function (ele) {
+                    lecture[ele.field_title] = ele.field_value;
+                });
+                api.Model.save({type: 'lectures'}, lecture, function (data) {
+                    api.Model.get({type: 'lessons', id: $routeParams.lessonId}, function (lesson) {
+                        lesson.lecture_keys.push(data.Id);
+                        api.Model.save({type: 'lessons', id: lesson.Id}, lesson, function () {
+                            $scope.lesson.lecture_keys.push(data);
+                        });
+                    });
+                })
+            }, function () {
+                console.log('Modal dismissed at: ' + new Date());
+            });
+
+        };
+
+        $scope.showEditModal = function (lecture) {
+            var editForm = $.extend(true, {}, addForm);
+            editForm["form_name"] = "Edit Lecture";
+            _.each(editForm.form_fields, function (field) {
+                field.field_value = lecture[field.field_title];
+            });
+            var modalInstance = $modal.open({
+                templateUrl: 'myModalContent.html',
+                controller: ModalInstanceCtrl,
+                resolve: {
+                    form: function () {
+                        return editForm;
+                    }
+                }
+            });
+            modalInstance.result.then(function (addForm) {
+                lecture_tmp = {}
+                _.each(addForm.form_fields, function (ele) {
+                    if (ele.field_title == "time")
+                        lecture_tmp[ele.field_title] = parseFloat(ele.field_value);
+                    else lecture_tmp[ele.field_title] = ele.field_value;
+                });
+                api.Model.save({type: 'lectures', id: lecture.Id}, lecture_tmp, function (data) {
+                    lecture = _.extend(lecture, lecture_tmp);
+                    $scope.$apply();
+                })
+            }, function () {
+                console.log('Modal dismissed at: ' + new Date());
+            });
+        }
+
+        var ModalInstanceCtrl = function ($scope, $modalInstance, form) {
+
+            $scope.form = form;
+
+            $scope.ok = function (data) {
+                $modalInstance.close($scope.form);
+            };
+
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
+            };
+        };
+
+        $scope.uploadFile = function (files, lecture) {
+            $http.get('/api/files/lecture/' + lecture.Id + '/img').success(function (data) {
+                var fd = new FormData();
+                fd.append("file", files[0]);
+                $http.post(data.upload_url, fd, {
+                    withCredentials: true,
+                    headers: {'Content-Type': undefined },
+                    transformRequest: angular.identity
+                }).success(function (data) {
+                        lecture.img = data.image_url;
+                    }).error();
+            })
+
+        };
+
+         var ModalInstanceCtrl = function ($scope, $modalInstance, form) {
+
+            $scope.form = form;
+
+            $scope.ok = function (data) {
+                $modalInstance.close($scope.form);
+            };
+
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
+            };
+        };
+    }])
+    .controller("QuestionAdminCtrl", ["$scope", "api", "$routeParams", '$modal', '$http', function ($scope, api, $routeParams, $modal, $http) {
+        $scope.lecture = api.Model.get({type: 'lectures', id: $routeParams.lectureId, recurse: true});
+
+    }]);
