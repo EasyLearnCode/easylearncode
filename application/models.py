@@ -210,7 +210,7 @@ class WeeklyQuizTest(ModelUtils, ndb.Model):
 
 
 class WeeklyQuizLevel(ModelUtils, ndb.Model):
-    level = ndb.FloatProperty()
+    level = ndb.IntegerProperty()
     description = ndb.StringProperty(indexed=False)
     limit_memory = ndb.FloatProperty(default=100)
     limit_time = ndb.FloatProperty(default=60)
@@ -360,6 +360,14 @@ class WeeklyQuiz(ModelUtils, ndb.Model):
         for result in results:
             quizs.append({'test_key': result.key.urlsafe(), 'week': result.week})
         return sorted(quizs, key=lambda k: k['week'], reverse=True)[:5]
+
+    @classmethod
+    def get_week_in_month(cls, month, year):
+        results = cls.query(cls.start_date.mouth == month, cls.start_date.year == year).fetch()
+        quizs = []
+        for result in results:
+            quizs.append({'test_key': result.key.urlsafe(), 'week': result.week})
+        return sorted(quizs, key=lambda k: k['week'], reverse=True)
 
 
 class WeeklyQuizResult(ModelUtils, ndb.Model):
