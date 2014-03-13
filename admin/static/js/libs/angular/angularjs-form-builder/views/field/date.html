@@ -1,9 +1,12 @@
 <div class="field row">
     <div class="span2">{{field.field_title}}:</div>
-    <span class="required-error" ng-show="field.field_required && !field.field_value">* required </span>
     <div class="span4">
         <div class="control-group input-append">
-            <input type="date" ng-model="field.field_value" ng-required="field.field_required">
+            <input type="text" ng-model="field.field_value" ng-required="field.field_required" class="datepicker">
         </div>
+        <span class="required-error" ng-show="field.field_required && !field.field_value">* required </span>
     </div>
 </div>
+<script>
+    $('.datepicker').datepicker();
+</script>

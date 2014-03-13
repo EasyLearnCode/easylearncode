@@ -2347,3 +2347,8 @@ footer p {
 .icon-red {
   background-image: url("../img/glyphicons-halflings-red.png");
 }
+
+.ace_editor {
+    height: 200px;
+    font-size: 14px !important;
+}

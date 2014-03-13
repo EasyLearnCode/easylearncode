@@ -454,8 +454,10 @@
     <script src="/admin/js/angular-resource.min.js"></script>
     <script src="/application/js/libs/angularjs/ui-bootstrap-tpls-0.7.0.min.js"></script>
     <script src="/application/js/libs/angularjs/angular-route.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js"></script>
+    <script src="/application/js/libs/angularjs/ui-ace.min.js"></script>
     <script>
-        angular.module('angularjsFormBuilder',[]);
+        angular.module('angularjsFormBuilder',["ui.bootstrap","ui.ace"]);
     </script>
     <script src="/admin/js/libs/angular/angularjs-form-builder/directives/form-directive.js"></script>
     <script src="/admin/js/libs/angular/angularjs-form-builder/directives/field-directive.js"></script>

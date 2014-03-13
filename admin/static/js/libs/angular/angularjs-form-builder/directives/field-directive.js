@@ -34,6 +34,9 @@ angular.module('angularjsFormBuilder').directive('fieldDirective', function ($ht
                 case 'radio':
                     templateUrl = '/admin/js/libs/angular/angularjs-form-builder/views/field/radio.html';
                     break;
+                case 'code':
+                    templateUrl = '/admin/js/libs/angular/angularjs-form-builder/views/field/code.html';
+                    break;
             }
             return templateUrl;
         }
