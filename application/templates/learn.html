@@ -104,8 +104,6 @@
                         <div class="tab-pane fade active" id="home">{{ lecture.description }}</div>
                         <div class="tab-pane fade" id="profile">
                             <div id="gplus-cm"></div>
-                            <script async type="text/javascript"
-                                    src="http://apis.google.com/js/plusone.js?callback=gpcb"></script>
                         </div>
                         <div class="tab-pane fade" id="messages">
                             <ul ng-social-buttons
@@ -152,6 +150,7 @@
     {% endraw %}
 {% endblock %}
 {% block pluginJS %}
+    <script type="text/javascript" src="http://apis.google.com/js/plusone.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js"></script>
     <script src="/application/js/libs/angularjs/ui-ace.min.js"></script>
     <script src="/application/js/libs/angularjs/angular-sanitize.min.js"></script>
