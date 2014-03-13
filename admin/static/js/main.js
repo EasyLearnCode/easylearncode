@@ -106,7 +106,6 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core"])
                     "field_id": 2,
                     "field_title": "description",
                     "field_type": "textarea",
-                    "field_language": "python",
                     "field_value": "",
                     "field_required": true
                 }
