@@ -1,10 +1,10 @@
 "use strict";
 angular.module("info.vietnamcode.nampnq.videogular.plugins.youtube", [])
     .run(['$rootScope', '$window',
-        function($rootScope, $window) {
+        function ($rootScope, $window) {
             $rootScope.youtubeApiReady = false;
-            $window.onYouTubeIframeAPIReady = function() {
-                $rootScope.$apply(function() {
+            $window.onYouTubeIframeAPIReady = function () {
+                $rootScope.$apply(function () {
                     $rootScope.youtubeApiReady = true;
                 });
 
@@ -18,19 +18,19 @@ angular.module("info.vietnamcode.nampnq.videogular.plugins.youtube", [])
     ])
     .directive(
         "vgYoutube", ["VG_EVENTS", "VG_STATES", "$rootScope", "$window", "$timeout", "$interval",
-            function(VG_EVENTS, VG_STATES, $rootScope, $window, $timeout, $interval) {
+            function (VG_EVENTS, VG_STATES, $rootScope, $window, $timeout, $interval) {
                 return {
                     restrict: "E",
                     require: "^videogular",
                     templateUrl: "/application/js/libs/videogular/plugins/views/youtube/youtube.html",
                     scope: {},
-                    link: function(scope, elem, attr, API) {
+                    link: function (scope, elem, attr, API) {
                         var result = {
                             method: "",
                             url: ""
                         };
                         scope.vgYoutubePlayerId = Date.now();
-                        scope.onYoutubeStateChange = function(event) {
+                        scope.onYoutubeStateChange = function (event) {
                             var videogularElementScope = API.elementScope.scope().$$childHead;
                             if (event.data == YT.PlayerState.BUFFERING) {
                                 videogularElementScope.onStartBuffering({
@@ -48,62 +48,63 @@ angular.module("info.vietnamcode.nampnq.videogular.plugins.youtube", [])
                                 API.pause();
                             }
                         }
-                        scope.onVideoReady = function() {
+                        scope.onVideoReady = function () {
                             var videogularElementScope = API.elementScope.scope().$$childHead,
                                 vgOverPlayElementScope = angular.element('vg-overlay-play>div', API.videogularElement).scope();
                             vgOverPlayElementScope.currentIcon = vgOverPlayElementScope.playIcon;
                             API.videoElement.remove();
                             API.videoElement = angular.element("#youtube_player_" + scope.vgYoutubePlayerId);
                             //Define some property, method for player
-                            API.videoElement[0].__defineGetter__("currentTime", function() {
+                            API.videoElement[0].__defineGetter__("currentTime", function () {
                                 return scope.ytplayer.getCurrentTime();
                             });
-                            API.videoElement[0].__defineSetter__("currentTime", function(seconds) {
+                            API.videoElement[0].__defineSetter__("currentTime", function (seconds) {
                                 return scope.ytplayer.seekTo(seconds, true);
                             });
-                            API.videoElement[0].__defineGetter__("duration", function() {
+                            API.videoElement[0].__defineGetter__("duration", function () {
                                 return scope.ytplayer.getDuration();
                             });
-                            API.videoElement[0].__defineGetter__("paused", function() {
+                            API.videoElement[0].__defineGetter__("paused", function () {
                                 return scope.ytplayer.getPlayerState() != YT.PlayerState.PLAYING;
                             });
-                            API.videoElement[0].__defineGetter__("videoWidth", function() {
+                            API.videoElement[0].__defineGetter__("videoWidth", function () {
                                 return scope.ytplayer.a.width;
                             });
-                            API.videoElement[0].__defineGetter__("videoHeight", function() {
+                            API.videoElement[0].__defineGetter__("videoHeight", function () {
                                 return scope.ytplayer.a.height;
                             });
-                            API.videoElement[0].__defineGetter__("volume", function() {
+                            API.videoElement[0].__defineGetter__("volume", function () {
                                 return scope.ytplayer.getVolume() / 100.0;
                             });
-                            API.videoElement[0].__defineSetter__("volume", function(volume) {
+                            API.videoElement[0].__defineSetter__("volume", function (volume) {
                                 return scope.ytplayer.setVolume(volume * 100.0);
                             });
-                            API.videoElement[0].play = function() {
+                            API.videoElement[0].play = function () {
                                 API.videoElement.css('display', 'block');
                                 scope.ytplayer.playVideo();
                             }
-                            API.videoElement[0].pause = function() {
+                            API.videoElement[0].pause = function () {
                                 API.videoElement.css('display', 'none');
                                 scope.ytplayer.pauseVideo();
                             };
                             scope.ytplayer.setSize(API.getSize().width, API.getSize().height);
                             videogularElementScope.updateSize();
-                            scope.updateTimer = $interval(function() {
+                            function updateTime(){
                                 videogularElementScope.onUpdateTime({
-                                    target: API.videoElement[0]
-                                })
-                            }, 600);
+                                        target: API.videoElement[0]
+                                    })
+                            }
+                            scope.updateTimer = setInterval(updateTime, 600);
                             //Overwrite method onPlayerReady in videogularElementScope
 
-                            videogularElementScope.onPlayerReady = function() {
+                            videogularElementScope.onPlayerReady = function () {
                                 videogularElementScope.doPlayerReady();
                             };
 
                             //Call method onVideoReady in videogularElementScope
                             videogularElementScope.onVideoReady();
                         }
-                        scope.loadYoutube = function() {
+                        scope.loadYoutube = function () {
                             var videogularElementScope = API.elementScope.scope().$$childHead,
                                 vgOverPlayElementScope = angular.element('vg-overlay-play>div', API.videogularElement).scope();
                             vgOverPlayElementScope.currentIcon = "";
@@ -121,7 +122,7 @@ angular.module("info.vietnamcode.nampnq.videogular.plugins.youtube", [])
                                 }
                             });
                         }
-                        scope.parseSrc = function(src) {
+                        scope.parseSrc = function (src) {
                             if (src) {
                                 // Regex to parse the video ID
                                 var regId = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
@@ -155,20 +156,22 @@ angular.module("info.vietnamcode.nampnq.videogular.plugins.youtube", [])
                                 }
                             }
                         };
-                        $rootScope.$watch('youtubeApiReady', function(value) {
+                        $rootScope.$watch('youtubeApiReady', function (value) {
                             if (value) {
                                 console.log("Api loaded..");
                                 if (result.method === 'youtube')
-                                    $timeout(function(){scope.loadYoutube()});
+                                    $timeout(function () {
+                                        scope.loadYoutube()
+                                    });
                             }
                         })
-                        scope.removeHtmlMediaElementListener = function(htmlMediaElement) {
+                        scope.removeHtmlMediaElementListener = function (htmlMediaElement) {
                             htmlMediaElement.removeEventListener("waiting");
                             htmlMediaElement.removeEventListener("ended");
                             htmlMediaElement.removeEventListener("playing");
                             htmlMediaElement.removeEventListener("timeupdate");
                         }
-                        scope.checkYoutubeSource = function() {
+                        scope.checkYoutubeSource = function () {
                             var htmlMediaElement = API.videoElement[0];
                             var mediaFiles = [],
                                 i,
@@ -222,8 +225,8 @@ angular.module("info.vietnamcode.nampnq.videogular.plugins.youtube", [])
                             }
                         };
                         scope.checkYoutubeSource();
-                        scope.$on('$destroy',function(){
-                            $interval.cancel(scope.updateTimer);
+                        scope.$on('$destroy', function () {
+                            clearInterval(scope.updateTimer);
                         })
 
                     }
