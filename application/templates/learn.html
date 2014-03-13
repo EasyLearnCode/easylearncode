@@ -3,6 +3,7 @@
     <link rel="stylesheet" href="/application/css/learn.css">
     <link rel="stylesheet" type="text/css" href="/application/css/videogular/quiz.css">
     <link href="/application/css/hopscotch-0.1.1.css" rel="stylesheet">
+    <link href="/application/css/angular-social.css" rel="stylesheet">
     <!--<link rel="stylesheet" type="text/css" href="/application/css/expandable_menu/expandable_menu.css">-->
 {% endblock %}
 {% block content %}
@@ -17,14 +18,14 @@
             <div class="row highlight">
                 <div class="col-xs-8">
                     <div class="lesson_info overlay" ng-show="show"></div>
-                    <div class="panel-group" id="accordion">
+                    <div class="panel-group" style="margin-bottom: 0px" id="accordion">
                         <div class="panel panel-primary">
                             <div class="panel-heading">
                                 <span class="pull-left" id="step-1"> <h3 class="panel-title"><a class="second"><i
                                         class="fa fa-laptop fa-lg"></i> {{ lecture.title }}</a></h3></span>
                             <span class="pull-right" id="step-2">
                                <a class="btn btn-default" ng-click="show=!show" ng-class="{show:show}">
-                                   {{ selectedIndex }}/10 <i class="fa fa-toggle-down"></i></a></span>
+                                   {{ getCurrentLectureIndex()+1 }}/{{ lectures.length }} <i class="fa fa-toggle-down"></i></a></span>
 
                                 <div class="lesson_info popover fade bottom" ng-init="show=false" ng-class="{in:show}"
                                      ng-show="show" style="display: block; top: 40px;left: 450px;width: 330px;">
@@ -37,7 +38,7 @@
                                                 <h4 class="panel-title">
                                                     <a data-toggle="collapse" data-parent="#accordion"
                                                        href="#collapseOne">
-                                                        phần 1: Kiến thức cơ bản
+                                                        Phần 1: Kiến thức cơ bản
                                                     </a>
                                                 </h4>
                                             </div>
@@ -59,7 +60,7 @@
                                                 <h4 class="panel-title">
                                                     <a data-toggle="collapse" data-parent="#accordion"
                                                        href="#collapseTwo">
-                                                        Ph?n 2: Python Nâng Cao{{ youtubeUrl }}
+                                                        Phần 2: Python Nâng Cao
                                                     </a>
                                                 </h4>
                                             </div>
@@ -80,15 +81,16 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="pull-left"> Đánh giá:
+                        <div class="pull-left" style="padding-top: 20px"><span style="font-weight: bold">Đánh giá:</span>
                             <rating value="rate" max="max" readonly="isReadonly" on-hover="hoveringOver(value)"
                                     on-leave="overStar = null"></rating>
                             <span class="label"
                                   ng-class="{'label-warning': percent<30, 'label-info': percent>=30 && percent<70, 'label-success': percent>=70}"
                                   ng-show="overStar && !isReadonly">{{ percent }}%</span></div>
-                        <div class="pull-right">
+                        <div class="pull-right" style="padding-top: 20px">
                             <img src="https://cdn1.iconfinder.com/data/icons/sweetsocial/32/youtube.png" ng-click="ViewOnYoutube()" alt="Xem tại trang youtube" title="Xem tại trang youtube"/>
                         </div>
+                        <div class="clearfix"></div>
                     </div>
                     <ul class="nav nav-tabs" id="myTab">
                         <li class="active"><a href="#home" data-toggle="tab"><span
@@ -106,47 +108,17 @@
                                     src="http://apis.google.com/js/plusone.js?callback=gpcb"></script>
                         </div>
                         <div class="tab-pane fade" id="messages">
-                            <!-- Place this tag where you want the share button to render. -->
-                            <div class="g-plus" data-action="share" data-href="http://easylearncode.appspot.com/"
-                                 data-annotation="bubble"></div>
-                            <!-- Place this tag after the last share tag. -->
-                            <script type="text/javascript">
-                                (function () {
-                                    var po = document.createElement('script');
-                                    po.type = 'text/javascript';
-                                    po.async = true;
-                                    po.src = 'https://apis.google.com/js/platform.js';
-                                    var s = document.getElementsByTagName('script')[0];
-                                    s.parentNode.insertBefore(po, s);
-                                })();
-                            </script>
-                            <a href="https://twitter.com/share" class="twitter-share-button" data-lang="en"
-                               data-url="http://easylearncode.appspot.com/">Tweet</a>
-                            <script>!function (d, s, id) {
-                                var js, fjs = d.getElementsByTagName(s)[0];
-                                if (!d.getElementById(id)) {
-                                    js = d.createElement(s);
-                                    js.id = id;
-                                    js.src = "https://platform.twitter.com/widgets.js";
-                                    fjs.parentNode.insertBefore(js, fjs);
-                                }
-                            }(document, "script", "twitter-wjs");</script>
-                            <div id="fb-root"></div>
-                            <script>(function (d, s, id) {
-                                var js, fjs = d.getElementsByTagName(s)[0];
-                                if (d.getElementById(id)) return;
-                                js = d.createElement(s);
-                                js.id = id;
-                                js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=294482573994222";
-                                fjs.parentNode.insertBefore(js, fjs);
-                            }(document, 'script', 'facebook-jssdk'));</script>
-                            <div class="fb-share-button" data-href="http://easylearncode.appspot.com/"
-                                 data-type="button_count"></div>
-                            <script src="//platform.linkedin.com/in.js" type="text/javascript">
-                                lang: en_US
-                            </script>
-                            <script type="IN/Share" data-url="http://easylearncode.appspot.com/"
-                                    data-counter="right"></script>
+                            <ul ng-social-buttons
+                                 data-url="current_url"
+                                 data-title="'current_title'"
+                                 data-description="current_description"
+                                 data-image="'http://easylearncode.appspot.com/application/img/logo.png'">
+                                <li>Share:</li>
+                                <li class="ng-social-facebook">Facebook</li>
+                                <li class="ng-social-google-plus">Google+</li>
+                                <li class="ng-social-twitter">Twitter</li>
+                                <li class="ng-social-pinterest">Pinterest</li>
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -184,6 +156,7 @@
     <script src="/application/js/libs/angularjs/ui-ace.min.js"></script>
     <script src="/application/js/libs/angularjs/angular-sanitize.min.js"></script>
     <script src="/application/js/libs/angularjs/ui-bootstrap-tpls-0.7.0.min.js"></script>
+    <script src="/application/js/libs/angularjs/angular-social.js"></script>
     <script src="/application/js/libs/videogular/videogular.js"></script>
     <script src="/application/js/libs/videogular/plugins/controls.js"></script>
     <script src="/application/js/libs/videogular/plugins/overlay-play.js"></script>
