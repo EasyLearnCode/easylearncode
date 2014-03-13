@@ -224,12 +224,12 @@ angular.module("services.utility").factory("libraryLoader", ["$q", "$rootScope",
                         cache: !0,
                         url: f
                     }).success(function () {
-                            j.resolve();
-                            $rootScope.$apply()
-                        }).error(function () {
-                            j.reject();
-                            $rootScope.$apply()
-                        }), d = j.promise);
+                        j.resolve();
+                        $rootScope.$apply()
+                    }).error(function () {
+                        j.reject();
+                        $rootScope.$apply()
+                    }), d = j.promise);
                     return d
                 }))
             }
@@ -486,11 +486,11 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "$h
             if (lang.active) {
                 $http.post('/api/contest/submit', {"key": $scope.thisweek_contest.this_quiz_level.quiz_level_key, "source": lang.source,
                     "_csrf_token": csrf_token, "lang": lang.lang}).success(function (data) {
-                        if (data.status == 1) {
-                            window.location = "/contest"
-                        }
+                    if (data.status == 1) {
+                        window.location = "/contest"
+                    }
 
-                    });
+                });
             }
         });
     }
@@ -527,14 +527,14 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "$h
                             $scope.compiling = false;
                         }
                     }).error(function (data, status, headers, config) {
-                            $scope.compile_result.push(
-                                {
-                                    'result': false,
-                                    'time': 0,
-                                    'memory': 0,
-                                    'error': 'Disconnect from server...Please try again'
-                                });
-                        });
+                        $scope.compile_result.push(
+                            {
+                                'result': false,
+                                'time': 0,
+                                'memory': 0,
+                                'error': 'Disconnect from server...Please try again'
+                            });
+                    });
                 });
 
 
@@ -580,7 +580,7 @@ angular.module("easylearncode.learn").run(function () {
     _.mixin({
 
         // return the index of the first array element passing a test
-        indexOf: function(array, test) {
+        indexOf: function (array, test) {
             // delegate to standard indexOf if the test isn't a function
             if (!_.isFunction(test)) return indexOfValue(array, test);
             // otherwise, look for the index
@@ -592,19 +592,19 @@ angular.module("easylearncode.learn").run(function () {
         }
 
     });
-}).controller('LearnCtrl', ['$scope', '$http', '$location', '$sce', '$compile','$window', function ($scope, $http, $location, $sce, $compile, $window) {
+}).controller('LearnCtrl', ['$scope', '$http', '$location', '$sce', '$compile', '$window', function ($scope, $http, $location, $sce, $compile, $window) {
         $scope.current_title = (document.title);
-        $scope.getCurrentLectureIndex = function(){
-            return _.indexOf($scope.lectures, function(lec){
+        $scope.getCurrentLectureIndex = function () {
+            return _.indexOf($scope.lectures, function (lec) {
                 return lec.Id == $location.search()['lecture_id'];
             })
         }
         $scope.current_url = (document.location.href);
         var c = document.getElementsByTagName('meta');
-        for (var x=0,y=c.length; x<y; x++) {
-          if (c[x].name.toLowerCase() == "description") {
-            $scope.current_description = c[x];
-          }
+        for (var x = 0, y = c.length; x < y; x++) {
+            if (c[x].name.toLowerCase() == "description") {
+                $scope.current_description = c[x];
+            }
         }
         $scope.lectures = [
             {
@@ -865,15 +865,17 @@ angular.module("easylearncode.learn").run(function () {
             $location.path("/").search('lecture_id', lecture.Id).replace();
             $scope.lecture = lecture;
             $scope.loadLecture();
+            $scope.$apply();
         }
-        $scope.loadLecture = function(){
+        $scope.loadLecture = function () {
             $scope.youtubeUrl = $sce.trustAsResourceUrl("http://www.youtube.com/watch?v=" + $scope.lecture.youtube_id);
             $scope.show = false;
-            if(angular.isDefined($scope.vgScope)){
+            if (angular.isDefined($scope.vgScope)) {
                 $scope.vgScope.$destroy();
             }
             $scope.vgScope = $scope.$new(false);
-            $('#video').html($compile("<videogular id=\"khung-video\"\r\n                                    vg-player-ready=\"onPlayerReady\" vg-complete=\"onCompleteVideo\" vg-update-time=\"onUpdateTime\" vg-update-size=\"onUpdateSize\" vg-update-volume=\"onUpdateVolume\" vg-update-state=\"onUpdateState\"\r\n                                    vg-width=\"config.width\" vg-height=\"config.height\" vg-theme=\"config.theme.url\" vg-autoplay=\"config.autoPlay\" vg-stretch=\"config.stretch.value\" vg-responsive=\"config.responsive\">\r\n                                    <video preload='metadata' id=\"video_content\">\r\n                                        <source type=\"video/youtube\" src=\"" + $scope.youtubeUrl + "\"  />\r\n                                        <!-- <source www.youtube.com/watch?v=vfzfwPo6MZ4 src=\"http://www.videogular.com/assets/videos/videogular.mp4\" type=\"video/mp4\">\r\n                                        <source src=\"http://www.videogular.com/assets/videos/videogular.webm\" type=\"video/webm\"> -->\r\n\r\n                                        <track kind=\"captions\" src=\"assets/subs/pale-blue-dot.vtt\" srclang=\"en\" label=\"English\" default></track>\r\n                                    </video>\r\n                                    <vg-youtube></vg-youtube>\r\n                                    <vg-quiz vg-data='config.plugins.quiz.data' vg-quiz-submit=\"onQuizSubmit\" vg-quiz-skip=\"onQuizSkip\" vg-quiz-continue=\"onQuizContinue\" vg-quiz-show-explanation=\"onQuizShowExplanation\"></vg-quiz>\r\n                                    <vg-poster-image vg-url='config.plugins.poster.url' vg-stretch=\"config.stretch.value\"></vg-poster-image>\r\n                                    <vg-buffering></vg-buffering>\r\n                                    <vg-overlay-play vg-play-icon=\"config.theme.playIcon\"></vg-overlay-play>\r\n\r\n                                    <vg-controls vg-autohide=\"config.autoHide\" vg-autohide-time=\"config.autoHideTime\" style=\"height: 50px;\">\r\n                                        <vg-play-pause-button vg-play-icon=\"config.theme.playIcon\" vg-pause-icon=\"config.theme.pauseIcon\"></vg-play-pause-button>\r\n                                        <vg-timeDisplay>{{ currentTime }}</vg-timeDisplay>\r\n                                        <vg-scrubBar>\r\n                                            <vg-scrubbarcurrenttime></vg-scrubbarcurrenttime>\r\n                                        </vg-scrubBar>\r\n                                        <vg-timeDisplay>{{ totalTime }}</vg-timeDisplay>\r\n                                        <vg-volume>\r\n                                            <vg-mutebutton\r\n                                                vg-volume-level-3-icon=\"config.theme.volumeLevel3Icon\"\r\n                                                vg-volume-level-2-icon=\"config.theme.volumeLevel2Icon\"\r\n                                                vg-volume-level-1-icon=\"config.theme.volumeLevel1Icon\"\r\n                                                vg-volume-level-0-icon=\"config.theme.volumeLevel0Icon\"\r\n                                                vg-mute-icon=\"config.theme.muteIcon\">\r\n                                            </vg-mutebutton>\r\n                                            <vg-volumebar></vg-volumebar>\r\n                                        </vg-volume>\r\n                                        <vg-fullscreenButton vg-enter-full-screen-icon=\"config.theme.enterFullScreenIcon\" vg-exit-full-screen-icon=\"config.theme.exitFullScreenIcon\"></vg-fullscreenButton>\r\n                                    </vg-controls>\r\n                                </videogular>")($scope.vgScope));
+            $('#video').html($compile("<videogular id=\"khung-video\"\r\n                                    vg-player-ready=\"onPlayerReady\" vg-complete=\"onCompleteVideo\" vg-update-time=\"onUpdateTime\" vg-update-size=\"onUpdateSize\" vg-update-volume=\"onUpdateVolume\" vg-update-state=\"onUpdateState\"\r\n                                    vg-width=\"config.width\" vg-height=\"config.height\" vg-theme=\"config.theme.url\" vg-autoplay=\"config.autoPlay\" vg-stretch=\"config.stretch.value\" vg-responsive=\"config.responsive\">\r\n<video preload='metadata' id=\"video_content\">\r\n<source type=\"video/youtube\" src=\"" + $scope.youtubeUrl + "\"  /></video>\r\n                                    <vg-youtube></vg-youtube>\r\n                                    <vg-quiz vg-data='config.plugins.quiz.data' vg-quiz-submit=\"onQuizSubmit\" vg-quiz-skip=\"onQuizSkip\" vg-quiz-continue=\"onQuizContinue\" vg-quiz-show-explanation=\"onQuizShowExplanation\"></vg-quiz>\r\n                                    <vg-poster-image vg-url='config.plugins.poster.url' vg-stretch=\"config.stretch.value\"></vg-poster-image>\r\n                                    <vg-buffering></vg-buffering>\r\n                                    <vg-overlay-play vg-play-icon=\"config.theme.playIcon\"></vg-overlay-play>\r\n\r\n                                    <vg-controls vg-autohide=\"config.autoHide\" vg-autohide-time=\"config.autoHideTime\" style=\"height: 50px;\">\r\n                                        <vg-play-pause-button vg-play-icon=\"config.theme.playIcon\" vg-pause-icon=\"config.theme.pauseIcon\"></vg-play-pause-button>\r\n                                        <vg-timeDisplay>{{ currentTime }}</vg-timeDisplay>\r\n                                        <vg-scrubBar>\r\n                                            <vg-scrubbarcurrenttime></vg-scrubbarcurrenttime>\r\n                                        </vg-scrubBar>\r\n                                        <vg-timeDisplay>{{ totalTime }}</vg-timeDisplay>\r\n                                        <vg-volume>\r\n                                            <vg-mutebutton\r\n                                                vg-volume-level-3-icon=\"config.theme.volumeLevel3Icon\"\r\n                                                vg-volume-level-2-icon=\"config.theme.volumeLevel2Icon\"\r\n                                                vg-volume-level-1-icon=\"config.theme.volumeLevel1Icon\"\r\n                                                vg-volume-level-0-icon=\"config.theme.volumeLevel0Icon\"\r\n                                                vg-mute-icon=\"config.theme.muteIcon\">\r\n                                            </vg-mutebutton>\r\n                                            <vg-volumebar></vg-volumebar>\r\n                                        </vg-volume>\r\n                                        <vg-fullscreenButton vg-enter-full-screen-icon=\"config.theme.enterFullScreenIcon\" vg-exit-full-screen-icon=\"config.theme.exitFullScreenIcon\"></vg-fullscreenButton>\r\n                                    </vg-controls>\r\n                                </videogular>")($scope.vgScope));
+            $("#gplus-cm").html("Loading G+ Comments");
         }
 
         $scope.config = {
@@ -938,32 +940,40 @@ angular.module("easylearncode.learn").run(function () {
         ];
 
         $scope.ViewOnYoutube = function () {
-            $window.open($scope.youtubeUrl+'#t='+$scope.currentTime);
-            $scope.state='pause';
+            $window.open($scope.youtubeUrl + '#t=' + $scope.currentTime);
+            $scope.state = 'pause';
         }
-        $('#gplus-cm').html('<div class="g-comments" data-width="700" data-href="'+location.toString()+'" data-first_party_property="BLOGGER" data-view_type="FILTERED_POSTMOD">Loading Google+ Comments ...</div>');
         $scope.lecture = _.where($scope.lectures, {Id: $location.search()['lecture_id']})[0];
         $scope.loadLecture();
+        $scope.$on('$locationChangeSuccess', function () {
+            $scope.current_url = (document.location.href);
+            gapi.comments.render('gplus-cm', {
+                href: $scope.current_url,
+                width: '700',
+                first_party_property: 'BLOGGER',
+                view_type: 'FILTERED_POSTMOD'
+            });
+        });
 
     }]).directive('hoverClass', function () {
-        return {
-            restrict: 'A',
-            scope: {
-                addClass: '@',
-                removeClass: '@'
-            },
-            link: function (scope, element) {
-                element.on('mouseenter', function () {
-                    element.addClass(scope.addClass);
-                    element.removeClass(scope.removeClass);
-                });
-                element.on('mouseleave', function () {
-                    element.addClass(scope.removeClass);
-                    element.removeClass(scope.addClass);
-                });
-            }
-        };
-    });
+    return {
+        restrict: 'A',
+        scope: {
+            addClass: '@',
+            removeClass: '@'
+        },
+        link: function (scope, element) {
+            element.on('mouseenter', function () {
+                element.addClass(scope.addClass);
+                element.removeClass(scope.removeClass);
+            });
+            element.on('mouseleave', function () {
+                element.addClass(scope.removeClass);
+                element.removeClass(scope.addClass);
+            });
+        }
+    };
+});
 
 angular.module("easylearncode.contest_result").controller('ContestResultCtrl', ['$scope', '$http', 'csrf_token', '$location', function ($scope, $http, csrf_token, $location) {
     $http.get('/api/contest/week_result/current').success(function (data) {
@@ -1394,7 +1404,7 @@ angular.module("easylearncode.visualization", ["ui.bootstrap", "ui.ace", 'easyle
 
 
         $scope.jsrepl.loadLanguage("python", function () {
-             $scope.$apply(function () {
+            $scope.$apply(function () {
                 $scope.jsreplReady = true;
             })
         });
