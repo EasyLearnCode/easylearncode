@@ -12,7 +12,7 @@
                     <button id="startTourBtn" class="btn btn-large btn-primary">Hướng dẫn</button>
                 </div>
             </div>
-            <div class="modal fade" id="visualaztionModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+            <div class="modal fade" id="visualizationModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
                  aria-hidden="true">
                 <div class="modal-dialog visualization">
                     <div class="modal-content">
@@ -39,12 +39,13 @@
                                 <h3 class="panel-title"><i class="fa fa-terminal fa-lg"></i> Code window</h3>
                             </span>
                             <span class="pull-right">
-                                <a class="btn btn-success" ng-click="runCode()" data-target="#resultModal"
-                                   data-toggle="modal">
+                                <a class="btn btn-success" ng-click="runCode()" ng-click="runCode()"
+                                   ng-disabled="!jsreplReady" ng-class="{'run-btn-full-screen':isEditorFullScreen}">
                                     <i class="fa fa-play"></i> Run</a>
-                                <a class="btn btn-default" data-target="#visualaztionModal" data-toggle="modal"
-                                   ng-click="updateVisualaztionUrl()"><i class="fa fa-code"></i> Visualization</a>
-                                <a class="btn btn-default">
+                                <a class="btn btn-default" data-target="#visualizationModal" data-toggle="modal"
+                                   ng-click="updateVisualizationUrl()"><i class="fa fa-code"></i> Visualization</a>
+                                <a class="btn btn-default" ng-click="toggleFullScreen()"
+                                   ng-class="{'full-btn-full-screen':isEditorFullScreen}">
                                     <i class="fa fa-laptop"></i> Full Screen</a>
                             </span>
                                     <div class="clearfix"></div>
@@ -53,8 +54,11 @@
 
                                 </div>
                                 <div class="panel-body">
-                                    <div ui-ace="{theme:'chrome', mode:exercise[1].lang}"
-                                         data-ng-model="exercise[1].source">
+                                    <div id="console" ng-show="showConsole"
+                                         ng-class="{'full-screen':isEditorFullScreen}"></div>
+                                    <div ui-ace="{theme:'chrome', mode:exercise[1].lang, onLoad: aceLoaded}"
+                                         data-ng-model="exercise[1].source"
+                                         ng-class="{'editor-full-screen':isEditorFullScreen}">
                                     </div>
                                 </div>
                             </div>
@@ -141,5 +145,6 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js"></script>
     <script src="/application/js/libs/angularjs/ui-ace.min.js"></script>
     <script src="/application/js/libs/angularjs/ui-bootstrap-tpls-0.7.0.min.js"></script>
-    <script src="/application/js/libs/jsrepl/jsrepl.js" id="jsrepl-script"></script>
+    <script src="/application/js/libs/jqconsole.min.js" charset="UTF-8"></script>
+    <script src="/application/js/libs/jsrepl/jsrepl.js" id="jsrepl-script"></script>>
 {% endblock %}
