@@ -97,7 +97,7 @@
 .lesson-checkpoint__wrapper {
     top: 40px;
     bottom: 0;
-    width: 103%;
+    width: 100%;
     background-color: #fff;
     height: 470px;
 }
@@ -128,7 +128,7 @@
 }
 
 .article__inner {
-    margin: 0 auto
+    margin: 0px 24px 0px 24px;
 }
 
 .article__header {
@@ -650,4 +650,13 @@ a:hover {
     z-index: 10000000 !important;
     bottom: 5px !important;
     right: 20px !important;
+}
+.console-alert.full-screen{
+    position: fixed !important;
+    z-index: 10000000 !important;
+    left: 0px !important;
+    right: 0px !important;
+    width: auto !important;
+    bottom: 0px !important;
+    margin: 0 !important;
 }

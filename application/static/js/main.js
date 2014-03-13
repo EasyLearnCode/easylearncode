@@ -1090,8 +1090,10 @@ angular.module("easylearncode.course_paractice_viewer", ["ui.bootstrap", "ui.ace
             $scope.isEditorFullScreen = !$scope.isEditorFullScreen;
             if ($scope.isEditorFullScreen) {
                 angular.element('body').css({'overflow': 'hidden'});
+                angular.element('.console-alert').addClass('full-screen');
             } else {
                 angular.element('body').css({'overflow': 'auto'});
+                angular.element('.console-alert').removeClass('full-screen');
             }
             $timeout(function () {
                 $scope.editor.resize()
@@ -1158,21 +1160,16 @@ angular.module("easylearncode.course_paractice_viewer", ["ui.bootstrap", "ui.ace
                         error_msg = result_val;
                     }
                     if (isSuccess) {
-                        setTimeout(function () {
-                            $('.console-chrome').addClass('finished');
-                        }, 1000);
-                        $scope.$apply(function () {
-                            if (($scope.get_current_project().index + 1) <= 2) {
-                                $scope.notification = "Chúc mừng bạn đã hoàn thành ví dụ " + ($scope.get_current_project().index + 1);
-                            }
-                            else
-                                $scope.notification = "Chúc mừng bạn đã hoàn thành xong các ví dụ. Giờ bạn có thể nhấn tiếp tục để đăng nhập hệ thống và bắt đầu các khóa học của chúng tôi!";
-                        });
-                        //return this.ShowCongratulations();
+                        //TODO: Show alert success
                     } else {
-                        //this.exercises_fail_detail[this.Exercises[this.Exercises.CurrentLang][this.Exercises.CurrentExercise].ExerciseID] += 1;
-                        //return this.ShowRetryAnswerPrompt(msg);
-                        $scope.jqconsole.Write('<span style="color: crimson">Bạn đã nhập sai! <br><span style="color: #F80">' + utf8_decode(result_val) + '</span></span>', 'log', false);
+                        $scope.$apply(function () {
+                            $scope.showConsole = false;
+                            $scope.showAlert = true;
+                            $scope.alert = {
+                                type: 'danger',
+                                msg: '<span style="color: crimson">Bạn đã nhập sai! <br><span style="color: #F80">' + utf8_decode(result_val) + '</span></span>'
+                            }
+                        })
                     }
                 } else if (resultObj.type === 'evalUser') {
                     if (result) {
@@ -1195,7 +1192,7 @@ angular.module("easylearncode.course_paractice_viewer", ["ui.bootstrap", "ui.ace
                     command = command.replace(/#{/g, '\\#{');
                     dataObj = {
                         command: command,
-                        testScript: $scope.get_current_checkpoint().test_functions,
+                        testScript: $scope.current_checkpoint.test_functions,
                         type: 'evalSolution'
                     };
                     jsrepl.sandbox.post({
@@ -1235,7 +1232,7 @@ angular.module("easylearncode.course_paractice_viewer", ["ui.bootstrap", "ui.ace
                 callback: $scope.timeoutCallback
             }
         });
-        jsrepl.loadLanguage("python", function () {
+        jsrepl.loadLanguage($scope.exercise.language, function () {
             $scope.$apply(function () {
                 $scope.jsreplReady = true;
             })
@@ -1271,7 +1268,7 @@ angular.module("easylearncode.visualization", ["ui.bootstrap", "ui.ace", 'easyle
             },
             {
                 lang: 'python',
-                source:'def Tinhtong(a, b): \r\n\treturn a + b \r\nprint Tinhtong(12, 33)'
+                source: 'def Tinhtong(a, b): \r\n\treturn a + b \r\nprint Tinhtong(12, 33)'
             }
         ];
 
