@@ -17,8 +17,8 @@ angular.module("info.vietnamcode.nampnq.videogular.plugins.youtube", [])
         }
     ])
     .directive(
-        "vgYoutube", ["VG_EVENTS", "VG_STATES", "$rootScope", "$window", "$timeout",
-            function(VG_EVENTS, VG_STATES, $rootScope, $window, $timeout) {
+        "vgYoutube", ["VG_EVENTS", "VG_STATES", "$rootScope", "$window", "$timeout", "$interval",
+            function(VG_EVENTS, VG_STATES, $rootScope, $window, $timeout, $interval) {
                 return {
                     restrict: "E",
                     require: "^videogular",
@@ -62,6 +62,7 @@ angular.module("info.vietnamcode.nampnq.videogular.plugins.youtube", [])
                                 return scope.ytplayer.seekTo(seconds, true);
                             });
                             API.videoElement[0].__defineGetter__("duration", function() {
+                                console.log(scope.ytplayer.getDuration());
                                 return scope.ytplayer.getDuration();
                             });
                             API.videoElement[0].__defineGetter__("paused", function() {
@@ -89,7 +90,7 @@ angular.module("info.vietnamcode.nampnq.videogular.plugins.youtube", [])
                             };
                             scope.ytplayer.setSize(API.getSize().width, API.getSize().height);
                             videogularElementScope.updateSize();
-                            setInterval(function() {
+                            scope.updateTimer = $interval(function() {
                                 videogularElementScope.onUpdateTime({
                                     target: API.videoElement[0]
                                 })
@@ -222,6 +223,9 @@ angular.module("info.vietnamcode.nampnq.videogular.plugins.youtube", [])
                             }
                         };
                         scope.checkYoutubeSource();
+                        scope.$on('$destroy',function(){
+                            $interval.cancel(scope.updateTimer);
+                        })
 
                     }
                 }
