@@ -865,7 +865,6 @@ angular.module("easylearncode.learn").run(function () {
             $location.path("/").search('lecture_id', lecture.Id).replace();
             $scope.lecture = lecture;
             $scope.loadLecture();
-            $scope.$apply();
         }
         $scope.loadLecture = function () {
             $scope.youtubeUrl = $sce.trustAsResourceUrl("http://www.youtube.com/watch?v=" + $scope.lecture.youtube_id);
