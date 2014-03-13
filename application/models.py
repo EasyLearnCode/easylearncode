@@ -307,9 +307,6 @@ class WeeklyQuiz(ModelUtils, ndb.Model):
     publish_date = ndb.DateTimeProperty(auto_now_add=True)
     level_keys = ndb.KeyProperty(WeeklyQuizLevel, repeated=True)
 
-    @classmethod
-    def get_weeklyquizs(cls):
-        return cls.query().fetch();
 
     @classmethod
     def get_this_week_contest(cls):

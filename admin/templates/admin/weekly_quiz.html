@@ -1,100 +1,121 @@
-{% extends "admin/base.html" %}
-{% block content %}
-    {% raw %}
-        <div class="container col-lg-12" data-ng-controller='WeeklyQuizCtrl'>
-        <button class="btn" data-ng-click="them()">Thêm</button>
-            <table class="table table-bordered">
-                <tr>
-                    <th>STT</th>
-                    <th>Mô tả</th>
-                    <th>Bộ nhớ giới hạn</th>
-                    <th>Thời gian giới hạn</th>
-                    <th>Ngày tạo</th>
-                    <th>Ngày bắt đầu thi</th>
-                    <th>Xóa</th>
-                    <th>Sửa</th>
-                </tr>
-                <tr data-ng-repeat="contest in contests">
-                    <td>{{ $index + 1 }}</td>
-                    <td>{{ contest.description }}</td>
-                    <td>{{ contest.limit_memory }}</td>
-                    <td>{{ contest.limit_time }}</td>
-                    <td>{{ contest.publish_date }}</td>
-                    <td>{{ contest.start_date }}</td>
-                    <td>
-                        <button value="Xóa" data-ng-click="xoa(contest)">Xóa</button>
-                    </td>
-                    <td>
-                        <button value="Sửa" data-ng-click="sua(contest)">Sửa</button>
-                    </td>
-                </tr>
-            </table>
-            <div>
-                <div data-backdrop='static' data-keyboard='false' class="modal fade" id="modelAdd" tabindex="-1"
-                     role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h4 class="modal-title">Thêm bài thi</h4>
-                            </div>
-                            <div class="modal-body">
-                                <form class="form-horizontal">
-                                    <div class="form-group">
-                                        <label for="desciption" class="col-lg-3 control-label">Mô tả</label>
-                                        <div class="col-lg-5">
-                                            <input type="text" class="form-control" id="desciption" placeholder="Mô tả">
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="limit_memory" class="col-lg-3 control-label">Bộ nhớ giới hạn</label>
-                                        <div class="col-lg-5">
-                                            <input type="text" class="form-control" id="limit_memory"
-                                                   placeholder="Bộ nhớ giới hạn">
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="limit_time" class="col-lg-3 control-label">Thời gian giới
-                                            hạn</label>
-
-                                        <div class="col-lg-5">
-                                            <input type="text" class="form-control" id="limit_time"
-                                                   placeholder="Thời gian giới hạn">
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="start_date" class="col-lg-3 control-label">Ngày bắt đầu</label>
-
-                                        <div class="col-lg-5">
-                                            <input type="text" class="form-control" id="start_date"
-                                                   placeholder="Ngày bắt đầu">
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="test_case" class="col-lg-3 control-label">Bộ test</label>
-
-                                        <div class="col-lg-5">
-                                            <button class="button">Thêm bộ test</button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                            <div class="modal-footer">
-                                <button class="btn btn-primary btn-lg">Lưu</button>
-                            </div>
-                        </div>
-                        <!-- /.modal-content -->
-                    </div>
-                    <!-- /.modal-dialog -->
-                </div>
-                <!-- /.modal -->
-                <!-- Modal -->
-            </div>
-        </div>
-    {% endraw %}
+{% extends "/admin/base.html" %}
+{% block breadcrumb %}
+    <li>
+        <a href="{{ uri_for("admin-home") }}">Home</a> <span class="divider">/</span>
+    </li>
+    <li>
+        <a href="{{ uri_for("admin-quiz") }}">Quiz</a>
+    </li>
 {% endblock %}
-{% block mediaJS %}
-    {{ super() }}
-    <script>
-        angular.module('services.utility').constant('csrf_token', '{{ csrf_token() }}');
+
+{% block content %}
+    <ng-view></ng-view>
+    <script type="text/ng-template" id="template/angular/admin/quiz/quizs.html">
+        {% raw %}
+            <div class="row-fluid sortable">
+                <div class="box span12">
+                    <div class="box-header" data-original-title>
+                        <h2><i class="icon-user"></i><span class="break"></span>Quiz</h2>
+
+                        <div class="box-icon">
+                            <a href="#" class="btn-setting"><i class="icon-wrench"></i></a>
+                            <a href="#" ng-click="showAddModal()"><i class="icon-plus"></i></a>
+                            <a href="#" class="btn-minimize"><i class="icon-chevron-up"></i></a>
+                            <a href="#" class="btn-close"><i class="icon-remove"></i></a>
+                        </div>
+                    </div>
+                    <div class="box-content">
+                        <table class="table table-striped table-bordered bootstrap-datatable">
+                            <thead>
+                            <tr>
+                                <th>Tuần</th>
+                                <th>Ngày tạo</th>
+                                <th>Ngày bắt đầu</th>
+                                <th>Mức độ</th>
+                                <th>Cập nhật</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="quiz in quizs">
+                                <td class="center">{{ quiz.week }}</td>
+                                <td class="center">{{ quiz.publish_date }}</td>
+                                <td class="center">{{ quiz.start_date }}</td>
+                                <td class="center"><a class="btn btn-success" ng-href="#!/level/{{ quiz.Id }}">
+                                    <i class="icon-zoom-in icon-white"></i>
+                                </a></td>
+                                <td class="center">
+                                    <a class="btn btn-success" href="#">
+                                        <i class="icon-zoom-in icon-white"></i>
+                                    </a>
+                                    <a class="btn btn-info" ng-click="showEditModal(quiz)">
+                                        <i class="icon-edit icon-white"></i>
+                                    </a>
+                                    <a class="btn btn-danger" ng-click="delete(quiz)">
+                                        <i class="icon-trash icon-white"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!--/span-->
+
+            </div><!--/row-->
+        {% endraw %}
+    </script>
+    <script type="text/ng-template" id="template/angular/admin/quiz/levels.html">
+        {% raw %}
+            <h2>Level manage of quiz {{ quiz.week }}</h2>
+            <div class="row-fluid sortable">
+                <div class="box span12">
+                    <div class="box-header" data-original-title>
+                        <h2><i class="icon-user"></i><span class="break"></span>Level</h2>
+
+                        <div class="box-icon">
+                            <a href="#" class="btn-setting"><i class="icon-wrench"></i></a>
+                            <a href="#" ng-click="showAddModal()"><i class="icon-plus"></i></a>
+                            <a href="#" class="btn-minimize"><i class="icon-chevron-up"></i></a>
+                            <a href="#" class="btn-close"><i class="icon-remove"></i></a>
+                        </div>
+                    </div>
+                    <div class="box-content">
+                        <table class="table table-striped table-bordered bootstrap-datatable">
+                            <thead>
+                            <tr>
+                                <th>Level</th>
+                                <th>Created</th>
+                                <th>Description</th>
+                                <th>Project</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="level in quiz.level_keys">
+                                <td>{{ level.level }}</td>
+                                <td class="center">{{ level.score }}</td>
+                                <td class="center">{{ level.description }}</td>
+                                <td class="center"><a class="btn btn-success"
+                                                      ng-href="#!/exercise/project/{{ exercise.Id }}">
+                                    <i class="icon-zoom-in icon-white"></i>
+                                </a></td>
+                                <td class="center">
+                                    <a class="btn btn-info" ng-click="showEditModal(exercise)">
+                                        <i class="icon-edit icon-white"></i>
+                                    </a>
+                                    <a class="btn btn-danger" ng-click="delete(exercise)">
+                                        <i class="icon-trash icon-white"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!--/span-->
+            </div><!--/row-->
+        {% endraw %}
+    </script>
+    <script type="text/ng-template" id="myModalContent.html">
+        <form-directive form="form"></form-directive>
     </script>
 {% endblock %}

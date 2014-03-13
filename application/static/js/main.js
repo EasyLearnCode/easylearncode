@@ -224,12 +224,12 @@ angular.module("services.utility").factory("libraryLoader", ["$q", "$rootScope",
                         cache: !0,
                         url: f
                     }).success(function () {
-                        j.resolve();
-                        $rootScope.$apply()
-                    }).error(function () {
-                        j.reject();
-                        $rootScope.$apply()
-                    }), d = j.promise);
+                            j.resolve();
+                            $rootScope.$apply()
+                        }).error(function () {
+                            j.reject();
+                            $rootScope.$apply()
+                        }), d = j.promise);
                     return d
                 }))
             }
@@ -486,11 +486,11 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "$h
             if (lang.active) {
                 $http.post('/api/contest/submit', {"key": $scope.thisweek_contest.this_quiz_level.quiz_level_key, "source": lang.source,
                     "_csrf_token": csrf_token, "lang": lang.lang}).success(function (data) {
-                    if (data.status == 1) {
-                        window.location = "/contest"
-                    }
+                        if (data.status == 1) {
+                            window.location = "/contest"
+                        }
 
-                });
+                    });
             }
         });
     }
@@ -527,14 +527,14 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "$h
                             $scope.compiling = false;
                         }
                     }).error(function (data, status, headers, config) {
-                        $scope.compile_result.push(
-                            {
-                                'result': false,
-                                'time': 0,
-                                'memory': 0,
-                                'error': 'Disconnect from server...Please try again'
-                            });
-                    });
+                            $scope.compile_result.push(
+                                {
+                                    'result': false,
+                                    'time': 0,
+                                    'memory': 0,
+                                    'error': 'Disconnect from server...Please try again'
+                                });
+                        });
                 });
 
 
@@ -573,7 +573,7 @@ angular.module("easylearncode.home").controller('HomeCarouselCtrl', ['$scope', f
 
 angular.module("easylearncode.learn").run(function () {
     $('#myTab a:last').tab('show');
-}).controller('LearnCtrl', ['$scope', '$http', '$location', '$sce', '$compile', '$window', function ($scope, $http, $location, $sce, $compile, $window) {
+}).controller('LearnCtrl', ['$scope', '$http', '$location', '$sce', '$compile','$window', function ($scope, $http, $location, $sce, $compile, $window) {
         $scope.lecture_id = $location.search()['lecture_id'];
         /*$http.get('/api/Lecture/'+lecture_id).success(function(data){
          $scope.lecture_name = data.name;
@@ -901,32 +901,32 @@ angular.module("easylearncode.learn").run(function () {
         ];
 
         $scope.ViewOnYoutube = function () {
-            $window.open($scope.youtubeUrl + '#t=' + $scope.currentTime);
-            $scope.state = 'pause';
+            $window.open($scope.youtubeUrl+'#t='+$scope.currentTime);
+            $scope.state='pause';
         }
 
 
-        $('#gplus-cm').html('<div class="g-comments" data-width="700" data-href="' + location.toString() + '" data-first_party_property="BLOGGER" data-view_type="FILTERED_POSTMOD">Loading Google+ Comments ...</div>');
+        $('#gplus-cm').html('<div class="g-comments" data-width="700" data-href="'+location.toString()+'" data-first_party_property="BLOGGER" data-view_type="FILTERED_POSTMOD">Loading Google+ Comments ...</div>');
 
     }]).directive('hoverClass', function () {
-    return {
-        restrict$scop: 'A',
-        scope: {
-            addClass: '@',
-            removeClass: '@'
-        },
-        link: function (scope, element) {
-            element.on('mouseenter', function () {
-                element.addClass(scope.addClass);
-                element.removeClass(scope.removeClass);
-            });
-            element.on('mouseleave', function () {
-                element.addClass(scope.removeClass);
-                element.removeClass(scope.addClass);
-            });
-        }
-    };
-});
+        return {
+            restrict: 'A',
+            scope: {
+                addClass: '@',
+                removeClass: '@'
+            },
+            link: function (scope, element) {
+                element.on('mouseenter', function () {
+                    element.addClass(scope.addClass);
+                    element.removeClass(scope.removeClass);
+                });
+                element.on('mouseleave', function () {
+                    element.addClass(scope.removeClass);
+                    element.removeClass(scope.addClass);
+                });
+            }
+        };
+    });
 
 angular.module("easylearncode.contest_result").controller('ContestResultCtrl', ['$scope', '$http', 'csrf_token', '$location', function ($scope, $http, csrf_token, $location) {
     $http.get('/api/contest/week_result/current').success(function (data) {
@@ -1261,6 +1261,24 @@ angular.module("easylearncode.course_paractice_viewer", ["ui.bootstrap", "ui.ace
 
 angular.module("easylearncode.visualization", ["ui.bootstrap", "ui.ace", 'easylearncode.core'])
     .controller("VisualizationCtrl", ["$scope", "$sce", "$timeout", function ($scope, $sce, $timeout) {
+        var jqconsole = $('#console').jqconsole('  >> EasyLearnCode Python Compiler v0.1 <<\n', '>>>');
+        $scope.jsreplReady = false;
+        $scope.isEditorFullScreen = false;
+        $scope.showConsole = false;
+        $scope.aceLoaded = function (_editor) {
+            $scope.editor = _editor;
+        }
+        $scope.toggleFullScreen = function () {
+            $scope.isEditorFullScreen = !$scope.isEditorFullScreen;
+            if ($scope.isEditorFullScreen) {
+                angular.element('body').css({'overflow': 'hidden'});
+            } else {
+                angular.element('body').css({'overflow': 'auto'});
+            }
+            $timeout(function () {
+                $scope.editor.resize()
+            }, 10);
+        }
         $scope.exercise = [
             {
                 lang: 'python',
@@ -1272,11 +1290,11 @@ angular.module("easylearncode.visualization", ["ui.bootstrap", "ui.ace", 'easyle
             }
         ];
 
-        $scope.updateVisualaztionUrl = function () {
+        $scope.updateVisualizationUrl = function () {
             src = "http://pythontutor.com/iframe-embed.html#code=" + encodeURIComponent($scope.exercise[1].source) + "&cumulative=false&heapPrimitives=false&drawParentPointers=false&textReferences=false&showOnlyOutputs=false&py=2&curInstr=0&codeDivWidth=350&codeDivHeight=400";
-            $("#visualaztionModal .modal-body").find("iframe").remove();
+            $("#visualizationModal .modal-body").find("iframe").remove();
             var iframe = $('<iframe src="' + src + '" frameborder="0" width="800" height="500"></iframe>');
-            $("#visualaztionModal .modal-body").append(iframe);
+            $("#visualizationModal .modal-body").append(iframe);
         }
 
         $scope.inputCallback = function (callback) {
@@ -1292,12 +1310,12 @@ angular.module("easylearncode.visualization", ["ui.bootstrap", "ui.ace", 'easyle
 
         $scope.outputCallback = function (output, cls) {
             if (output) {
-                $scope.result = output;
-                $scope.$apply();
+                jqconsole.Write('==> ' + output);
             }
         };
 
         $scope.errorCallback = function (e) {
+            jqconsole.Write(e, 'error');
         };
 
         $scope.timeoutCallback = function () {
@@ -1319,7 +1337,8 @@ angular.module("easylearncode.visualization", ["ui.bootstrap", "ui.ace", 'easyle
 
 
         $scope.runCode = function () {
-            console.log($scope.jsrepl);
+            $scope.showConsole = true;
+            jqconsole.Reset();
             dataObj = {
                 command: $scope.exercise[1].source,
                 testScript: '',
@@ -1338,6 +1357,9 @@ angular.module("easylearncode.visualization", ["ui.bootstrap", "ui.ace", 'easyle
 
 
         $scope.jsrepl.loadLanguage("python", function () {
+             $scope.$apply(function () {
+                $scope.jsreplReady = true;
+            })
         });
 
     }])
