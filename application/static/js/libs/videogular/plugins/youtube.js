@@ -62,7 +62,6 @@ angular.module("info.vietnamcode.nampnq.videogular.plugins.youtube", [])
                                 return scope.ytplayer.seekTo(seconds, true);
                             });
                             API.videoElement[0].__defineGetter__("duration", function() {
-                                console.log(scope.ytplayer.getDuration());
                                 return scope.ytplayer.getDuration();
                             });
                             API.videoElement[0].__defineGetter__("paused", function() {
