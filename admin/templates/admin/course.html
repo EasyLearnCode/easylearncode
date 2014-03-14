@@ -71,8 +71,6 @@
     </div><!--/row-->
         {% endraw %}
     </script>
-    <script type="text/ng-template" id="template/angular/admin/courses/lesson.html">
-    </script>
     <script type="text/ng-template" id="template/angular/admin/courses/exercise.html">
      {% raw %}
         <h2>Exercise manage of course {{ course.title }}</h2>
@@ -241,6 +239,7 @@
     <script type="text/ng-template" id="template/angular/admin/courses/lessons/lectures/question.html">
      {% raw %}
         <h2>Question manage of lecture {{ lecture.title }}</h2>
+        <div id="video-content"></div>
         <div class="row-fluid sortable">
         <div class="box span12">
     <div class="box-header" data-original-title>
@@ -293,5 +292,16 @@
     <script type="text/ng-template" id="myModalContent.html">
         <form-directive form="form"></form-directive>
     </script>
-
+{% endblock %}
+{% block pluginJS %}
+    <script src="/application/js/libs/videogular/videogular.js"></script>
+    <script src="/application/js/libs/angularjs/angular-sanitize.min.js"></script>
+    <script src="/application/js/libs/angularjs/ui-bootstrap-tpls-0.7.0.min.js"></script>
+    <script src="/application/js/libs/videogular/videogular.js"></script>
+    <script src="/application/js/libs/videogular/plugins/controls.js"></script>
+    <script src="/application/js/libs/videogular/plugins/overlay-play.js"></script>
+    <script src="/application/js/libs/videogular/plugins/buffering.js"></script>
+    <script src="/application/js/libs/videogular/plugins/poster.js"></script>
+    <script src="/application/js/libs/videogular/plugins/youtube.js"></script>
+    <script src="/application/js/libs/videogular/plugins/quiz.js"></script>
 {% endblock %}

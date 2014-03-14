@@ -954,6 +954,9 @@ angular.module("easylearncode.learn").run(function () {
             });
         });
 
+
+        $('#gplus-cm').html('<div class="g-comments" data-width="700" data-href="'+location.toString()+'" data-first_party_property="BLOGGER" data-view_type="FILTERED_POSTMOD">Loading Google+ Comments ...</div>');
+
     }]).directive('hoverClass', function () {
     return {
         restrict: 'A',
@@ -1305,7 +1308,7 @@ angular.module("easylearncode.course_paractice_viewer", ["ui.bootstrap", "ui.ace
     });
 
 
-angular.module("easylearncode.visualization", ["ui.bootstrap", "ui.ace", 'easylearncode.core'])
+angular.module("easylearncode.visualization", ["ui.bootstrap", "ui.ace", 'easylearncode.core', 'angularTreeview'])
     .controller("VisualizationCtrl", ["$scope", "$sce", "$timeout", function ($scope, $sce, $timeout) {
         var jqconsole = $('#console').jqconsole('  >> EasyLearnCode Python Compiler v0.1 <<\n', '>>>');
         $scope.jsreplReady = false;
@@ -1332,7 +1335,7 @@ angular.module("easylearncode.visualization", ["ui.bootstrap", "ui.ace", 'easyle
             },
             {
                 lang: 'python',
-                source: 'def Tinhtong(a, b): \r\n\treturn a + b \r\nprint Tinhtong(12, 33)'
+                source:'def Tinhtong(a, b): \r\n\treturn a + b \r\nprint Tinhtong(12, 33)'
             }
         ];
 
@@ -1408,23 +1411,20 @@ angular.module("easylearncode.visualization", ["ui.bootstrap", "ui.ace", 'easyle
             })
         });
 
-    }])
-    .directive('hoverClass', function () {
-        return {
-            restrict: 'A',
-            scope: {
-                addClass: '@',
-                removeClass: '@'
-            },
-            link: function (scope, element) {
-                element.on('mouseenter', function () {
-                    element.addClass(scope.addClass);
-                    element.removeClass(scope.removeClass);
-                });
-                element.on('mouseleave', function () {
-                    element.addClass(scope.removeClass);
-                    element.removeClass(scope.addClass);
-                });
-            }
-        };
-    });
+        $scope.treedata =
+            [
+                { "roleName": "User", "roleId": "role1", "children": [
+                    { "roleName": "subUser1", "roleId": "role11", "children": [] },
+                    { "roleName": "subUser2", "roleId": "role12", "children": [
+                        { "roleName": "subUser2-1", "roleId": "role121", "children": [
+                            { "roleName": "subUser2-1-1", "roleId": "role1211", "children": [] },
+                            { "roleName": "subUser2-1-2", "roleId": "role1212", "children": [] }
+                        ]}
+                    ]}
+                ]},
+
+                { "roleName": "Admin", "roleId": "role2", "children": [] },
+
+                { "roleName": "Guest", "roleId": "role3", "children": [] }
+            ];
+    }]);
