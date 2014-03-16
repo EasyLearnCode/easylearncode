@@ -41,6 +41,12 @@ indexes:
 
 - kind: WeeklyQuizResult
   properties:
+  - name: level_key
+  - name: score
+    direction: desc
+
+- kind: WeeklyQuizResult
+  properties:
   - name: test
   - name: complitecostTime
   - name: memory
@@ -51,6 +57,12 @@ indexes:
   - name: complitecostTime
     direction: desc
   - name: memory
+    direction: desc
+
+- kind: WeeklyQuizResult
+  properties:
+  - name: test_key
+  - name: score
     direction: desc
 
 - kind: WeeklyQuizResult

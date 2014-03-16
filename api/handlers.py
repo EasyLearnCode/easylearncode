@@ -8,10 +8,12 @@ class GetWeekResultHandler(BaseHandler):
     def get(self, week_id):
         from application.models import WeeklyQuiz
         import json
+
         if week_id == "current":
             test = WeeklyQuiz.get_this_week_contest()
         else:
             from google.appengine.ext import ndb
+
             test = ndb.Key(urlsafe=week_id).get()
 
         if test:
@@ -88,7 +90,7 @@ def json_extras(obj):
 
 class GetThisweekContestHandler(BaseHandler):
     @user_required
-    def get(self):
+    def get(self, level_id):
         from application.models import WeeklyQuiz, WeeklyQuizResult
         import json
 
@@ -97,17 +99,22 @@ class GetThisweekContestHandler(BaseHandler):
             test_key = test.key
             top_player = WeeklyQuizResult.get_top_player(test_key)
             result_last_week = WeeklyQuizResult.get_result_last_week(self.user_key)
-            this_quiz_level = test.get_this_contest_level(self.user_key)
+            this_quiz_levels = test.get_this_contest_level(self.user_key)
+            this_quiz_level = this_quiz_levels[0]
+            level_current = this_quiz_levels[0]
+            if level_id != "current":
+                from google.appengine.ext import ndb
+                this_quiz_level = ndb.Key(urlsafe=level_id).get()
             test = test.to_dict()
             test.pop('start_date', None)
             test.pop('publish_date', None)
             test.update({'top_player': top_player})
             test.update({'result_last_week': result_last_week})
             test.update({'test_key': test_key.urlsafe()})
-            test.update({'this_quiz_level': this_quiz_level[0].to_dict()})
-            test['this_quiz_level'].update({'description_html': this_quiz_level[0].description_html})
-            test['this_quiz_level'].update({'quiz_level_key': this_quiz_level[0].key.urlsafe()})
-            test['this_quiz_level'].update({'level': this_quiz_level[0].level})
+            test.update({'this_quiz_level': this_quiz_level.to_dict()})
+            test['this_quiz_level'].update({'description_html': this_quiz_level.description_html})
+            test['this_quiz_level'].update({'quiz_level_key': this_quiz_level.key.urlsafe()})
+            test['this_quiz_level'].update({'level': level_current.level})
             self.response.headers["Content-Type"] = "application/json"
             print test
             self.response.write(json.dumps(test, default=json_extras))

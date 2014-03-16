@@ -3,7 +3,7 @@ import datetime
 import logging
 import json
 
-from application.models import Course, Exercise, WeeklyQuiz, WeeklyQuizLevel, Lesson, Lecture
+from application.models import Course, Exercise, WeeklyQuiz, WeeklyQuizLevel, Lesson, Lecture, WeeklyQuizResult
 
 from google.appengine import api
 from google.appengine.ext import ndb
@@ -17,7 +17,7 @@ class _ConfigDefaults(object):
     # store total model count in metadata field HEAD query
     METADATA = False
     # list of valid models, None means anything goes
-    DEFINED_MODELS = {"courses": Course, "exercises": Exercise, "quizs": WeeklyQuiz, "level": WeeklyQuizLevel, "lessons": Lesson, "lectures": Lecture}
+    DEFINED_MODELS = {"courses": Course, "exercises": Exercise, "quizs": WeeklyQuiz, "levels": WeeklyQuizLevel, "lessons": Lesson, "lectures": Lecture, "quizresults": WeeklyQuizResult}
     RESTRICT_TO_DEFINED_MODELS = True
     PROTECTED_MODEL_NAMES = ["(?i)(mesh|messages|files|events|admin|proxy)",
                              "(?i)tailbone.*"]

@@ -442,12 +442,12 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "$h
         }
     ]
 
-    $http.get('/api/contest/get_thisweek_contest').success(function (data) {
+    $http.get('/api/contest/get_thisweek_contest/current').success(function (data) {
         if (data.status == 1) {
             //$scope.error = "Chưa có đề thi";
             //alert("hi");
             $(function () {
-                //$('#myModal1').modal();
+                $('#myModal1').modal();
             });
         }
         else {
@@ -455,6 +455,16 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "$h
         }
 
     });
+    $scope.get_level = function (key) {
+        $http.get('/api/contest/get_thisweek_contest/' + key).success(function (data) {
+            if (data.status == 1) {
+            }
+            else {
+                $scope.thisweek_contest = data;
+            }
+
+        });
+    }
     $scope.resetCode = function () {
         $scope.langs = [
             {
@@ -487,7 +497,7 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "$h
                 $http.post('/api/contest/submit', {"key": $scope.thisweek_contest.this_quiz_level.quiz_level_key, "source": lang.source,
                     "_csrf_token": csrf_token, "lang": lang.lang}).success(function (data) {
                     if (data.status == 1) {
-                        window.location = "/contest"
+                        window.location = "/contest/current"
                     }
 
                 });

@@ -18,7 +18,8 @@
                 đồng thời cũng có thể giao lưu, học tập dược từ các bạn khác!<br/>
                 Cuộc thi hiện đang ở tuần thứ: {{ thisweek_contest.week }}. <br/>
                 Bắt đầu từ: {{ start | date:'dd-MM-yyyy' }} 00:00 đến {{ end | date:'dd-MM-yyyy' }} 23:59
-                <a class="pull-right btn" id="startTourBtn"><img rel="tooltip" data-placement="bottom" title="Help" alt="help"
+                <a class="pull-right btn" id="startTourBtn"><img rel="tooltip" data-placement="bottom" title="Help"
+                                                                 alt="help"
                                                                  src="/application/img/quiz/help.png"
                                                                  width="50"/> </a>
             </div>
@@ -27,11 +28,16 @@
                     <div class="col-md-8">
                         <h4 class="text-warning" style="float: left; margin-right: 5px;" id="step-1">Mức độ: </h4>
 
-                        <div class="profileSteps" data-ng-repeat="i in [1,2,3,4,5]">
-                            <div ng-class="{profileStepActive:i<thisweek_contest.this_quiz_level.level, profileStepPassive:i>=thisweek_contest.this_quiz_level.level}"
+                        <div class="profileSteps" data-ng-repeat="level in thisweek_contest.level_keys">
+                            <div ng-class="{profileStepActive:($index+1) <= thisweek_contest.this_quiz_level.level,
+                            profileStepPassive:($index + 1)>thisweek_contest.this_quiz_level.level}"
                                  class="profileStep profileStepOne">
                                 <div class="connect"></div>
-                                <div class="icon">{{ i }}</div>
+                                <div class="icon">
+                                    <a class="btn" data-ng-click="get_level(level)"
+                                       ng-show="($index+1)<= thisweek_contest.this_quiz_level.level">{{ $index+1 }}</a>
+                                    <span ng-show="($index+1)>thisweek_contest.this_quiz_level.level">{{ $index +1 }}</span>
+                                </div>
                             </div>
 
                         </div>
@@ -100,12 +106,12 @@
                 </tabset>
             </div>
             <div class="col-xs-12 col-md-12 highlight">
-                <a id="step-5" class="btn pull-right" data-ng-click="submitCode()">
-                    <i rel="tooltip" data-placement="bottom" title="Nộp bài" class="fa fa-upload fa-1"></i> </a>
-                <a  id="step-6" class="btn" data-ng-click="runCode()">
-                    <i rel="tooltip" data-placement="bottom" title="Kiểm tra" class="fa fa-check fa-2"></i> </a>
-                <a id="step-7" class="btn" data-ng-click="resetCode()">
-                    <i rel="tooltip" data-placement="bottom" title="Làm lại" class="fa fa-refresh fa-3"></i></a>
+                <a id="step-5" class="btn btn-success pull-right" data-ng-click="submitCode()">
+                    <i rel="tooltip" data-placement="bottom" title="Nộp bài" class="fa fa-upload"></i> </a>
+                <a id="step-6" class="btn btn-info" data-ng-click="runCode()">
+                    <i rel="tooltip" data-placement="bottom" title="Kiểm tra" class="fa fa-check"></i> </a>
+                <a id="step-7" class="btn btn-danger" data-ng-click="resetCode()">
+                    <i rel="tooltip" data-placement="bottom" title="Làm lại" class="fa fa-refresh"></i></a>
             </div>
 
             <div style="height: 50px; text-align: center;" data-ng-show="compiling" id="fountainTextG">
