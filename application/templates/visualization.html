@@ -59,7 +59,7 @@
                                     <div id="console" ng-show="showConsole"
                                          ng-class="{'full-screen':isEditorFullScreen}"></div>
                                     <div ui-ace="{theme:'chrome', mode:exercise[1].lang, onLoad: aceLoaded}"
-                                         data-ng-model="exercise[1].source"
+                                         data-ng-model="TreeId.currentNode.code"
                                          ng-class="{'editor-full-screen':isEditorFullScreen}">
                                     </div>
                                 </div>
@@ -70,18 +70,17 @@
                             <div class="lesson_info overlay" ng-show="show"></div>
                             <div class="panel panel-success">
                                 <div class="panel-heading">
-                                <span class="pull-left"><h3 class="panel-title"><i class="fa fa-tasks fa-lg"></i> Python
-                                    syntax</h3></span>
+                                <span class="pull-left"><h3 class="panel-title"><i class="fa fa-tasks fa-lg"></i> Contents</h3></span>
                                     <div class="clearfix"></div>
                                 </div>
                                 <div class="panel-body">
                                     <div class="list-group">
                                         <div
                                           data-angular-treeview="true"
-                                          data-tree-id="mytree"
-                                          data-tree-model="treedata"
-                                          data-node-id="roleId"
-                                          data-node-label="roleName"
+                                          data-tree-id="TreeId"
+                                          data-tree-model="Tests"
+                                          data-node-id="id"
+                                          data-node-label="title"
                                           data-node-children="children" class="wrap_introduction">
                                         </div>
                                     </div>

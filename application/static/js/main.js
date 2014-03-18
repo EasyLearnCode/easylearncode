@@ -683,7 +683,42 @@ angular.module("easylearncode.learn").run(function () {
                 description: "Định nghĩa hàm trong python",
                 time: 552,
                 youtube_id: 'JwO_25S_eWE'
-            }
+            },
+            {
+                Id: 'asdsfsAsafasWWWWWWWWWWWxxxx11',
+                title: "Biểu đồ những gì xảy ra khi hàm được gọi",
+                description: "Hiểu được phạm vi biến và hàm được gọi",
+                time: 552,
+                youtube_id: '6qCQB8E5bkI'
+            },
+            {
+                Id: 'asdsfsAsafasWWWWWWWWWWWxxxx12',
+                title: "Hàm đệ quy",
+                description: "Tìm hiểu về đệ quy",
+                time: 552,
+                youtube_id: 'o920mj0NbhE'
+            },
+            {
+                Id: 'asdsfsAsafasWWWWWWWWWWWxxxx13',
+                title: "So sánh hàm lặp và đệ quy",
+                description: "Tìm hiểu về đệ quy",
+                time: 552,
+                youtube_id: 'kx6DfrYfWnQ'
+            },
+             {
+                Id: 'asdsfsAsafasWWWWWWWWWWWxxxx14',
+                title: "Viết hàm Fibonacci",
+                description: "Giới thiệu dãy fibonacci",
+                time: 552,
+                youtube_id: 'Bdbc1ZC-vhw'
+            },
+            {
+                Id: 'asdsfsAsafasWWWWWWWWWWWxxxx15',
+                title: "Hàm Fibonacci sử dụng vòng lặp",
+                description: "Một cách khác để viết hàm Fibonacci",
+                time: 552,
+                youtube_id: '94O_3QCvfqI'
+            },
         ];
         $scope.lang =
         {
@@ -940,7 +975,7 @@ angular.module("easylearncode.learn").run(function () {
 
         $scope.ViewOnYoutube = function () {
             $window.open($scope.youtubeUrl + '#t=' + $scope.currentTime);
-            $scope.state = 'pause';
+            $scope.API.pause();
         }
         $scope.lecture = _.where($scope.lectures, {Id: $location.search()['lecture_id']})[0];
         $scope.loadLecture();
@@ -1340,7 +1375,7 @@ angular.module("easylearncode.visualization", ["ui.bootstrap", "ui.ace", 'easyle
         ];
 
         $scope.updateVisualizationUrl = function () {
-            src = "http://pythontutor.com/iframe-embed.html#code=" + encodeURIComponent($scope.exercise[1].source) + "&cumulative=false&heapPrimitives=false&drawParentPointers=false&textReferences=false&showOnlyOutputs=false&py=2&curInstr=0&codeDivWidth=350&codeDivHeight=400";
+            src = "http://pythontutor.com/iframe-embed.html#code=" + encodeURIComponent($scope.TreeId.currentNode.code) + "&cumulative=false&heapPrimitives=false&drawParentPointers=false&textReferences=false&showOnlyOutputs=false&py=2&curInstr=0&codeDivWidth=350&codeDivHeight=400";
             $("#visualizationModal .modal-body").find("iframe").remove();
             var iframe = $('<iframe src="' + src + '" frameborder="0" width="800" height="500"></iframe>');
             $("#visualizationModal .modal-body").append(iframe);
@@ -1389,7 +1424,7 @@ angular.module("easylearncode.visualization", ["ui.bootstrap", "ui.ace", 'easyle
             $scope.showConsole = true;
             jqconsole.Reset();
             dataObj = {
-                command: $scope.exercise[1].source,
+                command: $scope.TreeId.currentNode.code,//$scope.exercise[1].source,
                 testScript: '',
                 type: 'evalUser'
             };
@@ -1411,20 +1446,47 @@ angular.module("easylearncode.visualization", ["ui.bootstrap", "ui.ace", 'easyle
             })
         });
 
-        $scope.treedata =
+        $scope.Tests =
             [
-                { "roleName": "User", "roleId": "role1", "children": [
-                    { "roleName": "subUser1", "roleId": "role11", "children": [] },
-                    { "roleName": "subUser2", "roleId": "role12", "children": [
-                        { "roleName": "subUser2-1", "roleId": "role121", "children": [
-                            { "roleName": "subUser2-1-1", "roleId": "role1211", "children": [] },
-                            { "roleName": "subUser2-1-2", "roleId": "role1212", "children": [] }
-                        ]}
-                    ]}
+                { "title": "Phần 1: Kiến thức cơ bản về Python", "id": "LessonId1", "children": [
+                    { "title": "GT về chương trình, loại dữ liệu và giá trị", "id": "LectureId01", "children": [
+                        {"title": "Ví dụ 01", "id": "LessonId01", "code": 'print(3+7)\r\nprint(2-1) \r\nprint("this is a chunk of text")', "children":[]},
+                        {"title": "Ví dụ 02", "id": "LessonId02", "code": 'a = 3+5\r\nb= a*a-a-1\r\nc = a*b\r\nprint(c)', "children":[]},
+                        {"title": "Ví dụ 03", "id": "LessonId03", "code": 'a = -6\r\nb= a*a-a-1\r\nc = a*b\r\nif(a<0):\r\n\tprint(c)\r\nelse:\r\n\tprint(c-a)', "children":[]},
+                        {"title": "Ví dụ 04", "id": "LessonId04", "code": 'a = -6\r\nb= a*a-a-1\r\nc = a*b\r\nif(a<0):\r\n\tprint("a<0")\r\n\tprint(c)\r\nelse:\r\n\tprint("a is not less than 0")\r\n\tprint(c-a)\r\n\tprint("We are done with the program")', "children":[]}
+                    ]},
+                    { "title": "List trong Python", "id": "LectureId03", "children": [
+                        {"title": "Ví dụ 01", "id": "LessonId05", "code": "a =[1, 2, -7, 9, 11]\r\nprint(a)\r\na[1] = \"Sal's String\"\r\nprint (a)\r\nb=a\r\nprint(b)\r\nc = a[:]\r\nprint (c)\r\nb[0] = 0\r\nprint(b)\r\nprint(a)\r\nprint(c)\r\na.append(\"new elemen\")\r\nprint(a)\r\nprint(b)\r\nprint(c)", "children":[]}
+                    ]},
+                    { "title": "Vòng lặp for trong python", "id": "LectureId04", "children": [
+                        {"title": "Ví dụ 01", "id": "LessonId06", "code": "print range(6)\r\nprint range(7)\r\nprint range(1,7)\r\nprint range(0, 8, 2)\r\nprint range(3, 31, 3)" , "children":[]},
+                        {"title": "Ví dụ 02", "id": "LessonId07", "code": "for i in range(5):\n    print i" , "children":[]},
+                        {"title": "Ví dụ 03", "id": "LessonId08", "code": "sum = 0\r\nfor i in range(5):\r\n    sum = sum+i\r\n    print sum" , "children":[]}
+                    ]},
+                    { "title": "Vòng lặp while trong python", "id": "LectureId05", "children": [
+                        {"title": "Ví dụ 01", "id": "LessonId09", "code": "#this while loop calculates the sum of 0 throunh 9 (including 9) and places\n#it in the variable \"sum\"\nsum = 0\ni = 0\nwhile i < 10:\n    sum = sum + i\n    print sum\n    i = i +1\n    \n#for i in range(10):\n#    sum = sum + i\n#    print sum"  , "children":[]}
+                    ]},
+                    { "title": "Kiểu chuỗi trong python", "id": "LectureId06", "children": [
+                        {"title": "Ví dụ 01", "id": "LessonId10", "code": "a = \"My first test string\"\nb = 'Another test string that I have defined'\nc = \"this is Sal's string\"\nd = 'My favorite word is \"asparaus\", what is your?'\nmath_string = \"3+4*2\"\nexpression_string = \"a+' '+b+' tiger'\"\nprint a\nprint b\nprint c\nprint d\nprint math_string\nprint expression_string\n" , "children":[]},
+                        {"title": "Ví dụ 02", "id": "LessonId11", "code": "a = \"My first test string\"\nb = 'Another test string that I have defined'\nc = \"this is Sal's string\"\nd = 'My favorite word is \"asparaus\", what is your?'\nmath_string = \"3+4*2\"\nexpression_string = \"a+' '+b+' tiger'\"\nprint a\nprint b\nprint c\nprint d\nprint math_string\nprint expression_string\nprint a +b" , "children":[]},
+                        {"title": "Ví dụ 03", "id": "LessonId12", "code": "a = \"My first test string\"\nb = 'Another test string that I have defined'\nc = \"this is Sal's string\"\nd = 'My favorite word is \"asparaus\", what is your?'\nmath_string = \"3+4*2\"\nexpression_string = \"a+' '+b+' tiger'\"\nprint a\nprint b\nprint c\nprint d\nprint math_string\nprint expression_string\nprint math_string.find('*')\nprint math_string.find('3')" , "children":[]},
+                        {"title": "Ví dụ 04", "id": "LessonId13", "code": "a = \"My first test string\"\nb = 'Another test string that I have defined'\nc = \"this is Sal's string\"\nd = 'My favorite word is \"asparaus\", what is your?'\nmath_string = \"3+4*2\"\nexpression_string = \"a+' '+b+' tiger'\"\nprint a\nprint b\nprint c\nprint d\nprint math_string\nprint expression_string\nprint c.replace('i', 'o')\nprint c" , "children":[]},
+                        {"title": "Ví dụ 05", "id": "LessonId14", "code": "a = \"My first test string\"\nb = 'Another test string that I have defined'\nc = \"this is Sal's string\"\nd = 'My favorite word is \"asparaus\", what is your?'\nmath_string = \"3+4*2\"\nexpression_string = \"a+' '+b+' tiger'\"\nprint a\nprint b\nprint c\nprint d\nprint math_string\nprint expression_string\nc = c.replace('i', 'o')\nprint c" , "children":[]},
+                        {"title": "Ví dụ 06", "id": "LessonId15", "code": "a = \"My first test string\"\nb = 'Another test string that I have defined'\nc = \"this is Sal's string\"\nd = 'My favorite word is \"asparaus\", what is your?'\nmath_string = \"3+4*2\"\nexpression_string = \"a+' '+b+' tiger'\"\nprint a\nprint b\nprint c\nprint d\nprint math_string\nprint expression_string\nprint eval(math_string)\nprint eval(math_string + '1')" , "children":[]},
+                    ]},
+                    { "title": "Viết một chương trình đơn giản", "id": "LectureId07", "children": [
+                        {"title": "Ví dụ 01", "id": "LessonId16", "code": "#Enter non-negative integer to take the factorial of:\nnumber = 10\n\nproduct = 1\nfor i in range(number):\n    product = product * (i+1)\n\nprint product" , "children":[]}
+                    ]},
+                    { "title": "Định nghĩa hàm trong python", "id": "LectureId08", "children": [
+                        {"title": "Ví dụ 01", "id": "LessonId17", "code": "#returns the facturial of the argument \"number\"\ndef factorial(number):    \n    product = 1\n    for i in range(number):\n        product = product * (i+1)\n    return product\n\nprint factorial(10)" , "children":[]}
+                    ]},
+                    { "title": "Hàm đệ quy", "id": "LectureId09", "children": [
+                        {"title": "Ví dụ 01", "id": "LessonId18", "code": "def factorial(number):\n    if number <= 1:\n        return 1\n    else:\n        return number*factorial(number -1)\n\nprint factorial(10)", "children":[]}
+                    ]},
                 ]},
-
-                { "roleName": "Admin", "roleId": "role2", "children": [] },
-
-                { "roleName": "Guest", "roleId": "role3", "children": [] }
+                { "title": "Phần 2: Python nâng cao", "id": "LessonId2", "children": [
+                    { "title": "Bài 1", "id": "LectureId33", "children": [
+                    ]}
+                ]}
             ];
     }]);
