@@ -210,7 +210,7 @@ class WeeklyQuizTest(ModelUtils, ndb.Model):
 
 
 class WeeklyQuizLevel(ModelUtils, ndb.Model):
-    level = ndb.IntegerProperty()
+    level = ndb.FloatProperty()
     description = ndb.StringProperty(indexed=False)
     limit_memory = ndb.FloatProperty(default=100)
     limit_time = ndb.FloatProperty(default=60)
@@ -260,17 +260,29 @@ class WeeklyQuizLevel(ModelUtils, ndb.Model):
                         score = 0
                     else:
                         score -= (avg_time + avg_memory / 10)
-
-                    quiz_result = WeeklyQuizResult(user_key=kwargs['user_key'],
-                                                   level_key=self.key,
-                                                   result=result,
-                                                   time_used=avg_time,
-                                                   memory_used=avg_memory,
-                                                   language=kwargs['lang'],
-                                                   code=kwargs['code'],
-                                                   test_key=WeeklyQuiz.get_this_week_contest().key,
-                                                   score=score)
-                    quiz_result.put()
+                    result_tmp = WeeklyQuizResult.query(WeeklyQuizResult.user_key == kwargs['user_key'],
+                                                        WeeklyQuizResult.level_key == self.key).get()
+                    print result_tmp
+                    if result_tmp:
+                        if result_tmp.score < score:
+                            result_tmp.score = score
+                            result_tmp.result = result
+                            result_tmp.time_used = avg_time
+                            result_tmp.memory_used = avg_memory
+                            result_tmp.language = kwargs['lang']
+                            result_tmp.code = kwargs['code']
+                            result_tmp.put()
+                    else:
+                        quiz_result = WeeklyQuizResult(user_key=kwargs['user_key'],
+                                                       level_key=self.key,
+                                                       result=result,
+                                                       time_used=avg_time,
+                                                       memory_used=avg_memory,
+                                                       language=kwargs['lang'],
+                                                       code=kwargs['code'],
+                                                       test_key=WeeklyQuiz.get_this_week_contest().key,
+                                                       score=score)
+                        quiz_result.put()
                     logging.debug("Finshed run test case")
 
         def create_callback(rpc, **kwargs):
@@ -330,7 +342,8 @@ class WeeklyQuiz(ModelUtils, ndb.Model):
                 return filter(lambda x: x.level == result.level_key.get().level,
                               [level_key.get() for level_key in self.level_keys])
         else:
-            return filter(lambda x: x.level == 1, [level_key.get() for level_key in self.level_keys])
+            print [level_key.get() for level_key in self.level_keys]
+            return filter(lambda x: int(x.level or 1) == 1, [level_key.get() for level_key in self.level_keys])
 
     def get_players(self):
         top_player = WeeklyQuizResult.query(WeeklyQuizResult.test_key == self.key) \

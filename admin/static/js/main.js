@@ -726,6 +726,7 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
             $scope.loadLecture();
         });
     }]);
+
 angular.module("easylearncode.admin.quiz", ["easylearncode.admin.core"])
     .config(["$locationProvider", "$routeProvider", function ($locationProvider, $routeProvider) {
         $routeProvider
@@ -738,6 +739,16 @@ angular.module("easylearncode.admin.quiz", ["easylearncode.admin.core"])
             {
                 templateUrl: "template/angular/admin/quiz/levels.html",
                 controller: "LevelAdminCtrl"
+            })
+            .when("/level/test/:levelId",
+            {
+                templateUrl: "template/angular/admin/quiz/levels/tests.html",
+                controller: "TestAdminCtrl"
+            })
+            .when("/level/result/:levelId",
+            {
+                templateUrl: "template/angular/admin/quiz/levels/results.html",
+                controller: "ResultAdminCtrl"
             })
             .otherwise({redirectTo: "/"})
     }])
@@ -851,11 +862,11 @@ angular.module("easylearncode.admin.quiz", ["easylearncode.admin.core"])
         $scope.quiz = api.Model.get({type: 'quizs', id: $routeParams.quizId, recurse: true});
         var addForm = {
             "form_id": 1,
-            "form_name": "Add Course",
+            "form_name": "Add Level",
             "form_fields": [
                 {
                     "field_id": 1,
-                    "field_title": "title",
+                    "field_title": "level",
                     "field_type": "textfield",
                     "field_value": "",
                     "field_required": true
@@ -863,16 +874,42 @@ angular.module("easylearncode.admin.quiz", ["easylearncode.admin.core"])
                 {
                     "field_id": 2,
                     "field_title": "description",
+                    "field_type": "textarea",
+                    "field_value": "",
+                    "field_required": true
+                },
+                {
+                    "field_id": 3,
+                    "field_title": "limit_memory",
+                    "field_type": "textfield",
+                    "field_value": "1000",
+                    "field_required": true
+                },
+                {
+                    "field_id": 4,
+                    "field_title": "limit_time",
+                    "field_type": "textfield",
+                    "field_value": "60",
+                    "field_required": true
+                },
+                {
+                    "field_id": 5,
+                    "field_title": "score",
                     "field_type": "textfield",
                     "field_value": "",
                     "field_required": true
                 }
             ]
         }
-        $scope.delete = function (course) {
-
-            api.Model.delete({type: 'courses', id: course.Id}, function () {
-                $scope.courses = _.without($scope.courses, course);
+        $scope.delete = function (level) {
+            api.Model.get({type: 'quizs', id: $routeParams.quizId}, function (quiz) {
+                api.Model.delete({type: 'levels', id: level.Id}, function () {
+                    quiz.level_keys.pop(level.Id);
+                    $scope.quiz.level_keys.pop(level);
+                    quiz.start_date = new Date(quiz.start_date);
+                    api.Model.save({type: 'quizs', id: quiz.Id}, quiz, function () {
+                    });
+                });
             });
         }
         $scope.showAddModal = function () {
@@ -886,15 +923,28 @@ angular.module("easylearncode.admin.quiz", ["easylearncode.admin.core"])
                 }
             });
             modalInstance.result.then(function (addForm) {
-                course = {}
+                level = {}
                 _.each(addForm.form_fields, function (ele) {
-                    course[ele.field_title] = ele.field_value;
+                    if (ele.field_title == "level") {
+                        ele.field_value = parseInt(ele.field_value);
+                    }
+                    if (ele.field_title == "limit_memory") {
+                        ele.field_value = parseInt(ele.field_value);
+                    }
+                    if (ele.field_title == "limit_time") {
+                        ele.field_value = parseInt(ele.field_value);
+                    }
+                    if (ele.field_title == "score") {
+                        ele.field_value = parseInt(ele.field_value);
+                    }
+                    level[ele.field_title] = ele.field_value;
                 });
-                api.Model.save({type: 'exercises'}, course, function (data) {
-                    api.Model.get({type: 'courses', id: $routeParams.courseId}, function (course) {
-                        course.exercise_keys.push(data.Id);
-                        api.Model.save({type: 'courses', id: course.Id}, course, function () {
-                            $scope.course.exercise_keys.push(data);
+                api.Model.save({type: 'levels'}, level, function (data) {
+                    api.Model.get({type: 'quizs', id: $routeParams.quizId}, function (quiz) {
+                        quiz.level_keys.push(data.Id);
+                        quiz.start_date = new Date(quiz.start_date);
+                        api.Model.save({type: 'quizs', id: quiz.Id}, quiz, function () {
+                            $scope.quiz.level_keys.push(data);
                         });
                     });
 
@@ -904,11 +954,11 @@ angular.module("easylearncode.admin.quiz", ["easylearncode.admin.core"])
             });
 
         };
-        $scope.showEditModal = function (course) {
+        $scope.showEditModal = function (level) {
             var editForm = $.extend(true, {}, addForm);
-            editForm["form_name"] = "Edit Course";
+            editForm["form_name"] = "Edit level";
             _.each(editForm.form_fields, function (field) {
-                field.field_value = course[field.field_title];
+                field.field_value = level[field.field_title];
             });
             var modalInstance = $modal.open({
                 templateUrl: 'myModalContent.html',
@@ -920,13 +970,24 @@ angular.module("easylearncode.admin.quiz", ["easylearncode.admin.core"])
                 }
             });
             modalInstance.result.then(function (addForm) {
-                course_tmp = {}
+                level_tmp = {}
                 _.each(addForm.form_fields, function (ele) {
-                    course_tmp[ele.field_title] = ele.field_value;
+                    if (ele.field_title == "level") {
+                        ele.field_value = parseInt(ele.field_value);
+                    }
+                    if (ele.field_title == "limit_memory") {
+                        ele.field_value = parseInt(ele.field_value);
+                    }
+                    if (ele.field_title == "limit_time") {
+                        ele.field_value = parseInt(ele.field_value);
+                    }
+                    if (ele.field_title == "score") {
+                        ele.field_value = parseInt(ele.field_value);
+                    }
+                    level_tmp[ele.field_title] = ele.field_value;
                 });
-                api.Model.save({type: 'courses', id: course.Id}, course_tmp, function (data) {
-                    //$scope.courses.push(data);
-                    course = _.extend(course, course_tmp);
+                api.Model.save({type: 'levels', id: level.Id}, level_tmp, function (data) {
+                    level = _.extend(level, level_tmp);
                     $scope.$apply();
                 })
             }, function () {
@@ -945,4 +1006,113 @@ angular.module("easylearncode.admin.quiz", ["easylearncode.admin.core"])
                 $modalInstance.dismiss('cancel');
             };
         };
+    }])
+    .controller("TestAdminCtrl", ["$scope", "api", "$routeParams", '$modal', function ($scope, api, $routeParams, $modal) {
+        //console.log($routeParams)
+        $scope.level = api.Model.get({type: 'levels', id: $routeParams.levelId, recurse: true});
+        var addForm = {
+            "form_id": 1,
+            "form_name": "Add Test",
+            "form_fields": [
+                {
+                    "field_id": 1,
+                    "field_title": "input",
+                    "field_type": "textfield",
+                    "field_value": "",
+                    "field_required": true
+                },
+                {
+                    "field_id": 2,
+                    "field_title": "output",
+                    "field_type": "textfield",
+                    "field_value": "",
+                    "field_required": true
+                }
+            ]
+        }
+        $scope.delete = function (test) {
+            api.Model.get({type: 'levels', id: $routeParams.levelId}, function (level) {
+                level.test_case.pop(test);
+                $scope.level.test_case.pop(test);
+                api.Model.save({type: 'levels', id: level.Id}, level, function () {
+                });
+                /*api.Model.delete({type: 'testcases', id: test.Id}, function () {
+
+                 });*/
+            });
+        }
+        $scope.showAddModal = function () {
+            var modalInstance = $modal.open({
+                templateUrl: 'myModalContent.html',
+                controller: ModalInstanceCtrl,
+                resolve: {
+                    form: function () {
+                        return addForm;
+                    }
+                }
+            });
+            modalInstance.result.then(function (addForm) {
+                test = {}
+                _.each(addForm.form_fields, function (ele) {
+                    test[ele.field_title] = ele.field_value;
+                });
+                api.Model.get({type: 'levels', id: $routeParams.levelId}, function (level) {
+                    level.test_case.push(test);
+                    api.Model.save({type: 'levels', id: level.Id}, level, function () {
+                        $scope.level.test_case.push(test);
+                    });
+                });
+            }, function () {
+                console.log('Modal dismissed at: ' + new Date());
+            });
+
+        };
+        $scope.showEditModal = function (test) {
+            var editForm = $.extend(true, {}, addForm);
+            editForm["form_name"] = "Edit test";
+            _.each(editForm.form_fields, function (field) {
+                field.field_value = test[field.field_title];
+            });
+            var modalInstance = $modal.open({
+                templateUrl: 'myModalContent.html',
+                controller: ModalInstanceCtrl,
+                resolve: {
+                    form: function () {
+                        return editForm;
+                    }
+                }
+            });
+            modalInstance.result.then(function (addForm) {
+                test_tmp = {}
+                _.each(addForm.form_fields, function (ele) {
+                    test_tmp[ele.field_title] = ele.field_value;
+                });
+                api.Model.get({type: 'levels', id: $routeParams.levelId}, function (level) {
+
+
+                });
+
+            }, function () {
+                console.log('Modal dismissed at: ' + new Date());
+            });
+        }
+        var ModalInstanceCtrl = function ($scope, $modalInstance, form) {
+
+            $scope.form = form;
+
+            $scope.ok = function (data) {
+                $modalInstance.close($scope.form);
+            };
+
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
+            };
+        };
+    }])
+
+    .controller("ResultAdminCtrl", ["$scope", "api", "$routeParams", '$modal', '$http', function ($scope, api, $routeParams, $modal, $http) {
+        $http.get('/api/quizresults?filter=level_key==' + $routeParams.levelId + '&order=-score').success(function (data) {
+            $scope.results = data;
+        });
+
     }])
