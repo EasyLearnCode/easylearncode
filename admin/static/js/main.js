@@ -291,8 +291,8 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
         }
 
         $scope.delete = function (lesson) {
-            api.Model.get({type: 'courses', id: $routeParams.courseId}, function (course) {
-                api.Model.delete({type: 'lessons', id: lesson.Id}, function () {
+            api.Model.delete({type: 'lessons', id: lesson.Id}, function () {
+                api.Model.get({type: 'courses', id: $routeParams.courseId}, function (course) {
                     course.lesson_keys.pop(lesson.Id);
                     $scope.course.lesson_keys.pop(lesson);
                     api.Model.save({type: 'courses', id: course.Id}, course, function () {
@@ -327,7 +327,7 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
             _.each(editForm.form_fields, function (field) {
                 field.field_value = lesson[field.field_title];
             });
-           formModalService.showFormModal(editForm, function (form) {
+            formModalService.showFormModal(editForm, function (form) {
                 lesson_tmp = {}
                 _.each(form.form_fields, function (ele) {
                     lesson_tmp[ele.field_title] = ele.field_value;
@@ -483,8 +483,8 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
                     headers: {'Content-Type': undefined },
                     transformRequest: angular.identity
                 }).success(function (data) {
-                    lecture.img = data.image_url;
-                }).error();
+                        lecture.img = data.image_url;
+                    }).error();
             })
 
         };
@@ -782,7 +782,7 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
             ]
         }
 
-         $scope.showAddAnswerQuizModal = function (quiz) {
+        $scope.showAddAnswerQuizModal = function (quiz) {
             var modalInstance = $modal.open({
                 templateUrl: 'myModalContent.html',
                 controller: ModalInstanceCtrl,
@@ -795,9 +795,9 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
             modalInstance.result.then(function (addForm) {
                 answer = {}
                 _.each(addAnswerQuizForm.form_fields, function (ele) {
-                    if (ele.field_title == "is_true"){
-                        if(ele.field_value == 1) ele.field_value =  true;
-                        else ele.field_value =  false;
+                    if (ele.field_title == "is_true") {
+                        if (ele.field_value == 1) ele.field_value = true;
+                        else ele.field_value = false;
                     }
                     answer[ele.field_title] = ele.field_value;
                 });
@@ -814,12 +814,12 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
 
         $scope.deleteAnswerQuiz = function (answer, quiz) {
             //api.Model.delete({type: 'lecture_quizs', id: quiz.Id}, function () {
-                api.Model.get({type: 'lecture_quizs', id: quiz.Id}, function (quiz_result) {
-                    quiz_result.answers.pop(answer);
-                    api.Model.save({type: 'lecture_quizs', id: quiz.Id}, quiz_result, function (data) {
-                       quiz.answers = _.without(quiz.answers, answer);
-                    });
+            api.Model.get({type: 'lecture_quizs', id: quiz.Id}, function (quiz_result) {
+                quiz_result.answers.pop(answer);
+                api.Model.save({type: 'lecture_quizs', id: quiz.Id}, quiz_result, function (data) {
+                    quiz.answers = _.without(quiz.answers, answer);
                 });
+            });
             //});
         };
 
