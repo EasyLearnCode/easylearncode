@@ -430,7 +430,17 @@ class Lecture(ModelUtils, ndb.Model):
     time = ndb.FloatProperty()
     index = ndb.FloatProperty()
     created = ndb.DateTimeProperty(auto_now_add=True)
-    question_keys = ndb.KeyProperty('Question', repeated=True)
+    quiz_keys = ndb.KeyProperty('Quiz', repeated=True)
+    test_keys = ndb.KeyProperty('Test', repeated=True)
+    code_keys = ndb.KeyProperty('Code', repeated=True)
+
+
+class Code(ModelUtils, ndb.Model):
+    title = ndb.StringProperty()
+    description = ndb.StringProperty(indexed=False);
+    content = ndb.StringProperty(indexed=False)
+    time = ndb.FloatProperty()
+    created = ndb.DateTimeProperty(auto_now_add=True)
 
 
 class QuizAnswer(ModelUtils, ndb.Model):
@@ -439,18 +449,25 @@ class QuizAnswer(ModelUtils, ndb.Model):
 
 
 class Quiz(ModelUtils, ndb.Model):
+    title = ndb.StringProperty()
     question = ndb.StringProperty()
     answers = ndb.StructuredProperty(QuizAnswer, repeated=True)
     time = ndb.FloatProperty()
-
-
-class Question(ModelUtils, ndb.Model):
-    quiz_keys = ndb.KeyProperty('Quiz', repeated=True)
-    test_keys = ndb.KeyProperty('Test', repeated=True)
+    created = ndb.DateTimeProperty(auto_now_add=True)
     score = ndb.FloatProperty()
 
 
+class Question(ModelUtils, ndb.Model):
+    quiz_key = ndb.KeyProperty('Quiz')
+    test_key = ndb.KeyProperty('Test')
+    score = ndb.FloatProperty()
+    created = ndb.DateTimeProperty(auto_now_add=True)
+
+
 class Test(ModelUtils, ndb.Model):
+    title = ndb.StringProperty()
     description = ndb.StringProperty(indexed=False)
     test_script = ndb.StringProperty(indexed=False)
     time = ndb.FloatProperty()
+    created = ndb.DateTimeProperty(auto_now_add=True)
+    score = ndb.FloatProperty()
