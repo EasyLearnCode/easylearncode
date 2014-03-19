@@ -5,12 +5,13 @@ a {
 a {
     text-decoration: none;
 }
-.range{
+
+.range {
     margin-top: 10px;
     margin-bottom: 10px;
 }
 
-.size{
+.size {
     width: 50%;
 }
 
@@ -190,7 +191,6 @@ div {
     right: 0;
     padding: 5px;
 }
-
 .track-progress .track-name {
     margin-bottom: 15px;
     text-align: center;
@@ -220,7 +220,7 @@ div {
     float: right;
 }
 
-.module, .discussion-items, .discussion-entry .entry-container, .comments-container, .entry-editor, #user-registration-form .zebra-form, #user-session-form .zebra-form,.zebra-form, #badges-modal .zebra-form, .zebra-form, .zebra-form, .zebra-form,.zebra-form,.zebra-form, .zebra-form,.zebra-form,.zebra-form,.zebra-form,.zebra-form, .v2-scope .zebra-form,.zebra-form, .modal-content #shared-markdown, .zebra-table {
+.module, .discussion-items, .discussion-entry .entry-container, .comments-container, .entry-editor, #user-registration-form .zebra-form, #user-session-form .zebra-form, .zebra-form, #badges-modal .zebra-form, .zebra-form, .zebra-form, .zebra-form, .zebra-form, .zebra-form, .zebra-form, .zebra-form, .zebra-form, .zebra-form, .zebra-form, .v2-scope .zebra-form, .zebra-form, .modal-content #shared-markdown, .zebra-table {
     margin-bottom: 20px;
     overflow: hidden;
     border: 3px solid #d2d2d2;
@@ -261,7 +261,7 @@ div {
     color: #969696;
 }
 
-.module.neutral, .neutral.discussion-items, .discussion-entry .entry-container, .comments-container, .entry-editor, #user-registration-form .zebra-form, #user-session-form .zebra-form, .zebra-form, #badges-modal .zebra-form, .zebra-form, .zebra-form,.zebra-form,.zebra-form,.zebra-form, .zebra-form, .zebra-form, .zebra-form, .zebra-form,.zebra-form, .v2-scope .zebra-form,.zebra-form, .modal-content .neutral#shared-markdown, .neutral.zebra-table {
+.module.neutral, .neutral.discussion-items, .discussion-entry .entry-container, .comments-container, .entry-editor, #user-registration-form .zebra-form, #user-session-form .zebra-form, .zebra-form, #badges-modal .zebra-form, .zebra-form, .zebra-form, .zebra-form, .zebra-form, .zebra-form, .zebra-form, .zebra-form, .zebra-form, .zebra-form, .zebra-form, .v2-scope .zebra-form, .zebra-form, .modal-content .neutral#shared-markdown, .neutral.zebra-table {
     background-color: #fafafa;
 }
 

@@ -480,8 +480,8 @@ Maze.init = function() {
   var visualization = document.getElementById('visualization');
   var onresize = function(e) {
     var top = visualization.offsetTop;
-    blocklyDiv.style.top = Math.max(10, top - window.scrollY) + 'px';
-    blocklyDiv.style.left = rtl ? '10px' : '540px';
+    //blocklyDiv.style.top = Math.max(10, top - window.scrollY) + 'px';
+    blocklyDiv.style.left = rtl ? '10px' : '430px';
     blocklyDiv.style.width = (window.innerWidth - 226 - 440) + 'px';
   };
   window.addEventListener('scroll', function() {
@@ -1025,8 +1025,8 @@ Maze.congratulations = function() {
     var cancel = document.createElement('button');
     cancel.appendChild(
         document.createTextNode(BlocklyApps.getMsg('dialogCancel')));
-    cancel.addEventListener('click', BlocklyApps.hideDialog, true);
-    cancel.addEventListener('touchend', BlocklyApps.hideDialog, true);
+    cancel.addEventListener('click', BlocklyApps.hideDialog, false);
+    cancel.addEventListener('touchend', BlocklyApps.hideDialog, false);
     buttonDiv.appendChild(cancel);
 
     var ok = document.createElement('button');
