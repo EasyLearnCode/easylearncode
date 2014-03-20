@@ -1,5 +1,5 @@
 (function () {
-    angular.module("easylearncode.core", ["services", "controllers", "directives", "oldFilters", "oldMeta"]);
+    angular.module("easylearncode.core", ["ngResource", "services", "controllers", "directives", "oldFilters", "oldMeta"]);
     angular.module("services", "services.gateways services.utility services.reviews services.blogFeed services.forum services.user services.auth services.content services.dummyData services.milestones services.search services.payment".split(" "));
     angular.module("controllers", "controllers.courseCatalog controllers.lesson controllers.reviews controllers.editor controllers.myCourses controllers.search controllers.utility controllers.courseOverview controllers.header".split(" "));
     angular.module("directives", "directives.user directives.utility directives.reviews directives.forum directives.myCourses directives.search directives.payment".split(" "));
@@ -68,6 +68,10 @@
         }
     ])
 })();
+angular.module("easylearncode.core").service("api", ["$resource", function ($resource) {
+        this.Model = $resource('/api/:type/:id');
+
+    }])
 angular.module("easylearncode.core").filter('to_trusted', ['$sce', function ($sce) {
     return function (text) {
         return $sce.trustAsHtml(text);
@@ -1195,8 +1199,9 @@ angular.module("easylearncode.course_paractice_detail", ["ui.bootstrap", "easyle
     }
 }]);
 angular.module("easylearncode.course_paractice_viewer", ["ui.bootstrap", "ui.ace", 'easylearncode.core'])
-    .controller("PracticeCtrl", ["$scope", "$sce", "$timeout", "exercise", '$compile', function ($scope, $sce, $timeout, exercise, $compile) {
+    .controller("PracticeCtrl", ["$scope", "$sce", "$timeout", "exercise", '$compile', "api", function ($scope, $sce, $timeout, exercise, $compile, api) {
         var jqconsole = $('#console').jqconsole('  >> EasyLearnCode Python Compiler v0.1 <<\n', '>>>');
+        $scope.user = api.Model.get({type: 'users', id: "me"});
         $scope.exercise = exercise;
         $scope.jsreplReady = false;
         $scope.isEditorFullScreen = false;
