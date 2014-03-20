@@ -433,10 +433,14 @@ class Lecture(ModelUtils, ndb.Model):
     quiz_keys = ndb.KeyProperty('Quiz', repeated=True)
     test_keys = ndb.KeyProperty('Test', repeated=True)
     code_keys = ndb.KeyProperty('Code', repeated=True)
+    level = ndb.FloatProperty()
+    current_users = ndb.KeyProperty(User, repeated=True)
+    passed_users = ndb.KeyProperty(User, repeated=True)
 
 
 class Code(ModelUtils, ndb.Model):
     title = ndb.StringProperty()
+    index = ndb.FloatProperty()
     description = ndb.StringProperty(indexed=False);
     content = ndb.StringProperty(indexed=False)
     time = ndb.FloatProperty()
@@ -455,13 +459,6 @@ class Quiz(ModelUtils, ndb.Model):
     time = ndb.FloatProperty()
     created = ndb.DateTimeProperty(auto_now_add=True)
     score = ndb.FloatProperty()
-
-
-class Question(ModelUtils, ndb.Model):
-    quiz_key = ndb.KeyProperty('Quiz')
-    test_key = ndb.KeyProperty('Test')
-    score = ndb.FloatProperty()
-    created = ndb.DateTimeProperty(auto_now_add=True)
 
 
 class Test(ModelUtils, ndb.Model):

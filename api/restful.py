@@ -3,7 +3,7 @@ import datetime
 import logging
 import json
 
-from application.models import Course, Exercise, WeeklyQuiz, WeeklyQuizLevel, Lesson, Lecture, Code, Test, Question, Quiz, QuizAnswer
+from application.models import Course, Exercise, WeeklyQuiz, WeeklyQuizLevel, Lesson, Lecture, Code, Test, Quiz, QuizAnswer
 
 from google.appengine import api
 from google.appengine.ext import ndb
