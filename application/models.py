@@ -422,6 +422,7 @@ class Lesson(ModelUtils, ndb.Model):
     lecture_keys = ndb.KeyProperty('Lecture', repeated=True)
 
 
+
 class Lecture(ModelUtils, ndb.Model):
     title = ndb.StringProperty(required=True)
     description = ndb.StringProperty()

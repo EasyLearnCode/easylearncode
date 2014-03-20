@@ -99,7 +99,7 @@
                 <tabset>
                     <tab data-ng-repeat="lang in langs" heading="{{ lang.name }}" active="lang.active">
                         <div ui-ace="{ theme:'chrome',
-  mode:lang.mode, onLoad: aceLoaded(lang)}" data-ng-model="lang.source">
+  mode:lang.mode, onLoad: aceLoaded}" data-ng-model="lang.source">
                         </div>
                     </tab>
 
@@ -197,7 +197,8 @@
     {% endraw %}
 {% endblock %}
 {% block pluginJS %}
-    <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js"></script>
+    <script src="//ace.c9.io/build/src-noconflict/ace.js"></script>
+    <script src="//ace.c9.io/build/src-noconflict/ext-language_tools.js"></script>
     <script src="/application/js/libs/angularjs/ui-ace.min.js"></script>
     <script src="/application/js/libs/angularjs/ui-bootstrap-tpls-0.7.0.min.js"></script>
     <script src="/application/js/libs/angularjs/angular-timer.min.js"></script>

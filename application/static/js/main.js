@@ -506,6 +506,11 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "$h
     }
     $scope.compiling = false;
     $scope.compile_result = [];
+    $scope.aceLoaded = function(_editor){
+        _editor.setOptions({
+		enableBasicAutocompletion: true
+	});
+    }
     $scope.runCode = function () {
         angular.forEach($scope.langs, function (lang) {
             if (lang.active) {
