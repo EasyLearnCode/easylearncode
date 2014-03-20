@@ -168,9 +168,9 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
                 _.each(form.form_fields, function (ele) {
                     data[ele.field_title] = ele.field_value;
                 });
-                api.Model.save({type: 'courses', id: course.Id}, data, function (result) {
+                api.Model.save({type: 'courses', id: obj.Id}, data, function (result) {
                     //$scope.courses.push(data);
-                    obj = _.extend(result, data);
+                    obj = _.extend(obj, data);
                     $scope.$apply();
                 })
             }, function () {
