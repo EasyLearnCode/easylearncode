@@ -19,7 +19,7 @@ class _ConfigDefaults(object):
     # store total model count in metadata field HEAD query
     METADATA = True
     # list of valid models, None means anything goes
-    DEFINED_MODELS = {"courses": Course, "exercises": Exercise, "quizs": WeeklyQuiz, "level": WeeklyQuizLevel,
+    DEFINED_MODELS = {"courses": Course, "exercises": Exercise, "quizs": WeeklyQuiz, "levels": WeeklyQuizLevel,
                       "lessons": Lesson, "lectures": Lecture, "codes": Code, "tests": Test, "lecture_quizs": Quiz,
                       "answers": QuizAnswer}
     RESTRICT_TO_DEFINED_MODELS = True
