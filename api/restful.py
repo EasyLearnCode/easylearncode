@@ -3,7 +3,7 @@ import datetime
 import logging
 import json
 
-from application.models import Course, Exercise, WeeklyQuiz, WeeklyQuizLevel, Lesson, Lecture, Code, Test, Quiz, QuizAnswer
+from application.models import Course, Exercise, WeeklyQuiz, WeeklyQuizLevel, Lesson, Lecture, User
 
 from google.appengine import api
 from google.appengine.ext import ndb
@@ -11,13 +11,14 @@ from google.appengine.ext import ndb
 from util import AppError, LoginError, BreakError
 from util import as_json, parse_body
 from application.handlers import BaseHandler
+from webapp2_extras import auth
 
 
 class _ConfigDefaults(object):
     # store total model count in metadata field HEAD query
     METADATA = False
     # list of valid models, None means anything goes
-    DEFINED_MODELS = {"courses": Course, "exercises": Exercise, "quizs": WeeklyQuiz, "level": WeeklyQuizLevel, "lessons": Lesson, "lectures": Lecture, "codes":Code, "tests": Test, "lecture_quizs": Quiz, "answers": QuizAnswer}
+    DEFINED_MODELS = {"courses": Course, "exercises": Exercise, "quizs": WeeklyQuiz, "level": WeeklyQuizLevel, "lessons": Lesson, "lectures": Lecture}
     RESTRICT_TO_DEFINED_MODELS = True
     PROTECTED_MODEL_NAMES = ["(?i)(mesh|messages|files|events|admin|proxy)",
                              "(?i)tailbone.*"]
@@ -27,7 +28,8 @@ class _ConfigDefaults(object):
         return api.users.is_current_user_admin(*args, **kwargs)
 
     def get_current_user(*args, **kwargs):
-        return api.users.get_current_user(*args, **kwargs)
+        #return api.users.get_current_user(*args, **kwargs)
+        return auth.get_auth().get_user_by_session()
         # from application.models import User
         # return User.get_by_id(auth.get_auth().get_user_by_session()['user_id'])
 
@@ -35,6 +37,7 @@ class _ConfigDefaults(object):
 _config = api.lib_config.register('tailboneRestful', _ConfigDefaults.__dict__)
 
 re_public = re.compile(r"^[A-Z].*")
+re_private = re.compile(r"(password|email)")
 re_type = type(re_public)
 re_admin = re.compile(r"^(A|a)dmin.*")
 acl_attributes = [u"owners", u"viewers"]
@@ -50,7 +53,7 @@ def validate_modelname(model):
 def current_user(required=False):
     u = _config.get_current_user()
     if u:
-        return ndb.Key("users", u.user_id())
+        return ndb.Key("User", u['user_id'])
     if required:
         raise LoginError("User must be logged in.")
     return None
@@ -115,7 +118,7 @@ class ScopedModel(HookedModel):
         if not self.can_read(current_user()):
             # public properties only
             for k in result.keys():
-                if not re_public.match(k):
+                if re_private.match(k):
                     del result[k]
         result["Id"] = self.key.urlsafe()
         return result
@@ -166,7 +169,7 @@ class users(HookedModel, ndb.Expando):
             pass
         else:
             for k in result.keys():
-                if not re_public.match(k):
+                if re_private.match(k):
                     del result[k]
         result["Id"] = self.key.urlsafe()
         admin = _config.is_current_user_admin()
@@ -468,7 +471,7 @@ class RestfulHandler(BaseHandler):
         model = model.lower()
         cls = None
         if _config.DEFINED_MODELS:
-            cls = users if model == "users" else _config.DEFINED_MODELS.get(model)
+            cls = type('User', (users,), dict(User.__dict__)) if model == "users" else _config.DEFINED_MODELS.get(model)
             if not cls and _config.RESTRICT_TO_DEFINED_MODELS:
                 raise RestrictedModelError
             if cls:
@@ -479,7 +482,7 @@ class RestfulHandler(BaseHandler):
         logging.info("ID %s" % id)
         if id:
             me = False
-            if model == "users":
+            if model == "User":
                 if id == "me":
                     me = True
                     id = current_user(required=True).urlsafe()
