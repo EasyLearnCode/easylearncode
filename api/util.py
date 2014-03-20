@@ -40,6 +40,7 @@ def json_extras(obj):
             if item is None:
                 return obj.urlsafe()
             item = item.to_dict()
+            item["Id"] = obj.urlsafe()
             item["$class"] = obj.kind()
             return item
         return obj.urlsafe()
