@@ -2,23 +2,26 @@ import re
 import datetime
 import logging
 import json
-
-from application.models import Course, Exercise, WeeklyQuiz, WeeklyQuizLevel, Lesson, Lecture, User
+import counter
 
 from google.appengine import api
 from google.appengine.ext import ndb
+from webapp2_extras import auth
 
+from application.models import Course, Exercise, WeeklyQuiz, WeeklyQuizLevel, Lesson, Lecture, User, Code, Test, Quiz, \
+    QuizAnswer
 from util import AppError, LoginError, BreakError
 from util import as_json, parse_body
 from application.handlers import BaseHandler
-from webapp2_extras import auth
 
 
 class _ConfigDefaults(object):
     # store total model count in metadata field HEAD query
-    METADATA = False
+    METADATA = True
     # list of valid models, None means anything goes
-    DEFINED_MODELS = {"courses": Course, "exercises": Exercise, "quizs": WeeklyQuiz, "level": WeeklyQuizLevel, "lessons": Lesson, "lectures": Lecture}
+    DEFINED_MODELS = {"courses": Course, "exercises": Exercise, "quizs": WeeklyQuiz, "level": WeeklyQuizLevel,
+                      "lessons": Lesson, "lectures": Lecture, "codes": Code, "tests": Test, "lecture_quizs": Quiz,
+                      "answers": QuizAnswer}
     RESTRICT_TO_DEFINED_MODELS = True
     PROTECTED_MODEL_NAMES = ["(?i)(mesh|messages|files|events|admin|proxy)",
                              "(?i)tailbone.*"]
@@ -68,12 +71,16 @@ class HookedModel(ndb.Model):
 
     def _post_put_hook(self, future):
         future.wait()
+        if _config.METADATA and self._previous is None:
+            counter.increment(self.__class__.__name__)
         if _config.post_put_hook:
             _config.post_put_hook(self)
 
     @classmethod
     def _post_delete_hook(cls, key, future):
         future.wait()
+        if _config.METADATA:
+            counter.decrement(cls.__name__)
 
 
 # Model
@@ -471,14 +478,16 @@ class RestfulHandler(BaseHandler):
         model = model.lower()
         cls = None
         if _config.DEFINED_MODELS:
-            cls = type('User', (users,), dict(User.__dict__)) if model == "users" else _config.DEFINED_MODELS.get(model)
+            cls = type('User', (users,), dict(User.__dict__)) if model == "users" else \
+                type(_config.DEFINED_MODELS.get(model).__name__, (ScopedExpando, ),
+                     dict(_config.DEFINED_MODELS.get(model).__dict__))
             if not cls and _config.RESTRICT_TO_DEFINED_MODELS:
                 raise RestrictedModelError
             if cls:
                 model = cls.__name__
         if not cls:
             validate_modelname(model)
-            cls = users if model == "users" else type(model, (ScopedExpando,), {})
+            cls = type('User', (users,), dict(User.__dict__)) if model == "users" else type(model, (ScopedExpando,), {})
         logging.info("ID %s" % id)
         if id:
             me = False
@@ -542,11 +551,12 @@ class RestfulHandler(BaseHandler):
                 raise AppError("Id must be the current " +
                                "user_id or me. User {} tried to modify user {}.".format(u, id))
             id = u.urlsafe()
-            cls = users
+            cls = type('User', (users,), dict(User.__dict__))
         else:
             cls = None
             if _config.DEFINED_MODELS:
-                cls = _config.DEFINED_MODELS.get(model)
+                cls = type(_config.DEFINED_MODELS.get(model).__name__, (ScopedExpando, ),
+                           dict(_config.DEFINED_MODELS.get(model).__dict__))
                 if not cls and _config.RESTRICT_TO_DEFINED_MODELS:
                     raise RestrictedModelError
                 if cls:
@@ -566,8 +576,6 @@ class RestfulHandler(BaseHandler):
                 setattr(_m, k, getattr(m, k))
             m = _m
         if model != "users":
-            if not hasattr(m, 'owners'):
-                m.owners = []
             if len(m.owners) == 0:
                 m.owners.append(u)
 
@@ -586,7 +594,7 @@ class RestfulHandler(BaseHandler):
             model = model.lower()
             validate_modelname(model)
             metadata = {
-                "total": 0
+                "total": counter.get_count(model)
             }
             self.response.headers["Metadata"] = json.dumps(metadata)
 
