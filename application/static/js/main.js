@@ -68,6 +68,27 @@
         }
     ])
 })();
+angular.module("easylearncode.core").run(function(){
+        var indexOfValue = _.indexOf;
+
+    // using .mixin allows both wrapped and unwrapped calls:
+    // _(array).indexOf(...) and _.indexOf(array, ...)
+    _.mixin({
+
+        // return the index of the first array element passing a test
+        indexOf: function (array, test) {
+            // delegate to standard indexOf if the test isn't a function
+            if (!_.isFunction(test)) return indexOfValue(array, test);
+            // otherwise, look for the index
+            for (var x = 0; x < array.length; x++) {
+                if (test(array[x])) return x;
+            }
+            // not found, return fail value
+            return -1;
+        }
+
+    });
+})
 angular.module("easylearncode.core").service("api", ["$resource", function ($resource) {
         this.Model = $resource('/api/:type/:id');
 
@@ -592,25 +613,6 @@ angular.module("easylearncode.home").controller('HomeCarouselCtrl', ['$scope', f
 
 angular.module("easylearncode.learn").run(function () {
     $('#myTab a:last').tab('show');
-    var indexOfValue = _.indexOf;
-
-    // using .mixin allows both wrapped and unwrapped calls:
-    // _(array).indexOf(...) and _.indexOf(array, ...)
-    _.mixin({
-
-        // return the index of the first array element passing a test
-        indexOf: function (array, test) {
-            // delegate to standard indexOf if the test isn't a function
-            if (!_.isFunction(test)) return indexOfValue(array, test);
-            // otherwise, look for the index
-            for (var x = 0; x < array.length; x++) {
-                if (test(array[x])) return x;
-            }
-            // not found, return fail value
-            return -1;
-        }
-
-    });
 }).controller('LearnCtrl', ['$scope', '$http', '$location', '$sce', '$compile', '$window', function ($scope, $http, $location, $sce, $compile, $window) {
         $scope.current_title = (document.title);
         $scope.getCurrentLectureIndex = function () {
@@ -1159,16 +1161,17 @@ angular.module("easylearncode.course_paractice_detail", ["ui.bootstrap", "easyle
     $scope.course_description = "Khóa học ngôn ngữ lập trình python";
     $scope.sections = [
         {
-            name: 'Ứng dụng tính toán',
+            name: 'Bài tập tính toán đơn giản',
             units: [
+                {time: '05:00', description: 'Làm quen với cú pháp python', src: "/course/practice/viewer#!?exercise_id=cs101"},
                 {time: '05:00', description: 'Thực hành tính một phép tính cơ bản', src: "/course/practice/viewer#!?exercise_id=cs101"},
             ]
         },
         {
-            name: 'Ứng dụng xem ngày giờ',
+            name: 'Bài tập xem ngày và giờ',
             units: [
-                {time: '02:00', description: 'Thực hành chuỗi và cách in ra màn hình', src: "/course/practice/viewer#!?exercise_id=cs101"},
-                {time: '05:00', description: 'Làm quen với ngày và giờ', src: "/course/practice/viewer#!?exercise_id=cs101"},
+                {time: '02:00', description: 'Làm quen với chuỗi và màn hình conosle', src: "/course/practice/viewer#!?exercise_id=cs101"},
+                {time: '05:00', description: 'Bài tập xem ngày và giờ', src: "/course/practice/viewer#!?exercise_id=cs101"},
             ]
         },
         {
@@ -1179,19 +1182,55 @@ angular.module("easylearncode.course_paractice_detail", ["ui.bootstrap", "easyle
             ]
         },
         {
-            name: 'Một chuyến đi du lịch',
+            name: 'Tính chi phí chuyến du lịch',
             units: [
                 {time: '05:00', description: 'Làm quen với hàm', src: "/course/practice/viewer#!?exercise_id=cs101"},
                 {time: '05:00', description: 'Ứng dụng tính chi phí chuyến du lịch', src: "/course/practice/viewer#!?exercise_id=cs101"},
             ]
         },
         {
-            name:'Ứng dụng tính tiền',
+            name:'Tính tiền siêu thị',
             units: [
                 {time: '05:00', description: 'Làm quen với cấu trúc danh sách và từ điến', src: "/course/practice/viewer#!?exercise_id=cs101"},
                 {time: '05:00', description: 'Ứng dụng tính tiền siêu thị', src: "/course/practice/viewer#!?exercise_id=cs101"},
             ]
+        },
+        {
+            name:'Trò chơi bắn tàu chiến',
+            units: [
+                {time: '05:00', description: 'Làm quen với danh sách và hàm', src: "/course/practice/viewer#!?exercise_id=cs101"},
+                {time: '05:00', description: 'Ứng dụng tính tiền siêu thị', src: "/course/practice/viewer#!?exercise_id=cs101"},
+            ]
+        },
+        {
+            name:'Bài tập vòng lặp',
+            units: [
+                {time: '05:00', description: 'Làm quen với vòng lặp', src: "/course/practice/viewer#!?exercise_id=cs101"},
+                {time: '05:00', description: 'Bài tập vòng lặp', src: "/course/practice/viewer#!?exercise_id=cs101"},
+            ]
+        },
+        {
+            name:'Bài kiểm tra tổng hợp',
+            units: [
+                {time: '05:00', description: 'Bài kiểm tra tổng hợp', src: "/course/practice/viewer#!?exercise_id=cs101"}
+            ]
+        },
+        {
+            name:'Một vài chủ đề nâng cao trong Python',
+            units: [
+                {time: '05:00', description: 'Một vài chủ đề nâng cao trong Python', src: "/course/practice/viewer#!?exercise_id=cs101"},
+                {time: '05:00', description: 'Làm quen các thao tác trên bit', src: "/course/practice/viewer#!?exercise_id=cs101"},
+            ]
+        },
+        {
+            name:'Bài tập class',
+            units: [
+                {time: '05:00', description: 'Làm quen với class', src: "/course/practice/viewer#!?exercise_id=cs101"},
+                {time: '05:00', description: 'Bài tập class', src: "/course/practice/viewer#!?exercise_id=cs101"},
+            ]
         }
+
+
     ];
     $scope.toggle = function (section) {
         section.toggle = !section.toggle;
@@ -1199,9 +1238,8 @@ angular.module("easylearncode.course_paractice_detail", ["ui.bootstrap", "easyle
     }
 }]);
 angular.module("easylearncode.course_paractice_viewer", ["ui.bootstrap", "ui.ace", 'easylearncode.core'])
-    .controller("PracticeCtrl", ["$scope", "$sce", "$timeout", "exercise", '$compile', "api", function ($scope, $sce, $timeout, exercise, $compile, api) {
+    .controller("PracticeCtrl", ["$scope", "$sce", "$timeout", "exercise", '$compile', "$window", function ($scope, $sce, $timeout, exercise, $compile, $window) {
         var jqconsole = $('#console').jqconsole('  >> EasyLearnCode Python Compiler v0.1 <<\n', '>>>');
-        $scope.user = api.Model.get({type: 'users', id: "me"});
         $scope.exercise = exercise;
         $scope.jsreplReady = false;
         $scope.isEditorFullScreen = false;
@@ -1289,7 +1327,7 @@ angular.module("easylearncode.course_paractice_viewer", ["ui.bootstrap", "ui.ace
                             $scope.showAlert = true;
                             $scope.alert = {
                                 type: 'info',
-                                msg: '<span style="color: red">Tuyệt<span> <br><a class="btn btn-primary pull-right" ng-click="nextCheckpoint()">Tiếp tục</a></span><div class="clearfix"></div>'
+                                msg: '<i class="fa fa-sun-o"></i> <strong>Tuyệt vời ông mặt trời!!!</strong><br>Tiếp tục nào<a class="btn btn-primary pull-right" onclick="nextCheckpoint()">Tiếp tục</a><div class="clearfix"></div>'
                             }
                             $timeout($compile($('.console-alert span').contents())($scope),10);
                         })
@@ -1299,7 +1337,7 @@ angular.module("easylearncode.course_paractice_viewer", ["ui.bootstrap", "ui.ace
                             $scope.showAlert = true;
                             $scope.alert = {
                                 type: 'danger',
-                                msg: '<span style="color: crimson">Bạn đã nhập sai! <br><span style="color: #F80">' + utf8_decode(result_val) + '</span></span>'
+                                msg: '<i class="fa fa-exclamation-triangle"></i><strong> Có điều gì lầm lẫn! </strong><br>' + utf8_decode(result_val)
                             }
                         })
                     }
@@ -1361,6 +1399,19 @@ angular.module("easylearncode.course_paractice_viewer", ["ui.bootstrap", "ui.ace
                 $scope.jsreplReady = true;
             })
         });
+        $timeout(function(){
+          $window.nextCheckpoint = function(){
+            var _index = _.indexOf($scope.exercise.projects[0].checkpoints, function(obj){
+                return obj._id == $scope.current_checkpoint._id;
+            })
+            if(_index >= 0 && _index < $scope.exercise.projects[0].checkpoints.length - 1){
+                $scope.changeCurrentCheckpoint($scope.exercise.projects[0].checkpoints[_index+1]);
+                $scope.showAlert = false;
+                $scope.$apply();
+            }
+
+        }
+        })
     }])
     .directive('hoverClass', function () {
         return {
