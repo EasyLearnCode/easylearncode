@@ -57,7 +57,7 @@
     angular.module("easylearncode.contest", ["ui.bootstrap", "ui.ace", "easylearncode.core", "timer"]);
     angular.module("easylearncode.home", ["ui.bootstrap", "easylearncode.core"]);
     angular.module("easylearncode.game", ["easylearncode.core"]);
-    angular.module("easylearncode.learn", ["ui.bootstrap", "ui.ace", "easylearncode.core", "com.2fdevs.videogular", "com.2fdevs.videogular.plugins.controls", "com.2fdevs.videogular.plugins.overlayplay", "com.2fdevs.videogular.plugins.buffering", "com.2fdevs.videogular.plugins.poster", "info.vietnamcode.nampnq.videogular.plugins.youtube", "info.vietnamcode.nampnq.videogular.plugins.quiz", "ngSocial"]);
+    angular.module("easylearncode.learn", ["ui.bootstrap", "ui.ace", "easylearncode.core", "com.2fdevs.videogular", "com.2fdevs.videogular.plugins.controls", "com.2fdevs.videogular.plugins.overlayplay", "com.2fdevs.videogular.plugins.buffering", "com.2fdevs.videogular.plugins.poster", "info.vietnamcode.nampnq.videogular.plugins.youtube", "info.vietnamcode.nampnq.videogular.plugins.quiz", "ngSocial", "ngDisqus"]);
     angular.module("easylearncode.info", ["ui.bootstrap", "easylearncode.core", "ngAnimate"]);
     angular.module("easylearncode.user_profile", ["easylearncode.core"]);
     angular.module("easylearncode.contest_result", ["easylearncode.core"]);
@@ -614,6 +614,7 @@ angular.module("easylearncode.home").controller('HomeCarouselCtrl', ['$scope', f
 angular.module("easylearncode.learn").run(function () {
     $('#myTab a:last').tab('show');
 }).controller('LearnCtrl', ['$scope', '$http', '$location', '$sce', '$compile', '$window', function ($scope, $http, $location, $sce, $compile, $window) {
+        $window.disqus_shortname = 'easylearncode2014';
         $scope.current_title = (document.title);
         $scope.getCurrentLectureIndex = function () {
             return _.indexOf($scope.lectures, function (lec) {
