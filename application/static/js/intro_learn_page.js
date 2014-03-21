@@ -3,15 +3,15 @@ var tour = {
   steps: [
     {
       target: 'step-1',
-      title: 'Mức độ',
-      content: 'Đây là nơi hiển thị mức độ bạn đã vượt qua trong tuần này.',
+      title: 'Tên bài',
+      content: 'Hiển thị tên bài mà bạn đang học.',
       placement: 'bottom'
     },
     {
       target: 'step-2',
       placement: 'top',
-      title: 'Câu hỏi',
-      content: 'Đây là phần hiển thị nội dung câu hỏi.'
+      title: 'Chọn bài',
+      content: 'Hiển thị danh sách các bài học.'
     },
     {
       target: 'step-3',
@@ -28,26 +28,26 @@ var tour = {
     {
       target: 'step-5',
       placement: 'bottom',
-      title: 'Nộp bài',
-      content: 'Khi làm xong bạn hãy clink vào đây để nộp bài.'
+      title: 'Chạy code',
+      content: 'Nhấn vào đây để chạy thử code của bạn.'
     },
     {
       target: 'step-6',
       placement: 'bottom',
-      title: 'Chạy thử',
-      content: 'Bạn muốn chạy thử xem kết quả ra sao thì hãy click vào đây!'
+      title: 'Làm lại',
+      content: 'Xóa trắng khung code'
     },
     {
       target: 'step-7',
-      placement: 'bottom',
-      title: 'Làm lại',
-      content: 'Khi nào muốn xóa trắng màn hình thì bạn hãy click vào đây!'
+      placement: 'left',
+      title: 'Phóng to',
+      content: 'Phóng to khung code'
     },
     {
       target: 'step-8',
       placement: 'top',
-      title: 'Khung kết quả',
-      content: 'Bảng hiển thị kết quả khi chạy thử.'
+      title: 'Kết quả',
+      content: 'Khung hiển thị kết quả'
     }
   ],
   showPrevButton: true,
