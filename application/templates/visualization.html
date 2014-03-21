@@ -6,36 +6,47 @@
 {% block content %}
     {% raw %}
         <div class="container" data-ng-controller="VisualizationCtrl">
-            <!-- Modal -->
-            <div class="row">
-                <div class="alert alert-info alert-dismissable">
-                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                    <button id="startTourBtn" class="btn btn-large btn-primary">Hướng dẫn</button>
-                </div>
+        <!-- Modal -->
+        <div class="row">
+            <div class="alert alert-info alert-dismissable" style="height: 140px">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    <div><img width="100" alt="logo" style="float: left; margin-right: 5px"
+                              src="/application/img/Olympic-Flame.ico"/>
+                    </div>
+                    Xin chào mừng các bạn đến với phân hệ học qua thực hành. Trong phân hệ này các bạn sẽ được học qua
+                    video dạy học thực hành trực tiếp, thực hành code trực tiếp trong khung code bên phải và được làm
+                    các bài test trong khi xem video. Qua các bài học các bạn sẽ từng bước học các kiến thức cơ bản về
+                    lập trình. Chúng tôi hi vọng khi học xong khóa học này thì các bạn sẽ thấy học việc học lập trình
+                    trở nên dễ dàng và thú vị hơn.
+                    <a class="pull-right btn" id="startTourBtn"><img rel="tooltip" data-placement="bottom" title="Help"
+                                                                     alt="help"
+                                                                     src="/application/img/quiz/help.png"
+                                                                     width="50"/> </a>
             </div>
-            <div class="modal fade" id="visualizationModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-                 aria-hidden="true">
-                <div class="modal-dialog visualization">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                            <h4 class="modal-title" id="myModalLabel">Visualization</h4>
-                        </div>
-                        <div class="modal-body">
-                            <iframe width="800" height="500" frameborder="0"></iframe>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        </div>
+        </div>
+        <div class="modal fade" id="visualizationModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog visualization">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">Visualization</h4>
+                    </div>
+                    <div class="modal-body">
+                        <iframe width="800" height="500" frameborder="0"></iframe>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="row">
+        <div class="col-md-12 highlight">
             <div class="row">
-                <div class="col-md-12 highlight">
-                    <div class="row">
-                        <div class="col-md-8">
-                            <div class="panel panel-primary">
-                                <div class="panel-heading">
+                <div class="col-md-8">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
                             <span class="pull-left">
                                 <h3 class="panel-title"><i class="fa fa-terminal fa-lg"></i> Code window</h3>
                             </span>
@@ -50,48 +61,53 @@
                                     <i class="fa fa-laptop"></i> Full Screen</a>
                             </span>
 
-                                    <div class="clearfix"></div>
-                                </div>
-                                <div>
-
-                                </div>
-                                <div class="panel-body">
-                                    <div id="console" ng-show="showConsole"
-                                         ng-class="{'full-screen':isEditorFullScreen}"></div>
-                                    <div ui-ace="{theme:'chrome', mode:exercise[1].lang, onLoad: aceLoaded}"
-                                         data-ng-model="TreeId.currentNode.code"
-                                         ng-class="{'editor-full-screen':isEditorFullScreen}">
-                                    </div>
-                                </div>
-                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div>
 
                         </div>
-                        <div class="col-md-4">
-                            <div class="lesson_info overlay" ng-show="show"></div>
-                            <div class="panel panel-success">
-                                <div class="panel-heading">
-                                <span class="pull-left"><h3 class="panel-title"><i class="fa fa-tasks fa-lg"></i> Contents</h3></span>
-                                    <div class="clearfix"></div>
-                                </div>
-                                <div class="panel-body">
-                                    <div class="list-group">
-                                        <div
-                                          data-angular-treeview="true"
-                                          data-tree-id="TreeId"
-                                          data-tree-model="Tests"
-                                          data-node-id="id"
-                                          data-node-label="title"
-                                          data-node-children="children" class="wrap_introduction">
-                                        </div>
-                                    </div>
-                                </div>
+                        <div class="panel-body">
+                            <div id="console" ng-show="showConsole"
+                                 ng-class="{'full-screen':isEditorFullScreen}"></div>
+                            <div ui-ace="{theme:'chrome', mode:exercise[1].lang, onLoad: aceLoaded}"
+                                 data-ng-model="TreeId.currentNode.code"
+                                 ng-class="{'editor-full-screen':isEditorFullScreen}">
                             </div>
                         </div>
-                        <div class="col-md-4" style="height: 300px"></div>
                     </div>
-
                 </div>
+                <div class="col-md-4">
+                    <div class="lesson_info overlay" ng-show="show"></div>
+                    <div class="panel panel-success">
+                        <div class="panel-heading">
+                                <span class="pull-left"><h3 class="panel-title"><i class="fa fa-tasks fa-lg"></i>
+                                    Contents</h3></span>
 
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="panel-body">
+                            <div class="list-group">
+                                <div
+                                        data-angular-treeview="true"
+                                        data-tree-id="TreeId"
+                                        data-tree-model="Tests"
+                                        data-node-id="id"
+                                        data-node-label="title"
+                                        data-node-children="children" class="wrap_introduction">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading"><h3 class="panel-title">Mô tả</h3></div>
+                        <div class="panel-body" style="height: 150px; overflow: auto">{{ TreeId.currentNode.description }}
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     {% endraw %}

@@ -10,9 +10,20 @@
     {% raw %}
         <div class="container" data-ng-controller="LearnCtrl">
             <div class="row">
-                <div class="alert alert-info alert-dismissable">
+                <div class="alert alert-info alert-dismissable" style="height: 140px">
                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                    <button id="startTourBtn" class="btn btn-large btn-primary">Hướng dẫn</button>
+                    <div><img width="100" alt="logo" style="float: left; margin-right: 5px"
+                              src="/application/img/Olympic-Flame.ico"/>
+                    </div>
+                    Xin chào mừng các bạn đến với phân hệ học qua thực hành. Trong phân hệ này các bạn sẽ được học qua
+                    video dạy học thực hành trực tiếp, thực hành code trực tiếp trong khung code bên phải và được làm
+                    các bài test trong khi xem video. Qua các bài học các bạn sẽ từng bước học các kiến thức cơ bản về
+                    lập trình. Chúng tôi hi vọng khi học xong khóa học này thì các bạn sẽ thấy học việc học lập trình
+                    trở nên dễ dàng và thú vị hơn.
+                    <a class="pull-right btn" id="startTourBtn"><img rel="tooltip" data-placement="bottom" title="Help"
+                                                                     alt="help"
+                                                                     src="/application/img/quiz/help.png"
+                                                                     width="50"/> </a>
                 </div>
             </div>
             <div class="row highlight">
@@ -25,7 +36,8 @@
                                         class="fa fa-laptop fa-lg"></i> {{ lecture.title }}</a></h3></span>
                             <span class="pull-right" id="step-2">
                                <a class="btn btn-default" ng-click="show=!show" ng-class="{show:show}">
-                                   {{ getCurrentLectureIndex()+1 }}/{{ lectures.length }} <i class="fa fa-toggle-down"></i></a></span>
+                                   {{ getCurrentLectureIndex()+1 }}/{{ lectures.length }} <i
+                                       class="fa fa-toggle-down"></i></a></span>
 
                                 <div class="lesson_info popover fade bottom" ng-init="show=false" ng-class="{in:show}"
                                      ng-show="show" style="display: block; top: 40px;left: 450px;width: 330px;">
@@ -79,14 +91,16 @@
                             <div class="panel-body" id="video">
                             </div>
                         </div>
-                        <div class="pull-left" style="padding-top: 20px"><span style="font-weight: bold">Đánh giá:</span>
+                        <div class="pull-left" style="padding-top: 20px"><span
+                                style="font-weight: bold">Đánh giá:</span>
                             <rating value="rate" max="max" readonly="isReadonly" on-hover="hoveringOver(value)"
                                     on-leave="overStar = null"></rating>
                             <span class="label"
                                   ng-class="{'label-warning': percent<30, 'label-info': percent>=30 && percent<70, 'label-success': percent>=70}"
                                   ng-show="overStar && !isReadonly">{{ percent }}%</span></div>
                         <div class="pull-right" style="padding-top: 20px">
-                            <img src="https://cdn1.iconfinder.com/data/icons/sweetsocial/32/youtube.png" ng-click="ViewOnYoutube()" alt="Xem tại trang youtube" title="Xem tại trang youtube"/>
+                            <img src="https://cdn1.iconfinder.com/data/icons/sweetsocial/32/youtube.png"
+                                 ng-click="ViewOnYoutube()" alt="Xem tại trang youtube" title="Xem tại trang youtube"/>
                         </div>
                         <div class="clearfix"></div>
                     </div>
@@ -105,10 +119,10 @@
                         </div>
                         <div class="tab-pane fade" id="messages">
                             <ul ng-social-buttons
-                                 data-url="current_url"
-                                 data-title="current_title"
-                                 data-description="current_description"
-                                 data-image="'http://easylearncode.appspot.com/application/img/logo.png'">
+                                data-url="current_url"
+                                data-title="current_title"
+                                data-description="current_description"
+                                data-image="'http://easylearncode.appspot.com/application/img/logo.png'">
                                 <li>Share:</li>
                                 <li class="ng-social-facebook">Facebook</li>
                                 <li class="ng-social-google-plus">Google+</li>
@@ -126,15 +140,19 @@
                         </div>
                         <div class="panel-body">
                             <div ui-ace="{ theme:'chrome',
-                        mode:lang.mode}" data-ng-model="code" id="code-content"></div>
+                        mode:lang.mode}" data-ng-model="code" id="code-content"
+                                 ng-class="{'editor-full-screen':isEditorFullScreen}"></div>
                             </br>
-                            <button type="button" class="btn btn-success" ng-click="runCode()" id="step-5"><span
+                            <button type="button" class="btn btn-success" ng-click="runCode()"
+                                    ng-disabled="!jsreplReady" id="step-5"><span
                                     class="glyphicon glyphicon-play"></span> Chạy code
                             </button>
                             <button type="button" class="btn btn-default" ng-click="reSet()" id="step-6"><span
                                     class="glyphicon glyphicon-remove"></span> Làm lại
                             </button>
-                            <button type="button" class="btn btn-default pull-right" id="step-7"><span
+                            <button type="button" class="btn btn-default pull-right" id="step-7"
+                                    ng-click="toggleFullScreen()"
+                                    ng-class="{'full-btn-full-screen':isEditorFullScreen}"><span
                                     class="glyphicon glyphicon-fullscreen"></span> Phóng to
                             </button>
 

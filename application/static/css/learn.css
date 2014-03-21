@@ -70,4 +70,26 @@
     z-index: 100;
     position: relative;
 }
-
+.run-btn-full-screen, .full-btn-full-screen {
+    position: fixed !important;
+    z-index: 10000000 !important;
+    top: 10px !important;
+}
+.run-btn-full-screen {
+    right: 150px !important;
+}
+.full-btn-full-screen {
+    right: 20px !important;
+}
+.editor-full-screen {
+    position: fixed !important;
+    top: 0px !important;
+    bottom: 0px !important;
+    left: 0px !important;
+    right: 0px !important;
+    z-index: 9999999 !important;
+    height: auto !important;
+    width: auto !important;
+    border: 0 !important;
+    margin: 0 !important;
+}
