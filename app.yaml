@@ -32,6 +32,9 @@ builtins:
 - remote_api: on #/_ah/remote_api/
 - deferred: on #/_ah/queue/deferred
 
+inbound_services:
+- channel_presence
+
 handlers:
 
 - url: /quanly/.*
