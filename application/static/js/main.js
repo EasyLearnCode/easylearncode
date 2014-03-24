@@ -98,11 +98,6 @@ angular.module("easylearncode.core").filter('to_trusted', ['$sce', function ($sc
         return $sce.trustAsHtml(text);
     };
 }]);
-angular.module("controllers.header").controller('HeaderController', ['$scope', '$window', function ($scope, $window) {
-    $scope.isActive = function (viewLocation) {
-        return viewLocation === $window.location.pathname;
-    };
-}]);
 angular.module("services.utility").factory("validator", [
     function () {
         var a = {
@@ -439,7 +434,7 @@ angular.module("services.utility").factory("md5", [ function () {
     };
     return md5;
 } ]);
-angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "api", "$http", "csrf_token", "channelToken", function ($scope, api, $http, csrf_token, channelToken) {
+angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "api", "$http", "csrf_token", function ($scope, api, $http, csrf_token) {
 
     var curr = new Date(); // get current date
     curr.setHours(0, 0, 0, 0);
@@ -475,14 +470,6 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "ap
     $scope.view_code = function (ID) {
         api.Model.get({type: 'quizresults', id: ID}, function (data) {
             var code = data;
-            $http.get('/api/contest/get_thisweek_contest/' + code.level_key).success(function (data) {
-                if (data.status == 1) {
-                }
-                else {
-                    $scope.thisweek_contest = data;
-                }
-
-            });
             if (code.language == 'PYTHON') {
                 $scope.langs = [
                     {
@@ -508,121 +495,35 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "ap
 
                     }
                 ];
-            } else if (code.language = "JAVA") {
-                $scope.langs = [
-                    {
-                        name: 'Python',
-                        mode: 'python',
-                        lang: 'PYTHON',
-                        active: false,
-                        source: ""
-                    },
-                    {
-                        name: 'Java',
-                        mode: 'java',
-                        lang: 'JAVA',
-                        active: true,
-                        source: code.code
-                    },
-                    {
-                        name: 'C++',
-                        mode: 'c_cpp',
-                        lang: 'CPP',
-                        active: false,
-                        source: ""
-
-                    }
-                ];
-            } else {
-                $scope.langs = [
-                    {
-                        name: 'Python',
-                        mode: 'python',
-                        lang: 'PYTHON',
-                        active: false,
-                        source: ""
-                    },
-                    {
-                        name: 'Java',
-                        mode: 'java',
-                        lang: 'JAVA',
-                        active: false,
-                        source: ""
-                    },
-                    {
-                        name: 'C++',
-                        mode: 'c_cpp',
-                        lang: 'CPP',
-                        active: true,
-                        source: code.code
-
-                    }
-                ];
             }
         });
     }
-    $http.get('/api/contest').success(function (data) {
-        $scope.quiz_id = data.Id;
-        $http.get('api/quizs/'+data.Id+'?recurse=true').success(function (data) {
-            $scope.thisweek_contest = data;
-            for (key in data.level_keys) {
-                if (data.level_keys[key].is_current_level) {
-                    $scope.thisweek_contest.this_quiz_level = data.level_keys[key];
-                }
-            }
-            $scope.thisweek_contest.level = 1;
-            for (key in data.level_keys) {
-                if (data.level_keys[key].is_passed_level) {
-                    if($scope.thisweek_contest.level<=data.level_keys[key].level)
-                        $scope.thisweek_contest.level = data.level_keys[key].level+1;
-                }
-            }
-        });
-    });
-    /*$http.get('/api/contest/get_thisweek_contest/current').success(function (data) {
-     if (data.status == 1) {
-     //$scope.error = "Chưa có đề thi";
-     //alert("hi");
-     $(function () {
-     $('#myModal1').modal();
-     });
-     }
-     else {
-     $scope.quiz_id=$http.get('api/contest');
-     $scope.thisweek_contest = data;
-     $http.get('/api/quizresults?order=-score&filter=test_key==' + data.test_key + '&filter=user_key==' + data.user_key + '&recurse=true&page_size=2').success(function (data, status, headers) {
-     $scope.results = data;
-     $scope.more = headers("More").toLocaleLowerCase() == "true" ? true : false;
-     if ($scope.more) {
-     $scope.next = headers('Cursor');
-     }
-     });
-     }
-
-     });*/
-    $scope.pre_result = function () {
-        $http.get('/api/quizresults?order=-score&filter=test_key==' + $scope.thisweek_contest.test_key + '&filter=user_key==' + $scope.thisweek_contest.user_key + '&recurse=true&page_size=2').success(function (data, status, headers) {
-            $scope.results = data;
-            $scope.more = headers("More").toLocaleLowerCase() == "true" ? true : false;
-            if ($scope.more) {
-                $scope.next = headers('Cursor');
-            }
-        });
-    }
-    $scope.next_result = function () {
-        $http.get('/api/quizresults?order=-score&filter=test_key==' +
-                $scope.thisweek_contest.test_key + '&filter=user_key==' + $scope.thisweek_contest.user_key +
-                '&recurse=true&page_size=2&cursor=' + $scope.next).success(function (data, status, headers) {
-                $scope.results = _.union($scope.results, data);
-                $scope.more = headers("More").toLocaleLowerCase() == "true" ? true : false;
-                if ($scope.more) {
-                    $scope.next = headers('Cursor');
-                }
+    $http.get('/api/contest/get_thisweek_contest/current').success(function (data) {
+        if (data.status == 1) {
+            //$scope.error = "Chưa có đề thi";
+            //alert("hi");
+            $(function () {
+                $('#myModal1').modal();
             });
-    }
-    $scope.get_level = function (key) {
-        $scope.thisweek_contest.this_quiz_level = api.Model.get({type: 'levels', id: key, recurse: true});
+        }
+        else {
+            $scope.thisweek_contest = data;
+            $http.get('/api/quizresults?filter=test_key==' + data.test_key + '&& user_key==' + data.user_key + '&recurse=true').success(function (data) {
+                $scope.results = data;
+            });
+            console.log($scope.results)
+        }
 
+    });
+    $scope.get_level = function (key) {
+        $http.get('/api/contest/get_thisweek_contest/' + key).success(function (data) {
+            if (data.status == 1) {
+            }
+            else {
+                $scope.thisweek_contest = data;
+            }
+
+        });
     }
     $scope.resetCode = function () {
         $scope.langs = [
@@ -716,16 +617,11 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "ap
         })
 
     };
-    var channel = new goog.appengine.Channel(channelToken);
-    var handler = {
-      'onopen': function(){console.log(arguments)},
-      'onmessage': function(){
-          console.log(arguments)
-      },
-      'onerror': function() {},
-      'onclose': function() {}
+}]);
+angular.module("controllers.header").controller('HeaderController', ['$scope', '$window', function ($scope, $window) {
+    $scope.isActive = function (viewLocation) {
+        return viewLocation === $window.location.pathname;
     };
-    var socket = channel.open(handler);
 }]);
 angular.module("easylearncode.home").controller('HomeCarouselCtrl', ['$scope', function ($scope) {
     $scope.myInterval = 5500;
@@ -752,22 +648,7 @@ angular.module("easylearncode.home").controller('HomeCarouselCtrl', ['$scope', f
 
 angular.module("easylearncode.learn").run(function () {
     $('#myTab a:last').tab('show');
-    $("[rel='tooltip']").tooltip();
-}).controller('LearnCtrl', ['$scope', '$http', '$location', '$sce', '$compile', '$window', 'api', function ($scope, $http, $location, $sce, $compile, $window, api) {
-        $scope.lectures = [];
-        api.Model.query({type: 'lessons', filter: 'Lecture=='+$location.search()['lecture_id']+'' }, function(data){
-            api.Model.query({type: 'courses', filter: 'Lesson=='+data[0].Id+'',recurse:true  }, function(data){
-                angular.forEach(data[0].lesson_keys, function(lesson){
-                    angular.forEach(lesson.lecture_keys, function(lecture){
-                        $scope.lectures.push(lecture);
-                    })
-                });
-                $scope.lecture = _.where($scope.lectures, {Id: $location.search()['lecture_id']})[0];
-                $scope.loadLecture();
-            })
-
-        })
-        $window.disqus_shortname = 'easylearncode2014';
+}).controller('LearnCtrl', ['$scope', '$http', '$location', '$sce', '$compile', '$window', function ($scope, $http, $location, $sce, $compile, $window) {
         $scope.current_title = (document.title);
         $scope.getCurrentLectureIndex = function () {
             return _.indexOf($scope.lectures, function (lec) {
@@ -796,6 +677,120 @@ angular.module("easylearncode.learn").run(function () {
                 $scope.editor.resize()
             }, 10);
         }
+        $scope.lectures = [
+            {
+                Id: 'asdsfsAsafasWWWWWWWWWWWxxxx0',
+                title: "Giới thiệu về chương trình, loại dữ liệu và giá trị",
+                description: "Viết một chương trình cơ bản. Khái niệm cơ bản của các kiểu dữ liệu, các biến và các báo cáo có điều kiện",
+                time: 689,
+                youtube_id: 'vfzfwPo6MZ4'
+            },
+            {
+                Id: 'asdsfsAsafasWWWWWWWWWWWxxxx1',
+                title: "Số nhị phân",
+                description: "Hiểu được thế nào là số đại diện.Giới thiệu số nhị phân",
+                time: 114,
+                youtube_id: '8vxI2F-Gu4E'
+            },
+            {
+                Id: 'asdsfsAsafasWWWWWWWWWWWxxxx2',
+                title: "Danh sách (List) trong python",
+                description: "Hiểu được cơ bản về list trong python",
+                time: 701,
+                youtube_id: 'QK0wgGPcVxg'
+            },
+            {
+                Id: 'asdsfsAsafasWWWWWWWWWWWxxxx3',
+                title: "Vòng lặp for trong python",
+                description: "Vòng lặp for cơ bản trong python",
+                time: 615,
+                youtube_id: 'l4kopWpjq9E'
+            },
+            {
+                Id: 'asdsfsAsafasWWWWWWWWWWWxxxx4',
+                title: "Vòng lặp while trong python",
+                description: "Một vòng lặp while có thể làm một điều tương tự như một vòng lặp for",
+                time: 320,
+                youtube_id: 'KfePraaexho'
+            },
+            {
+                Id: 'asdsfsAsafasWWWWWWWWWWWxxxx5',
+                title: "Kiểu chuỗi trong python",
+                description: "Thử nghiệm và xem chúng ta làm gì được với chuỗi",
+                time: 838,
+                youtube_id: 'iZAtkS0F-Zo'
+            },
+            {
+                Id: 'asdsfsAsafasWWWWWWWWWWWxxxx6',
+                title: "Viết một chương trình đơn giản",
+                description: "Viết một chương trình đơn giản với vòng lặp for",
+                time: 689,
+                youtube_id: 'ZyYp1V84Xqc'
+            },
+            {
+                Id: 'asdsfsAsafasWWWWWWWWWWWxxxx7',
+                title: "Chạy chương trình từng bước",
+                description: "Từng bước xem những gì xảy ra khi người dùng thử nhập vào một giá trị",
+                time: 563,
+                youtube_id: 'dn9XjHz33O8'
+            },
+            {
+                Id: 'asdsfsAsafasWWWWWWWWWWWxxxx8',
+                title: "lưu đồ hoạt động của chương trình",
+                description: "Lưu đồ hoạt động của chương trình",
+                time: 689,
+                youtube_id: 'EiR6cf8Towc'
+            },
+            {
+                Id: 'asdsfsAsafasWWWWWWWWWWWxxxx9',
+                title: "Python 3 không tương thích với python 2",
+                description: "Hiểu dduocj lý do tại sao các chương trình ví dụ sẽ không chạy trong Python 3 và làm thế nào để sửa chữa nó.",
+                time: 322,
+                youtube_id: 'WT-gS-8p7KA'
+            },
+            {
+                Id: 'asdsfsAsafasWWWWWWWWWWWxxxx10',
+                title: "Định nghĩa hàm Python",
+                description: "Định nghĩa hàm trong python",
+                time: 552,
+                youtube_id: 'JwO_25S_eWE'
+            },
+            {
+                Id: 'asdsfsAsafasWWWWWWWWWWWxxxx11',
+                title: "Biểu đồ những gì xảy ra khi hàm được gọi",
+                description: "Hiểu được phạm vi biến và hàm được gọi",
+                time: 552,
+                youtube_id: '6qCQB8E5bkI'
+            },
+            {
+                Id: 'asdsfsAsafasWWWWWWWWWWWxxxx12',
+                title: "Hàm đệ quy",
+                description: "Tìm hiểu về đệ quy",
+                time: 552,
+                youtube_id: 'o920mj0NbhE'
+            },
+            {
+                Id: 'asdsfsAsafasWWWWWWWWWWWxxxx13',
+                title: "So sánh hàm lặp và đệ quy",
+                description: "Tìm hiểu về đệ quy",
+                time: 552,
+                youtube_id: 'kx6DfrYfWnQ'
+            },
+            {
+                Id: 'asdsfsAsafasWWWWWWWWWWWxxxx14',
+                title: "Viết hàm Fibonacci",
+                description: "Giới thiệu dãy fibonacci",
+                time: 552,
+                youtube_id: 'Bdbc1ZC-vhw'
+            },
+            {
+                Id: 'asdsfsAsafasWWWWWWWWWWWxxxx15',
+                title: "Hàm Fibonacci sử dụng vòng lặp",
+                description: "Một cách khác để viết hàm Fibonacci",
+                time: 552,
+                youtube_id: '94O_3QCvfqI'
+            },
+        ];
         $scope.lang =
         {
             name: 'Python',
@@ -803,6 +798,54 @@ angular.module("easylearncode.learn").run(function () {
             lang: 'PYTHON',
             source: "'''\n# Read input from stdin and provide input before running code\n\nname = raw_input('What is your name?\\n')\nprint 'Hi, %s.' % name\n'''\nprint 'Hello World!'\n"
         };
+
+        var codes = [
+            {
+                time: 100,
+                code: "print 3+7",
+                description: "mo ta"
+            },
+            {
+                time: 110,
+                code: "print(3+7)"
+            },
+            {
+                time: 126,
+                code: "print(3+7)\nprint(2-1)"
+            },
+            {
+                time: 138,
+                code: 'print(3+7)\nprint(2-1)\nprint("this is a chunk of text")'
+            },
+            {
+                time: 244,
+                code: 'print(type(3+7))\nprint(2-1)\nprint("this is a chunk of text")'
+            },
+            {
+                time: 260,
+                code: 'print(type(3+7))\nprint(2-1)\nprint(type("this is a chunk of text"))'
+            },
+            {
+                time: 340,
+                code: 'a = 3 + 5'
+            },
+            {
+                time: 353,
+                code: 'a = 3 + 5\na = a * a - a - 1'
+            },
+            {
+                time: 363,
+                code: 'a = 3 + 5\na = a * a - a - 1\nc = a * b'
+            },
+            {
+                time: 385,
+                code: 'a = 3 + 5\na = a * a - a - 1\nc = a * b\nprint(c)'
+            },
+            {
+                time: 486,
+                code: 'a = -6\na = a * a - a - 1\nc = a * b\nprint(c)'
+            }
+        ];
 
         $scope.inputCallback = function (callback) {
             $scope.jqconsole.Input(function (result) {
@@ -817,7 +860,7 @@ angular.module("easylearncode.learn").run(function () {
 
         $scope.outputCallback = function (output, cls) {
             if (output) {
-                $scope.kq = '>> ' + output;
+                $scope.kq = '>>> ' + output;
                 console.log(output);
             }
         };
@@ -887,10 +930,10 @@ angular.module("easylearncode.learn").run(function () {
         $scope.onUpdateTime = function (currentTime, totalTime) {
             $scope.currentTime = currentTime;
             $scope.totalTime = totalTime;
-            angular.forEach($scope.lecture.code_keys, function (code) {
-                if (currentTime - code.time < 3 && currentTime - code.time > 0) {
+            angular.forEach(codes, function (code) {
+                if (code.time < currentTime) {
                     if ($scope.state == 'play')
-                        $scope.code = code.content;
+                        $scope.code = code.code;
                 }
             });
         };
@@ -938,6 +981,7 @@ angular.module("easylearncode.learn").run(function () {
             }
             $scope.vgScope = $scope.$new(false);
             $('#video').html($compile("<videogular id=\"khung-video\"\r\n                                    vg-player-ready=\"onPlayerReady\" vg-complete=\"onCompleteVideo\" vg-update-time=\"onUpdateTime\" vg-update-size=\"onUpdateSize\" vg-update-volume=\"onUpdateVolume\" vg-update-state=\"onUpdateState\"\r\n                                    vg-width=\"config.width\" vg-height=\"config.height\" vg-theme=\"config.theme.url\" vg-autoplay=\"config.autoPlay\" vg-stretch=\"config.stretch.value\" vg-responsive=\"config.responsive\">\r\n<video preload='metadata' id=\"video_content\">\r\n<source type=\"video/youtube\" src=\"" + $scope.youtubeUrl + "\"  /></video>\r\n                                    <vg-youtube></vg-youtube>\r\n                                    <vg-quiz vg-data='config.plugins.quiz.data' vg-quiz-submit=\"onQuizSubmit\" vg-quiz-skip=\"onQuizSkip\" vg-quiz-continue=\"onQuizContinue\" vg-quiz-show-explanation=\"onQuizShowExplanation\"></vg-quiz>\r\n                                    <vg-poster-image vg-url='config.plugins.poster.url' vg-stretch=\"config.stretch.value\"></vg-poster-image>\r\n                                    <vg-buffering></vg-buffering>\r\n                                    <vg-overlay-play vg-play-icon=\"config.theme.playIcon\"></vg-overlay-play>\r\n\r\n                                    <vg-controls vg-autohide=\"config.autoHide\" vg-autohide-time=\"config.autoHideTime\" style=\"height: 50px;\">\r\n                                        <vg-play-pause-button vg-play-icon=\"config.theme.playIcon\" vg-pause-icon=\"config.theme.pauseIcon\"></vg-play-pause-button>\r\n                                        <vg-timeDisplay>{{ currentTime }}</vg-timeDisplay>\r\n                                        <vg-scrubBar>\r\n                                            <vg-scrubbarcurrenttime></vg-scrubbarcurrenttime>\r\n                                        </vg-scrubBar>\r\n                                        <vg-timeDisplay>{{ totalTime }}</vg-timeDisplay>\r\n                                        <vg-volume>\r\n                                            <vg-mutebutton\r\n                                                vg-volume-level-3-icon=\"config.theme.volumeLevel3Icon\"\r\n                                                vg-volume-level-2-icon=\"config.theme.volumeLevel2Icon\"\r\n                                                vg-volume-level-1-icon=\"config.theme.volumeLevel1Icon\"\r\n                                                vg-volume-level-0-icon=\"config.theme.volumeLevel0Icon\"\r\n                                                vg-mute-icon=\"config.theme.muteIcon\">\r\n                                            </vg-mutebutton>\r\n                                            <vg-volumebar></vg-volumebar>\r\n                                        </vg-volume>\r\n                                        <vg-fullscreenButton vg-enter-full-screen-icon=\"config.theme.enterFullScreenIcon\" vg-exit-full-screen-icon=\"config.theme.exitFullScreenIcon\"></vg-fullscreenButton>\r\n                                    </vg-controls>\r\n                                </videogular>")($scope.vgScope));
+            $("#gplus-cm").html("Loading G+ Comments");
         }
 
         $scope.config = {
@@ -1005,9 +1049,21 @@ angular.module("easylearncode.learn").run(function () {
             $window.open($scope.youtubeUrl + '#t=' + $scope.currentTime);
             $scope.API.pause();
         }
+        $scope.lecture = _.where($scope.lectures, {Id: $location.search()['lecture_id']})[0];
+        $scope.loadLecture();
         $scope.$on('$locationChangeSuccess', function () {
             $scope.current_url = (document.location.href);
+            gapi.comments.render('gplus-cm', {
+                href: $scope.current_url,
+                width: '700',
+                first_party_property: 'BLOGGER',
+                view_type: 'FILTERED_POSTMOD'
+            });
         });
+
+
+        $('#gplus-cm').html('<div class="g-comments" data-width="700" data-href="' + location.toString() + '" data-first_party_property="BLOGGER" data-view_type="FILTERED_POSTMOD">Loading Google+ Comments ...</div>');
+
     }]).directive('hoverClass', function () {
         return {
             restrict: 'A',
@@ -1133,23 +1189,67 @@ angular.module("easylearncode.user_profile")
         };
     } ]);
 
-angular.module("easylearncode.info").controller('InfoCtrl', ['$scope', '$http', '$location', 'api', '$window', function ($scope, $http, $location, api, $window) {
+angular.module("easylearncode.info").controller('InfoCtrl', ['$scope', '$http', '$location', 'api', function ($scope, $http, $location, api) {
     var course_id = $location.search()['course_id'];
-    $scope.course = api.Model.get({type: 'courses', id: course_id, recurse: true});
+//    api.Model.get({type: 'courses', id: course_id}, function(courses){
+//        console.log(courses);
+//    });
+    $scope.course_name = "Python";
+    $scope.course_description = "Khóa học ngôn ngữ lập trình pyhton";
+    $scope.sections = [
+        {
+            name: 'Kiến thức cơ bản về python',
+            units: [
+                {time: '15:00', description: 'Giới thiệu về chương trình, loại dữ liệu và giá trị.', src: "/course/learn/viewer#!?lecture_id=asdsfsAsafasWWWWWWWWWWWxxxx0"},
+                {time: '15:00', description: 'Số nhị phân.', src: "/course/learn/viewer#!?lecture_id=asdsfsAsafasWWWWWWWWWWWxxxx1"},
+                {time: '15:00', description: 'List trong Python', src: "/course/learn/viewer#!?lecture_id=asdsfsAsafasWWWWWWWWWWWxxxx2"},
+                {time: '15:00', description: 'Vòng lặp for trong python', src: "/course/learn/viewer#!?lecture_id=3"},
+                {time: '15:00', description: 'Vòng lặp while trong python', src: "/course/learn/viewer#!?lecture_id=4"},
+                {time: '15:00', description: 'Chuỗi trong python', src: "/course/learn/viewer#!?lecture_id=5"},
+                {time: '15:00', description: 'Viết một chương trình đơn giản với python', src: "/course/learn/viewer#!?lecture_id=6"},
+                {time: '15:00', description: 'Chạy từng bước chương trình', src: "/course/learn/viewer#!?lecture_id=7"},
+                {time: '15:00', description: 'Lưu đồ hoạt động của chương trình', src: "/course/learn/viewer#!?lecture_id=8"},
+                {time: '15:00', description: 'Python 3 không tương thích với python 2', src: "/course/learn/viewer#!?lecture_id=9"},
+                {time: '15:00', description: 'Định nghĩa hàm Python', src: "/course/learn/viewer#!?lecture_id=10"}
+            ]
+        },
+        {
+            name: 'Python Nâng cao',
+            units: [
+                {time: '10:00', description: 'Giới thiệu về chương trình, loại dữ liệu và giá trị.', src: "/course/learn/viewer#!?lecture_id='+lecture_key"},
+                {time: '10:00', description: 'Số nhị phân.', src: "/course/learn/viewer#!?lecture_id='+lecture_key"},
+                {time: '10:00', description: 'List trong Python', src: "/course/learn/viewer#!?lecture_id='+lecture_key"},
+            ]
+        }
+    ];
+    /* $http({method: 'GET', url: '/api/Course/'+course_id}).
+     success(function(data, status, headers, config) {
+     $scope.course_name = data.name;
+     $scope.course_description = data.description;
+     $scope.sections = new Array();
+     angular.forEach(data.lesson_keys,function(lesson_key){
+     $http.get('/api/Lesson/'+lesson_key).success(function(data){
+     data.units = new Array();
+     var d = data;
+     angular.forEach(data.lecture_keys, function(lecture_key){
+     $http.get('/api/Lecture/'+lecture_key).success(function(data){
+     data.src='/course/learn/viewer#!?lecture_id='+lecture_key;
+     d.units.push(data);
+     })
+     })
+     $scope.sections.push(data);
+     })
+     })
+     }).
+     error(function(data, status, headers, config) {
+     // called asynchronously if an error occurs
+     // or server returns response with an error status.
+     });*/
+
     $scope.toggle = function (section) {
         section.toggle = !section.toggle;
         section.status = section.toggle ? "Ẩn" : "Hiện";
     }
-    $window.onscroll = function(){
-         var e = $(window).scrollTop(), n = $("#footer").offset().top - 130, r = $("#current-curriculum"), i = r.offset().top - 100, o = {position: r[0].style.position,top: r[0].style.top};
-                if (e + r.height() >= n) {
-                    if (r.css("position") === "fixed") {
-                        var s = n - r.height() + 30;
-                        r.css({position: "absolute",top: s > 0 ? s : 0})
-                    }
-                } else
-                    e >= i ? r.css({position: "fixed",top: 100 + "px"}) : e < i && r.css(o)
-     };
 }]);
 angular.module("easylearncode.courses", ["easylearncode.core"]);
 angular.module("easylearncode.course_paractice_detail", ["ui.bootstrap", "easylearncode.core", "ngAnimate"]).controller('InfoCtrl', ['$scope', '$http', '$location', function ($scope, $http, $location) {

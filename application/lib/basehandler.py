@@ -316,6 +316,9 @@ class BaseHandler(webapp2.RequestHandler):
             'enable_federated_login': self.app.config.get('enable_federated_login'),
             'base_layout': self.get_base_layout
         })
+        if self.user_id:
+            _user = self.user_key.get()
+            kwargs.update({'fullname': ('%s %s' % (_user.name, _user.last_name))})
         kwargs.update(self.auth_config)
         if hasattr(self, 'form'):
             kwargs['form'] = self.form
