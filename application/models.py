@@ -83,6 +83,13 @@ class User(User):
                 result['unused'].append(v)
         return result
 
+    def get_badges(self):
+        badges = UserBadge.get_by_user(self.key)
+        result = []
+        for badge in badges:
+            result.append(badge.badge.get().to_dict().update({'earnday': badge.created}))
+        return result
+
 
 class LogVisit(ndb.Model):
     user = ndb.KeyProperty(kind=User)
@@ -169,21 +176,25 @@ class ExerciseCheckpoint(ndb.Model):
     test_functions = ndb.StringProperty()
     index = ndb.FloatProperty()
     created = ndb.DateTimeProperty(auto_now_add=True)
+    files = ndb.KeyProperty(kind="File", repeated=True)
 
 
 class ExerciseProject(ndb.Model):
     title = ndb.StringProperty()
-    checkpoints = ndb.StructuredProperty(ExerciseCheckpoint)
+    checkpoints = ndb.KeyProperty(kind="ExerciseCheckpoint", repeated=True)
     index = ndb.FloatProperty()
     created = ndb.DateTimeProperty(auto_now_add=True)
+    language = ndb.StringProperty()
 
 
 class Exercise(ndb.Model):
-    author = ndb.UserProperty()
+    author = ndb.KeyProperty(kind="User")
     title = ndb.StringProperty()
     description = ndb.StringProperty()
     index = ndb.FloatProperty()
     created = ndb.DateTimeProperty(auto_now_add=True)
+
+LEVELS = ('Beginning', 'Intermediate', 'Advanced', 'Other')
 
 
 class Course(ndb.Model):
@@ -191,10 +202,15 @@ class Course(ndb.Model):
     updated = ndb.DateTimeProperty(auto_now=True)
     title = ndb.StringProperty()
     img = ndb.BlobKeyProperty()
-    description = ndb.StringProperty(indexed=False)
     exercise_keys = ndb.KeyProperty(Exercise, repeated=True)
     lesson_keys = ndb.KeyProperty('Lesson', repeated=True)
     user_keys = ndb.KeyProperty(User, repeated=True)
+    level = ndb.StringProperty(choices=LEVELS)
+    short_desc = ndb.StringProperty()
+    long_desc = ndb.TextProperty()
+    tag = ndb.StringProperty(repeated=True)
+    is_available = ndb.BooleanProperty()
+    is_new = ndb.BooleanProperty()
 
 
 class WeeklyQuizTest(ndb.Model):
@@ -346,8 +362,6 @@ class Lecture(ndb.Model):
     test_keys = ndb.KeyProperty('Test', repeated=True)
     code_keys = ndb.KeyProperty('Code', repeated=True)
     level = ndb.FloatProperty()
-    current_users = ndb.KeyProperty(User, repeated=True)
-    passed_users = ndb.KeyProperty(User, repeated=True)
 
 
 class Code(ndb.Model):
@@ -394,8 +408,38 @@ class UserBadge(ndb.Model):
     badge = ndb.KeyProperty(kind="Badge")
     earning_day = ndb.DateProperty(auto_now_add=True)
 
+    @classmethod
+    def get_by_user(cls, user):
+        return cls.query(cls.user == user).fetch()
+
 
 class File(ndb.Model):
     created = ndb.DateTimeProperty(auto_now_add=True)
     filename = ndb.StringProperty()
     content = ndb.StringProperty(indexed=False)
+
+
+class LessonUser(ndb.Model):
+    user = ndb.KeyProperty(kind="User")
+    lesson = ndb.KeyProperty(kind="Lesson")
+    join_date = ndb.DateProperty(auto_now_add=True)
+    status = ndb.StringProperty(choices=('passed', 'learning'))
+    current_lecture = ndb.KeyProperty(kind="Lecture")
+    passed_lecture = ndb.KeyProperty(kind="Lecture", repeated=True)
+
+    @classmethod
+    def get_by_user(cls, user):
+        return cls.query(cls.user == user).fetch()
+
+
+class ExerciseUser(ndb.Model):
+    user = ndb.KeyProperty(kind="User")
+    exercise = ndb.KeyProperty(kind="Exercise")
+    join_date = ndb.DateProperty(auto_now_add=True)
+    status = ndb.StringProperty(choices=('passed', 'working'))
+    current_checkpoint = ndb.KeyProperty(kind="ExerciseCheckpoint")
+    passed_checkpoint = ndb.KeyProperty(kind="ExerciseCheckpoint",repeated=True)
+
+    @classmethod
+    def get_by_user(cls, user):
+        return cls.query(cls.user == user).fetch()
