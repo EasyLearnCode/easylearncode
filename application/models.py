@@ -216,94 +216,10 @@ class WeeklyQuizLevel(ndb.Model):
 
         return markdown2.markdown(self.description)
 
-    def run_test_case(self, **kwargs):
 
-        import urllib
-        import logging
-        import json
-        from google.appengine.api import urlfetch
-        from application.config import config
-
-        test_result = []
-
-        def handle_result(rpc, **kwargs):
-            result = rpc.get_result()
-            if result and result.content:
-                compile_result = json.loads(result.content)
-                testcase = {'time_used': float(compile_result['run_status']['time_used']) or None,
-                            'memory_used': int(compile_result['run_status']['memory_used']) or None}
-                if compile_result['run_status'] and compile_result['run_status']['output'].strip() == kwargs[
-                    'test_output']:
-                    testcase['result'] = True
-                else:
-                    testcase['result'] = False
-                test_result.append(testcase)
-                if len(test_result) == len(self.test_case):
-                    avg_time = sum(
-                        test['time_used'] or self.limit_time for test in test_result) / len(
-                        self.test_case)
-                    avg_memory = sum(
-                        test['memory_used'] or self.limit_memory for test in test_result) / len(
-                        self.test_case)
-                    result = True
-                    for test in test_result:
-                        result = result and test['result']
-                    score = self.score
-                    if avg_memory > self.limit_memory or avg_time > self.limit_time or result == False:
-                        score = 0
-                    else:
-                        score -= (avg_time + avg_memory / 10)
-                    result_tmp = WeeklyQuizResult.query(WeeklyQuizResult.user_key == kwargs['user_key'],
-                                                        WeeklyQuizResult.level_key == self.key).get()
-                    print result_tmp
-                    if result_tmp:
-                        if result_tmp.score < score:
-                            result_tmp.score = score
-                            result_tmp.result = result
-                            result_tmp.time_used = avg_time
-                            result_tmp.memory_used = avg_memory
-                            result_tmp.language = kwargs['lang']
-                            result_tmp.code = kwargs['code']
-                            result_tmp.put()
-                    else:
-                        quiz_result = WeeklyQuizResult(user_key=kwargs['user_key'],
-                                                       level_key=self.key,
-                                                       result=result,
-                                                       time_used=avg_time,
-                                                       memory_used=avg_memory,
-                                                       language=kwargs['lang'],
-                                                       code=kwargs['code'],
-                                                       test_key=WeeklyQuiz.get_this_week_contest().key,
-                                                       score=score)
-                        quiz_result.put()
-                    logging.debug("Finshed run test case")
-
-        def create_callback(rpc, **kwargs):
-            return lambda: handle_result(rpc, **kwargs)
-
-        rpcs = []
-        data = {
-            'source': kwargs['code'],
-            'lang': kwargs['lang']
-        }
-        data.update({'client_secret': config.get("HACKEREARTH_CLIENT_SECRET")})
-        data.update({'async': 0})
-
-        for test in self.test_case:
-            rpc = urlfetch.create_rpc()
-            rpc.callback = create_callback(rpc, test_output=test.output, lang=kwargs['lang'], code=kwargs['code'],
-                                           user_key=kwargs['user_key'])
-            data.update({'input': test.input})
-            form_data = urllib.urlencode(data)
-            urlfetch.make_fetch_call(rpc, url=config.get("HACKEREARTH_RUN_URL"), payload=form_data,
-                                     method=urlfetch.POST)
-            rpcs.append(rpc)
-
-        # ...
-
-        # Finish all RPCs, and let callbacks process the results.
-        for rpc in rpcs:
-            rpc.wait()
+class RankWeeklyQuiz(ndb.Model):
+    rank = ndb.FloatProperty()
+    user_key = ndb.KeyProperty(User)
 
 
 class WeeklyQuiz(ndb.Model):
@@ -311,7 +227,15 @@ class WeeklyQuiz(ndb.Model):
     start_date = ndb.DateProperty()
     publish_date = ndb.DateTimeProperty(auto_now_add=True)
     level_keys = ndb.KeyProperty(WeeklyQuizLevel, repeated=True)
+    rank = ndb.StructuredProperty(RankWeeklyQuiz, repeated=True)
 
+
+    def get_rank_user(self, user_key):
+        rank = 0
+        for i in self.rank:
+            if i.user_key == user_key:
+                rank = i.rank
+        return rank
 
     @classmethod
     def get_this_week_contest(cls):
@@ -335,7 +259,6 @@ class WeeklyQuiz(ndb.Model):
                 return filter(lambda x: x.level == result.level_key.get().level,
                               [level_key.get() for level_key in self.level_keys])
         else:
-            print [level_key.get() for level_key in self.level_keys]
             return filter(lambda x: int(x.level or 1) == 1, [level_key.get() for level_key in self.level_keys])
 
     def get_players(self):
@@ -350,6 +273,7 @@ class WeeklyQuiz(ndb.Model):
             player.pop('test_key', None)
             player.pop('user_key', None)
             player.pop('level_key', None)
+            player.pop('rank', None)
             player.update({'username': username})
             top.append(player)
         top_player = top
@@ -386,24 +310,19 @@ class WeeklyQuizResult(ndb.Model):
     score = ndb.FloatProperty()
 
     @classmethod
-    def get_top_player(cls, test_key):
+    def get_top_player(cls, test_key, num):
         from itertools import groupby
 
         results = cls.query(cls.test_key == test_key).fetch()
-        score = []
-        for key, result in groupby(results, lambda x: x.user_key):
-            score.append({'user_key': key, 'username': key.get().email, 'score': sum([x.score for x in result])})
-        return sorted(score, key=lambda k: k['score'], reverse=True)[:5]
-
-    @classmethod
-    def get_result_last_week(cls, user_key):
-        from itertools import groupby
-
-        results = cls.query(cls.user_key == user_key).fetch()
-        score = []
-        for key, result in groupby(results, lambda x: x.test_key):
-            score.append({'test_key': key, 'week': key.get().week, 'score': sum([x.score for x in result])})
-        return sorted(score, key=lambda k: k['score'], reverse=True)[:5]
+        results2 = dict(((x.user_key, x.level_key), x) for x in sorted(results, key=lambda x: x.score)).values()
+        scores = []
+        for key, result in groupby(results2, lambda x: x.user_key):
+            scores.append({'user_key': key.urlsafe(), 'username': key.get().email, 'test_key': test_key.urlsafe(),
+                           'score': int(sum([x.score for x in result]))})
+        if num == 5:
+            return sorted(scores, key=lambda k: k['score'], reverse=True)[:5]
+        else:
+            return sorted(scores, key=lambda k: k['score'], reverse=True)
 
 
 class Lesson(ndb.Model):

@@ -68,8 +68,8 @@
         }
     ])
 })();
-angular.module("easylearncode.core").run(function(){
-        var indexOfValue = _.indexOf;
+angular.module("easylearncode.core").run(function () {
+    var indexOfValue = _.indexOf;
 
     // using .mixin allows both wrapped and unwrapped calls:
     // _(array).indexOf(...) and _.indexOf(array, ...)
@@ -90,9 +90,9 @@ angular.module("easylearncode.core").run(function(){
     });
 })
 angular.module("easylearncode.core").service("api", ["$resource", function ($resource) {
-        this.Model = $resource('/api/:type/:id');
+    this.Model = $resource('/api/:type/:id');
 
-    }])
+}])
 angular.module("easylearncode.core").filter('to_trusted', ['$sce', function ($sce) {
     return function (text) {
         return $sce.trustAsHtml(text);
@@ -249,12 +249,12 @@ angular.module("services.utility").factory("libraryLoader", ["$q", "$rootScope",
                         cache: !0,
                         url: f
                     }).success(function () {
-                        j.resolve();
-                        $rootScope.$apply()
-                    }).error(function () {
-                        j.reject();
-                        $rootScope.$apply()
-                    }), d = j.promise);
+                            j.resolve();
+                            $rootScope.$apply()
+                        }).error(function () {
+                            j.reject();
+                            $rootScope.$apply()
+                        }), d = j.promise);
                     return d
                 }))
             }
@@ -434,7 +434,8 @@ angular.module("services.utility").factory("md5", [ function () {
     };
     return md5;
 } ]);
-angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "$http", "csrf_token", function ($scope, $http, csrf_token) {
+angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "api", "$http", "csrf_token", function ($scope, api, $http, csrf_token) {
+
     var curr = new Date(); // get current date
     curr.setHours(0, 0, 0, 0);
     var first = curr.getDate() - (curr.getDay() + 6) % 7; // First day is the day of the month - the day of the week
@@ -466,7 +467,37 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "$h
 
         }
     ]
+    $scope.view_code = function (ID) {
+        api.Model.get({type: 'quizresults', id: ID}, function (data) {
+            var code = data;
+            if (code.language == 'PYTHON') {
+                $scope.langs = [
+                    {
+                        name: 'Python',
+                        mode: 'python',
+                        lang: 'PYTHON',
+                        active: true,
+                        source: code.code
+                    },
+                    {
+                        name: 'Java',
+                        mode: 'java',
+                        lang: 'JAVA',
+                        active: false,
+                        source: ""
+                    },
+                    {
+                        name: 'C++',
+                        mode: 'c_cpp',
+                        lang: 'CPP',
+                        active: false,
+                        source: ""
 
+                    }
+                ];
+            }
+        });
+    }
     $http.get('/api/contest/get_thisweek_contest/current').success(function (data) {
         if (data.status == 1) {
             //$scope.error = "Chưa có đề thi";
@@ -477,6 +508,10 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "$h
         }
         else {
             $scope.thisweek_contest = data;
+            $http.get('/api/quizresults?filter=test_key==' + data.test_key + '&& user_key==' + data.user_key + '&recurse=true').success(function (data) {
+                $scope.results = data;
+            });
+            console.log($scope.results)
         }
 
     });
@@ -521,20 +556,20 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "$h
             if (lang.active) {
                 $http.post('/api/contest/submit', {"key": $scope.thisweek_contest.this_quiz_level.quiz_level_key, "source": lang.source,
                     "_csrf_token": csrf_token, "lang": lang.lang}).success(function (data) {
-                    if (data.status == 1) {
-                        window.location = "/contest/current"
-                    }
+                        if (data.status == 1) {
+                            window.location = "/contest"
+                        }
 
-                });
+                    });
             }
         });
     }
     $scope.compiling = false;
     $scope.compile_result = [];
-    $scope.aceLoaded = function(_editor){
+    $scope.aceLoaded = function (_editor) {
         _editor.setOptions({
-		enableBasicAutocompletion: true
-	});
+            enableBasicAutocompletion: true
+        });
     }
     $scope.runCode = function () {
         angular.forEach($scope.langs, function (lang) {
@@ -567,14 +602,14 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "$h
                             $scope.compiling = false;
                         }
                     }).error(function (data, status, headers, config) {
-                        $scope.compile_result.push(
-                            {
-                                'result': false,
-                                'time': 0,
-                                'memory': 0,
-                                'error': 'Disconnect from server...Please try again'
-                            });
-                    });
+                            $scope.compile_result.push(
+                                {
+                                    'result': false,
+                                    'time': 0,
+                                    'memory': 0,
+                                    'error': 'Disconnect from server...Please try again'
+                                });
+                        });
                 });
 
 
@@ -741,7 +776,7 @@ angular.module("easylearncode.learn").run(function () {
                 time: 552,
                 youtube_id: 'kx6DfrYfWnQ'
             },
-             {
+            {
                 Id: 'asdsfsAsafasWWWWWWWWWWWxxxx14',
                 title: "Viết hàm Fibonacci",
                 description: "Giới thiệu dãy fibonacci",
@@ -1027,51 +1062,94 @@ angular.module("easylearncode.learn").run(function () {
         });
 
 
-        $('#gplus-cm').html('<div class="g-comments" data-width="700" data-href="'+location.toString()+'" data-first_party_property="BLOGGER" data-view_type="FILTERED_POSTMOD">Loading Google+ Comments ...</div>');
+        $('#gplus-cm').html('<div class="g-comments" data-width="700" data-href="' + location.toString() + '" data-first_party_property="BLOGGER" data-view_type="FILTERED_POSTMOD">Loading Google+ Comments ...</div>');
 
     }]).directive('hoverClass', function () {
-    return {
-        restrict: 'A',
-        scope: {
-            addClass: '@',
-            removeClass: '@'
-        },
-        link: function (scope, element) {
-            element.on('mouseenter', function () {
-                element.addClass(scope.addClass);
-                element.removeClass(scope.removeClass);
-            });
-            element.on('mouseleave', function () {
-                element.addClass(scope.removeClass);
-                element.removeClass(scope.addClass);
-            });
-        }
-    };
-});
+        return {
+            restrict: 'A',
+            scope: {
+                addClass: '@',
+                removeClass: '@'
+            },
+            link: function (scope, element) {
+                element.on('mouseenter', function () {
+                    element.addClass(scope.addClass);
+                    element.removeClass(scope.removeClass);
+                });
+                element.on('mouseleave', function () {
+                    element.addClass(scope.removeClass);
+                    element.removeClass(scope.addClass);
+                });
+            }
+        };
+    });
 
-angular.module("easylearncode.contest_result").controller('ContestResultCtrl', ['$scope', '$http', 'csrf_token', '$location', function ($scope, $http, csrf_token, $location) {
+angular.module("easylearncode.contest_result").controller('ContestResultCtrl', ['$scope', 'api', '$http', 'csrf_token', '$location', function ($scope, api, $http, csrf_token, $location) {
+    $scope.weeks = api.Model.query({type: 'quizs', page_size: 5, order: '-week', recurse: true});
+
+    $scope.months = [
+        {value: 1},
+        {value: 2},
+        {value: 3},
+        {value: 4},
+        {value: 5},
+        {value: 6},
+        {value: 7},
+        {value: 8},
+        {value: 9},
+        {value: 10},
+        {value: 11},
+        {value: 12}
+    ];
+    $scope.month = $scope.months[0];
+    yearcurrent = (new Date()).getFullYear();
+    $scope.years = [
+        {value: yearcurrent},
+        {value: yearcurrent - 1},
+        {value: yearcurrent - 2},
+        {value: yearcurrent - 3},
+        {value: yearcurrent - 4},
+        {value: yearcurrent - 5}
+    ]
+    $scope.year = $scope.years[0];
+    $scope.get_weeks = function () {
+        $scope.weeks = new Array();
+        var date_start = (new Date($scope.year.value, $scope.month.value - 1, 1)).toISOString();
+        var date_finish = (new Date($scope.year.value, $scope.month.value, 0)).toISOString();
+        $http.get('/api/quizs?recurse=true&filter=start_date>=' + date_start + '&filter=start_date<=' + date_finish).success(function (data) {
+            $scope.weeks = data;
+        });
+    }
     $http.get('/api/contest/week_result/current').success(function (data) {
         if (data.status == 1) {
         }
         else {
-            $scope.thisweek_contest = data;
-            $scope.currentWeek = $scope.thisweek_contest.week;
+            $scope.results = data;
+            $scope.currentWeek = data[0].test_key;
         }
-
     });
-
     $scope.getThisResult = function (key) {
-        $scope.currentWeek = true;
-        $scope.thisweek_contest = new Array();
+        //scope.thisweek_contest = api.Model.get({type: 'quizs', id: key, recurse: true});
+        /*$http.get('/api/quizresults?filter=test_key==' + key + '&order=-score&recurse=true').success(function (data) {
+         $scope.results = data;
+         $scope.currentWeek = key;
+         console.log($scope.currentWeek);
+         });*/
         $http.get('/api/contest/week_result/' + key).success(function (data) {
             if (data.status == 1) {
             }
             else {
-                $scope.thisweek_contest = data;
-                $scope.currentWeek = $scope.thisweek_contest.week;
+                $scope.results = data;
+                $scope.currentWeek = key;
             }
 
         });
+    }
+    $scope.get_detail = function (key) {
+        $http.get('/api/quizresults?filter=test_key==' + $scope.currentWeek + '&filter=user_key==' + key +
+                '&order=-score&recurse=true').success(function (data) {
+                $scope.details = data;
+            });
     }
 }]);
 angular.module("easylearncode.user_profile")
@@ -1208,41 +1286,41 @@ angular.module("easylearncode.course_paractice_detail", ["ui.bootstrap", "easyle
             ]
         },
         {
-            name:'Tính tiền siêu thị',
+            name: 'Tính tiền siêu thị',
             units: [
                 {time: '05:00', description: 'Làm quen với cấu trúc danh sách và từ điến', src: "/course/practice/viewer#!?exercise_id=cs101"},
                 {time: '05:00', description: 'Ứng dụng tính tiền siêu thị', src: "/course/practice/viewer#!?exercise_id=cs101"},
             ]
         },
         {
-            name:'Trò chơi bắn tàu chiến',
+            name: 'Trò chơi bắn tàu chiến',
             units: [
                 {time: '05:00', description: 'Làm quen với danh sách và hàm', src: "/course/practice/viewer#!?exercise_id=cs101"},
                 {time: '05:00', description: 'Ứng dụng tính tiền siêu thị', src: "/course/practice/viewer#!?exercise_id=cs101"},
             ]
         },
         {
-            name:'Bài tập vòng lặp',
+            name: 'Bài tập vòng lặp',
             units: [
                 {time: '05:00', description: 'Làm quen với vòng lặp', src: "/course/practice/viewer#!?exercise_id=cs101"},
                 {time: '05:00', description: 'Bài tập vòng lặp', src: "/course/practice/viewer#!?exercise_id=cs101"},
             ]
         },
         {
-            name:'Bài kiểm tra tổng hợp',
+            name: 'Bài kiểm tra tổng hợp',
             units: [
                 {time: '05:00', description: 'Bài kiểm tra tổng hợp', src: "/course/practice/viewer#!?exercise_id=cs101"}
             ]
         },
         {
-            name:'Một vài chủ đề nâng cao trong Python',
+            name: 'Một vài chủ đề nâng cao trong Python',
             units: [
                 {time: '05:00', description: 'Một vài chủ đề nâng cao trong Python', src: "/course/practice/viewer#!?exercise_id=cs101"},
                 {time: '05:00', description: 'Làm quen các thao tác trên bit', src: "/course/practice/viewer#!?exercise_id=cs101"},
             ]
         },
         {
-            name:'Bài tập class',
+            name: 'Bài tập class',
             units: [
                 {time: '05:00', description: 'Làm quen với class', src: "/course/practice/viewer#!?exercise_id=cs101"},
                 {time: '05:00', description: 'Bài tập class', src: "/course/practice/viewer#!?exercise_id=cs101"},
@@ -1348,7 +1426,7 @@ angular.module("easylearncode.course_paractice_viewer", ["ui.bootstrap", "ui.ace
                                 type: 'info',
                                 msg: '<i class="fa fa-sun-o"></i> <strong>Tuyệt vời ông mặt trời!!!</strong><br>Tiếp tục nào<a class="btn btn-primary pull-right" onclick="nextCheckpoint()">Tiếp tục</a><div class="clearfix"></div>'
                             }
-                            $timeout($compile($('.console-alert span').contents())($scope),10);
+                            $timeout($compile($('.console-alert span').contents())($scope), 10);
                         })
                     } else {
                         $scope.$apply(function () {
@@ -1418,18 +1496,18 @@ angular.module("easylearncode.course_paractice_viewer", ["ui.bootstrap", "ui.ace
                 $scope.jsreplReady = true;
             })
         });
-        $timeout(function(){
-          $window.nextCheckpoint = function(){
-            var _index = _.indexOf($scope.exercise.projects[0].checkpoints, function(obj){
-                return obj._id == $scope.current_checkpoint._id;
-            })
-            if(_index >= 0 && _index < $scope.exercise.projects[0].checkpoints.length - 1){
-                $scope.changeCurrentCheckpoint($scope.exercise.projects[0].checkpoints[_index+1]);
-                $scope.showAlert = false;
-                $scope.$apply();
-            }
+        $timeout(function () {
+            $window.nextCheckpoint = function () {
+                var _index = _.indexOf($scope.exercise.projects[0].checkpoints, function (obj) {
+                    return obj._id == $scope.current_checkpoint._id;
+                })
+                if (_index >= 0 && _index < $scope.exercise.projects[0].checkpoints.length - 1) {
+                    $scope.changeCurrentCheckpoint($scope.exercise.projects[0].checkpoints[_index + 1]);
+                    $scope.showAlert = false;
+                    $scope.$apply();
+                }
 
-        }
+            }
         })
     }])
     .directive('hoverClass', function () {
@@ -1480,7 +1558,7 @@ angular.module("easylearncode.visualization", ["ui.bootstrap", "ui.ace", 'easyle
             },
             {
                 lang: 'python',
-                source:'def Tinhtong(a, b): \r\n\treturn a + b \r\nprint Tinhtong(12, 33)'
+                source: 'def Tinhtong(a, b): \r\n\treturn a + b \r\nprint Tinhtong(12, 33)'
             }
         ];
 
@@ -1560,38 +1638,38 @@ angular.module("easylearncode.visualization", ["ui.bootstrap", "ui.ace", 'easyle
             [
                 { "title": "Phần 1: Kiến thức cơ bản về Python", "id": "LessonId1", "children": [
                     { "title": "Bài 1: Giới thiệu về chương trình, loại dữ liệu và giá trị", "id": "LectureId01", "children": [
-                        {"description": "Lệnh print - Hiển thị một chuỗi, hoặc một biến nào đó là màn hình", "title": "Ví dụ 1.1", "id": "LessonId01", "code": 'print(3+7)\r\nprint(2-1) \r\nprint("this is a chunk of text")', "children":[]},
-                        {"title": "Ví dụ 1.2", "id": "LessonId02", "code": 'a = 3+5\r\nb= a*a-a-1\r\nc = a*b\r\nprint(c)', "children":[]},
-                        {"title": "Ví dụ 1.3", "id": "LessonId03", "code": 'a = -6\r\nb= a*a-a-1\r\nc = a*b\r\nif(a<0):\r\n\tprint(c)\r\nelse:\r\n\tprint(c-a)', "children":[]},
-                        {"title": "Ví dụ 1.4", "id": "LessonId04", "code": 'a = -6\r\nb= a*a-a-1\r\nc = a*b\r\nif(a<0):\r\n\tprint("a<0")\r\n\tprint(c)\r\nelse:\r\n\tprint("a is not less than 0")\r\n\tprint(c-a)\r\n\tprint("We are done with the program")', "children":[]}
+                        {"description": "Lệnh print - Hiển thị một chuỗi, hoặc một biến nào đó là màn hình", "title": "Ví dụ 1.1", "id": "LessonId01", "code": 'print(3+7)\r\nprint(2-1) \r\nprint("this is a chunk of text")', "children": []},
+                        {"title": "Ví dụ 1.2", "id": "LessonId02", "code": 'a = 3+5\r\nb= a*a-a-1\r\nc = a*b\r\nprint(c)', "children": []},
+                        {"title": "Ví dụ 1.3", "id": "LessonId03", "code": 'a = -6\r\nb= a*a-a-1\r\nc = a*b\r\nif(a<0):\r\n\tprint(c)\r\nelse:\r\n\tprint(c-a)', "children": []},
+                        {"title": "Ví dụ 1.4", "id": "LessonId04", "code": 'a = -6\r\nb= a*a-a-1\r\nc = a*b\r\nif(a<0):\r\n\tprint("a<0")\r\n\tprint(c)\r\nelse:\r\n\tprint("a is not less than 0")\r\n\tprint(c-a)\r\n\tprint("We are done with the program")', "children": []}
                     ]},
                     { "title": "Bài 3: List trong Python", "id": "LectureId03", "children": [
-                        {"title": "Ví dụ 3.1", "id": "LessonId05", "code": "a =[1, 2, -7, 9, 11]\r\nprint(a)\r\na[1] = \"Sal's String\"\r\nprint (a)\r\nb=a\r\nprint(b)\r\nc = a[:]\r\nprint (c)\r\nb[0] = 0\r\nprint(b)\r\nprint(a)\r\nprint(c)\r\na.append(\"new elemen\")\r\nprint(a)\r\nprint(b)\r\nprint(c)", "children":[]}
+                        {"title": "Ví dụ 3.1", "id": "LessonId05", "code": "a =[1, 2, -7, 9, 11]\r\nprint(a)\r\na[1] = \"Sal's String\"\r\nprint (a)\r\nb=a\r\nprint(b)\r\nc = a[:]\r\nprint (c)\r\nb[0] = 0\r\nprint(b)\r\nprint(a)\r\nprint(c)\r\na.append(\"new elemen\")\r\nprint(a)\r\nprint(b)\r\nprint(c)", "children": []}
                     ]},
                     { "title": "Bài 4: Vòng lặp for trong python", "id": "LectureId04", "children": [
-                        {"title": "Ví dụ 4.1", "id": "LessonId06", "code": "print range(6)\r\nprint range(7)\r\nprint range(1,7)\r\nprint range(0, 8, 2)\r\nprint range(3, 31, 3)" , "children":[]},
-                        {"title": "Ví dụ 4.2", "id": "LessonId07", "code": "for i in range(5):\n    print i" , "children":[]},
-                        {"title": "Ví dụ 4.3", "id": "LessonId08", "code": "sum = 0\r\nfor i in range(5):\r\n    sum = sum+i\r\n    print sum" , "children":[]}
+                        {"title": "Ví dụ 4.1", "id": "LessonId06", "code": "print range(6)\r\nprint range(7)\r\nprint range(1,7)\r\nprint range(0, 8, 2)\r\nprint range(3, 31, 3)", "children": []},
+                        {"title": "Ví dụ 4.2", "id": "LessonId07", "code": "for i in range(5):\n    print i", "children": []},
+                        {"title": "Ví dụ 4.3", "id": "LessonId08", "code": "sum = 0\r\nfor i in range(5):\r\n    sum = sum+i\r\n    print sum", "children": []}
                     ]},
                     { "title": "Bài 5: Vòng lặp while trong python", "id": "LectureId05", "children": [
-                        {"title": "Ví dụ 5.1", "id": "LessonId09", "code": "#this while loop calculates the sum of 0 throunh 9 (including 9) and places\n#it in the variable \"sum\"\nsum = 0\ni = 0\nwhile i < 10:\n    sum = sum + i\n    print sum\n    i = i +1\n    \n#for i in range(10):\n#    sum = sum + i\n#    print sum"  , "children":[]}
+                        {"title": "Ví dụ 5.1", "id": "LessonId09", "code": "#this while loop calculates the sum of 0 throunh 9 (including 9) and places\n#it in the variable \"sum\"\nsum = 0\ni = 0\nwhile i < 10:\n    sum = sum + i\n    print sum\n    i = i +1\n    \n#for i in range(10):\n#    sum = sum + i\n#    print sum", "children": []}
                     ]},
                     { "title": "Bài 6: Kiểu chuỗi trong python", "id": "LectureId06", "children": [
-                        {"title": "Ví dụ 6.1", "id": "LessonId10", "code": "a = \"My first test string\"\nb = 'Another test string that I have defined'\nc = \"this is Sal's string\"\nd = 'My favorite word is \"asparaus\", what is your?'\nmath_string = \"3+4*2\"\nexpression_string = \"a+' '+b+' tiger'\"\nprint a\nprint b\nprint c\nprint d\nprint math_string\nprint expression_string\n" , "children":[]},
-                        {"title": "Ví dụ 6.2", "id": "LessonId11", "code": "a = \"My first test string\"\nb = 'Another test string that I have defined'\nc = \"this is Sal's string\"\nd = 'My favorite word is \"asparaus\", what is your?'\nmath_string = \"3+4*2\"\nexpression_string = \"a+' '+b+' tiger'\"\nprint a\nprint b\nprint c\nprint d\nprint math_string\nprint expression_string\nprint a +b" , "children":[]},
-                        {"title": "Ví dụ 6.3", "id": "LessonId12", "code": "a = \"My first test string\"\nb = 'Another test string that I have defined'\nc = \"this is Sal's string\"\nd = 'My favorite word is \"asparaus\", what is your?'\nmath_string = \"3+4*2\"\nexpression_string = \"a+' '+b+' tiger'\"\nprint a\nprint b\nprint c\nprint d\nprint math_string\nprint expression_string\nprint math_string.find('*')\nprint math_string.find('3')" , "children":[]},
-                        {"title": "Ví dụ 6.4", "id": "LessonId13", "code": "a = \"My first test string\"\nb = 'Another test string that I have defined'\nc = \"this is Sal's string\"\nd = 'My favorite word is \"asparaus\", what is your?'\nmath_string = \"3+4*2\"\nexpression_string = \"a+' '+b+' tiger'\"\nprint a\nprint b\nprint c\nprint d\nprint math_string\nprint expression_string\nprint c.replace('i', 'o')\nprint c" , "children":[]},
-                        {"title": "Ví dụ 6.5", "id": "LessonId14", "code": "a = \"My first test string\"\nb = 'Another test string that I have defined'\nc = \"this is Sal's string\"\nd = 'My favorite word is \"asparaus\", what is your?'\nmath_string = \"3+4*2\"\nexpression_string = \"a+' '+b+' tiger'\"\nprint a\nprint b\nprint c\nprint d\nprint math_string\nprint expression_string\nc = c.replace('i', 'o')\nprint c" , "children":[]},
-                        {"title": "Ví dụ 6.6", "id": "LessonId15", "code": "a = \"My first test string\"\nb = 'Another test string that I have defined'\nc = \"this is Sal's string\"\nd = 'My favorite word is \"asparaus\", what is your?'\nmath_string = \"3+4*2\"\nexpression_string = \"a+' '+b+' tiger'\"\nprint a\nprint b\nprint c\nprint d\nprint math_string\nprint expression_string\nprint eval(math_string)\nprint eval(math_string + '1')" , "children":[]},
+                        {"title": "Ví dụ 6.1", "id": "LessonId10", "code": "a = \"My first test string\"\nb = 'Another test string that I have defined'\nc = \"this is Sal's string\"\nd = 'My favorite word is \"asparaus\", what is your?'\nmath_string = \"3+4*2\"\nexpression_string = \"a+' '+b+' tiger'\"\nprint a\nprint b\nprint c\nprint d\nprint math_string\nprint expression_string\n", "children": []},
+                        {"title": "Ví dụ 6.2", "id": "LessonId11", "code": "a = \"My first test string\"\nb = 'Another test string that I have defined'\nc = \"this is Sal's string\"\nd = 'My favorite word is \"asparaus\", what is your?'\nmath_string = \"3+4*2\"\nexpression_string = \"a+' '+b+' tiger'\"\nprint a\nprint b\nprint c\nprint d\nprint math_string\nprint expression_string\nprint a +b", "children": []},
+                        {"title": "Ví dụ 6.3", "id": "LessonId12", "code": "a = \"My first test string\"\nb = 'Another test string that I have defined'\nc = \"this is Sal's string\"\nd = 'My favorite word is \"asparaus\", what is your?'\nmath_string = \"3+4*2\"\nexpression_string = \"a+' '+b+' tiger'\"\nprint a\nprint b\nprint c\nprint d\nprint math_string\nprint expression_string\nprint math_string.find('*')\nprint math_string.find('3')", "children": []},
+                        {"title": "Ví dụ 6.4", "id": "LessonId13", "code": "a = \"My first test string\"\nb = 'Another test string that I have defined'\nc = \"this is Sal's string\"\nd = 'My favorite word is \"asparaus\", what is your?'\nmath_string = \"3+4*2\"\nexpression_string = \"a+' '+b+' tiger'\"\nprint a\nprint b\nprint c\nprint d\nprint math_string\nprint expression_string\nprint c.replace('i', 'o')\nprint c", "children": []},
+                        {"title": "Ví dụ 6.5", "id": "LessonId14", "code": "a = \"My first test string\"\nb = 'Another test string that I have defined'\nc = \"this is Sal's string\"\nd = 'My favorite word is \"asparaus\", what is your?'\nmath_string = \"3+4*2\"\nexpression_string = \"a+' '+b+' tiger'\"\nprint a\nprint b\nprint c\nprint d\nprint math_string\nprint expression_string\nc = c.replace('i', 'o')\nprint c", "children": []},
+                        {"title": "Ví dụ 6.6", "id": "LessonId15", "code": "a = \"My first test string\"\nb = 'Another test string that I have defined'\nc = \"this is Sal's string\"\nd = 'My favorite word is \"asparaus\", what is your?'\nmath_string = \"3+4*2\"\nexpression_string = \"a+' '+b+' tiger'\"\nprint a\nprint b\nprint c\nprint d\nprint math_string\nprint expression_string\nprint eval(math_string)\nprint eval(math_string + '1')", "children": []},
                     ]},
                     { "title": "Bài 7: Viết một chương trình đơn giản", "id": "LectureId07", "children": [
-                        {"title": "Ví dụ 7.1", "id": "LessonId16", "code": "#Enter non-negative integer to take the factorial of:\nnumber = 10\n\nproduct = 1\nfor i in range(number):\n    product = product * (i+1)\n\nprint product" , "children":[]}
+                        {"title": "Ví dụ 7.1", "id": "LessonId16", "code": "#Enter non-negative integer to take the factorial of:\nnumber = 10\n\nproduct = 1\nfor i in range(number):\n    product = product * (i+1)\n\nprint product", "children": []}
                     ]},
                     { "title": "Bài 11: Định nghĩa hàm trong python", "id": "LectureId08", "children": [
-                        {"title": "Ví dụ 11.1", "id": "LessonId17", "code": "#returns the facturial of the argument \"number\"\ndef factorial(number):    \n    product = 1\n    for i in range(number):\n        product = product * (i+1)\n    return product\n\nprint factorial(10)" , "children":[]}
+                        {"title": "Ví dụ 11.1", "id": "LessonId17", "code": "#returns the facturial of the argument \"number\"\ndef factorial(number):    \n    product = 1\n    for i in range(number):\n        product = product * (i+1)\n    return product\n\nprint factorial(10)", "children": []}
                     ]},
                     { "title": "Bài 13: Hàm đệ quy", "id": "LectureId09", "children": [
-                        {"title": "Ví dụ 13.1", "id": "LessonId18", "code": "def factorial(number):\n    if number <= 1:\n        return 1\n    else:\n        return number*factorial(number -1)\n\nprint factorial(10)", "children":[]}
+                        {"title": "Ví dụ 13.1", "id": "LessonId18", "code": "def factorial(number):\n    if number <= 1:\n        return 1\n    else:\n        return number*factorial(number -1)\n\nprint factorial(10)", "children": []}
                     ]},
                 ]},
                 { "title": "Phần 2: Python nâng cao", "id": "LessonId2", "children": [
