@@ -434,7 +434,7 @@ class Lecture(ndb.Model):
 class Code(ndb.Model):
     title = ndb.StringProperty()
     index = ndb.FloatProperty()
-    description = ndb.StringProperty(indexed=False);
+    description = ndb.StringProperty(indexed=False)
     content = ndb.StringProperty(indexed=False)
     time = ndb.FloatProperty()
     created = ndb.DateTimeProperty(auto_now_add=True)
@@ -461,3 +461,22 @@ class Test(ndb.Model):
     time = ndb.FloatProperty()
     created = ndb.DateTimeProperty(auto_now_add=True)
     score = ndb.FloatProperty()
+
+
+class Badge(ndb.Model):
+    icon = ndb.BlobKeyProperty()
+    title = ndb.StringProperty()
+    description = ndb.StringProperty()
+    created = ndb.DateTimeProperty(auto_now_add=True)
+
+
+class UserBadge(ndb.Model):
+    user = ndb.KeyProperty(kind="User")
+    badge = ndb.KeyProperty(kind="Badge")
+    earning_day = ndb.DateProperty(auto_now_add=True)
+
+
+class File(ndb.Model):
+    created = ndb.DateTimeProperty(auto_now_add=True)
+    filename = ndb.StringProperty()
+    content = ndb.StringProperty(indexed=False)
