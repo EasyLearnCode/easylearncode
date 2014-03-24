@@ -41,7 +41,7 @@ mazepage.messages = function(opt_data, opt_ignored, opt_ijData) {
 
 
 mazepage.start = function(opt_data, opt_ignored, opt_ijData) {
-  var output = mazepage.messages(null, null, opt_ijData) + '<table width="96%"><tr><td><h1><span id="title"><a href="../index.html">Blockly</a> : Maze</span> &nbsp; <div class="profileSteps">';
+  var output = mazepage.messages(null, null, opt_ijData) + '<table width="96%"><tr><td><h1><span id="title"><a href="../index.html">Blockly</a> : Ma trận</span> &nbsp; <div class="profileSteps">';
   for (var i161 = 1; i161 < 11; i161++) {
     output += ' ' + ((i161 <= opt_ijData.level) ? '<div class="profileStep profileStepOne profileStepActive"><div class="connect"></div><div class="icon"><a class="" href="?lang=' + soy.$$escapeHtml(opt_ijData.lang) + '&level=' + soy.$$escapeHtml(i161) + '&skin=' + soy.$$escapeHtml(opt_ijData.skin) + '">' + soy.$$escapeHtml(i161) + '</a></div></div>' : '<div class="profileStep profileStepOne profileStepPassive"><div class="connect"></div><div class="icon"><span>' + soy.$$escapeHtml(i161) + '</span></div></div>');
   }

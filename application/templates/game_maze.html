@@ -15,7 +15,12 @@
                 CHƠI. Đây là phần mà bạn có thể luyện tập tư duy, suy luận logic với hướng lập trình thông minh theo
                 cách của bạn mà bạn không cần phải code...
                 <!-- Button trigger modal -->
-                <a class="btn btn-default" role="button" data-toggle="modal" data-target="#myModal" style="color: #0044cc; font-size: 15px">Xem chi tiết »</a>
+                <a class="btn btn-default" role="button" data-toggle="modal" data-target="#myModal"
+                   style="color: #0044cc; font-size: 15px">Xem chi tiết »</a>
+                <a class="pull-right btn" id="startTourBtn"><img rel="tooltip" data-placement="bottom" title="Help"
+                                                                 alt="help"
+                                                                 src="/application/img/quiz/help.png"
+                                                                 width="50"/> </a>
             </div>
         </div>
 
@@ -26,18 +31,34 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                        <img width="40" alt="logo" style="float: left; margin-right: 1px"
-                          src="\application\img\huong_dan.png"/><h4 class="modal-title" id="myModalLabel"><b style="color: #0044cc; font-size: 25px">Hướng
+                        <h4 class="modal-title" id="myModalLabel"><b style="color: #0044cc; font-size: 25px">Hướng
                             dẫn</b></h4>
                     </div>
-                    <div class="modal-body" style="color:#0044cc">
-                        <br><p>Chào mừng các bạn đến với phân hệ HỌC MÀ CHƠI.</p><p>Đây là phần mà bạn có thể luyện tập tư duy, suy luận logic với hướng lập trình
-                        thông minh theo cách của bạn mà bạn không cần phải code. Có nghĩa là bạn hãy suy nghĩ cách để con đồ chơi ấy có
-                        thể đi đến đích( quả bóng màu đỏ) bằng cách kéo thả các nút màu tím ở giữa để ghép với mảnh đã có sẳn. Bạn cũng có thể kéo thả thẻ không cần thiết bỏ vào sọt rác bên dưới để hủy nó.
-                        Và bạn phải chơi theo từng level không được chơi tùy ý. Ngoài ra, nếu bạn muốn biết nó code như thế nào để có thể chạy
-                        được thì bạn có thể click vào biểu tượng bên cạnh nút chạy màu đỏ để xem code.</p><p>Chúng tôi hy vọng qua việc tham gia trò chơi này,
-                        bạn sẽ tìm thấy sự hứng thú trong việc học tin học trên nền tảng cơ bản về lập trình, nâng cao được trình độ của mình trong tư duy cũng
-                        như suy diễn một vấn đề một cách logic!</p>
+                    <div class="modal-body">
+                        <br>
+
+                        <p style="color: #0044cc">Chào mừng các bạn đến với phân hệ HỌC MÀ CHƠI.</p>
+
+                        <p
+
+                        <p style="color: #0044cc"> Đây là phần mà bạn có thể luyện tập tư duy, suy luận logic với hướng
+                            lập trình
+                            thông minh theo cách của bạn mà bạn không cần phải code. Có nghĩa là bạn hãy tự mình suy
+                            nghĩ cách để con đồ chơi ấy có
+                            thể đi đến đích( quả bóng màu đỏ) bằng cách kéo thả các nút màu tím ở giữa để ghép với mảnh
+                            đã có sẳn. Hoặc nếu bạn không muốn
+                            sử dụng nút màu tím có sẳn hoặc muốn bỏ nút nào mà bạn đã kéo nhầm (không đúng) bạn có thể
+                            kéo thả bỏ vào sọt rác bên dưới để hủy nó.
+                            Và lần lượt, bạn phải trải qua từng level một và không được chơi tùy ý. Ngoài ra, nếu bạn
+                            muốn biết nó code như thế nào để có thể chạy
+                            được thì bạn có thể click vào biểu tượng bên cạnh nút chạy màu đỏ để xem code. </p>
+
+                        <p
+
+                        <p style="color: #0044cc">Chúng tôi hy vọng qua việc tham gia trò chơi này,
+                            bạn sẽ tìm thấy sự hứng thú trong việc học tin học trên nền tảng cơ bản về lập trình, nâng
+                            cao được trình độ của mình trong tư duy cũng
+                            như suy diễn một vấn đề một cách logic!</p><br/>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-info" data-dismiss="modal">OK</button>
@@ -62,6 +83,10 @@
         BlocklyApps.LANG = "{{ locale_language_id }}";
     </script>
     <script type="text/javascript" src="/application/js/libs/blockly/maze/maze.js"></script>
+    <script type="text/javascript" src="/application/js/libs/blockly/maze/help_vi.js"></script>
+    <script type="text/javascript" src="/application/js/hopscotch-0.1.2.min.js"></script>
+    <script src="/application/js/libs/angularjs/ui-bootstrap-tpls-0.7.0.min.js"></script>
+    <script src="/application/js/libs/angularjs/ui-ace.min.js"></script>
     <script type="text/javascript">
         $("#blockyApp").html(mazepage.start({}, null,
                 {lang: BlocklyApps.LANG,
@@ -73,4 +98,12 @@
     <script type="text/javascript" src="/application/js/libs/blockly/javascript_compressed.js"></script>
     <script type="text/javascript" src="/application/js/libs/blockly/msg/js/{{ locale_language_id }}.js"></script>
     <script type="text/javascript" src="/application/js/libs/blockly/maze/blocks.js"></script>
+{% endblock %}
+{% block mediaJS %}
+    <script>
+        $(function () {
+            $("[rel='tooltip']").tooltip();
+        });
+
+    </script>
 {% endblock %}
