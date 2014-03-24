@@ -70,3 +70,10 @@ indexes:
   - name: test_key
   - name: time_used
   - name: memory_used
+
+- kind: WeeklyQuizResult
+  properties:
+  - name: test_key
+  - name: user_key
+  - name: score
+    direction: desc

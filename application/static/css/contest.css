@@ -263,3 +263,15 @@ div.profileStepPassive .icon {
     font-size: 13px;
     padding: 10px;
 }
+.glyphicon-ok
+{
+    color: blue;
+}
+.glyphicon-remove
+{
+    color: #ff0000;
+}
+.yellow
+{
+    color: #FFCC00;
+}

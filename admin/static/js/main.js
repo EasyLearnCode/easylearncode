@@ -332,6 +332,7 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
                 _.each(form.form_fields, function (ele) {
                     lesson_tmp[ele.field_title] = ele.field_value;
                 });
+                delete lesson_tmp['img'];
                 api.Model.save({type: 'lessons', id: lesson.Id}, lesson_tmp, function (data) {
                     //$scope.courses.push(data);
                     lesson = _.extend(lesson, data);

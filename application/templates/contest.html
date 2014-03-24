@@ -44,11 +44,15 @@
                         <div class="clearfix"></div>
                         <div class="panel panel-danger">
                             <div class="panel-heading">
-                                <h3 class="panel-title" id="step-2">Câu hỏi:</h3>
+                                <h3 class="panel-title" id="step-2">Đề bài</h3>
                             </div>
                             <div class="panel-body"
                                  ng-bind-html="thisweek_contest.this_quiz_level.description_html|to_trusted">
-
+                            </div>
+                            <div class="panel-footer">
+                                Thời gian giới hạn: {{ thisweek_contest.this_quiz_level.limit_time }} (s)<br />
+                                Bộ nhớ giới hạn: {{ thisweek_contest.this_quiz_level.limit_memory }} (KiB)<br />
+                                Điểm tối đa: {{ thisweek_contest.this_quiz_level.score }}
                             </div>
                         </div>
                     </div>
@@ -70,24 +74,51 @@
                                 <ul class="list-group">
                                     <li data-ng-repeat="player in thisweek_contest.top_player"
                                         class="list-group-item">
-                                        <span class="badge">{{ player.score }} Điểm</span>
-                                        {{ $index+1 }}. {{ player.username }}</li>
+                                        <span class="badge">{{ player.score }} Điểm </span>
+                                        <span title="Hạng {{ $index +1}}" ng-class="{yellow:($index)==0,blue:($index)==1}" class="glyphicon glyphicon-star" ></span>  {{ player.username }}</li>
                                 </ul>
                                 <a class="btn btn-success" href="/contest/result">Xem chi tiết...</a>
                             </div>
                         </div>
                         <div class="panel panel-success">
                             <div class="panel-heading">
-                                <h3 class="panel-title">Thành tích của bạn</h3>
+                                <h3 class="panel-title">Kết quả của bạn</h3>
                             </div>
                             <div class="panel-body">
-                                <ul class="list-group">
-                                    <li data-ng-repeat="i in thisweek_contest.result_last_week"
-                                        class="list-group-item">
-                                        <span class="badge">{{ i.score }} Điểm</span>
-                                        {{ $index+1 }}. Tuần {{ i.week }}</li>
-                                </ul>
-
+                                <table class="table">
+                                    <tr>
+                                        <th>Level</th>
+                                        <th>Thời gian</th>
+                                        <th>Bộ nhớ</th>
+                                        <th>Ngôn ngữ</th>
+                                        <th> Kết quả</th>
+                                        <th>Xem</th>
+                                    </tr>
+                                    <tr data-ng-repeat="i in results">
+                                        <td>
+                                            {{ i.level_key.level }}
+                                        </td>
+                                        <td>
+                                            {{ i.time_used|number:1 }}
+                                        </td>
+                                        <td>
+                                            {{ i.memory_used|number:1 }}
+                                        </td>
+                                        <td>{{ i.language }}</td>
+                                        <td>
+                                           <span ng-show="i.result" class="glyphicon glyphicon-ok"></span>
+                                           <span ng-show="!i.result" class="glyphicon glyphicon-remove"></span>
+                                            <br />
+                                           {{ i.score|number:1 }}
+                                        </td>
+                                        <td><button class="btn btn-primary" data-ng-click="view_code(i.Id)"><span
+                                        class="glyphicon glyphicon-search"></span></button></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="panel-footer">
+                                <span ng-show="thisweek_contest.rank>0">Hiện tại bạn đang xếp hạng {{ thisweek_contest.rank }} trong tuần</span>
+                                <span ng-show="thisweek_contest.rank==0">Bạn chưa tham gia cuộc thi trong tuần này</span>
                             </div>
                         </div>
                     </div>
@@ -106,12 +137,12 @@
                 </tabset>
             </div>
             <div class="col-xs-12 col-md-12 highlight">
-                <a id="step-5" class="btn btn-success pull-right" data-ng-click="submitCode()">
-                    <i rel="tooltip" data-placement="bottom" title="Nộp bài" class="fa fa-upload"></i> </a>
-                <a id="step-6" class="btn btn-info" data-ng-click="runCode()">
-                    <i rel="tooltip" data-placement="bottom" title="Kiểm tra" class="fa fa-check"></i> </a>
-                <a id="step-7" class="btn btn-danger" data-ng-click="resetCode()">
-                    <i rel="tooltip" data-placement="bottom" title="Làm lại" class="fa fa-refresh"></i></a>
+                <a rel="tooltip" data-placement="bottom" title="Nộp bài" id="step-5" class="btn btn-success pull-right" data-ng-click="submitCode()">
+                    <i  class="fa fa-upload"></i> </a>
+                <a rel="tooltip" data-placement="bottom" title="Kiểm tra" id="step-6" class="btn btn-info" data-ng-click="runCode()">
+                    <i  class="fa fa-check"></i> </a>
+                <a rel="tooltip" data-placement="bottom" title="Làm lại" id="step-7" class="btn btn-danger" data-ng-click="resetCode()">
+                    <i  class="fa fa-refresh"></i></a>
             </div>
 
             <div style="height: 50px; text-align: center;" data-ng-show="compiling" id="fountainTextG">
