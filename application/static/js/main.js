@@ -502,9 +502,9 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "ap
         if (data.status == 1) {
             //$scope.error = "Chưa có đề thi";
             //alert("hi");
-            $(function () {
-                $('#myModal1').modal();
-            });
+//            $(function () {
+//                $('#myModal1').modal();
+//            });
         }
         else {
             $scope.thisweek_contest = data;
@@ -648,6 +648,7 @@ angular.module("easylearncode.home").controller('HomeCarouselCtrl', ['$scope', f
 
 angular.module("easylearncode.learn").run(function () {
     $('#myTab a:last').tab('show');
+    $("[rel='tooltip']").tooltip();
 }).controller('LearnCtrl', ['$scope', '$http', '$location', '$sce', '$compile', '$window', function ($scope, $http, $location, $sce, $compile, $window) {
         $window.disqus_shortname = 'easylearncode2014';
         $scope.current_title = (document.title);
@@ -861,7 +862,7 @@ angular.module("easylearncode.learn").run(function () {
 
         $scope.outputCallback = function (output, cls) {
             if (output) {
-                $scope.kq = '>>> ' + output;
+                $scope.kq = '>> ' + output;
                 console.log(output);
             }
         };

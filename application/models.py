@@ -395,6 +395,7 @@ class Test(ndb.Model):
     created = ndb.DateTimeProperty(auto_now_add=True)
     score = ndb.FloatProperty()
 
+
 class Rate(ndb.Model):
     created = ndb.DateTimeProperty(auto_now_add=True)
     num_rate = ndb.IntegerProperty()
