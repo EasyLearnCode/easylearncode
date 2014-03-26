@@ -2,6 +2,13 @@ from webapp2_extras.appengine.auth.models import User
 from google.appengine.ext import ndb
 
 
+class UtilModel(object):
+    def to_dict(self, *args, **kwargs):
+        result = super(UtilModel, self).to_dict(*args, **kwargs)
+        result['Id'] = self.key.urlsafe()
+        return result
+
+
 class User(User):
     """
     Universal user model. Can be used with App Engine's default users API,
@@ -69,7 +76,7 @@ class User(User):
         result = []
         #        import logging
         for social_user_object in social_user_objects:
-        #            logging.error(social_user_object.extra_data['screen_name'])
+            #            logging.error(social_user_object.extra_data['screen_name'])
             result.append(social_user_object.provider)
         return result
 
@@ -84,21 +91,21 @@ class User(User):
         return result
 
     def get_badges(self):
-        badges = UserBadge.get_by_user(self.key)
+        badges = BadgeUser.get_by_user(self.key)
         result = []
         for badge in badges:
             result.append(badge.badge.get().to_dict().update({'earnday': badge.created}))
         return result
 
 
-class LogVisit(ndb.Model):
+class LogVisit(UtilModel, ndb.Model):
     user = ndb.KeyProperty(kind=User)
     uastring = ndb.StringProperty()
     ip = ndb.StringProperty()
     timestamp = ndb.StringProperty()
 
 
-class LogEmail(ndb.Model):
+class LogEmail(UtilModel, ndb.Model):
     sender = ndb.StringProperty(
         required=True)
     to = ndb.StringProperty(
@@ -109,15 +116,15 @@ class LogEmail(ndb.Model):
     when = ndb.DateTimeProperty()
 
 
-class SocialUser(ndb.Model):
-    PROVIDERS_INFO = {# uri is for OpenID only (not OAuth)
-                      'google': {'name': 'google', 'label': 'Google', 'uri': 'gmail.com'},
-                      'github': {'name': 'github', 'label': 'Github', 'uri': ''},
-                      'facebook': {'name': 'facebook', 'label': 'Facebook', 'uri': ''},
-                      'linkedin': {'name': 'linkedin', 'label': 'LinkedIn', 'uri': ''},
-                      'myopenid': {'name': 'myopenid', 'label': 'MyOpenid', 'uri': 'myopenid.com'},
-                      'twitter': {'name': 'twitter', 'label': 'Twitter', 'uri': ''},
-                      'yahoo': {'name': 'yahoo', 'label': 'Yahoo!', 'uri': 'yahoo.com'},
+class SocialUser(UtilModel, ndb.Model):
+    PROVIDERS_INFO = {  # uri is for OpenID only (not OAuth)
+                        'google': {'name': 'google', 'label': 'Google', 'uri': 'gmail.com'},
+                        'github': {'name': 'github', 'label': 'Github', 'uri': ''},
+                        'facebook': {'name': 'facebook', 'label': 'Facebook', 'uri': ''},
+                        'linkedin': {'name': 'linkedin', 'label': 'LinkedIn', 'uri': ''},
+                        'myopenid': {'name': 'myopenid', 'label': 'MyOpenid', 'uri': 'myopenid.com'},
+                        'twitter': {'name': 'twitter', 'label': 'Twitter', 'uri': ''},
+                        'yahoo': {'name': 'yahoo', 'label': 'Yahoo!', 'uri': 'yahoo.com'},
     }
 
     user = ndb.KeyProperty(kind=User)
@@ -165,7 +172,7 @@ class SocialUser(ndb.Model):
         return [k for k, v in SocialUser.PROVIDERS_INFO.items() if v['uri']]
 
 
-class ExerciseCheckpoint(ndb.Model):
+class ExerciseCheckpoint(UtilModel, ndb.Model):
     entry = ndb.StringProperty()
     entry_html = ndb.StringProperty()
     hint = ndb.StringProperty()
@@ -179,7 +186,7 @@ class ExerciseCheckpoint(ndb.Model):
     files = ndb.KeyProperty(kind="File", repeated=True)
 
 
-class ExerciseProject(ndb.Model):
+class ExerciseProject(UtilModel, ndb.Model):
     title = ndb.StringProperty()
     checkpoints = ndb.KeyProperty(kind="ExerciseCheckpoint", repeated=True)
     index = ndb.FloatProperty()
@@ -187,17 +194,18 @@ class ExerciseProject(ndb.Model):
     language = ndb.StringProperty()
 
 
-class Exercise(ndb.Model):
+class Exercise(UtilModel, ndb.Model):
     author = ndb.KeyProperty(kind="User")
     title = ndb.StringProperty()
     description = ndb.StringProperty()
     index = ndb.FloatProperty()
     created = ndb.DateTimeProperty(auto_now_add=True)
 
+
 LEVELS = ('Beginning', 'Intermediate', 'Advanced', 'Other')
 
 
-class Course(ndb.Model):
+class Course(UtilModel, ndb.Model):
     created = ndb.DateTimeProperty(auto_now_add=True)
     updated = ndb.DateTimeProperty(auto_now=True)
     title = ndb.StringProperty()
@@ -213,12 +221,12 @@ class Course(ndb.Model):
     is_new = ndb.BooleanProperty()
 
 
-class WeeklyQuizTest(ndb.Model):
+class WeeklyQuizTest(UtilModel, ndb.Model):
     input = ndb.StringProperty()
     output = ndb.StringProperty()
 
 
-class WeeklyQuizLevel(ndb.Model):
+class WeeklyQuizLevel(UtilModel, ndb.Model):
     level = ndb.FloatProperty()
     description = ndb.StringProperty(indexed=False)
     limit_memory = ndb.FloatProperty(default=100)
@@ -232,116 +240,96 @@ class WeeklyQuizLevel(ndb.Model):
 
         return markdown2.markdown(self.description)
 
+    def to_dict(self, *args, **kwargs):
+        result = super(WeeklyQuizLevel, self).to_dict(*args, **kwargs)
+        from api.restful import current_user
+        from api.util import is_request_from_admin
+        _current_user = current_user()
+        if _current_user and not is_request_from_admin():
+            weekly_quiz = WeeklyQuiz.query(WeeklyQuiz.level_keys == self.key).get().key
+            weekly_quiz_current_user = WeeklyQuizUser.get_by_user_and_weekly_quiz(_current_user, weekly_quiz)
+            result['is_current_level'] = True if weekly_quiz_current_user.current_level == self.key else False
+            result['is_passed_level'] = True if self.key in weekly_quiz_current_user.passed_level else False
+            result['description_html'] = self.description_html
+        return result
 
-class RankWeeklyQuiz(ndb.Model):
-    rank = ndb.FloatProperty()
-    user_key = ndb.KeyProperty(User)
 
 
-class WeeklyQuiz(ndb.Model):
+class WeeklyQuiz(UtilModel, ndb.Model):
     week = ndb.FloatProperty()
     start_date = ndb.DateProperty()
-    publish_date = ndb.DateTimeProperty(auto_now_add=True)
+    created = ndb.DateTimeProperty(auto_now_add=True)
     level_keys = ndb.KeyProperty(WeeklyQuizLevel, repeated=True)
-    rank = ndb.StructuredProperty(RankWeeklyQuiz, repeated=True)
 
-
-    def get_rank_user(self, user_key):
-        rank = 0
-        for i in self.rank:
-            if i.user_key == user_key:
-                rank = i.rank
-        return rank
+    def get_rank_by_user(self, user):
+        return (item for item in self.rank if item.user_key == user).next().rank
 
     @classmethod
-    def get_this_week_contest(cls):
+    def get_current_week_contest(cls):
         from datetime import datetime, timedelta
 
-        test = cls.query(cls.start_date >= (datetime.now() + timedelta(0 - datetime.now().weekday())).date(),
-                         cls.start_date <= (datetime.now() + timedelta(
-                             6 - datetime.now().weekday())).date()).get()
-        return test
-
-    def get_this_contest_level(self, user_key):
-        result = WeeklyQuizResult.query(WeeklyQuizResult.user_key == user_key,
-                                        WeeklyQuizResult.test_key == self.key, WeeklyQuizResult.result == True).get()
-        if result:
-            maxLevel = filter(lambda x: x.level == result.level_key.get().level + 1,
-                              [level_key.get() for level_key in self.level_keys])
-            print maxLevel
-            if maxLevel:
-                return maxLevel
-            else:
-                return filter(lambda x: x.level == result.level_key.get().level,
-                              [level_key.get() for level_key in self.level_keys])
-        else:
-            return filter(lambda x: int(x.level or 1) == 1, [level_key.get() for level_key in self.level_keys])
-
-    def get_players(self):
-        top_player = WeeklyQuizResult.query(WeeklyQuizResult.test_key == self.key) \
-            .order() \
-            .fetch()
-        top = []
-        for player in top_player:
-            username = player.user_key.get().email
-            player = player.to_dict()
-            player.update({'submit_time': str(player['submit_time'])})
-            player.pop('test_key', None)
-            player.pop('user_key', None)
-            player.pop('level_key', None)
-            player.pop('rank', None)
-            player.update({'username': username})
-            top.append(player)
-        top_player = top
-        return top_player
+        first_day_current_week = (datetime.now() + timedelta(0 - datetime.now().weekday())).date()
+        last_day_current_week = (datetime.now() + timedelta(6 - datetime.now().weekday())).date()
+        result = cls.query(cls.start_date >= first_day_current_week, cls.start_date <= last_day_current_week).get()
+        return result
 
 
-    @classmethod
-    def get_quizs_last(cls):
-        results = cls.query().fetch()
-        quizs = []
-        for result in results:
-            quizs.append({'test_key': result.key.urlsafe(), 'week': result.week})
-        return sorted(quizs, key=lambda k: k['week'], reverse=True)[:5]
-
-    @classmethod
-    def get_week_in_month(cls, month, year):
-        results = cls.query(cls.start_date.mouth == month, cls.start_date.year == year).fetch()
-        quizs = []
-        for result in results:
-            quizs.append({'test_key': result.key.urlsafe(), 'week': result.week})
-        return sorted(quizs, key=lambda k: k['week'], reverse=True)
-
-
-class WeeklyQuizResult(ndb.Model):
-    test_key = ndb.KeyProperty(WeeklyQuiz)
-    level_key = ndb.KeyProperty(WeeklyQuizLevel)
-    user_key = ndb.KeyProperty(User)
-    submit_time = ndb.DateTimeProperty(auto_now_add=True)
+class WeeklyQuizRunCodeResult(UtilModel, ndb.Model):
+    level = ndb.KeyProperty(kind='WeeklyQuizLevel')
+    user = ndb.KeyProperty(kind='User')
+    created = ndb.DateTimeProperty(auto_now_add=True)
     result = ndb.BooleanProperty()
     time_used = ndb.FloatProperty()
     memory_used = ndb.FloatProperty()
-    language = ndb.StringProperty()
-    code = ndb.StringProperty(indexed=False)
+    language = ndb.StringProperty(choices=('Python', 'Java', 'C++'))
+    code = ndb.KeyProperty(kind='File')
     score = ndb.FloatProperty()
 
+    def _pre_put_hook(self):
+        _level = self.level.get()
+        return _level.score - self.time_used * 10 - self.memory_used / 100
+
     @classmethod
-    def get_top_player(cls, test_key, num):
-        from itertools import groupby
+    def get_by_user(cls, user):
+        return cls.query(cls.user == user).fetch()
 
-        results = cls.query(cls.test_key == test_key).fetch()
-        results2 = dict(((x.user_key, x.level_key), x) for x in sorted(results, key=lambda x: x.score)).values()
-        scores = []
-        for key, result in groupby(results2, lambda x: x.user_key):
-            scores.append({'user_key': key.urlsafe(), 'username': key.get().email, 'test_key': test_key.urlsafe(),
-                           'score': int(sum([x.score for x in result]))})
-        if num == 5:
-            return sorted(scores, key=lambda k: k['score'], reverse=True)[:5]
-        else:
-            return sorted(scores, key=lambda k: k['score'], reverse=True)
+    @classmethod
+    def get_by_user_and_level(cls, user, level):
+        return cls.query(cls.user == user, cls.level == level).fetch()
+
+    @classmethod
+    def get_best_score_by_user_and_level(cls, user, level):
+        return cls.query(cls.user == user, cls.level == level).order(cls.score).get()
+
+    @classmethod
+    def get_top_user_by_level(cls, level, quantity=5):
+        _lst_score = cls.query(cls.level == level).query()
+        return dict((x.user, x) for x in sorted(_lst_score, key=lambda x: x.score)).values()[quantity]
 
 
-class Lesson(ndb.Model):
+class WeeklyQuizResult(UtilModel, ndb.Model):
+    weekly_quiz = ndb.KeyProperty(kind='WeeklyQuiz')
+    result = ndb.KeyProperty(kind='WeeklyQuizRunCodeResult', repeated=True)
+
+    @classmethod
+    def get_top_player_by_weekly_quiz(cls, weekly_quiz, quantity=5):
+        #TODO: Write method get top player
+        # from itertools import groupby
+        #
+        # results = cls.query(cls.test_key == test_key).fetch()
+        # results2 = dict(((x.user_key, x.level_key), x) for x in sorted(results, key=lambda x: x.score)).values()
+        # scores = []
+        # for key, result in groupby(results2, lambda x: x.user_key):
+        #     scores.append({'user_key': key.urlsafe(), 'username': key.get().email, 'test_key': test_key.urlsafe(),
+        #                    'score': int(sum([x.score for x in result]))})
+        # if num == 5:
+        #     return sorted(scores, key=lambda k: k['score'], reverse=True)[:5]
+        # else:
+        #     return sorted(scores, key=lambda k: k['score'], reverse=True)
+        pass
+
+
+class Lesson(UtilModel, ndb.Model):
     author = ndb.UserProperty()
     title = ndb.StringProperty()
     description = ndb.StringProperty()
@@ -350,7 +338,7 @@ class Lesson(ndb.Model):
     lecture_keys = ndb.KeyProperty('Lecture', repeated=True)
 
 
-class Lecture(ndb.Model):
+class Lecture(UtilModel, ndb.Model):
     title = ndb.StringProperty(required=True)
     description = ndb.StringProperty()
     img = ndb.BlobKeyProperty()
@@ -364,7 +352,7 @@ class Lecture(ndb.Model):
     level = ndb.FloatProperty()
 
 
-class Code(ndb.Model):
+class Code(UtilModel, ndb.Model):
     title = ndb.StringProperty()
     index = ndb.FloatProperty()
     description = ndb.StringProperty(indexed=False)
@@ -373,12 +361,12 @@ class Code(ndb.Model):
     created = ndb.DateTimeProperty(auto_now_add=True)
 
 
-class QuizAnswer(ndb.Model):
+class QuizAnswer(UtilModel, ndb.Model):
     title = ndb.StringProperty()
     is_true = ndb.BooleanProperty()
 
 
-class Quiz(ndb.Model):
+class Quiz(UtilModel, ndb.Model):
     title = ndb.StringProperty()
     question = ndb.StringProperty()
     answers = ndb.StructuredProperty(QuizAnswer, repeated=True)
@@ -387,7 +375,7 @@ class Quiz(ndb.Model):
     score = ndb.FloatProperty()
 
 
-class Test(ndb.Model):
+class Test(UtilModel, ndb.Model):
     title = ndb.StringProperty()
     description = ndb.StringProperty(indexed=False)
     test_script = ndb.StringProperty(indexed=False)
@@ -396,14 +384,14 @@ class Test(ndb.Model):
     score = ndb.FloatProperty()
 
 
-class Badge(ndb.Model):
+class Badge(UtilModel, ndb.Model):
     icon = ndb.BlobKeyProperty()
     title = ndb.StringProperty()
     description = ndb.StringProperty()
     created = ndb.DateTimeProperty(auto_now_add=True)
 
 
-class UserBadge(ndb.Model):
+class BadgeUser(UtilModel, ndb.Model):
     user = ndb.KeyProperty(kind="User")
     badge = ndb.KeyProperty(kind="Badge")
     earning_day = ndb.DateProperty(auto_now_add=True)
@@ -413,13 +401,13 @@ class UserBadge(ndb.Model):
         return cls.query(cls.user == user).fetch()
 
 
-class File(ndb.Model):
+class File(UtilModel, ndb.Model):
     created = ndb.DateTimeProperty(auto_now_add=True)
     filename = ndb.StringProperty()
     content = ndb.StringProperty(indexed=False)
 
 
-class LessonUser(ndb.Model):
+class LessonUser(UtilModel, ndb.Model):
     user = ndb.KeyProperty(kind="User")
     lesson = ndb.KeyProperty(kind="Lesson")
     join_date = ndb.DateProperty(auto_now_add=True)
@@ -432,14 +420,42 @@ class LessonUser(ndb.Model):
         return cls.query(cls.user == user).fetch()
 
 
-class ExerciseUser(ndb.Model):
+class ExerciseUser(UtilModel, ndb.Model):
     user = ndb.KeyProperty(kind="User")
     exercise = ndb.KeyProperty(kind="Exercise")
     join_date = ndb.DateProperty(auto_now_add=True)
     status = ndb.StringProperty(choices=('passed', 'working'))
     current_checkpoint = ndb.KeyProperty(kind="ExerciseCheckpoint")
-    passed_checkpoint = ndb.KeyProperty(kind="ExerciseCheckpoint",repeated=True)
+    passed_checkpoint = ndb.KeyProperty(kind="ExerciseCheckpoint", repeated=True)
 
     @classmethod
     def get_by_user(cls, user):
         return cls.query(cls.user == user).fetch()
+
+
+class WeeklyQuizUser(UtilModel, ndb.Model):
+    user = ndb.KeyProperty(kind='User')
+    weekly_quiz = ndb.KeyProperty(kind='WeeklyQuiz')
+    created = ndb.DateTimeProperty(auto_now_add=True)
+    current_level = ndb.KeyProperty(kind='WeeklyQuizLevel')
+    passed_level = ndb.KeyProperty(kind='WeeklyQuizLevel', repeated=True)
+    rank = ndb.FloatProperty()
+
+    @classmethod
+    def get_by_user(cls, user):
+        return cls.query(cls.user == user).fetch()
+
+    @classmethod
+    def get_by_user_and_weekly_quiz(cls, user, weekly_quiz):
+        return cls.query(cls.user == user, cls.weekly_quiz == weekly_quiz).get()
+
+    @classmethod
+    def create_new_by_user(cls, user):
+        weekly_quiz = WeeklyQuiz.get_current_week_contest()
+        weekly_week_current_user = WeeklyQuizUser()
+        weekly_week_current_user.user = user
+        weekly_week_current_user.weekly_quiz = weekly_quiz.key
+        weekly_week_current_user.current_level = sorted(
+            ndb.get_multi(weekly_quiz.level_keys), key=lambda x: x.level)[0].key
+        weekly_week_current_user.rank = 0
+        weekly_week_current_user.put()
