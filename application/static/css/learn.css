@@ -11,9 +11,6 @@
     font-size: 14px !important;
 }
 
-.result_box {
-    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
-}
 
 .border_info {
     background-color: #ffffff;
@@ -70,16 +67,19 @@
     z-index: 100;
     position: relative;
 }
-.run-btn-full-screen, .full-btn-full-screen {
+.run-btn-full-screen, .full-btn-full-screen, .full-btn-clear-screen {
     position: fixed !important;
     z-index: 10000000 !important;
     top: 10px !important;
 }
 .run-btn-full-screen {
-    right: 150px !important;
+    right: 120px !important;
 }
 .full-btn-full-screen {
     right: 20px !important;
+}
+.full-btn-clear-screen {
+    right: 85px !important;
 }
 .editor-full-screen {
     position: fixed !important;
@@ -93,3 +93,25 @@
     border: 0 !important;
     margin: 0 !important;
 }
+
+#console.full-screen{
+    position: fixed !important;
+    z-index: 10000000 !important;
+    bottom: 5px !important;
+    right: 20px !important;
+    height: 200px;
+    width: 400px;
+}
+
+#console {
+    height: 200px;
+    background-color: black;
+    z-index: 100;
+    opacity: .7;
+    color: #ffffff;
+    border-radius:5px;
+    padding: 10px;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
+    overflow: auto;
+}
+

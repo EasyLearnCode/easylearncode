@@ -396,6 +396,12 @@ class Test(ndb.Model):
     score = ndb.FloatProperty()
 
 
+class Rate(ndb.Model):
+    created = ndb.DateTimeProperty(auto_now_add=True)
+    num_rate = ndb.IntegerProperty()
+    user_key = ndb.KeyProperty(User)
+
+
 class Badge(ndb.Model):
     icon = ndb.BlobKeyProperty()
     title = ndb.StringProperty()
