@@ -139,3 +139,11 @@ def parse_body(self):
             else:
                 data[k] = v
     return data or {}
+
+
+def is_request_from_admin():
+    r = webapp2.get_request()
+    if not r.referer:
+        return False
+    from urlparse import urlparse
+    return urlparse(r.referer).path.lower().startswith('/admin')

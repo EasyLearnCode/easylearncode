@@ -13,6 +13,7 @@ from application.models import Course, Exercise, WeeklyQuiz, WeeklyQuizLevel, Le
 from util import AppError, LoginError, BreakError
 from util import as_json, parse_body
 from application.handlers import BaseHandler
+from util import is_request_from_admin
 
 
 class _ConfigDefaults(object):
@@ -62,113 +63,7 @@ def current_user(required=False):
     return None
 
 
-class HookedModel(ndb.Model):
-    _previous = None
-
-    def _pre_put_hook(self):
-        if self.key.id():
-            self._previous = self.key.get()
-
-    def _post_put_hook(self, future):
-        future.wait()
-        if _config.METADATA and self._previous is None:
-            counter.increment(self.__class__.__name__)
-        if _config.post_put_hook:
-            _config.post_put_hook(self)
-
-    @classmethod
-    def _post_delete_hook(cls, key, future):
-        future.wait()
-        if _config.METADATA:
-            counter.decrement(cls.__name__)
-
-
-# Model
-# -----
-# A modifed Expando class that all models derive from, this allows app engine to work as an
-# arbitrary document store for your json objects as well as scope the public private nature of
-# objects based on the capitolization of the property.
-class ScopedModel(HookedModel):
-    owners = ndb.KeyProperty(repeated=True)
-    viewers = ndb.KeyProperty(repeated=True)
-
-    def can_write(self, u):
-        if _config.is_current_user_admin():
-            return True
-        try:
-            owners = self.owners
-        except ndb.UnprojectedPropertyError:
-            owners = []
-        if u and u in owners:
-            return True
-        return False
-
-    def can_read(self, u):
-        if _config.is_current_user_admin():
-            return True
-        try:
-            owners = self.owners
-        except ndb.UnprojectedPropertyError:
-            owners = []
-        try:
-            viewers = self.viewers
-        except ndb.UnprojectedPropertyError:
-            viewers = []
-        if u and (u in owners or u in viewers):
-            return True
-        return False
-
-    def to_dict(self, *args, **kwargs):
-        # pop kwargs recurse or 0
-        result = super(ScopedModel, self).to_dict(*args, **kwargs)
-        # expand(result, recurse)
-        if not self.can_read(current_user()):
-            # public properties only
-            for k in result.keys():
-                if re_private.match(k):
-                    del result[k]
-        result["Id"] = self.key.urlsafe()
-        return result
-
-    def _pre_put_hook(self):
-        super(ScopedModel, self)._pre_put_hook()
-        if _config.is_current_user_admin():
-            return
-        # check for writable and for any admin properties
-        if self._previous is not None:
-            u = current_user(required=True)
-            if not self._previous.can_write(u):
-                raise AppError("You do not have sufficient privileges.")
-            keys = [p._code_name for p in self._properties.itervalues()]
-            for k in keys:
-                if re_admin.match(k):
-                    attr = getattr(self._previous, k, None)
-                    if attr:
-                        setattr(self, k, attr)
-                    else:
-                        delattr(self, k)
-        else:
-            keys = [p._code_name for p in self._properties.itervalues()]
-            for k in keys:
-                if re_admin.match(k):
-                    delattr(self, k)
-
-    @classmethod
-    def _pre_delete_hook(cls, key):
-        m = key.get()
-        u = current_user(required=True)
-        if not m.can_write(u):
-            raise AppError("You ({}) do not have permission to delete this model ({}).".format(u, key.id()))
-
-
-class ScopedExpando(ScopedModel, ndb.Expando):
-    pass
-
-
-# User
-# ----
-# User is an special model that can only be written to by the google account owner.
-class users(HookedModel, ndb.Expando):
+class users(object):
     def to_dict(self, *args, **kwargs):
         result = super(users, self).to_dict(*args, **kwargs)
         u = current_user()
@@ -478,17 +373,13 @@ class RestfulHandler(BaseHandler):
         model = model.lower()
         cls = None
         if _config.DEFINED_MODELS:
-            cls = type('User', (users,), dict(User.__dict__)) if model == "users" else \
-                type(_config.DEFINED_MODELS.get(model).__name__, (ScopedExpando, ),
-                     dict(_config.DEFINED_MODELS.get(model).__dict__))
+            cls = type('User', (users,), dict(User.__dict__)) if model == "users" else _config.DEFINED_MODELS.get(model)
             if not cls and _config.RESTRICT_TO_DEFINED_MODELS:
                 raise RestrictedModelError
             if cls:
                 model = cls.__name__
         if not cls:
-            validate_modelname(model)
-            cls = type('User', (users,), dict(User.__dict__)) if model == "users" else type(model, (ScopedExpando,), {})
-        logging.info("ID %s" % id)
+            raise RestrictedModelError
         if id:
             me = False
             if model == "User":
@@ -555,15 +446,13 @@ class RestfulHandler(BaseHandler):
         else:
             cls = None
             if _config.DEFINED_MODELS:
-                cls = type(_config.DEFINED_MODELS.get(model).__name__, (ScopedExpando, ),
-                           dict(_config.DEFINED_MODELS.get(model).__dict__))
+                cls = _config.DEFINED_MODELS.get(model)
                 if not cls and _config.RESTRICT_TO_DEFINED_MODELS:
                     raise RestrictedModelError
                 if cls:
                     model = cls.__name__
             if not cls:
-                validate_modelname(model)
-                cls = type(model, (ScopedExpando,), {})
+                raise RestrictedModelError
         data = parse_body(self)
         key = parse_id(id, model, data.get("Id"))
         clean_data(data)
@@ -575,10 +464,6 @@ class RestfulHandler(BaseHandler):
             for k, _ in data.iteritems():
                 setattr(_m, k, getattr(m, k))
             m = _m
-        if model != "users":
-            if len(m.owners) == 0:
-                m.owners.append(u)
-
         m.put()
 
         redirect = self.request.get("redirect")
@@ -619,15 +504,6 @@ class RestfulHandler(BaseHandler):
     def delete(self, *args, **kwargs):
         return self._delete(*args, **kwargs)
 
-
-def get_model(urlsafekey):
-    key = ndb.Key(urlsafe=urlsafekey)
-    # dynamic class defined if doesn't exists for reflective creation later
-    type(key.kind(), (ScopedExpando,), {})
-    m = key.get()
-    if not key:
-        raise AppError("Model {} does not exists.".format(urlsafekey))
-    return m
 
 
 _validation = None

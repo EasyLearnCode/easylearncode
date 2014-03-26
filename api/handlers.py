@@ -1,13 +1,16 @@
 __author__ = 'nampnq'
 
 from application.handlers import BaseHandler, user_required
+from util import as_json
+from restful import current_user
 
 
 class GetWeekResultHandler(BaseHandler):
     @user_required
+    @as_json
     def get(self, week_id):
         from application.models import WeeklyQuiz, WeeklyQuizResult
-        import json
+
         if week_id == "current":
             test = WeeklyQuiz.get_this_week_contest()
         else:
@@ -16,26 +19,22 @@ class GetWeekResultHandler(BaseHandler):
         if test:
             test_key = test.key
             top_player = WeeklyQuizResult.get_top_player(test_key, 100)
-            self.response.headers["Content-Type"] = "application/json"
-            self.response.write(json.dumps(top_player))
+            return top_player
         else:
-            self.response.headers["Content-Type"] = "application/json"
-            self.response.write(json.dumps({'status': 1}))
+            return {'status': 1}
 
 
 class SubmitContestHandler(BaseHandler):
     @user_required
+    @as_json
     def post(self):
         import json
-        from google.appengine.ext import ndb
         from google.appengine.ext import deferred
 
         data = json.loads(self.request.body)
-        weeklyquizlevel = ndb.Key(urlsafe=data['key']).get()
         deferred.defer(run_test_case, level_key=data['key'], code=data['source'], lang=data['lang'],
                        user_key=self.user_key)
-        self.response.headers["Content-Type"] = "application/json"
-        self.response.write(json.dumps({'status': 1}))
+        return {'status': 'ok'}
 
 
 def run_test_case(level_key, **kwargs):
@@ -46,6 +45,7 @@ def run_test_case(level_key, **kwargs):
     from google.appengine.api import urlfetch
     from application.config import config
     from application.models import WeeklyQuizResult, WeeklyQuiz
+    from google.appengine.api import channel
 
     level = ndb.Key(urlsafe=level_key).get()
     test_result = []
@@ -63,6 +63,7 @@ def run_test_case(level_key, **kwargs):
             else:
                 testcase['result'] = False
             test_result.append(testcase)
+            channel.send_message(current_user().id(), json.dumps(testcase))
             if len(test_result) == len(level.test_case):
                 avg_time = sum(
                     test['time_used'] or level.limit_time for test in test_result) / len(
@@ -120,6 +121,7 @@ def run_test_case(level_key, **kwargs):
 
 class RunCodeHandler(BaseHandler):
     @user_required
+    @as_json
     def post(self):
         import json
         import urllib
@@ -136,52 +138,25 @@ class RunCodeHandler(BaseHandler):
                                 method=urlfetch.POST)
         self.response.headers['Content-Type'] = "application/json"
         if result:
-            self.response.write(result.content)
+            return result.content
         else:
-            self.response.write("{status:'Server die!'}")
+            return {'status': 'Server die!'}
 
 
-def json_extras(obj):
-    from google.appengine.ext import ndb
-
-    if isinstance(obj, ndb.Key):
-        return obj.urlsafe()
-
-
-class GetThisweekContestHandler(BaseHandler):
+class GetCurrentWeekContestHandler(BaseHandler):
     @user_required
-    def get(self, level_id):
-        from application.models import WeeklyQuiz, WeeklyQuizResult
-        import json
-
-        test = WeeklyQuiz.get_this_week_contest()
-        if test:
-            test_key = test.key
-            top_player = WeeklyQuizResult.get_top_player(test_key, 5)
-
-            this_quiz_levels = test.get_this_contest_level(self.user_key)
-            this_quiz_level = this_quiz_levels[0]
-            level_current = this_quiz_levels[0]
-            rank = test.get_rank_user(self.user_key)
-            if level_id != "current":
-                from google.appengine.ext import ndb
-
-                this_quiz_level = ndb.Key(urlsafe=level_id).get()
-            test = test.to_dict()
-            test.pop('start_date', None)
-            test.pop('publish_date', None)
-            test.update({'top_player': top_player})
-
-            test.update({'test_key': test_key.urlsafe()})
-            test.update({'user_key': self.user_key})
-            test.update({'rank': rank})
-            test.update({'this_quiz_level': this_quiz_level.to_dict()})
-            test['this_quiz_level'].update({'description_html': this_quiz_level.description_html})
-            test['this_quiz_level'].update({'quiz_level_key': this_quiz_level.key.urlsafe()})
-            test['this_quiz_level'].update({'level': level_current.level})
-            self.response.headers["Content-Type"] = "application/json"
-            print test
-            self.response.write(json.dumps(test, default=json_extras))
+    @as_json
+    def get(self):
+        from application.models import WeeklyQuiz
+        weekly_quiz = WeeklyQuiz.get_current_week_contest()
+        if weekly_quiz:
+            from application.models import WeeklyQuizUser
+            weekly_week_current_user = WeeklyQuizUser.get_by_user(self.user_key)
+            if not weekly_week_current_user:
+                from google.appengine.ext import deferred
+                deferred.defer(WeeklyQuizUser.create_new_by_user, user=self.user_key)
+            return {
+                "Id": weekly_quiz.key.urlsafe(),
+            }
         else:
-            self.response.headers["Content-Type"] = "application/json"
-            self.response.write(json.dumps({'status': 1}))
+            return {'status': 1}
