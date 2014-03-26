@@ -556,26 +556,45 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "ap
             }
         });
     }
-    $http.get('/api/contest/get_thisweek_contest/current').success(function (data) {
-        if (data.status == 1) {
-            //$scope.error = "Chưa có đề thi";
-            //alert("hi");
-            $(function () {
-                $('#myModal1').modal();
-            });
-        }
-        else {
+    $http.get('/api/contest').success(function (data) {
+        $scope.quiz_id = data.Id;
+        $http.get('api/quizs/'+data.Id+'?recurse=true').success(function (data) {
             $scope.thisweek_contest = data;
-            $http.get('/api/quizresults?order=-score&filter=test_key==' + data.test_key + '&filter=user_key==' + data.user_key + '&recurse=true&page_size=2').success(function (data, status, headers) {
-                $scope.results = data;
-                $scope.more = headers("More").toLocaleLowerCase() == "true" ? true : false;
-                if ($scope.more) {
-                    $scope.next = headers('Cursor');
+            for (key in data.level_keys) {
+                if (data.level_keys[key].is_current_level) {
+                    $scope.thisweek_contest.this_quiz_level = data.level_keys[key];
                 }
-            });
-        }
-
+            }
+            $scope.thisweek_contest.level = 1;
+            for (key in data.level_keys) {
+                if (data.level_keys[key].is_passed_level) {
+                    if($scope.thisweek_contest.level<=data.level_keys[key].level)
+                        $scope.thisweek_contest.level = data.level_keys[key].level+1;
+                }
+            }
+        });
     });
+    /*$http.get('/api/contest/get_thisweek_contest/current').success(function (data) {
+     if (data.status == 1) {
+     //$scope.error = "Chưa có đề thi";
+     //alert("hi");
+     $(function () {
+     $('#myModal1').modal();
+     });
+     }
+     else {
+     $scope.quiz_id=$http.get('api/contest');
+     $scope.thisweek_contest = data;
+     $http.get('/api/quizresults?order=-score&filter=test_key==' + data.test_key + '&filter=user_key==' + data.user_key + '&recurse=true&page_size=2').success(function (data, status, headers) {
+     $scope.results = data;
+     $scope.more = headers("More").toLocaleLowerCase() == "true" ? true : false;
+     if ($scope.more) {
+     $scope.next = headers('Cursor');
+     }
+     });
+     }
+
+     });*/
     $scope.pre_result = function () {
         $http.get('/api/quizresults?order=-score&filter=test_key==' + $scope.thisweek_contest.test_key + '&filter=user_key==' + $scope.thisweek_contest.user_key + '&recurse=true&page_size=2').success(function (data, status, headers) {
             $scope.results = data;
@@ -597,14 +616,8 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "ap
             });
     }
     $scope.get_level = function (key) {
-        $http.get('/api/contest/get_thisweek_contest/' + key).success(function (data) {
-            if (data.status == 1) {
-            }
-            else {
-                $scope.thisweek_contest = data;
-            }
+        $scope.thisweek_contest.this_quiz_level = api.Model.get({type: 'levels', id: key, recurse: true});
 
-        });
     }
     $scope.resetCode = function () {
         $scope.langs = [
@@ -698,7 +711,8 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "ap
         })
 
     };
-}]);
+}])
+;
 angular.module("controllers.header").controller('HeaderController', ['$scope', '$window', function ($scope, $window) {
     $scope.isActive = function (viewLocation) {
         return viewLocation === $window.location.pathname;

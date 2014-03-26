@@ -29,14 +29,14 @@
                         <h4 class="text-warning" style="float: left; margin-right: 5px;" id="step-1">Mức độ: </h4>
 
                         <div class="profileSteps" data-ng-repeat="level in thisweek_contest.level_keys">
-                            <div ng-class="{profileStepActive:($index+1) <= thisweek_contest.this_quiz_level.level_current,
-                            profileStepPassive:($index + 1)>thisweek_contest.this_quiz_level.level_current}"
+                            <div ng-class="{profileStepActive:($index+1)<= thisweek_contest.level,
+                            profileStepPassive:($index+1)>thisweek_contest.level}"
                                  class="profileStep profileStepOne">
                                 <div class="connect"></div>
                                 <div class="icon" ng-class="{ac:thisweek_contest.this_quiz_level.level==($index + 1)}">
-                                    <a class="btn" data-ng-click="get_level(level)"
-                                       ng-show="($index+1)<= thisweek_contest.this_quiz_level.level_current">{{ $index+1 }}</a>
-                                    <span ng-show="($index+1)>thisweek_contest.this_quiz_level.level_current">{{ $index +1 }}</span>
+                                    <a class="btn" data-ng-click="get_level(level.Id)"
+                                       ng-show="($index+1)<= thisweek_contest.level">{{ $index+1 }}</a>
+                                    <span ng-show="($index+1)>thisweek_contest.level">{{ $index +1 }}</span>
                                 </div>
                             </div>
 

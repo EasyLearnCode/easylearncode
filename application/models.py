@@ -440,6 +440,7 @@ class WeeklyQuizUser(UtilModel, ndb.Model):
     current_level = ndb.KeyProperty(kind='WeeklyQuizLevel')
     passed_level = ndb.KeyProperty(kind='WeeklyQuizLevel', repeated=True)
     rank = ndb.FloatProperty()
+    score = ndb.FloatProperty()
 
     @classmethod
     def get_by_user(cls, user):
@@ -458,4 +459,5 @@ class WeeklyQuizUser(UtilModel, ndb.Model):
         weekly_week_current_user.current_level = sorted(
             ndb.get_multi(weekly_quiz.level_keys), key=lambda x: x.level)[0].key
         weekly_week_current_user.rank = 0
+        weekly_week_current_user.score = 0
         weekly_week_current_user.put()
