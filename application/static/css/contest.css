@@ -275,3 +275,24 @@ div.profileStepPassive .icon {
 {
     color: #FFCC00;
 }
+.blue
+{
+    color: blue;
+}
+.ac a
+{
+    color: #ffffff;
+    font-weight: bold;
+}
+.ac a:hover
+{
+    color: #ffffff;
+    font-weight: bold;
+    text-decoration: none;
+}
+.ac
+{
+    background-color: blue !important;
+    box-shadow: 0px 0px 15px rgba(251, 94, 77, 0.78);
+    z-index: 2!important;
+}

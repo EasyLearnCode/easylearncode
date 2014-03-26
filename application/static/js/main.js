@@ -470,6 +470,14 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "ap
     $scope.view_code = function (ID) {
         api.Model.get({type: 'quizresults', id: ID}, function (data) {
             var code = data;
+            $http.get('/api/contest/get_thisweek_contest/' + code.level_key).success(function (data) {
+                if (data.status == 1) {
+                }
+                else {
+                    $scope.thisweek_contest = data;
+                }
+
+            });
             if (code.language == 'PYTHON') {
                 $scope.langs = [
                     {
@@ -495,6 +503,56 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "ap
 
                     }
                 ];
+            } else if (code.language = "JAVA") {
+                $scope.langs = [
+                    {
+                        name: 'Python',
+                        mode: 'python',
+                        lang: 'PYTHON',
+                        active: false,
+                        source: ""
+                    },
+                    {
+                        name: 'Java',
+                        mode: 'java',
+                        lang: 'JAVA',
+                        active: true,
+                        source: code.code
+                    },
+                    {
+                        name: 'C++',
+                        mode: 'c_cpp',
+                        lang: 'CPP',
+                        active: false,
+                        source: ""
+
+                    }
+                ];
+            } else {
+                $scope.langs = [
+                    {
+                        name: 'Python',
+                        mode: 'python',
+                        lang: 'PYTHON',
+                        active: false,
+                        source: ""
+                    },
+                    {
+                        name: 'Java',
+                        mode: 'java',
+                        lang: 'JAVA',
+                        active: false,
+                        source: ""
+                    },
+                    {
+                        name: 'C++',
+                        mode: 'c_cpp',
+                        lang: 'CPP',
+                        active: true,
+                        source: code.code
+
+                    }
+                ];
             }
         });
     }
@@ -508,13 +566,36 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "ap
         }
         else {
             $scope.thisweek_contest = data;
-            $http.get('/api/quizresults?filter=test_key==' + data.test_key + '&& user_key==' + data.user_key + '&recurse=true').success(function (data) {
+            $http.get('/api/quizresults?order=-score&filter=test_key==' + data.test_key + '&filter=user_key==' + data.user_key + '&recurse=true&page_size=2').success(function (data, status, headers) {
                 $scope.results = data;
+                $scope.more = headers("More").toLocaleLowerCase() == "true" ? true : false;
+                if ($scope.more) {
+                    $scope.next = headers('Cursor');
+                }
             });
-            console.log($scope.results)
         }
 
     });
+    $scope.pre_result = function () {
+        $http.get('/api/quizresults?order=-score&filter=test_key==' + $scope.thisweek_contest.test_key + '&filter=user_key==' + $scope.thisweek_contest.user_key + '&recurse=true&page_size=2').success(function (data, status, headers) {
+            $scope.results = data;
+            $scope.more = headers("More").toLocaleLowerCase() == "true" ? true : false;
+            if ($scope.more) {
+                $scope.next = headers('Cursor');
+            }
+        });
+    }
+    $scope.next_result = function () {
+        $http.get('/api/quizresults?order=-score&filter=test_key==' +
+                $scope.thisweek_contest.test_key + '&filter=user_key==' + $scope.thisweek_contest.user_key +
+                '&recurse=true&page_size=2&cursor=' + $scope.next).success(function (data, status, headers) {
+                $scope.results = _.union($scope.results, data);
+                $scope.more = headers("More").toLocaleLowerCase() == "true" ? true : false;
+                if ($scope.more) {
+                    $scope.next = headers('Cursor');
+                }
+            });
+    }
     $scope.get_level = function (key) {
         $http.get('/api/contest/get_thisweek_contest/' + key).success(function (data) {
             if (data.status == 1) {

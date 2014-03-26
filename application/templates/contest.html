@@ -29,14 +29,14 @@
                         <h4 class="text-warning" style="float: left; margin-right: 5px;" id="step-1">Mức độ: </h4>
 
                         <div class="profileSteps" data-ng-repeat="level in thisweek_contest.level_keys">
-                            <div ng-class="{profileStepActive:($index+1) <= thisweek_contest.this_quiz_level.level,
-                            profileStepPassive:($index + 1)>thisweek_contest.this_quiz_level.level}"
+                            <div ng-class="{profileStepActive:($index+1) <= thisweek_contest.this_quiz_level.level_current,
+                            profileStepPassive:($index + 1)>thisweek_contest.this_quiz_level.level_current}"
                                  class="profileStep profileStepOne">
                                 <div class="connect"></div>
-                                <div class="icon">
+                                <div class="icon" ng-class="{ac:thisweek_contest.this_quiz_level.level==($index + 1)}">
                                     <a class="btn" data-ng-click="get_level(level)"
-                                       ng-show="($index+1)<= thisweek_contest.this_quiz_level.level">{{ $index+1 }}</a>
-                                    <span ng-show="($index+1)>thisweek_contest.this_quiz_level.level">{{ $index +1 }}</span>
+                                       ng-show="($index+1)<= thisweek_contest.this_quiz_level.level_current">{{ $index+1 }}</a>
+                                    <span ng-show="($index+1)>thisweek_contest.this_quiz_level.level_current">{{ $index +1 }}</span>
                                 </div>
                             </div>
 
@@ -52,7 +52,8 @@
                             <div class="panel-footer">
                                 Thời gian giới hạn: {{ thisweek_contest.this_quiz_level.limit_time }} (s)<br />
                                 Bộ nhớ giới hạn: {{ thisweek_contest.this_quiz_level.limit_memory }} (KiB)<br />
-                                Điểm tối đa: {{ thisweek_contest.this_quiz_level.score }}
+                                Điểm tối đa: {{ thisweek_contest.this_quiz_level.score }}<br />
+                                Mức độ: {{ thisweek_contest.this_quiz_level.level }}
                             </div>
                         </div>
                     </div>
@@ -115,6 +116,8 @@
                                         class="glyphicon glyphicon-search"></span></button></td>
                                     </tr>
                                 </table>
+                                <button class="btn btn-success" data-ng-click="next_result()" ng-disabled="!more"><span class="glyphicon glyphicon-circle-arrow-down"></span></button>
+                                <button class="btn btn-success" data-ng-click="pre_result()"><span class="glyphicon glyphicon-circle-arrow-up"></span></button>
                             </div>
                             <div class="panel-footer">
                                 <span ng-show="thisweek_contest.rank>0">Hiện tại bạn đang xếp hạng {{ thisweek_contest.rank }} trong tuần</span>
@@ -195,10 +198,15 @@
                     </tr>
                     <tr data-ng-repeat="result in compile_result">
                         <td>{{ $index+1 }}</td>
-                        <td>{{ result.result }}</td>
+                        <td>
+                            <span ng-show="result.result" class="glyphicon glyphicon-ok"></span>
+                            <span ng-show="!result.result" class="glyphicon glyphicon-remove"></span>
+                        </td>
                         <td>{{ result.time }}</td>
                         <td>{{ result.memory }}</td>
-                        <td>{{ result.error }}</td>
+                        <td><span ng-show="result.error=='OK'" class="glyphicon glyphicon-ok"></span>
+                            <span ng-show="result.error!='OK'">{{ result.error }}</span>
+                        </td>
                     </tr>
                 </table>
             </div>
