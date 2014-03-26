@@ -470,6 +470,14 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "ap
     $scope.view_code = function (ID) {
         api.Model.get({type: 'quizresults', id: ID}, function (data) {
             var code = data;
+            $http.get('/api/contest/get_thisweek_contest/' + code.level_key).success(function (data) {
+                if (data.status == 1) {
+                }
+                else {
+                    $scope.thisweek_contest = data;
+                }
+
+            });
             if (code.language == 'PYTHON') {
                 $scope.langs = [
                     {
@@ -495,35 +503,121 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "ap
 
                     }
                 ];
+            } else if (code.language = "JAVA") {
+                $scope.langs = [
+                    {
+                        name: 'Python',
+                        mode: 'python',
+                        lang: 'PYTHON',
+                        active: false,
+                        source: ""
+                    },
+                    {
+                        name: 'Java',
+                        mode: 'java',
+                        lang: 'JAVA',
+                        active: true,
+                        source: code.code
+                    },
+                    {
+                        name: 'C++',
+                        mode: 'c_cpp',
+                        lang: 'CPP',
+                        active: false,
+                        source: ""
+
+                    }
+                ];
+            } else {
+                $scope.langs = [
+                    {
+                        name: 'Python',
+                        mode: 'python',
+                        lang: 'PYTHON',
+                        active: false,
+                        source: ""
+                    },
+                    {
+                        name: 'Java',
+                        mode: 'java',
+                        lang: 'JAVA',
+                        active: false,
+                        source: ""
+                    },
+                    {
+                        name: 'C++',
+                        mode: 'c_cpp',
+                        lang: 'CPP',
+                        active: true,
+                        source: code.code
+
+                    }
+                ];
             }
         });
     }
-    $http.get('/api/contest/get_thisweek_contest/current').success(function (data) {
-        if (data.status == 1) {
-            //$scope.error = "Chưa có đề thi";
-            //alert("hi");
-            $(function () {
-                $('#myModal1').modal();
-            });
-        }
-        else {
+    $http.get('/api/contest').success(function (data) {
+        $scope.quiz_id = data.Id;
+        $http.get('api/quizs/'+data.Id+'?recurse=true').success(function (data) {
             $scope.thisweek_contest = data;
-            $http.get('/api/quizresults?filter=test_key==' + data.test_key + '&& user_key==' + data.user_key + '&recurse=true').success(function (data) {
-                $scope.results = data;
-            });
-            console.log($scope.results)
-        }
-
-    });
-    $scope.get_level = function (key) {
-        $http.get('/api/contest/get_thisweek_contest/' + key).success(function (data) {
-            if (data.status == 1) {
+            for (key in data.level_keys) {
+                if (data.level_keys[key].is_current_level) {
+                    $scope.thisweek_contest.this_quiz_level = data.level_keys[key];
+                }
             }
-            else {
-                $scope.thisweek_contest = data;
+            $scope.thisweek_contest.level = 1;
+            for (key in data.level_keys) {
+                if (data.level_keys[key].is_passed_level) {
+                    if($scope.thisweek_contest.level<=data.level_keys[key].level)
+                        $scope.thisweek_contest.level = data.level_keys[key].level+1;
+                }
             }
-
         });
+    });
+    /*$http.get('/api/contest/get_thisweek_contest/current').success(function (data) {
+     if (data.status == 1) {
+     //$scope.error = "Chưa có đề thi";
+     //alert("hi");
+     $(function () {
+     $('#myModal1').modal();
+     });
+     }
+     else {
+     $scope.quiz_id=$http.get('api/contest');
+     $scope.thisweek_contest = data;
+     $http.get('/api/quizresults?order=-score&filter=test_key==' + data.test_key + '&filter=user_key==' + data.user_key + '&recurse=true&page_size=2').success(function (data, status, headers) {
+     $scope.results = data;
+     $scope.more = headers("More").toLocaleLowerCase() == "true" ? true : false;
+     if ($scope.more) {
+     $scope.next = headers('Cursor');
+     }
+     });
+     }
+
+     });*/
+    $scope.pre_result = function () {
+        $http.get('/api/quizresults?order=-score&filter=test_key==' + $scope.thisweek_contest.test_key + '&filter=user_key==' + $scope.thisweek_contest.user_key + '&recurse=true&page_size=2').success(function (data, status, headers) {
+            $scope.results = data;
+            $scope.more = headers("More").toLocaleLowerCase() == "true" ? true : false;
+            if ($scope.more) {
+                $scope.next = headers('Cursor');
+            }
+        });
+    }
+    $scope.next_result = function () {
+        $http.get('/api/quizresults?order=-score&filter=test_key==' +
+                $scope.thisweek_contest.test_key + '&filter=user_key==' + $scope.thisweek_contest.user_key +
+                '&recurse=true&page_size=2&cursor=' + $scope.next).success(function (data, status, headers) {
+                $scope.results = _.union($scope.results, data);
+                $scope.more = headers("More").toLocaleLowerCase() == "true" ? true : false;
+                if ($scope.more) {
+                    $scope.next = headers('Cursor');
+                }
+            });
+    }
+    $scope.get_level = function (key) {
+        $scope.thisweek_contest.this_quiz_level = api.Model.get({type: 'levels', id: key, recurse: true});
+
     }
     $scope.resetCode = function () {
         $scope.langs = [
@@ -617,7 +711,8 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "ap
         })
 
     };
-}]);
+}])
+;
 angular.module("controllers.header").controller('HeaderController', ['$scope', '$window', function ($scope, $window) {
     $scope.isActive = function (viewLocation) {
         return viewLocation === $window.location.pathname;
