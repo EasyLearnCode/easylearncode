@@ -40,6 +40,22 @@ class User(User):
     #: Account activation verifies email
     activated = ndb.BooleanProperty(default=False)
 
+    def to_dict(self, *args, **kwargs):
+        result = super(User, self).to_dict(*args, **kwargs)
+        from api.restful import current_user, _config, re_private
+        u = current_user()
+        if u and u.urlsafe() == self.key.urlsafe():
+            pass
+        else:
+            for k in result.keys():
+                if re_private.match(k):
+                    del result[k]
+        result["Id"] = self.key.urlsafe()
+        admin = _config.is_current_user_admin()
+        if admin:
+            result["$admin"] = admin
+        return result
+
     @classmethod
     def get_by_email(cls, email):
         """Returns a user object based on an email.
@@ -242,6 +258,7 @@ class WeeklyQuizLevel(UtilModel, ndb.Model):
 
     def to_dict(self, *args, **kwargs):
         result = super(WeeklyQuizLevel, self).to_dict(*args, **kwargs)
+        result['description_html'] = self.description_html
         from api.restful import current_user
         from api.util import is_request_from_admin
         _current_user = current_user()
@@ -250,9 +267,7 @@ class WeeklyQuizLevel(UtilModel, ndb.Model):
             weekly_quiz_current_user = WeeklyQuizUser.get_by_user_and_weekly_quiz(_current_user, weekly_quiz)
             result['is_current_level'] = True if weekly_quiz_current_user.current_level == self.key else False
             result['is_passed_level'] = True if self.key in weekly_quiz_current_user.passed_level else False
-            result['description_html'] = self.description_html
         return result
-
 
 
 class WeeklyQuiz(UtilModel, ndb.Model):
@@ -271,6 +286,11 @@ class WeeklyQuiz(UtilModel, ndb.Model):
         result = cls.query(cls.start_date >= first_day_current_week, cls.start_date <= last_day_current_week).get()
         return result
 
+    def to_dict(self, *args, **kwargs):
+        result = super(WeeklyQuiz, self).to_dict(*args, **kwargs)
+        result['top_player'] = WeeklyQuizUser.get_top_player_by_weekly_quiz(self.key)
+        return result
+
 
 class WeeklyQuizRunCodeResult(UtilModel, ndb.Model):
     level = ndb.KeyProperty(kind='WeeklyQuizLevel')
@@ -282,10 +302,6 @@ class WeeklyQuizRunCodeResult(UtilModel, ndb.Model):
     language = ndb.StringProperty(choices=('Python', 'Java', 'C++'))
     code = ndb.KeyProperty(kind='File')
     score = ndb.FloatProperty()
-
-    def _pre_put_hook(self):
-        _level = self.level.get()
-        return _level.score - self.time_used * 10 - self.memory_used / 100
 
     @classmethod
     def get_by_user(cls, user):
@@ -308,23 +324,6 @@ class WeeklyQuizRunCodeResult(UtilModel, ndb.Model):
 class WeeklyQuizResult(UtilModel, ndb.Model):
     weekly_quiz = ndb.KeyProperty(kind='WeeklyQuiz')
     result = ndb.KeyProperty(kind='WeeklyQuizRunCodeResult', repeated=True)
-
-    @classmethod
-    def get_top_player_by_weekly_quiz(cls, weekly_quiz, quantity=5):
-        #TODO: Write method get top player
-        # from itertools import groupby
-        #
-        # results = cls.query(cls.test_key == test_key).fetch()
-        # results2 = dict(((x.user_key, x.level_key), x) for x in sorted(results, key=lambda x: x.score)).values()
-        # scores = []
-        # for key, result in groupby(results2, lambda x: x.user_key):
-        #     scores.append({'user_key': key.urlsafe(), 'username': key.get().email, 'test_key': test_key.urlsafe(),
-        #                    'score': int(sum([x.score for x in result]))})
-        # if num == 5:
-        #     return sorted(scores, key=lambda k: k['score'], reverse=True)[:5]
-        # else:
-        #     return sorted(scores, key=lambda k: k['score'], reverse=True)
-        pass
 
 
 class Lesson(UtilModel, ndb.Model):
@@ -459,3 +458,7 @@ class WeeklyQuizUser(UtilModel, ndb.Model):
         weekly_week_current_user.rank = 0
         weekly_week_current_user.score = 0
         weekly_week_current_user.put()
+
+    @classmethod
+    def get_top_player_by_weekly_quiz(cls, weekly_quiz, quantity=5):
+        return [{'user':obj.user, 'score':obj.score} for obj in cls.query(cls.weekly_quiz == weekly_quiz).order(-cls.score).fetch(quantity)]

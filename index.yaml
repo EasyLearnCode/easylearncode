@@ -83,3 +83,9 @@ indexes:
   - name: user_key
   - name: score
     direction: desc
+
+- kind: WeeklyQuizUser
+  properties:
+  - name: weekly_quiz
+  - name: score
+    direction: desc

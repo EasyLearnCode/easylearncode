@@ -279,18 +279,18 @@ div.profileStepPassive .icon {
 {
     color: blue;
 }
-.ac a
+.profileStep .active a
 {
     color: #ffffff;
     font-weight: bold;
 }
-.ac a:hover
+.profileStep .active a:hover
 {
     color: #ffffff;
     font-weight: bold;
     text-decoration: none;
 }
-.ac
+.profileStep .active
 {
     box-shadow: 0px 0px 15px rgba(251, 94, 77, 0.78);
     z-index: 2!important;

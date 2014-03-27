@@ -149,14 +149,19 @@ class GetCurrentWeekContestHandler(BaseHandler):
     def get(self):
         from application.models import WeeklyQuiz
         weekly_quiz = WeeklyQuiz.get_current_week_contest()
+        data = {}
+        msg = ''
         if weekly_quiz:
             from application.models import WeeklyQuizUser
             weekly_week_current_user = WeeklyQuizUser.get_by_user(self.user_key)
             if not weekly_week_current_user:
                 from google.appengine.ext import deferred
                 deferred.defer(WeeklyQuizUser.create_new_by_user, user=self.user_key)
-            return {
-                "Id": weekly_quiz.key.urlsafe(),
-            }
+            data = weekly_quiz.to_dict()
         else:
-            return {'status': 1}
+            msg = 'No weekly quiz for current week'
+        return {
+            'status': 'ok',
+            'data': data,
+            'msg': msg
+        }

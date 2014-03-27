@@ -16,8 +16,8 @@
                 dạng tương tự như các bài thi học sinh giỏi tin học. Chúng tôi hy vọng qua việc tham gia cuộc thi, các
                 bạn sẽ tìm thấy sự hứng thú trong việc học tin học, nâng cao được trình độ của mình,
                 đồng thời cũng có thể giao lưu, học tập dược từ các bạn khác!<br/>
-                Cuộc thi hiện đang ở tuần thứ: {{ thisweek_contest.week }}. <br/>
-                Bắt đầu từ: {{ start | date:'dd-MM-yyyy' }} 00:00 đến {{ end | date:'dd-MM-yyyy' }} 23:59
+                Cuộc thi hiện đang ở tuần thứ: {{ current_week_data.week }}. <br/>
+                Bắt đầu từ: {{ firstDayOfWeek | date:'dd-MM-yyyy' }} 00:00 đến {{ lastDayOfWeek | date:'dd-MM-yyyy' }} 23:59
                 <a class="pull-right btn" id="startTourBtn"><img rel="tooltip" data-placement="bottom" title="Help"
                                                                  alt="help"
                                                                  src="/application/img/quiz/help.png"
@@ -28,15 +28,13 @@
                     <div class="col-md-8">
                         <h4 class="text-warning" style="float: left; margin-right: 5px;" id="step-1">Mức độ: </h4>
 
-                        <div class="profileSteps" data-ng-repeat="level in thisweek_contest.level_keys">
-                            <div ng-class="{profileStepActive:($index+1)<= thisweek_contest.level,
-                            profileStepPassive:($index+1)>thisweek_contest.level}"
-                                 class="profileStep profileStepOne">
+                        <div class="profileSteps">
+                            <div ng-class="{profileStepActive:level.is_passed_level, profileStepPassive:!level.is_passed_level && !level.is_current_level }" class="profileStep profileStepOne" ng-repeat="level in current_week_data.level_keys">
                                 <div class="connect"></div>
-                                <div class="icon" ng-class="{ac:thisweek_contest.this_quiz_level.level==($index + 1)}">
+                                <div class="icon" ng-class="{active:level.is_current_level}">
                                     <a class="btn" data-ng-click="get_level(level.Id)"
-                                       ng-show="($index+1)<= thisweek_contest.level">{{ $index+1 }}</a>
-                                    <span ng-show="($index+1)>thisweek_contest.level">{{ $index +1 }}</span>
+                                       ng-show="level.is_passed_level">{{ level.level }}</a>
+                                    <span ng-hide="level.is_passed_level">{{ level.level }}</span>
                                 </div>
                             </div>
 
@@ -47,20 +45,20 @@
                                 <h3 class="panel-title" id="step-2">Đề bài</h3>
                             </div>
                             <div class="panel-body"
-                                 ng-bind-html="thisweek_contest.this_quiz_level.description_html|to_trusted">
+                                 ng-bind-html="current_level.description_html|to_trusted">
                             </div>
                             <div class="panel-footer">
-                                Thời gian giới hạn: {{ thisweek_contest.this_quiz_level.limit_time }} (s)<br />
-                                Bộ nhớ giới hạn: {{ thisweek_contest.this_quiz_level.limit_memory }} (KiB)<br />
-                                Điểm tối đa: {{ thisweek_contest.this_quiz_level.score }}<br />
-                                Mức độ: {{ thisweek_contest.this_quiz_level.level }}
+                                Thời gian giới hạn: {{ current_level.limit_time }} (s)<br />
+                                Bộ nhớ giới hạn: {{ current_level.limit_memory }} (KiB)<br />
+                                Điểm tối đa: {{ current_level.score }}<br />
+                                Mức độ: {{ current_level.level }}
                             </div>
                         </div>
                     </div>
                     <div class="col-md-4">
 
                         <label class="label label-danger" id="step-3"><span class="clock">Còn lại:
-                        <timer end-time="endtime"> {{ days }} Ngày,
+                        <timer end-time="lastDayOfWeek"> {{ days }} Ngày,
                             {{ hours }} giờ,
                             {{ minutes }} phút,
                             {{ seconds }} giây
@@ -73,10 +71,10 @@
                             </div>
                             <div class="panel-body">
                                 <ul class="list-group">
-                                    <li data-ng-repeat="player in thisweek_contest.top_player"
+                                    <li data-ng-repeat="player in current_week_data.top_player"
                                         class="list-group-item">
                                         <span class="badge">{{ player.score }} Điểm </span>
-                                        <span title="Hạng {{ $index +1}}" ng-class="{yellow:($index)==0,blue:($index)==1}" class="glyphicon glyphicon-star" ></span>  {{ player.username }}</li>
+                                        <span title="Hạng {{ $index +1}}" ng-class="{yellow:($index)==0,blue:($index)==1}" class="glyphicon glyphicon-star" ></span>  {{ player.user.email }}</li>
                                 </ul>
                                 <a class="btn btn-success" href="/contest/result">Xem chi tiết...</a>
                             </div>
@@ -116,8 +114,8 @@
                                         class="glyphicon glyphicon-search"></span></button></td>
                                     </tr>
                                 </table>
-                                <button class="btn btn-success" data-ng-click="next_result()" ng-disabled="!more"><span class="glyphicon glyphicon-circle-arrow-down"></span></button>
-                                <button class="btn btn-success" data-ng-click="pre_result()"><span class="glyphicon glyphicon-circle-arrow-up"></span></button>
+                                <button class="btn btn-success" data-ng-click="next_result()" ng-disabled="!more"><i class="fa fa-info-circle"></i> Xem Thêm</button>
+                                <!--button class="btn btn-success" data-ng-click="pre_result()"><span class="glyphicon glyphicon-circle-arrow-up"></span></button-->
                             </div>
                             <div class="panel-footer">
                                 <span ng-show="thisweek_contest.rank>0">Hiện tại bạn đang xếp hạng {{ thisweek_contest.rank }} trong tuần</span>
@@ -241,8 +239,10 @@
     <script src="/application/js/libs/angularjs/ui-ace.min.js"></script>
     <script src="/application/js/libs/angularjs/ui-bootstrap-tpls-0.7.0.min.js"></script>
     <script src="/application/js/libs/angularjs/angular-timer.min.js"></script>
+    <script src="/application/js/libs/date.js"></script>
     <script src="/application/js/hopscotch-0.1.2.min.js"></script>
     <script src="/application/js/demo.js"></script>
+
     <script src='/_ah/channel/jsapi'></script>
 {% endblock %}
 {% block mediaJS %}

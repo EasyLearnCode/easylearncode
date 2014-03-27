@@ -17,11 +17,11 @@ from application.handlers import BaseHandler
 
 class _ConfigDefaults(object):
     # store total model count in metadata field HEAD query
-    METADATA = True
+    METADATA = False
     # list of valid models, None means anything goes
     DEFINED_MODELS = {"courses": Course, "exercises": Exercise, "quizs": WeeklyQuiz, "levels": WeeklyQuizLevel,
                       "lessons": Lesson, "lectures": Lecture, "codes": Code, "tests": Test, "lecture_quizs": Quiz,
-                      "answers": QuizAnswer,"quizresults": WeeklyQuizResult}
+                      "answers": QuizAnswer, "quizresults": WeeklyQuizResult, "users": User}
     RESTRICT_TO_DEFINED_MODELS = True
     PROTECTED_MODEL_NAMES = ["(?i)(mesh|messages|files|events|admin|proxy)",
                              "(?i)tailbone.*"]
@@ -60,23 +60,6 @@ def current_user(required=False):
     if required:
         raise LoginError("User must be logged in.")
     return None
-
-
-class users(object):
-    def to_dict(self, *args, **kwargs):
-        result = super(users, self).to_dict(*args, **kwargs)
-        u = current_user()
-        if u and u.urlsafe() == self.key.urlsafe():
-            pass
-        else:
-            for k in result.keys():
-                if re_private.match(k):
-                    del result[k]
-        result["Id"] = self.key.urlsafe()
-        admin = _config.is_current_user_admin()
-        if admin:
-            result["$admin"] = admin
-        return result
 
 
 # Reflectively instantiate a class given some data parsed by the restful json POST. If the size of
@@ -372,7 +355,7 @@ class RestfulHandler(BaseHandler):
         model = model.lower()
         cls = None
         if _config.DEFINED_MODELS:
-            cls = type('User', (users,), dict(User.__dict__)) if model == "users" else _config.DEFINED_MODELS.get(model)
+            cls = _config.DEFINED_MODELS.get(model)
             if not cls and _config.RESTRICT_TO_DEFINED_MODELS:
                 raise RestrictedModelError
             if cls:
@@ -394,11 +377,7 @@ class RestfulHandler(BaseHandler):
             key = parse_id(id, model)
             m = key.get()
             if not m:
-                if model == "users" and me:
-                    m = users()
-                    m.key = key
-                else:
-                    raise AppError("No {} with id {}.".format(model, id))
+                raise AppError("No {} with id {}.".format(model, id))
             if model == "users" and me:
                 u = _config.get_current_user()
                 if u:
@@ -441,7 +420,7 @@ class RestfulHandler(BaseHandler):
                 raise AppError("Id must be the current " +
                                "user_id or me. User {} tried to modify user {}.".format(u, id))
             id = u.urlsafe()
-            cls = type('User', (users,), dict(User.__dict__))
+            cls = User
         else:
             cls = None
             if _config.DEFINED_MODELS:

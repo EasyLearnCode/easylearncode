@@ -35,7 +35,8 @@ def json_extras(obj):
         return {"lat": obj.lat, "lon": obj.lon}
     if isinstance(obj, ndb.Key):
         r = webapp2.get_request()
-        if r.get("recurse", default_value=False):
+        recurse = r.get("recurse", default_value=False)
+        if recurse:
             item = obj.get()
             if item is None:
                 return obj.urlsafe()
