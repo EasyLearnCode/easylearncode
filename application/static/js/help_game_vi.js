@@ -5,31 +5,25 @@ var tour = {
       target: 'step-1',
       title: 'Mức độ',
       content: 'Đây là nơi hiển thị mức độ bạn đã vượt qua trong mỗi vòng.',
-      placement: 'bottom'
+      placement: 'top'
     },
     {
       target: 'step-2',
-      placement: 'top',
-      title: 'Câu hỏi',
-      content: 'Đây là phần thay đổi con vật bạn đang chơi.'
+      placement: 'left',
+      title: 'Thay đổi nhân vật',
+      content: 'Đây là phần thay đổi nhân vật bạn đang chơi.'
     },
     {
-      target: 'step-3',
-      placement: 'bottom',
+      target: 'blockly',
+      placement: 'top',
       title: 'Thanh tím',
       content: 'Các thanh tím này để bạn kéo thả vào khung trắng bên cạnh.'
     },
     {
-      target: 'step-4',
+      target: 'svgMaze',
       placement: 'top',
       title: 'Khung hướng đi.',
-      content: ''
-    },
-    {
-      target: 'step-5',
-      placement: 'bottom',
-      title: 'Thùng rác',
-      content: 'Bạn có thể bỏ thẻ màu tím không cần thiết vào đây.'
+      content: 'Đường đi của nhân vật có thể đi tới đích có dấu màu đỏ'
     },
     {
       target: 'step-6',
