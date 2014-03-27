@@ -45,7 +45,11 @@ var tour = {
     }
   ],
   showPrevButton: true,
-  scrollTopMargin: 100
+  scrollTopMargin: 100,
+  i18n: {
+      nextBtn:'>>',
+      prevBtn: '<<'
+  }
 },
 
 /* ========== */
