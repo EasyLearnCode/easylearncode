@@ -1241,14 +1241,14 @@ angular.module("easylearncode.admin.quiz", ["easylearncode.admin.core"])
                 {
                     "field_id": 1,
                     "field_title": "input",
-                    "field_type": "textfield",
+                    "field_type": "textarea",
                     "field_value": "",
                     "field_required": true
                 },
                 {
                     "field_id": 2,
                     "field_title": "output",
-                    "field_type": "textfield",
+                    "field_type": "textarea",
                     "field_value": "",
                     "field_required": true
                 }
@@ -1274,6 +1274,7 @@ angular.module("easylearncode.admin.quiz", ["easylearncode.admin.core"])
                 });
                 api.Model.get({type: 'levels', id: $routeParams.levelId}, function (level) {
                     level.test_case.push(test);
+                    delete level['description_html'];
                     api.Model.save({type: 'levels', id: level.Id}, level, function () {
                         $scope.level.test_case.push(test);
                     });
