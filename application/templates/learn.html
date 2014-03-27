@@ -1,6 +1,6 @@
 {% extends "main.html" %}
 {% block mediaCSS %}
-    <link rel="stylesheet" href="/application/css/learn.css">
+    <link rel="stylesheet" href="/application/css/learn.css" xmlns="http://www.w3.org/1999/html">
     <link rel="stylesheet" type="text/css" href="/application/css/videogular/quiz.css">
     <link href="/application/css/hopscotch-0.1.1.css" rel="stylesheet">
     <link href="/application/css/angular-social.css" rel="stylesheet">
@@ -93,14 +93,36 @@
                         </div>
                         <div class="pull-left" style="padding-top: 20px"><span
                                 style="font-weight: bold">Đánh giá:</span>
-                            <rating value="rate" max="max" readonly="isReadonly" on-hover="hoveringOver(value)"
+                            <rating value="rate" max="max" readonly="isReadonly" style="cursor: pointer"
+                                    on-hover="hoveringOver(value)"
                                     on-leave="overStar = null"></rating>
                             <span class="label"
                                   ng-class="{'label-warning': percent<30, 'label-info': percent>=30 && percent<70, 'label-success': percent>=70}"
                                   ng-show="overStar && !isReadonly">{{ percent }}%</span></div>
-                        <div class="pull-right" style="padding-top: 20px">
-                            <img src="https://cdn1.iconfinder.com/data/icons/sweetsocial/32/youtube.png"
-                                 ng-click="ViewOnYoutube()" alt="Xem tại trang youtube" title="Xem tại trang youtube"/>
+                        <div class="pull-right" style="padding-top: 15px">
+                            <ul ng-social-buttons
+                                data-url="current_url"
+                                data-title="current_title"
+                                data-description="current_description"
+                                data-image="'http://easylearncode.appspot.com/application/img/logo.png'">
+                                <li style="font-weight: bold">Chia sẻ:</li>
+                                <li class="ng-social-facebook" rel="tooltip" data-placement="bottom"
+                                    title="Chia sẻ trên facebook">Facebook
+                                </li>
+                                <li class="ng-social-google-plus" rel="tooltip" data-placement="bottom"
+                                    title="Chia sẻ trên google plus">Google+
+                                </li>
+                                <li class="ng-social-twitter" rel="tooltip" data-placement="bottom"
+                                    title="Chia sẻ trên twitter">Twitter
+                                </li>
+                                <li class="ng-social-pinterest" rel="tooltip" data-placement="bottom"
+                                    title="Chia sẻ trên printerest">Pinterest
+                                </li>
+                                <li style="cursor: pointer"><img
+                                        src="https://cdn1.iconfinder.com/data/icons/sweetsocial/32/youtube.png"
+                                        ng-click="ViewOnYoutube()"
+                                        title="Xem tại trang youtube" rel="tooltip" data-placement="bottom"/></li>
+                            </ul>
                         </div>
                         <div class="clearfix"></div>
                     </div>
@@ -109,55 +131,50 @@
                                 class="glyphicon glyphicon-info-sign"></span> Tóm tắt</a></li>
                         <li><a href="#profile" data-toggle="tab"><span class="glyphicon glyphicon-question-sign"></span>
                             Hỏi đáp</a></li>
-                        <li><a href="#messages" data-toggle="tab"><span class="glyphicon glyphicon-download"></span>
-                            Chia sẻ</a></li>
                     </ul>
                     <div class="tab-content border_info">
                         <div class="tab-pane fade active" id="home">{{ lecture.description }}</div>
                         <div class="tab-pane fade" id="profile">
                             <div disqus="lecture.Id"></div>
                         </div>
-                        <div class="tab-pane fade" id="messages">
-                            <ul ng-social-buttons
-                                data-url="current_url"
-                                data-title="current_title"
-                                data-description="current_description"
-                                data-image="'http://easylearncode.appspot.com/application/img/logo.png'">
-                                <li>Share:</li>
-                                <li class="ng-social-facebook">Facebook</li>
-                                <li class="ng-social-google-plus">Google+</li>
-                                <li class="ng-social-twitter">Twitter</li>
-                                <li class="ng-social-pinterest">Pinterest</li>
-                            </ul>
-                        </div>
                     </div>
                 </div>
                 <div class="col-xs-4">
                     <div class="panel panel-success" id="step-4">
                         <div class="panel-heading">
-                            <h3 class="panel-title"><i class="fa fa-terminal fa-lg"></i>Thực hành
-                            </h3>
+                            <div class="panel-title"><span class="pull-left" id="step-1"> <h3 class="panel-title"><a
+                                    class="second"><i
+                                    class="fa fa-code fa-lg"></i>Thực hành</a></h3></span><span class="pull-right"><button
+                                    type="button" class="btn btn-default"
+                                    id="step-7"
+                                    ng-click="toggleFullScreen()"
+                                    ng-class="{'full-btn-full-screen':isEditorFullScreen}" rel="tooltip"
+                                    data-placement="bottom"
+                                    title="Phóng to khung code"><i
+                                    class="glyphicon glyphicon-resize-full"
+                                    ng-class="{'glyphicon-resize-small':isEditorFullScreen}"></i>
+                            </button></span>
+                            </div>
+                            <div class="clearfix"></div>
                         </div>
                         <div class="panel-body">
-                            <div ui-ace="{ theme:'chrome',
+                            <div  ui-ace="{ theme:'chrome',
                         mode:lang.mode}" data-ng-model="code" id="code-content"
-                                 ng-class="{'editor-full-screen':isEditorFullScreen}"></div>
+                                 ng-class="{'editor-full-screen':isEditorFullScreen}">Khung code</div>
                             </br>
-                            <button type="button" class="btn btn-success" ng-click="runCode()"
-                                    ng-disabled="!jsreplReady" id="step-5"><span
-                                    class="glyphicon glyphicon-play"></span> Chạy code
+                            <button type="button" class="btn btn-success" ng-click="runCode()" rel="tooltip"
+                                    data-placement="bottom" ng-class="{'run-btn-full-screen':isEditorFullScreen}"
+                                    title="Thực thi code" style="margin-right: 5px;   ng-disabled="
+                            !jsreplReady" id="step-5"><i
+                                class="glyphicon glyphicon-play"></i>
                             </button>
-                            <button type="button" class="btn btn-default" ng-click="reSet()" id="step-6"><span
-                                    class="glyphicon glyphicon-remove"></span> Làm lại
+                            <button type="button" class="btn btn-default pull-right" ng-click="reSet()"
+                                    ng-class="{'full-btn-clear-screen':isEditorFullScreen}" id="step-6" rel="tooltip"
+                                    data-placement="bottom" title="Làm lại"><i
+                                    class="fa fa-refresh"></i>
                             </button>
-                            <button type="button" class="btn btn-default pull-right" id="step-7"
-                                    ng-click="toggleFullScreen()"
-                                    ng-class="{'full-btn-full-screen':isEditorFullScreen}"><span
-                                    class="glyphicon glyphicon-fullscreen"></span> Phóng to
-                            </button>
-
-                            <textarea class="form-control result_box" cols="200" rows="8" id="step-8" data-ng-model="kq"
-                                      style="margin-top: 20px"> >> </textarea>
+                            <div id="console" style="margin-top: 10px"
+                                 ng-class="{'full-screen':isEditorFullScreen}">{{ kq }}</div>
                         </div>
                     </div>
                 </div>

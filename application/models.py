@@ -261,8 +261,6 @@ class WeeklyQuiz(UtilModel, ndb.Model):
     created = ndb.DateTimeProperty(auto_now_add=True)
     level_keys = ndb.KeyProperty(WeeklyQuizLevel, repeated=True)
 
-    def get_rank_by_user(self, user):
-        return (item for item in self.rank if item.user_key == user).next().rank
 
     @classmethod
     def get_current_week_contest(cls):
