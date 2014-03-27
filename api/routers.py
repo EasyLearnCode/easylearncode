@@ -9,10 +9,9 @@ import files
 PREFIX = "/api/"
 
 _routes = [
-    RedirectRoute('/api/contest/week_result/<week_id>', handlers.GetWeekResultHandler, name='get-thisweek-result',
+    RedirectRoute('/api/contest', handlers.GetWeekContestHandler, name='get-thisweek-contest',
                   strict_slash=True),
-    RedirectRoute('/api/run_code', handlers.RunCodeHandler, name='run-code', strict_slash=True),
-    RedirectRoute('/api/contest', handlers.GetCurrentWeekContestHandler, name='get-thisweek-contest',
+    RedirectRoute('/api/contest/me', handlers.GetWeekContestInfoOfMeHandler, name='get-thisweek-contest',
                   strict_slash=True),
     RedirectRoute('/api/contest/submit', handlers.SubmitContestHandler, name='submit-contest', strict_slash=True),
     RedirectRoute('/api/files/<model>/<id>/<property>', handler=files.FileHandler, name='blog-upload-download', strict_slash=True),

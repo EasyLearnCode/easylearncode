@@ -9,7 +9,7 @@ from google.appengine.ext import ndb
 from webapp2_extras import auth
 
 from application.models import Course, Exercise, WeeklyQuiz, WeeklyQuizLevel, Lesson, Lecture, User, Code, Test, Quiz, \
-    QuizAnswer, WeeklyQuizResult
+    QuizAnswer
 from util import AppError, LoginError, BreakError
 from util import as_json, parse_body
 from application.handlers import BaseHandler
@@ -21,7 +21,7 @@ class _ConfigDefaults(object):
     # list of valid models, None means anything goes
     DEFINED_MODELS = {"courses": Course, "exercises": Exercise, "quizs": WeeklyQuiz, "levels": WeeklyQuizLevel,
                       "lessons": Lesson, "lectures": Lecture, "codes": Code, "tests": Test, "lecture_quizs": Quiz,
-                      "answers": QuizAnswer, "quizresults": WeeklyQuizResult, "users": User}
+                      "answers": QuizAnswer, "users": User}
     RESTRICT_TO_DEFINED_MODELS = True
     PROTECTED_MODEL_NAMES = ["(?i)(mesh|messages|files|events|admin|proxy)",
                              "(?i)tailbone.*"]
