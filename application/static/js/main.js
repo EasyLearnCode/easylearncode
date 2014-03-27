@@ -434,7 +434,7 @@ angular.module("services.utility").factory("md5", [ function () {
     };
     return md5;
 } ]);
-angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "api", "$http", "csrf_token", function ($scope, api, $http, csrf_token) {
+angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "api", "$http", "csrf_token", "channelToken", function ($scope, api, $http, csrf_token, channelToken) {
 
     var curr = new Date(); // get current date
     curr.setHours(0, 0, 0, 0);
@@ -502,9 +502,9 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "ap
         if (data.status == 1) {
             //$scope.error = "Chưa có đề thi";
             //alert("hi");
-            $(function () {
-                $('#myModal1').modal();
-            });
+//            $(function () {
+//                $('#myModal1').modal();
+//            });
         }
         else {
             $scope.thisweek_contest = data;
@@ -617,6 +617,16 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "ap
         })
 
     };
+    var channel = new goog.appengine.Channel(channelToken);
+    var handler = {
+      'onopen': function(){console.log(arguments)},
+      'onmessage': function(){
+          console.log(arguments)
+      },
+      'onerror': function() {},
+      'onclose': function() {}
+    };
+    var socket = channel.open(handler);
 }]);
 angular.module("controllers.header").controller('HeaderController', ['$scope', '$window', function ($scope, $window) {
     $scope.isActive = function (viewLocation) {
