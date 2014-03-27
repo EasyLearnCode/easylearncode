@@ -84,6 +84,27 @@ indexes:
   - name: score
     direction: desc
 
+- kind: WeeklyQuizRunCodeResult
+  properties:
+  - name: level
+  - name: user
+  - name: score
+
+- kind: WeeklyQuizRunCodeResult
+  properties:
+  - name: level
+  - name: user
+  - name: score
+  - name: created
+    direction: desc
+
+- kind: WeeklyQuizRunCodeResult
+  properties:
+  - name: level
+  - name: user
+  - name: score
+    direction: desc
+
 - kind: WeeklyQuizUser
   properties:
   - name: weekly_quiz
