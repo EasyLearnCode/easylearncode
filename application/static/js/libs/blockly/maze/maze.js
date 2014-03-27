@@ -102,9 +102,9 @@ Maze.map = [
 // Level 1.
  [[0, 0, 0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 2, 1, 3, 0, 0],
+  [0, 0, 1, 0, 0, 0, 0],
+  [0, 0, 1, 0, 3, 0, 0],
+  [0, 1, 2, 1, 1, 0, 0],
   [0, 0, 0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0, 0, 0]],
 // Level 2.
@@ -571,7 +571,7 @@ Maze.levelHelp = function() {
   if (Maze.LEVEL == 1) {
     if (Blockly.mainWorkspace.getAllBlocks().length < 2) {
       content = document.getElementById('dialogHelpStack');
-      style = {width: '370px', top: '180px'};
+      style = {width: '370px', top: '250px'};
       style[Blockly.RTL ? 'right' : 'left'] = '360px';
       origin = toolbar[0].getSvgRoot();
     } else {
