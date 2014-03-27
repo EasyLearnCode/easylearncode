@@ -18,9 +18,9 @@ import httpagentparser
 from webapp2_extras import security
 from webapp2_extras.auth import InvalidAuthIdError, InvalidPasswordError
 from webapp2_extras.i18n import gettext as _
-from webapp2_extras.appengine.auth.models import Unique
 from google.appengine.api import taskqueue
 from google.appengine.api import users
+from google.appengine.api import channel
 from google.appengine.api.datastore_errors import BadValueError
 from google.appengine.runtime import apiproxy_errors
 from github import github
@@ -1525,7 +1525,16 @@ class ContestHandler(BaseHandler):
     def get(self):
         params = {}
         params.update({'angular_app_name': "easylearncode.contest"})
+        params.update({'channelToken': channel.create_channel(self.user_id)})
         return self.render_template("contest.html", **params)
+
+
+class ChannelHandler(BaseHandler):
+    @user_required
+    def get(self):
+        channel.send_message(self.user_id, json.dumps({'id': self.user_id, 'msg': 'Test'}))
+        return 'Hello'
+
 
 class EditProfileBasicInfoHandler(BaseHandler):
     @user_required
@@ -1534,12 +1543,14 @@ class EditProfileBasicInfoHandler(BaseHandler):
         params.update({'angular_app_name': "easylearncode.contest"})
         return self.render_template("editprofile_basic_info.html", **params)
 
+
 class EditProfileSettingsHandler(BaseHandler):
     @user_required
     def get(self):
         params = {}
         params.update({'angular_app_name': "easylearncode.contest"})
         return self.render_template("editprofile_basic_info.html", **params)
+
 
 class GameHandler(BaseHandler):
     @user_required
@@ -1619,6 +1630,7 @@ class CourseLearnHandler(BaseHandler):
         params = {}
         params.update({'angular_app_name': 'easylearncode.info'})
         return self.render_template("info.html", **params)
+
 
 class VisualizationHandler(BaseHandler):
     @user_required
