@@ -62,6 +62,12 @@ indexes:
 - kind: WeeklyQuizResult
   properties:
   - name: test_key
+  - name: level
+    direction: desc
+
+- kind: WeeklyQuizResult
+  properties:
+  - name: test_key
   - name: score
     direction: desc
 

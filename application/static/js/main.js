@@ -470,6 +470,14 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "ap
     $scope.view_code = function (ID) {
         api.Model.get({type: 'quizresults', id: ID}, function (data) {
             var code = data;
+            $http.get('/api/contest/get_thisweek_contest/' + code.level_key).success(function (data) {
+                if (data.status == 1) {
+                }
+                else {
+                    $scope.thisweek_contest = data;
+                }
+
+            });
             if (code.language == 'PYTHON') {
                 $scope.langs = [
                     {
@@ -495,35 +503,121 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "ap
 
                     }
                 ];
+            } else if (code.language = "JAVA") {
+                $scope.langs = [
+                    {
+                        name: 'Python',
+                        mode: 'python',
+                        lang: 'PYTHON',
+                        active: false,
+                        source: ""
+                    },
+                    {
+                        name: 'Java',
+                        mode: 'java',
+                        lang: 'JAVA',
+                        active: true,
+                        source: code.code
+                    },
+                    {
+                        name: 'C++',
+                        mode: 'c_cpp',
+                        lang: 'CPP',
+                        active: false,
+                        source: ""
+
+                    }
+                ];
+            } else {
+                $scope.langs = [
+                    {
+                        name: 'Python',
+                        mode: 'python',
+                        lang: 'PYTHON',
+                        active: false,
+                        source: ""
+                    },
+                    {
+                        name: 'Java',
+                        mode: 'java',
+                        lang: 'JAVA',
+                        active: false,
+                        source: ""
+                    },
+                    {
+                        name: 'C++',
+                        mode: 'c_cpp',
+                        lang: 'CPP',
+                        active: true,
+                        source: code.code
+
+                    }
+                ];
             }
         });
     }
-    $http.get('/api/contest/get_thisweek_contest/current').success(function (data) {
-        if (data.status == 1) {
-            //$scope.error = "Chưa có đề thi";
-            //alert("hi");
-//            $(function () {
-//                $('#myModal1').modal();
-//            });
-        }
-        else {
+    $http.get('/api/contest').success(function (data) {
+        $scope.quiz_id = data.Id;
+        $http.get('api/quizs/'+data.Id+'?recurse=true').success(function (data) {
             $scope.thisweek_contest = data;
-            $http.get('/api/quizresults?filter=test_key==' + data.test_key + '&& user_key==' + data.user_key + '&recurse=true').success(function (data) {
-                $scope.results = data;
-            });
-            console.log($scope.results)
-        }
-
-    });
-    $scope.get_level = function (key) {
-        $http.get('/api/contest/get_thisweek_contest/' + key).success(function (data) {
-            if (data.status == 1) {
+            for (key in data.level_keys) {
+                if (data.level_keys[key].is_current_level) {
+                    $scope.thisweek_contest.this_quiz_level = data.level_keys[key];
+                }
             }
-            else {
-                $scope.thisweek_contest = data;
+            $scope.thisweek_contest.level = 1;
+            for (key in data.level_keys) {
+                if (data.level_keys[key].is_passed_level) {
+                    if($scope.thisweek_contest.level<=data.level_keys[key].level)
+                        $scope.thisweek_contest.level = data.level_keys[key].level+1;
+                }
             }
-
         });
+    });
+    /*$http.get('/api/contest/get_thisweek_contest/current').success(function (data) {
+     if (data.status == 1) {
+     //$scope.error = "Chưa có đề thi";
+     //alert("hi");
+     $(function () {
+     $('#myModal1').modal();
+     });
+     }
+     else {
+     $scope.quiz_id=$http.get('api/contest');
+     $scope.thisweek_contest = data;
+     $http.get('/api/quizresults?order=-score&filter=test_key==' + data.test_key + '&filter=user_key==' + data.user_key + '&recurse=true&page_size=2').success(function (data, status, headers) {
+     $scope.results = data;
+     $scope.more = headers("More").toLocaleLowerCase() == "true" ? true : false;
+     if ($scope.more) {
+     $scope.next = headers('Cursor');
+     }
+     });
+     }
+
+     });*/
+    $scope.pre_result = function () {
+        $http.get('/api/quizresults?order=-score&filter=test_key==' + $scope.thisweek_contest.test_key + '&filter=user_key==' + $scope.thisweek_contest.user_key + '&recurse=true&page_size=2').success(function (data, status, headers) {
+            $scope.results = data;
+            $scope.more = headers("More").toLocaleLowerCase() == "true" ? true : false;
+            if ($scope.more) {
+                $scope.next = headers('Cursor');
+            }
+        });
+    }
+    $scope.next_result = function () {
+        $http.get('/api/quizresults?order=-score&filter=test_key==' +
+                $scope.thisweek_contest.test_key + '&filter=user_key==' + $scope.thisweek_contest.user_key +
+                '&recurse=true&page_size=2&cursor=' + $scope.next).success(function (data, status, headers) {
+                $scope.results = _.union($scope.results, data);
+                $scope.more = headers("More").toLocaleLowerCase() == "true" ? true : false;
+                if ($scope.more) {
+                    $scope.next = headers('Cursor');
+                }
+            });
+    }
+    $scope.get_level = function (key) {
+        $scope.thisweek_contest.this_quiz_level = api.Model.get({type: 'levels', id: key, recurse: true});
+
     }
     $scope.resetCode = function () {
         $scope.langs = [
@@ -617,6 +711,8 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "ap
         })
 
     };
+}])
+;
     var channel = new goog.appengine.Channel(channelToken);
     var handler = {
       'onopen': function(){console.log(arguments)},
@@ -844,7 +940,6 @@ angular.module("easylearncode.learn").run(function () {
             }
             $scope.vgScope = $scope.$new(false);
             $('#video').html($compile("<videogular id=\"khung-video\"\r\n                                    vg-player-ready=\"onPlayerReady\" vg-complete=\"onCompleteVideo\" vg-update-time=\"onUpdateTime\" vg-update-size=\"onUpdateSize\" vg-update-volume=\"onUpdateVolume\" vg-update-state=\"onUpdateState\"\r\n                                    vg-width=\"config.width\" vg-height=\"config.height\" vg-theme=\"config.theme.url\" vg-autoplay=\"config.autoPlay\" vg-stretch=\"config.stretch.value\" vg-responsive=\"config.responsive\">\r\n<video preload='metadata' id=\"video_content\">\r\n<source type=\"video/youtube\" src=\"" + $scope.youtubeUrl + "\"  /></video>\r\n                                    <vg-youtube></vg-youtube>\r\n                                    <vg-quiz vg-data='config.plugins.quiz.data' vg-quiz-submit=\"onQuizSubmit\" vg-quiz-skip=\"onQuizSkip\" vg-quiz-continue=\"onQuizContinue\" vg-quiz-show-explanation=\"onQuizShowExplanation\"></vg-quiz>\r\n                                    <vg-poster-image vg-url='config.plugins.poster.url' vg-stretch=\"config.stretch.value\"></vg-poster-image>\r\n                                    <vg-buffering></vg-buffering>\r\n                                    <vg-overlay-play vg-play-icon=\"config.theme.playIcon\"></vg-overlay-play>\r\n\r\n                                    <vg-controls vg-autohide=\"config.autoHide\" vg-autohide-time=\"config.autoHideTime\" style=\"height: 50px;\">\r\n                                        <vg-play-pause-button vg-play-icon=\"config.theme.playIcon\" vg-pause-icon=\"config.theme.pauseIcon\"></vg-play-pause-button>\r\n                                        <vg-timeDisplay>{{ currentTime }}</vg-timeDisplay>\r\n                                        <vg-scrubBar>\r\n                                            <vg-scrubbarcurrenttime></vg-scrubbarcurrenttime>\r\n                                        </vg-scrubBar>\r\n                                        <vg-timeDisplay>{{ totalTime }}</vg-timeDisplay>\r\n                                        <vg-volume>\r\n                                            <vg-mutebutton\r\n                                                vg-volume-level-3-icon=\"config.theme.volumeLevel3Icon\"\r\n                                                vg-volume-level-2-icon=\"config.theme.volumeLevel2Icon\"\r\n                                                vg-volume-level-1-icon=\"config.theme.volumeLevel1Icon\"\r\n                                                vg-volume-level-0-icon=\"config.theme.volumeLevel0Icon\"\r\n                                                vg-mute-icon=\"config.theme.muteIcon\">\r\n                                            </vg-mutebutton>\r\n                                            <vg-volumebar></vg-volumebar>\r\n                                        </vg-volume>\r\n                                        <vg-fullscreenButton vg-enter-full-screen-icon=\"config.theme.enterFullScreenIcon\" vg-exit-full-screen-icon=\"config.theme.exitFullScreenIcon\"></vg-fullscreenButton>\r\n                                    </vg-controls>\r\n                                </videogular>")($scope.vgScope));
-            $("#gplus-cm").html("Loading G+ Comments");
         }
 
         $scope.config = {
@@ -914,15 +1009,7 @@ angular.module("easylearncode.learn").run(function () {
         }
         $scope.$on('$locationChangeSuccess', function () {
             $scope.current_url = (document.location.href);
-            gapi.comments.render('gplus-cm', {
-                href: $scope.current_url,
-                width: '700',
-                first_party_property: 'BLOGGER',
-                view_type: 'FILTERED_POSTMOD'
-            });
         });
-        $('#gplus-cm').html('<div class="g-comments" data-width="700" data-href="' + location.toString() + '" data-first_party_property="BLOGGER" data-view_type="FILTERED_POSTMOD">Loading Google+ Comments ...</div>');
-
     }]).directive('hoverClass', function () {
         return {
             restrict: 'A',
