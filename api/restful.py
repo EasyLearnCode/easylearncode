@@ -13,7 +13,6 @@ from application.models import Course, Exercise, WeeklyQuiz, WeeklyQuizLevel, Le
 from util import AppError, LoginError, BreakError
 from util import as_json, parse_body
 from application.handlers import BaseHandler
-from util import is_request_from_admin
 
 
 class _ConfigDefaults(object):
