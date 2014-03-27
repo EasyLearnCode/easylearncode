@@ -98,6 +98,11 @@ angular.module("easylearncode.core").filter('to_trusted', ['$sce', function ($sc
         return $sce.trustAsHtml(text);
     };
 }]);
+angular.module("controllers.header").controller('HeaderController', ['$scope', '$window', function ($scope, $window) {
+    $scope.isActive = function (viewLocation) {
+        return viewLocation === $window.location.pathname;
+    };
+}]);
 angular.module("services.utility").factory("validator", [
     function () {
         var a = {
@@ -711,8 +716,6 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "ap
         })
 
     };
-}])
-;
     var channel = new goog.appengine.Channel(channelToken);
     var handler = {
       'onopen': function(){console.log(arguments)},
@@ -723,11 +726,6 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "ap
       'onclose': function() {}
     };
     var socket = channel.open(handler);
-}]);
-angular.module("controllers.header").controller('HeaderController', ['$scope', '$window', function ($scope, $window) {
-    $scope.isActive = function (viewLocation) {
-        return viewLocation === $window.location.pathname;
-    };
 }]);
 angular.module("easylearncode.home").controller('HomeCarouselCtrl', ['$scope', function ($scope) {
     $scope.myInterval = 5500;
