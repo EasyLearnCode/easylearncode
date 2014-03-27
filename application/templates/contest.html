@@ -7,6 +7,11 @@
 {% block content %}
     {% raw %}
         <div class="container" data-ng-controller="ContestCtrl">
+        <div class="text-center" data-ng-show="!loaded">
+            <div class="row row-gap-large"><img src="/application/img/tp_loading.gif"></div>
+            <div class="row row-gap-small"><h4>Đang tải dữ liệu...</h4></div>
+        </div>
+        <div data-ng-show="loaded">
             <div class="col-md-12 highlight">
                 <div><img width="100" alt="logo" style="float: left; margin-right: 5px"
                           src="/application/img/Olympic-Flame.ico"/>
@@ -29,7 +34,8 @@
                         <h4 class="text-warning" style="float: left; margin-right: 5px;" id="step-1">Mức độ: </h4>
 
                         <div class="profileSteps">
-                            <div ng-class="{profileStepActive:level.is_passed_level, profileStepPassive:!level.is_passed_level && !level.is_current_level }" class="profileStep profileStepOne" ng-repeat="level in current_week_data.level_keys">
+                            <div ng-class="{profileStepActive:level.is_passed_level, profileStepPassive:!level.is_passed_level && !level.is_current_level }"
+                                 class="profileStep profileStepOne" ng-repeat="level in current_week_data.level_keys">
                                 <div class="connect"></div>
                                 <div class="icon" ng-class="{active:level.is_current_level}">
                                     <a class="btn" data-ng-click="get_level(level.Id)"
@@ -48,9 +54,9 @@
                                  ng-bind-html="current_level.description_html|to_trusted">
                             </div>
                             <div class="panel-footer">
-                                Thời gian giới hạn: {{ current_level.limit_time }} (s)<br />
-                                Bộ nhớ giới hạn: {{ current_level.limit_memory }} (KiB)<br />
-                                Điểm tối đa: {{ current_level.score }}<br />
+                                Thời gian giới hạn: {{ current_level.limit_time }} (s)<br/>
+                                Bộ nhớ giới hạn: {{ current_level.limit_memory }} (KiB)<br/>
+                                Điểm tối đa: {{ current_level.score }}<br/>
                                 Mức độ: {{ current_level.level }}
                             </div>
                         </div>
@@ -58,32 +64,36 @@
                     <div class="col-md-4">
 
                         <label class="label label-danger" id="step-3"><span class="clock">Còn lại:
-                        <timer end-time="lastDayOfWeek"> {{ days }} Ngày,
-                            {{ hours }} giờ,
-                            {{ minutes }} phút,
-                            {{ seconds }} giây
-                        </timer></span>
+                            <timer end-time="lastDayOfWeek"> {{ days }} Ngày,
+                                {{ hours }} giờ,
+                                {{ minutes }} phút,
+                                {{ seconds }} giây
+                            </timer></span>
                         </label>
 
                         <div class="panel panel-success">
                             <div class="panel-heading">
                                 <h3 class="panel-title">Thành tích tuần này</h3>
                             </div>
-                            <div class="panel-body">
+                            <div class="panel-body" ng-show="current_week_data.top_player">
                                 <ul class="list-group">
                                     <li data-ng-repeat="player in current_week_data.top_player"
                                         class="list-group-item">
-                                        <span class="badge">{{ player.score }} Điểm </span>
-                                        <span title="Hạng {{ $index +1}}" ng-class="{yellow:($index)==0,blue:($index)==1}" class="glyphicon glyphicon-star" ></span>  {{ player.user.email }}</li>
+                                        <span class="badge">{{ player.score|number:1 }} Điểm </span>
+                                        <span title="Hạng {{ $index +1}}" ng-class="{yellow:($index)==0,blue:($index)==1}"
+                                              class="glyphicon glyphicon-star"></span> {{ player.user.email }}</li>
                                 </ul>
                                 <a class="btn btn-success" href="/contest/result">Xem chi tiết...</a>
+                            </div>
+                            <div class="panel-body" ng-hide="current_week_data.top_player">
+                                <p>Hãy là người đầu tiên trong bảng thành tích</p>
                             </div>
                         </div>
                         <div class="panel panel-success">
                             <div class="panel-heading">
                                 <h3 class="panel-title">Kết quả của bạn</h3>
                             </div>
-                            <div class="panel-body">
+                            <div class="panel-body" ng-show="current_week_user_data.run_code_result">
                                 <table class="table">
                                     <tr>
                                         <th>Level</th>
@@ -93,33 +103,40 @@
                                         <th> Kết quả</th>
                                         <th>Xem</th>
                                     </tr>
-                                    <tr data-ng-repeat="i in results">
+                                    <tr data-ng-repeat="result in current_week_user_data.run_code_result|limitTo:resultQuantity">
                                         <td>
-                                            {{ i.level_key.level }}
+                                            {{ result.level.level }}
                                         </td>
                                         <td>
-                                            {{ i.time_used|number:1 }}
+                                            {{ result.time_used|number:1 }}
                                         </td>
                                         <td>
-                                            {{ i.memory_used|number:1 }}
+                                            {{ result.memory_used|number:1 }}
                                         </td>
-                                        <td>{{ i.language }}</td>
+                                        <td>{{ result.language }}</td>
                                         <td>
-                                           <span ng-show="i.result" class="glyphicon glyphicon-ok"></span>
-                                           <span ng-show="!i.result" class="glyphicon glyphicon-remove"></span>
-                                            <br />
-                                           {{ i.score|number:1 }}
+                                            <span ng-show="result.result" class="glyphicon glyphicon-ok"></span>
+                                            <span ng-hide="result.result" class="glyphicon glyphicon-remove"></span>
+                                            <br/>
+                                            {{ result.score|number:1 }}
                                         </td>
-                                        <td><button class="btn btn-primary" data-ng-click="view_code(i.Id)"><span
-                                        class="glyphicon glyphicon-search"></span></button></td>
+                                        <td>
+                                            <button class="btn btn-primary" data-ng-click="viewResult(i.Id)"><span
+                                                    class="glyphicon glyphicon-search"></span></button>
+                                        </td>
                                     </tr>
                                 </table>
-                                <button class="btn btn-success" data-ng-click="next_result()" ng-disabled="!more"><i class="fa fa-info-circle"></i> Xem Thêm</button>
+                                <button class="btn btn-success" data-ng-click="showMoreResult()" ng-disabled="resultQuantity>=current_week_user_data.run_code_result.length"><i
+                                        class="fa fa-info-circle"></i> Xem Thêm
+                                </button>
                                 <!--button class="btn btn-success" data-ng-click="pre_result()"><span class="glyphicon glyphicon-circle-arrow-up"></span></button-->
                             </div>
+                            <div class="panel-body" ng-hide="current_week_user_data.run_code_result">
+                                <p>Bạn chưa nộp bài lần nào</p>
+                            </div>
                             <div class="panel-footer">
-                                <span ng-show="thisweek_contest.rank>0">Hiện tại bạn đang xếp hạng {{ thisweek_contest.rank }} trong tuần</span>
-                                <span ng-show="thisweek_contest.rank==0">Bạn chưa tham gia cuộc thi trong tuần này</span>
+                                <span ng-show="current_week_user_data.rank>0">Hiện tại bạn đang xếp hạng {{ current_week_user_data.rank }} trong tuần</span>
+                                <span ng-show="current_week_user_data.rank==0">Bạn chưa có hạng</span>
                             </div>
                         </div>
                     </div>
@@ -131,19 +148,22 @@
                 <tabset>
                     <tab data-ng-repeat="lang in langs" heading="{{ lang.name }}" active="lang.active">
                         <div ui-ace="{ theme:'chrome',
-  mode:lang.mode, onLoad: aceLoaded}" data-ng-model="lang.source">
+      mode:lang.mode, onLoad: aceLoaded}" data-ng-model="lang.source">
                         </div>
                     </tab>
 
                 </tabset>
             </div>
             <div class="col-xs-12 col-md-12 highlight">
-                <a rel="tooltip" data-placement="bottom" title="Nộp bài" id="step-5" class="btn btn-success pull-right" data-ng-click="submitCode()">
-                    <i  class="fa fa-upload"></i> </a>
-                <a rel="tooltip" data-placement="bottom" title="Kiểm tra" id="step-6" class="btn btn-info" data-ng-click="runCode()">
-                    <i  class="fa fa-check"></i> </a>
-                <a rel="tooltip" data-placement="bottom" title="Làm lại" id="step-7" class="btn btn-danger" data-ng-click="resetCode()">
-                    <i  class="fa fa-refresh"></i></a>
+                <a rel="tooltip" data-placement="bottom" title="Nộp bài" id="step-5" class="btn btn-success pull-right"
+                   data-ng-click="submitCode('submit')">
+                    <i class="fa fa-upload"></i> </a>
+                <a rel="tooltip" data-placement="bottom" title="Kiểm tra" id="step-6" class="btn btn-info"
+                   data-ng-click="submitCode('run')">
+                    <i class="fa fa-check"></i> </a>
+                <a rel="tooltip" data-placement="bottom" title="Làm lại" id="step-7" class="btn btn-danger"
+                   data-ng-click="resetCode()">
+                    <i class="fa fa-refresh"></i></a>
             </div>
 
             <div style="height: 50px; text-align: center;" data-ng-show="compiling" id="fountainTextG">
@@ -184,7 +204,7 @@
                     .
                 </div>
             </div>
-            <div class="col-xs-12 col-md-12 highlight" id="step-8">
+            <div class="col-xs-12 col-md-12 highlight" id="step-8" ng-show="isShowCompileResult">
                 <h3>Kết quả chạy thử</h3>
                 <table class="table">
                     <tr>
@@ -200,17 +220,18 @@
                             <span ng-show="result.result" class="glyphicon glyphicon-ok"></span>
                             <span ng-show="!result.result" class="glyphicon glyphicon-remove"></span>
                         </td>
-                        <td>{{ result.time }}</td>
-                        <td>{{ result.memory }}</td>
-                        <td><span ng-show="result.error=='OK'" class="glyphicon glyphicon-ok"></span>
-                            <span ng-show="result.error!='OK'">{{ result.error }}</span>
+                        <td>{{ result.time_used }}</td>
+                        <td>{{ result.memory_used }}</td>
+                        <td><span ng-show="result.error_html=='OK'" class="glyphicon glyphicon-ok"></span>
+                            <span ng-show="result.error_html!='OK'" ng-bind-html="result.error_html|to_trusted">{{ result.error_html }}</span>
                         </td>
                     </tr>
                 </table>
             </div>
         </div>
+        </div>
 
-        <div data-backdrop='static' data-keyboard='false' class="modal fade" id="myModal1" tabindex="-1" role="dialog"
+        <div data-backdrop='static' data-keyboard='false' class="modal fade" id="noContestModal" tabindex="-1" role="dialog"
              aria-labelledby="myModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -222,6 +243,25 @@
                     </div>
                     <div class="modal-footer">
                         <a href="/" class="btn btn-primary btn-lg">OK</a>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+        <!-- Modal -->
+        <div data-backdrop='static' data-keyboard='false' class="modal fade" id="codeEmptyModal" tabindex="-1" role="dialog"
+             aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Thông báo</h4>
+                    </div>
+                    <div class="modal-body">
+                        Bạn vui lòng làm bài trước khi nộp hoặc chạy thử !!!
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary btn-lg" data-dismiss="modal">OK</button>
                     </div>
                 </div>
                 <!-- /.modal-content -->

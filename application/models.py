@@ -253,7 +253,6 @@ class WeeklyQuizLevel(UtilModel, ndb.Model):
     @property
     def description_html(self):
         import markdown2
-
         return markdown2.markdown(self.description)
 
     def to_dict(self, *args, **kwargs):
@@ -265,7 +264,11 @@ class WeeklyQuizLevel(UtilModel, ndb.Model):
         if _current_user and not is_request_from_admin():
             weekly_quiz = WeeklyQuiz.query(WeeklyQuiz.level_keys == self.key).get().key
             weekly_quiz_current_user = WeeklyQuizUser.get_by_user_and_weekly_quiz(_current_user, weekly_quiz)
-            result['is_current_level'] = True if weekly_quiz_current_user.current_level == self.key else False
+            if weekly_quiz_current_user:
+                result['is_current_level'] = True if weekly_quiz_current_user.current_level == self.key else False
+            else:
+                #TODO: Need better way if it smallest
+                result['is_current_level'] = True if self.level == 1 else False
             result['is_passed_level'] = True if self.key in weekly_quiz_current_user.passed_level else False
         return result
 
@@ -299,7 +302,7 @@ class WeeklyQuizRunCodeResult(UtilModel, ndb.Model):
     result = ndb.BooleanProperty()
     time_used = ndb.FloatProperty()
     memory_used = ndb.FloatProperty()
-    language = ndb.StringProperty(choices=('Python', 'Java', 'C++'))
+    language = ndb.StringProperty(choices=('PYTHON', 'JAVA', 'CPP'))
     code = ndb.KeyProperty(kind='File')
     score = ndb.FloatProperty()
 
@@ -313,17 +316,12 @@ class WeeklyQuizRunCodeResult(UtilModel, ndb.Model):
 
     @classmethod
     def get_best_score_by_user_and_level(cls, user, level):
-        return cls.query(cls.user == user, cls.level == level).order(cls.score).get()
+        return cls.query(cls.user == user, cls.level == level).order(-cls.score).get()
 
     @classmethod
     def get_top_user_by_level(cls, level, quantity=5):
         _lst_score = cls.query(cls.level == level).query()
         return dict((x.user, x) for x in sorted(_lst_score, key=lambda x: x.score)).values()[quantity]
-
-
-class WeeklyQuizResult(UtilModel, ndb.Model):
-    weekly_quiz = ndb.KeyProperty(kind='WeeklyQuiz')
-    result = ndb.KeyProperty(kind='WeeklyQuizRunCodeResult', repeated=True)
 
 
 class Lesson(UtilModel, ndb.Model):
@@ -438,6 +436,7 @@ class WeeklyQuizUser(UtilModel, ndb.Model):
     passed_level = ndb.KeyProperty(kind='WeeklyQuizLevel', repeated=True)
     rank = ndb.FloatProperty()
     score = ndb.FloatProperty()
+    run_code_result = ndb.KeyProperty(kind='WeeklyQuizRunCodeResult', repeated=True)
 
     @classmethod
     def get_by_user(cls, user):
@@ -458,7 +457,11 @@ class WeeklyQuizUser(UtilModel, ndb.Model):
         weekly_week_current_user.rank = 0
         weekly_week_current_user.score = 0
         weekly_week_current_user.put()
+        return weekly_week_current_user
 
     @classmethod
     def get_top_player_by_weekly_quiz(cls, weekly_quiz, quantity=5):
-        return [{'user':obj.user, 'score':obj.score} for obj in cls.query(cls.weekly_quiz == weekly_quiz).order(-cls.score).fetch(quantity)]
+        return [
+            {'user':obj.user, 'score':obj.score} for obj in cls.query(
+                cls.weekly_quiz == weekly_quiz, cls.score > 0).order(-cls.score).fetch(quantity)
+        ]
