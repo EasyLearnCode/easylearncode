@@ -579,11 +579,19 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "ap
         'onmessage': function (result) {
             console.log(arguments);
             result.data = JSON.parse(result.data);
-            if(result.data.type && (result.data.type=='run_code_result' || result.data.type=='submit_code_result')){
-                $scope.compile_result.push(result.data);
-                $scope.$apply();
-            }
+            if(result.data.type){
+                if((result.data.type=='run_code_result' || result.data.type=='submit_code_result')){
+                    $scope.compile_result.push(result.data);
+                    $scope.$apply();
+                }
+                else if(result.data.type=="submit_sumary_result"){
+                    if(result.data.result){
+                        //TODO: Show sumary submit result
+                        //TODO: Go to next level
+                    }
 
+                }
+            }
         },
         'onerror': function () {
         },
