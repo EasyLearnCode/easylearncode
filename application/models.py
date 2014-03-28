@@ -443,7 +443,7 @@ class QuizAnswer(UtilModel, ndb.Model):
 class Quiz(UtilModel, ndb.Model):
     title = ndb.StringProperty()
     question = ndb.StringProperty()
-    answers = ndb.StructuredProperty(QuizAnswer, repeated=True)
+    answer_keys = ndb.KeyProperty('QuizAnswer', repeated=True)
     time = ndb.FloatProperty()
     created = ndb.DateTimeProperty(auto_now_add=True)
     score = ndb.FloatProperty()

@@ -648,7 +648,7 @@ angular.module("easylearncode.home").controller('HomeCarouselCtrl', ['$scope', f
 angular.module("easylearncode.learn").run(function () {
     $('#myTab a:last').tab('show');
     $("[rel='tooltip']").tooltip();
-}).controller('LearnCtrl', ['$scope', '$http', '$location', '$sce', '$compile', '$window', 'api', function ($scope, $http, $location, $sce, $compile, $window, api) {
+}).controller('LearnCtrl', ['$scope', '$http', '$location', '$sce', '$compile', '$window', 'api', '$timeout', function ($scope, $http, $location, $sce, $compile, $window, api, $timeout) {
         $scope.lectures = [];
         api.Model.query({type: 'lessons', filter: 'Lecture==' + $location.search()['lecture_id'] + '' }, function (data) {
             api.Model.query({type: 'courses', filter: 'Lesson==' + data[0].Id + '', recurse: true  }, function (data) {
@@ -659,6 +659,9 @@ angular.module("easylearncode.learn").run(function () {
                 });
                 $scope.lecture = _.where($scope.lectures, {Id: $location.search()['lecture_id']})[0];
                 $scope.loadLecture();
+                $scope.config.plugins.quiz.data = $scope.lecture.quiz_keys;
+                $scope.config.plugins.quiz.data = _.extend($scope.config.plugins.quiz.data, $scope.lecture.test_keys);
+                console.log($scope.config.plugins.quiz.data);
             })
 
         })
@@ -783,7 +786,7 @@ angular.module("easylearncode.learn").run(function () {
             $scope.currentTime = currentTime;
             $scope.totalTime = totalTime;
             angular.forEach($scope.lecture.code_keys, function (code) {
-                if (currentTime - code.time < 3 && currentTime - code.time > 0) {
+                if (currentTime - code.time < 2 && currentTime - code.time > 0) {
                     if ($scope.state == 'play')
                         $scope.code = code.content;
                 }
@@ -800,9 +803,26 @@ angular.module("easylearncode.learn").run(function () {
         };
 
         $scope.onQuizSubmit = function (data) {
-            return {
-                result: true,
-                description: "Correct"
+            if(data.type == "Quiz"){
+                quizs = _.where($scope.lecture.quiz_keys, {Id: data.id});
+                result = false;
+                description = "";
+                if(quizs.length == 0){
+                    description: "Có lỗi xảy ra, xin vui lòng thử lại!";
+                }
+                else{
+                    answer = _.where(quizs[0].answer_keys, {Id: data.answer})
+                    if(answer[0].is_true == true){
+                        result = true;
+                        description = "Ok!";
+                    }
+                }
+                return {
+                    result:result,
+                    description:description
+                }
+            }else if(data.type == "Test"){
+
             }
         }
 
@@ -862,15 +882,16 @@ angular.module("easylearncode.learn").run(function () {
                 quiz: {
                     data: [
                         {
-                            "time": "164",
-                            "question_id": "70d70be689d73e08687496a6d12b2b0d",
+                            "time": "4",
+                            "question": "Nguyễn ngọc Hân là ai",
+                            "answers":[{Id: 1, title: 'Nguyễn Ngọc Hân hfa fdaj fdal fsd fds fd fds fds ds àds'}, {Id: 2, title: 'Nguyễn Ngọc Hân hfdhas hfjdka hfa  hfdjak hkfha sfds fs f fdsfdsfds f sfs fsd fds'}, {Id: 3, title: 'Nguyễn Ngọc Hân gs gs gs fs fgs gfs gfs gfsdg fg sgf sgsgfsgf sg sgs gfsgs'}, {Id: 4, title: 'Nguyễn Ngọc Hân'}],
                             "html": "<div dir=\"auto\" class=\"quiz-question-text\" style=\"position:absolute;\">\n<small>\n<pre>def is_palindrome_v3(s):\n    i = 0\n    j = len(s) - 1\n    while i &lt; j and s[i] == s[j]:\n        i = i + 1\n        j = j - 1\n\n    return j &lt;= i\n</pre>\n</small>\nIf <code>s</code> refers to a single-character string such as 'x', when the return statement is reached, which of the following expressions evaluates to <code>True</code>?</div>\n<div class=\"quiz-option\" style=\"position:absolute; left:40px; top: 250px; /* width:370px; */ /* height:80px; */ \">\n<input dir=\"auto\" class=\"quiz-input\" type=\"radio\" name=\"answer[9326a7b17e15cfc69f8e46f9357bf6c5][]\" id=\"gensym_52bed85054bc8\" value=\"ad32510af7c53e2fa6cce4d764c09800\"><label for=\"gensym_52bed85054bc8\" style=\"cursor:pointer;\"><code>i == 0 and j == -1</code> </label>\n</div>\n<div class=\"quiz-option\" style=\"position:absolute; left:40px; top: 320px; /* width:370px; */ /* height:80px; */ \">\n<input dir=\"auto\" class=\"quiz-input\" type=\"radio\" name=\"answer[9326a7b17e15cfc69f8e46f9357bf6c5][]\" id=\"gensym_52bed85055221\" value=\"8d53ca2fa487cfbb4479ce2bf7f2e295\"><label for=\"gensym_52bed85055221\" style=\"cursor:pointer;\"><code>i == 0 and j == 0</code> </label>\n</div>\n<div class=\"quiz-option\" style=\"position:absolute; left:430px; top: 250px; /* width:380px; */ /* height:80px; */ \">\n<input dir=\"auto\" class=\"quiz-input\" type=\"radio\" name=\"answer[9326a7b17e15cfc69f8e46f9357bf6c5][]\" id=\"gensym_52bed850558b5\" value=\"94023160fe66f684740c119a18e39a9e\"><label for=\"gensym_52bed850558b5\" style=\"cursor:pointer;\"><code>i == 0 and j == 1</code> </label>\n</div>\n<div class=\"quiz-option\" style=\"position:absolute; left:430px; top: 320px; /* width:380px; */ /* height:80px; */ \">\n<input dir=\"auto\" class=\"quiz-input\" type=\"radio\" name=\"answer[9326a7b17e15cfc69f8e46f9357bf6c5][]\" id=\"gensym_52bed85055eba\" value=\"ff8f062afa22c18eb5c2d4c557bcd44b\"><label for=\"gensym_52bed85055eba\" style=\"cursor:pointer;\"><code>i == 1 and j == 0</code> </label>\n</div>",
                             "background": "color",
                             "background_src": "white",
                             "post_answer_url": "https:\/\/class.coursera.org\/programming2-001\/quiz\/video_quiz_attempt?method=post_question_answer&quiz_id=20&preview=0&question_id=70d70be689d73e08687496a6d12b2b0d"
                         },
                         {
-                            "time": "180",
+                            "time": "100",
                             "question_id": "9326a7b17e15cfc69f8e46f9357bf6c5",
                             "html": "<div dir=\"auto\" class=\"quiz-question-text\" style=\"position:absolute;\">\n<small>\n<pre>def is_palindrome_v3(s):\n    i = 0\n    j = len(s) - 1\n    while i &lt; j and s[i] == s[j]:\n        i = i + 1\n        j = j - 1\n\n    return j &lt;= i\n</pre>\n</small>\nIf <code>s</code> refers to a single-character string such as 'x', when the return statement is reached, which of the following expressions evaluates to <code>True</code>?</div>\n<div class=\"quiz-option\" style=\"position:absolute; left:40px; top: 250px; /* width:370px; */ /* height:80px; */ \">\n<input dir=\"auto\" class=\"quiz-input\" type=\"radio\" name=\"answer[9326a7b17e15cfc69f8e46f9357bf6c5][]\" id=\"gensym_52bed85054bc8\" value=\"ad32510af7c53e2fa6cce4d764c09800\"><label for=\"gensym_52bed85054bc8\" style=\"cursor:pointer;\"><code>i == 0 and j == -1</code> </label>\n</div>\n<div class=\"quiz-option\" style=\"position:absolute; left:40px; top: 320px; /* width:370px; */ /* height:80px; */ \">\n<input dir=\"auto\" class=\"quiz-input\" type=\"radio\" name=\"answer[9326a7b17e15cfc69f8e46f9357bf6c5][]\" id=\"gensym_52bed85055221\" value=\"8d53ca2fa487cfbb4479ce2bf7f2e295\"><label for=\"gensym_52bed85055221\" style=\"cursor:pointer;\"><code>i == 0 and j == 0</code> </label>\n</div>\n<div class=\"quiz-option\" style=\"position:absolute; left:430px; top: 250px; /* width:380px; */ /* height:80px; */ \">\n<input dir=\"auto\" class=\"quiz-input\" type=\"radio\" name=\"answer[9326a7b17e15cfc69f8e46f9357bf6c5][]\" id=\"gensym_52bed850558b5\" value=\"94023160fe66f684740c119a18e39a9e\"><label for=\"gensym_52bed850558b5\" style=\"cursor:pointer;\"><code>i == 0 and j == 1</code> </label>\n</div>\n<div class=\"quiz-option\" style=\"position:absolute; left:430px; top: 320px; /* width:380px; */ /* height:80px; */ \">\n<input dir=\"auto\" class=\"quiz-input\" type=\"radio\" name=\"answer[9326a7b17e15cfc69f8e46f9357bf6c5][]\" id=\"gensym_52bed85055eba\" value=\"ff8f062afa22c18eb5c2d4c557bcd44b\"><label for=\"gensym_52bed85055eba\" style=\"cursor:pointer;\"><code>i == 1 and j == 0</code> </label>\n</div>",
                             "background": "color",

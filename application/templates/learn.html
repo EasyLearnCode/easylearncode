@@ -159,7 +159,7 @@
                         </div>
                         <div class="panel-body">
                             <div  ui-ace="{ theme:'chrome',
-                        mode:lang.mode}" data-ng-model="code" id="code-content"
+                        mode:lang.mode, onLoad: aceLoaded}" data-ng-model="code" id="code-content"
                                  ng-class="{'editor-full-screen':isEditorFullScreen}">Khung code</div>
                             </br>
                             <button type="button" class="btn btn-success" ng-click="runCode()" rel="tooltip"
