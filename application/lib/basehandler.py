@@ -85,8 +85,9 @@ class BaseHandler(webapp2.RequestHandler):
                 import json
 
                 token = self.session.get('_csrf_token')
-                client_csrf_token = self.request.get('_csrf_token') or json.loads(self.request.body).get(
-                    '_csrf_token') or self.request.headers.get("X-CSRFToken", None)
+                client_csrf_token = self.request.get('_csrf_token') or \
+                    self.request.headers.get("X-CSRFToken", None) or \
+                    json.loads(self.request.body).get('_csrf_token')
                 if not token or token != client_csrf_token:
                     self.abort(403)
 

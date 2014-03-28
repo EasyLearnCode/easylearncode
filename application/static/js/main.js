@@ -59,7 +59,6 @@
     angular.module("easylearncode.game", ["easylearncode.core"]);
     angular.module("easylearncode.learn", ["ui.bootstrap", "ui.ace", "easylearncode.core", "com.2fdevs.videogular", "com.2fdevs.videogular.plugins.controls", "com.2fdevs.videogular.plugins.overlayplay", "com.2fdevs.videogular.plugins.buffering", "com.2fdevs.videogular.plugins.poster", "info.vietnamcode.nampnq.videogular.plugins.youtube", "info.vietnamcode.nampnq.videogular.plugins.quiz", "ngSocial", "ngDisqus"]);
     angular.module("easylearncode.info", ["ui.bootstrap", "easylearncode.core", "ngAnimate"]);
-    angular.module("easylearncode.user_profile", ["easylearncode.core"]);
     angular.module("easylearncode.contest_result", ["easylearncode.core"]);
     angular.module("easylearncode.core").config(["$locationProvider",
         function ($locationProvider) {
@@ -89,6 +88,9 @@ angular.module("easylearncode.core").run(function () {
 
     });
 })
+angular.module("easylearncode.core").run(function run($http, csrf_token) {
+        $http.defaults.headers.post['X-CSRFToken'] = csrf_token;
+    });
 angular.module("easylearncode.core").service("api", ["$resource", function ($resource) {
     this.Model = $resource('/api/:type/:id');
 
@@ -113,7 +115,7 @@ angular.module("services.utility").factory("validator", [
                 return a
             },
             required: function (c, b) {
-                return "string" === typeof c && "" === c.replace(/^\s\s*/, "").replace(/\s\s*$/, "") || "undefined" === typeof c || "boolean" === typeof c && !c ? {
+                return "string" === typeof c && "" === c.replace(/^\s\s*/, "").replace(/\s\s*$/, "") || undefined == c || "undefined" === typeof c || "boolean" === typeof c && !c ? {
                     valid: !1,
                     errorText: b + " is required."
                 } : a
@@ -497,7 +499,7 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "ap
 //        });
     }
     $scope.showMoreResult = function () {
-        $scope.resultQuantity +=2;
+        $scope.resultQuantity += 2;
     }
     $scope.changeCurrentLevel = function (level) {
         $scope.current_level = level;
@@ -533,13 +535,13 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "ap
         type = type || "run";
         _.find($scope.langs, function (lang) {
             if (lang.active) {
-                if(lang.source){
+                if (lang.source) {
                     $http.post('/api/contest/submit', {"weekly_quiz_level_key": $scope.current_level.Id, "source": lang.source,
                         "_csrf_token": csrf_token, "lang": lang.lang, "type": type}).success(function (data) {
                         $scope.isShowCompileResult = true;
                         $scope.compile_result = [];
                     });
-                }else{
+                } else {
                     $(function () {
                         $('#codeEmptyModal').modal();
                     });
@@ -561,9 +563,9 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "ap
             $scope.current_level = _.find($scope.current_week_data.level_keys, function (level) {
                 return level.is_current_level;
             });
-            $http.get('/api/contest/me?recurse=True').success(function(data){
+            $http.get('/api/contest/me?recurse=True').success(function (data) {
                 $scope.current_week_user_data = data.data;
-                $scope.current_week_user_data.run_code_result = _.sortBy($scope.current_week_user_data.run_code_result, function(result){
+                $scope.current_week_user_data.run_code_result = _.sortBy($scope.current_week_user_data.run_code_result,function (result) {
                     return result.created;
                 }).reverse();
             })
@@ -579,13 +581,13 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "ap
         'onmessage': function (result) {
             console.log(arguments);
             result.data = JSON.parse(result.data);
-            if(result.data.type){
-                if((result.data.type=='run_code_result' || result.data.type=='submit_code_result')){
+            if (result.data.type) {
+                if ((result.data.type == 'run_code_result' || result.data.type == 'submit_code_result')) {
                     $scope.compile_result.push(result.data);
                     $scope.$apply();
                 }
-                else if(result.data.type=="submit_sumary_result"){
-                    if(result.data.result){
+                else if (result.data.type == "submit_sumary_result") {
+                    if (result.data.result) {
                         //TODO: Show sumary submit result
                         //TODO: Go to next level
                     }
@@ -970,42 +972,6 @@ angular.module("easylearncode.contest_result").controller('ContestResultCtrl', [
         });
     }
 }]);
-angular.module("easylearncode.user_profile")
-    .controller('UserProfileCtrl', ['$scope', '$http', 'userInfo', 'csrf_token', function ($scope, $http, userInfo, csrf_token) {
-        $scope.showSuccessAlert = false;
-        $scope.userInfo = userInfo;
-        $scope.edit_mode = false;
-        $scope.change_pass_mode = false;
-        $scope.changeEditMode = function () {
-            $scope.edit_mode = true;
-        }
-        $scope.changeEditPass = function () {
-            $scope.change_pass_mode = true;
-        }
-        $scope.cancelEditMode = function () {
-            $scope.edit_mode = false;
-            $scope.userInfo = userInfo;
-        }
-        $scope.save = function () {
-            $http.post('/settings/profile', {_csrf_token: csrf_token, username: $scope.userInfo.username, name: $scope.userInfo.name, lastname: $scope.userInfo.last_name}).success(function () {
-                $scope.edit_mode = false;
-                $scope.showSuccessAlert = true;
-            })
-        }
-        $scope.savepass = function () {
-            $http.post('/setting/profile/change_password', {_csrf_token: csrf_token, currentpass: $scope.userInfo.currentpassword, newpass: $scope.userInfo.newpassword}).success(function () {
-                if (data.status == "ok") {
-                    $scope.change_pass_mode = false;
-                    $scope.showSuccessAlert = true;
-                }
-            })
-        }
-    }])
-    .filter("md5", [ "md5", function (md5) {
-        return function (text) {
-            return text ? md5.createHash(text.toString().toLowerCase()) : text;
-        };
-    } ]);
 
 angular.module("easylearncode.info").controller('InfoCtrl', ['$scope', '$http', '$location', 'api', '$window', function ($scope, $http, $location, api, $window) {
     var course_id = $location.search()['course_id'];
@@ -1452,3 +1418,109 @@ angular.module("easylearncode.visualization", ["ui.bootstrap", "ui.ace", 'easyle
                 ]}
             ];
     }]);
+angular.module("easylearncode.account", ["easylearncode.core", "ngRoute"]);
+angular.module("easylearncode.account")
+    .config(["$routeProvider", function($routeProvider) {
+        $routeProvider
+            .when("/password",
+            {
+                templateUrl: "/templates/angular/account/password.html",
+                controller: "passwordTab"
+            })
+            .when("/my-courses",
+            {
+                templateUrl: "/templates/angular/account/my_courses.html" ,
+                controller: "myCoursesTab"
+            })
+            .when("/linked-accounts",
+            {
+                templateUrl: "/templates/angular/account/linked_accounts.html",
+                controller: "linkedAccountsTab"
+            })
+            .otherwise(
+            {
+                templateUrl: "/templates/angular/account/contact_info.html",
+                controller: "contactInfoTab"
+            })
+    }])
+    .controller("accountPage", ["$scope", "$location", function ($scope, $location) {
+        $scope.isActive = function (path) {
+            return $location.path() ? $location.path() === path : "/contact-info" === path
+        }
+    }])
+    .controller("contactInfoTab", ["$scope", "api", "validator", "$window", '$http', function($scope, api, validator, $window, $http) {
+        $scope.saveDisabled = !1;
+        $scope.showForm = !1;
+        $scope.serverSuccess = "";
+        $scope.serverError = "";
+        $scope.contactInfoErrors = {};
+        api.Model.get({'type':'users','id':'me'},function(data){
+            $scope.user = data;
+            $scope.showForm = !0
+        })
+        $scope.saveContactInfo = function() {
+            if (!$scope.saveDisabled) {
+                $scope.saveDisabled = !0;
+                $scope.serverSuccess = "";
+                $scope.serverError = "";
+                var b;
+                b = validator.check({setsFirstName: {pretty: "first name",value: $scope.user.name,validators: [{type: "required"}]},setsLastName: {pretty: "last name",value: $scope.user.last_name,validators: [{type: "required"}]},setsEmail: {pretty: "email address",value: $scope.user.email,validators: [{type: "required",chained: [{type: "email"}]}]}});
+                $scope.contactInfoErrors = b.errorText;
+                b.valid ? $http.post('/settings/profile',{'name':$scope.user.name,'last_name':$scope.user.last_name, 'username': $scope.user.username}).success(function(b) {
+                    if(b.type=='success'){
+                        $scope.serverSuccess = "Contact Information Saved";
+                        $window.location.reload()
+                    }else{
+                        $scope.serverError = b.msg;
+
+                    }
+                    $scope.saveDisabled = !1
+                }).error(
+                function(b) {
+                    $scope.serverError = b.error;
+                    $scope.saveDisabled = !1
+                }): $scope.saveDisabled = !1
+            }
+        }
+    }])
+    .controller("passwordTab", ["$scope", "api", "validator", "$http", function($scope, api, validator, $http) {
+        function reset() {
+            $scope.currentPassword = "";
+            $scope.newPassword = "";
+            $scope.confirmedNewPassword = "";
+            $scope.saveDisabled = !1
+        }
+        $scope.serverSuccess = "";
+        $scope.serverError = "";
+        reset();
+        $scope.passwordErrors = {};
+        $scope.showForm = !1;
+        api.Model.get({'type':'users', 'id':'me'}, function(b) {
+            $scope.user = b;
+            $scope.showForm = !0
+        });
+        $scope.resetPassword = function() {
+            if (!$scope.saveDisabled) {
+                $scope.saveDisabled = !0;
+                $scope.serverSuccess = "";
+                $scope.serverError = "";
+                var f;
+                f = {setsNewPass: {pretty: "new password",value: $scope.newPassword,
+                        validators: [{type: "strLen",args: [6, void 0]}]},setsConfirmedNewPass: {pretty: "new password confirmation",value: $scope.confirmedNewPassword,validators: [{type: "required",failMsg: "A password confirmation is required.",disabled: "" === $scope.newPassword,chained: [{type: "equal",args: [$scope.newPassword, "password"]}]}]}};
+                $scope.user.password !== null && (f.setsCurrPass = {pretty: "password",value: $scope.currentPassword,validators: [{type: "required",failMsg: "The current password is required.",disabled: "" === $scope.newPassword && "" === $scope.confirmedNewPassword}]});
+                f = validator.check(f);
+                $scope.passwordErrors = f.errorText;
+                f.valid ? (f = {"current_password": $scope.currentPassword,"password": $scope.newPassword}, $http.post('/settings/password',f).success(function(b) {
+                    if(b.type=='success'){
+                        $scope.serverSuccess = "Password successfully updated!";
+                    }else{
+                        $scope.serverError = b.msg;
+                    }
+                    reset()
+                }).error(function(b) {
+                    $scope.serverError = b.error;
+                    reset()
+                })) : reset()
+            }
+        }
+    }])
