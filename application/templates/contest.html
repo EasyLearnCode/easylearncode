@@ -37,10 +37,10 @@
                             <div ng-class="{profileStepActive:level.is_passed_level, profileStepPassive:!level.is_passed_level && !level.is_current_level }"
                                  class="profileStep profileStepOne" ng-repeat="level in current_week_data.level_keys">
                                 <div class="connect"></div>
-                                <div class="icon" ng-class="{active:level.is_current_level}">
-                                    <a class="btn" data-ng-click="get_level(level.Id)"
-                                       ng-show="level.is_passed_level">{{ level.level }}</a>
-                                    <span ng-hide="level.is_passed_level">{{ level.level }}</span>
+                                <div class="icon" ng-class="{active:$index+1==current_level.level}">
+                                    <a class="btn" data-ng-click="changeCurrentLevel(level)"
+                                       ng-show="level.is_passed_level || level.is_current_level ">{{ level.level }}</a>
+                                    <span ng-hide="level.is_passed_level || level.is_current_level">{{ level.level }}</span>
                                 </div>
                             </div>
 
@@ -77,7 +77,7 @@
                             </div>
                             <div class="panel-body" ng-show="current_week_data.top_player">
                                 <ul class="list-group">
-                                    <li data-ng-repeat="player in current_week_data.top_player"
+                                    <li data-ng-repeat="player in current_week_data.top_player|limitTo:5"
                                         class="list-group-item">
                                         <span class="badge">{{ player.score|number:1 }} Điểm </span>
                                         <span title="Hạng {{ $index +1}}" ng-class="{yellow:($index)==0,blue:($index)==1}"
@@ -121,7 +121,7 @@
                                             {{ result.score|number:1 }}
                                         </td>
                                         <td>
-                                            <button class="btn btn-primary" data-ng-click="viewResult(i.Id)"><span
+                                            <button class="btn btn-primary" data-ng-click="viewResult(result)"><span
                                                     class="glyphicon glyphicon-search"></span></button>
                                         </td>
                                     </tr>
@@ -226,7 +226,11 @@
                             <span ng-show="result.error_html!='OK'" ng-bind-html="result.error_html|to_trusted">{{ result.error_html }}</span>
                         </td>
                     </tr>
+                    <tr>
+                        <td colspan="5">{{ next_level_key }}</td>
+                    </tr>
                 </table>
+
             </div>
         </div>
         </div>

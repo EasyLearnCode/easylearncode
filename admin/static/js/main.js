@@ -1258,6 +1258,7 @@ angular.module("easylearncode.admin.quiz", ["easylearncode.admin.core"])
             api.Model.get({type: 'levels', id: $routeParams.levelId}, function (level) {
                 level.test_case.pop(test);
                 $scope.level.test_case.pop(test);
+                delete level['description_html'];
                 api.Model.save({type: 'levels', id: level.Id}, level, function () {
                 });
                 /*api.Model.delete({type: 'testcases', id: test.Id}, function () {
@@ -1296,6 +1297,7 @@ angular.module("easylearncode.admin.quiz", ["easylearncode.admin.core"])
                 });
                 api.Model.get({type: 'levels', id: $routeParams.levelId}, function (level) {
                     level.test_case = $scope.level.test_case;
+                    delete level['description_html'];
                     api.Model.save({type: 'levels', id: level.Id}, level, function (data) {
                     });
                 });

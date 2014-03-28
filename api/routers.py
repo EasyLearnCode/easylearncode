@@ -11,7 +11,7 @@ PREFIX = "/api/"
 _routes = [
     RedirectRoute('/api/contest', handlers.GetWeekContestHandler, name='get-thisweek-contest',
                   strict_slash=True),
-    RedirectRoute('/api/contest/me', handlers.GetWeekContestInfoOfMeHandler, name='get-thisweek-contest',
+    RedirectRoute('/api/contest/info', handlers.GetWeekContestInfoOfUserHandler, name='get-thisweek-contest',
                   strict_slash=True),
     RedirectRoute('/api/contest/submit', handlers.SubmitContestHandler, name='submit-contest', strict_slash=True),
     RedirectRoute('/api/files/<model>/<id>/<property>', handler=files.FileHandler, name='blog-upload-download', strict_slash=True),
