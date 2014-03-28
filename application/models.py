@@ -266,10 +266,11 @@ class WeeklyQuizLevel(UtilModel, ndb.Model):
             weekly_quiz_current_user = WeeklyQuizUser.get_by_user_and_weekly_quiz(_current_user, weekly_quiz)
             if weekly_quiz_current_user:
                 result['is_current_level'] = True if weekly_quiz_current_user.current_level == self.key else False
+                result['is_passed_level'] = True if self.key in weekly_quiz_current_user.passed_level else False
             else:
                 #TODO: Need better way if it smallest
                 result['is_current_level'] = True if self.level == 1 else False
-            result['is_passed_level'] = True if self.key in weekly_quiz_current_user.passed_level else False
+                result['is_passed_level'] = False
         return result
 
 
@@ -288,6 +289,15 @@ class WeeklyQuiz(UtilModel, ndb.Model):
         last_day_current_week = (datetime.now() + timedelta(6 - datetime.now().weekday())).date()
         result = cls.query(cls.start_date >= first_day_current_week, cls.start_date <= last_day_current_week).get()
         return result
+
+    def get_next_level(self, level):
+        level_keys = sorted(ndb.get_multi(self.level_keys), key=lambda x: x.level)
+        _index = [_level.key for _level in level_keys].index(level)
+        if _index == len(level_keys) - 1:
+            return level
+        else:
+            return level_keys[_index+1].key
+
 
     def to_dict(self, *args, **kwargs):
         result = super(WeeklyQuiz, self).to_dict(*args, **kwargs)
