@@ -421,6 +421,7 @@ class RestfulHandler(BaseHandler):
                                "user_id or me. User {} tried to modify user {}.".format(u, id))
             id = u.urlsafe()
             cls = User
+            model = cls.__name__
         else:
             cls = None
             if _config.DEFINED_MODELS:
