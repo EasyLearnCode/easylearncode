@@ -73,7 +73,7 @@ def run_test_case(weekly_quiz_level, **kwargs):
                 channel.send_message(str(user.id()), json.dumps(
                     {
                         'type': 'notification',
-                        'msg': 'complete compile'
+                        'msg': 'compile done'
                     }
                 ))
                 if is_submit:
@@ -106,11 +106,25 @@ def run_test_case(weekly_quiz_level, **kwargs):
                     run_code_result.put()
                     weekly_quiz_user = WeeklyQuizUser.get_by_user_and_weekly_quiz(user=user, weekly_quiz=weekly_quiz.key)
                     weekly_quiz_user.run_code_result.append(run_code_result.key)
+                    if result:
+                        weekly_quiz_user.passed_level.append(weekly_quiz_level.key)
+                        weekly_quiz_user.current_level = weekly_quiz.get_next_level(weekly_quiz_level.key)
+                    else:
+                        weekly_quiz_user.current_level = weekly_quiz_level.key
                     weekly_quiz_user.score = sum(
                         getattr(WeeklyQuizRunCodeResult.get_best_score_by_user_and_level(
                             user=user,
                             level=level), 'score', 0) for level in weekly_quiz.level_keys)
                     weekly_quiz_user.put()
+                    #TODO: Recalc rank of all user
+                    channel.send_message(str(user.id()), json.dumps(dict(
+                        {
+                            'type': 'submit_sumary_result',
+                            'result': result,
+                            'time_used': avg_time,
+                            'memory_used': avg_memory
+                        })
+                    ))
                     logging.debug("Finshed run test case")
 
     def create_callback(create_callback_rpc, **create_callback_kwargs):
