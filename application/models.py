@@ -426,6 +426,12 @@ class Lecture(UtilModel, ndb.Model):
     level = ndb.FloatProperty()
 
 
+class Rate(UtilModel, ndb.Model):
+    user_key = ndb.KeyProperty('User', repeated=False)
+    lecture_key = ndb.KeyProperty('Lecture', repeated=False)
+    rate = ndb.FloatProperty()
+
+
 class Code(UtilModel, ndb.Model):
     title = ndb.StringProperty()
     index = ndb.FloatProperty()
