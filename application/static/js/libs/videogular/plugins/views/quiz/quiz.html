@@ -7,14 +7,14 @@
     <div style="height: 150px;!important" ui-ace="{ theme:'chrome',
                         mode:'python'}" data-ng-model="code" ng-show="is_test"></div>
     <input type="hidden" name="id" value="{{ id }}">
-    <input type="hidden" name="answer" value="{{code}}">
+    <input type="hidden" name="code" value="{{answer}}" ng-show="is_test">
     <input type="hidden" name="type" value="{{ type }}">
 </form>
 <button class="btn btn-primary quiz-submit-button" data-ng-click="quizSubmit()" type="button" data-ng-show="submit">Submit</button>
 <button class="btn btn-default quiz-skip-button" data-ng-click="quizSkip()" type="button" data-ng-show="skip">Skip</button>
 <button class="btn btn-success quiz-continue-button" data-ng-click="quizContinue()" type="button" data-ng-show="continue_btn">Continue</button>
 <button class="btn btn-info quiz-show-explanation" data-ng-click="quizShowExplanation()" type="button" data-ng-show="explanation">Explanation</button>
-<div class="alert alert-warning alert-dismissable quiz-status" data-ng-show="status">
+<div class="alert alert-warning alert-dismissable quiz-status" data-ng-show="status" style="z-index: 10000!important;">
   <button type="button" class="close" data-ng-click="status=''" aria-hidden="true">&times;</button>
   {{ status }}
 </div>

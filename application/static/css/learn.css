@@ -118,7 +118,7 @@
 .console-alert {
     position: absolute;
     z-index: 101;
-    top: 400px;
-    width: 95%;
-    border-radius: 0px;
+    top: 365px;
+    width: 92%;
+    border-radius: 5px;
 }

@@ -26,22 +26,22 @@
                         <div class="curricula__item__start-now">
                             <a href="http://www.codecademy.com/tracks/jquery/resume">
                                 <div type="button" class="btn btn-primary">
-                                    Start
+                                    Continue (1%)
                                 </div>
                             </a></div>
                     </div>
                 </div>
-                <a href="http://www.codecademy.com/glossary/html" class="curriculum__glossary-button">
+                <!--<a href="http://www.codecademy.com/glossary/html" class="curriculum__glossary-button">
                     HTML Glossary
                 </a>
                 <a href="http://www.codecademy.com/glossary/css" class="curriculum__glossary-button">
                     CSS Glossary
-                </a>
+                </a>-->
             </div>
             <div id="curriculum-units" class="ui-counter" ng-repeat="lesson in course.lesson_keys">
                 <div class="unit-item">
                     <h2 class="unit-item__title">
-                        {{ lesson.title }}
+                        {{ lesson.description }}
                     </h2>
                     <article ng-repeat="lecture in lesson.lecture_keys">
                         <a href="/course/learn/viewer#!?lecture_id={{ lecture.Id }}"
