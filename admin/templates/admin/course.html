@@ -3,9 +3,13 @@
     <li>
         <a href="{{ uri_for("admin-home") }}">Home</a> <span class="divider">/</span>
     </li>
-    <li>
-        <a href="{{ uri_for("admin-course") }}">Course</a>
+    {% raw %}
+    <li ng-repeat="breadcrumb in breadcrumbs.get() track by breadcrumb.path" >
+      <a ng-if="!$last" ng-href="#!{{ breadcrumb.path }}" ng-bind="breadcrumb.label" class="margin-right-xs"></a>
+      <span ng-if="!$last" class="divider">/</span>
+      <span ng-if="$last" ng-bind="breadcrumb.label"></span>
     </li>
+    {% endraw %}
 {% endblock %}
 {% block content %}
     <ng-view></ng-view>
@@ -44,10 +48,10 @@
             <div><img ng-src="{{ course.img }}=s150"></div>
             <div><input type="file" name="file" ng-file-select="uploadFile($files, course)"/></div>
         </td>
-        <td class="center"><a class="btn btn-success" ng-href="#!/lessons/{{ course.Id }}">
+        <td class="center"><a class="btn btn-success" ng-href="#!/{{ course.Id }}/lessons">
                 <i class="icon-zoom-in icon-white"></i>
             </a></td>
-        <td class="center"><a class="btn btn-success" ng-href="#!/exercise/{{ course.Id }}">
+        <td class="center"><a class="btn btn-success" ng-href="#!/{{ course.Id }}/exercise">
                 <i class="icon-zoom-in icon-white"></i>
             </a></td>
         <td class="center">
@@ -151,7 +155,7 @@
         <td class="center">{{ lesson.created }}</td>
         <td class="center">{{ lesson.description }}</td>
         <td class="center">{{ lesson.author }}</td>
-        <td class="center"><a class="btn btn-success" ng-href="#!/lessons/lectures/{{ lesson.Id }}">
+        <td class="center"><a class="btn btn-success" ng-href="#!/{{ course.Id }}/lessons/{{ lesson.Id }}/lectures">
                 <i class="icon-zoom-in icon-white"></i>
             </a></td>
         <td class="center">
@@ -211,7 +215,7 @@
             <div><img ng-src="{{ course.img }}=s150"></div>
             <div><input type="file" name="file" ng-file-select="uploadFile($files, lecture)"/></div>
         </td>
-        <td class="center"><a class="btn btn-success" ng-href="#!/lessons/lectures/questions/{{ lecture.Id }}">
+        <td class="center"><a class="btn btn-success" ng-href="#!/{{ course.Id }}/lessons/{{ lesson.Id }}/lectures/{{ lecture.Id }}/questions">
                 <i class="icon-zoom-in icon-white"></i>
             </a></td>
         <td class="center">

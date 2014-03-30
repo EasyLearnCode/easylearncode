@@ -21,7 +21,7 @@
 
 })();
 angular.module("services.utility", []);
-angular.module("easylearncode.admin.core", ["ngRoute", "ngResource", "services.utility", "angularjsFormBuilder", "ui.bootstrap"])
+angular.module("easylearncode.admin.core", ["ngRoute", "ngResource", "services.utility", "angularjsFormBuilder", "ui.bootstrap", "ng-breadcrumbs"])
     .service("api", ["$resource", function ($resource) {
         this.Model = $resource('/api/:type/:id');
 
@@ -84,7 +84,10 @@ angular.module("easylearncode.admin.core", ["ngRoute", "ngResource", "services.u
             $locationProvider.html5Mode(!1);
             $locationProvider.hashPrefix("!")
         }
-    ]);
+    ])
+    .controller("BreadCrumbsCtrl",['$scope', 'breadcrumbs', function($scope, breadcrumbs) {
+        $scope.breadcrumbs = breadcrumbs;
+    }]);
 angular.module("easylearncode.admin.home", ["easylearncode.admin.core"]);
 angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2fdevs.videogular", "com.2fdevs.videogular.plugins.controls", "com.2fdevs.videogular.plugins.overlayplay", "com.2fdevs.videogular.plugins.buffering", "com.2fdevs.videogular.plugins.poster", "info.vietnamcode.nampnq.videogular.plugins.youtube", "info.vietnamcode.nampnq.videogular.plugins.quiz"])
     .config(["$locationProvider", "$routeProvider", function ($locationProvider, $routeProvider) {
@@ -92,27 +95,32 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
             .when("/",
             {
                 templateUrl: "template/angular/admin/courses/courses.html",
-                controller: "CourseAdminCtrl"
+                controller: "CourseAdminCtrl",
+                label: 'Courses'
             })
-            .when("/exercise/:courseId",
+            .when("/:courseId/exercise",
             {
                 templateUrl: "template/angular/admin/courses/exercise.html",
-                controller: "ExerciseAdminCtrl"
+                controller: "ExerciseAdminCtrl",
+                label: 'Exercise'
             })
-            .when("/lessons/:courseId",
+            .when("/:courseId/lessons",
             {
                 templateUrl: "template/angular/admin/courses/lesson.html",
-                controller: "LessonAdminCtrl"
+                controller: "LessonAdminCtrl",
+                label: 'Lessons'
             })
-            .when("/lessons/lectures/:lessonId",
+            .when("/:courseId/lessons/:lessonId/lectures",
             {
                 templateUrl: "template/angular/admin/courses/lessons/lecture.html",
-                controller: "LectureAdminCtrl"
+                controller: "LectureAdminCtrl",
+                label: 'Lectures'
             })
-            .when("/lessons/lectures/questions/:lectureId",
+            .when("/:courseId/lessons/:lessonId/lectures/:lectureId/questions",
             {
                 templateUrl: "template/angular/admin/courses/lessons/lectures/question.html",
-                controller: "QuestionAdminCtrl"
+                controller: "QuestionAdminCtrl",
+                label: 'Questions'
             })
             .otherwise({redirectTo: "/"})
     }])
@@ -356,6 +364,7 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
 //        };
     }])
     .controller("LectureAdminCtrl", ["$scope", "api", "$routeParams", '$modal', '$http', 'formModalService', function ($scope, api, $routeParams, $modal, $http, formModalService) {
+        $scope.course = { Id: $routeParams.courseId };
         $scope.lesson = api.Model.get({type: 'lessons', id: $routeParams.lessonId, recurse: true});
         var form = {
             "form_id": 1,
