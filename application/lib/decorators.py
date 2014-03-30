@@ -114,7 +114,7 @@ def teacher_required(handler):
         """
         from application.models import User
         _user = self.user_key.get()
-        if not _user.is_teacher:
+        if not users.is_current_user_admin() and not _user.is_teacher:
             self.response.write(
                 '<div style="padding-top: 200px; height:178px; width: 500px; color: white; margin: 0 auto; font-size: 52px; text-align: center; background: url(\'http://3.bp.blogspot.com/_d_q1e2dFExM/TNWbWrJJ7xI/AAAAAAAAAjU/JnjBiTSA1xg/s1600/Bank+Vault.jpg\')">Forbidden Access <a style=\'color: white;\' href=\'%s\'>Login</a></div>' %
                 users.create_login_url(self.request.path_url + self.request.query_string))
