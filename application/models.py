@@ -39,6 +39,8 @@ class User(User):
     tz = ndb.StringProperty()
     #: Account activation verifies email
     activated = ndb.BooleanProperty(default=False)
+    #: Is teacher
+    is_teacher = ndb.BooleanProperty(default=False)
 
     def to_dict(self, *args, **kwargs):
         result = super(User, self).to_dict(*args, **kwargs)
@@ -54,6 +56,9 @@ class User(User):
         admin = _config.is_current_user_admin()
         if admin:
             result["$admin"] = admin
+        if self.is_teacher:
+            result['$teacher'] = True
+        del result['is_teacher']
         return result
 
     @classmethod
@@ -190,7 +195,6 @@ class SocialUser(UtilModel, ndb.Model):
 
 class ExerciseCheckpoint(UtilModel, ndb.Model):
     entry = ndb.StringProperty()
-    entry_html = ndb.StringProperty()
     hint = ndb.StringProperty()
     hint_html = ndb.StringProperty()
     instruction = ndb.StringProperty()
@@ -201,6 +205,39 @@ class ExerciseCheckpoint(UtilModel, ndb.Model):
     created = ndb.DateTimeProperty(auto_now_add=True)
     files = ndb.KeyProperty(kind="File", repeated=True)
 
+    @property
+    def entry_html(self):
+        import markdown2
+        return markdown2.markdown(self.entry)
+
+    @property
+    def hint_html(self):
+        import markdown2
+        return markdown2.markdown(self.hint)
+
+    @property
+    def instruction_html(self):
+        import markdown2
+        return markdown2.markdown(self.instruction)
+
+    def to_dict(self, *args, **kwargs):
+        result = super(ExerciseCheckpoint, self).to_dict(*args, **kwargs)
+        result['_entry_html'] = self.entry_html
+        result['_hint_html'] = self.hint_html
+        result['_instruction_html'] = self.instruction_html
+        from api.restful import current_user
+        _current_user = current_user()
+        if _current_user:
+            _exercise_item = ExerciseItem.get_by_checkpoint(self.key).key
+            _exercise_item_user = ExerciseItemUser.get_by_user_and_exercise_item(_current_user, _exercise_item)
+            if _exercise_item_user:
+                result['_is_current_checkpoint'] = True if _exercise_item_user.current_checkpoint == self.key else False
+                result['_is_passed_checkpoint'] = True if self.key in _exercise_item_user.passed_checkpoint else False
+            else:
+                result["_is_current_checkpoint"] = False
+                result["_is_passed_checkpoint"] = False
+        return result
+
 
 class ExerciseProject(UtilModel, ndb.Model):
     title = ndb.StringProperty()
@@ -209,6 +246,45 @@ class ExerciseProject(UtilModel, ndb.Model):
     created = ndb.DateTimeProperty(auto_now_add=True)
     language = ndb.StringProperty()
 
+    @classmethod
+    def get_by_checkpoint(cls, checkpoint):
+        return cls.query(cls.checkpoints == checkpoint).get()
+
+
+
+class ExerciseItem(UtilModel, ndb.Model):
+    title = ndb.StringProperty()
+    created = ndb.DateTimeProperty(auto_now_add=True)
+    index = ndb.FloatProperty()
+    projects = ndb.KeyProperty(kind='ExerciseProject', repeated=True)
+
+    @classmethod
+    def get_by_project(cls, project):
+        return cls.query(cls.projects == project).get()
+
+    @classmethod
+    def get_by_checkpoint(cls, checkpoint):
+        _project = ExerciseProject.get_by_checkpoint(checkpoint)
+        return cls.get_by_project(_project)
+
+    def to_dict(self, *args, **kwargs):
+        result = super(ExerciseItem, self).to_dict(*args, **kwargs)
+        from api.restful import current_user
+        _current_user = current_user()
+        if _current_user:
+            _exercise_user = ExerciseUser.get_by_user(_current_user)
+            if _exercise_user:
+                result['_is_current_item'] = True if _exercise_user.current_item == self.key else False
+                result['_is_passed_item'] = True if self.key in _exercise_user.passed_item else False
+        return result
+
+
+class ExerciseUnit(UtilModel, ndb.Model):
+    title = ndb.StringProperty()
+    created = ndb.DateTimeProperty(auto_now_add=True)
+    index = ndb.FloatProperty()
+    items = ndb.KeyProperty(kind='ExerciseItem', repeated=True)
+
 
 class Exercise(UtilModel, ndb.Model):
     author = ndb.KeyProperty(kind="User")
@@ -216,6 +292,7 @@ class Exercise(UtilModel, ndb.Model):
     description = ndb.StringProperty()
     index = ndb.FloatProperty()
     created = ndb.DateTimeProperty(auto_now_add=True)
+    units = ndb.KeyProperty(kind='ExerciseUnit', repeated=True)
 
 
 LEVELS = ('Beginning', 'Intermediate', 'Advanced', 'Other')
@@ -226,7 +303,7 @@ class Course(UtilModel, ndb.Model):
     updated = ndb.DateTimeProperty(auto_now=True)
     title = ndb.StringProperty()
     img = ndb.BlobKeyProperty()
-    exercise_keys = ndb.KeyProperty(Exercise, repeated=True)
+    exercise_keys = ndb.KeyProperty(kind='Exercise', repeated=True)
     lesson_keys = ndb.KeyProperty('Lesson', repeated=True)
     user_keys = ndb.KeyProperty(User, repeated=True)
     level = ndb.StringProperty(choices=LEVELS)
@@ -297,7 +374,6 @@ class WeeklyQuiz(UtilModel, ndb.Model):
             return level
         else:
             return level_keys[_index+1].key
-
 
     def to_dict(self, *args, **kwargs):
         result = super(WeeklyQuiz, self).to_dict(*args, **kwargs)
@@ -429,13 +505,29 @@ class ExerciseUser(UtilModel, ndb.Model):
     user = ndb.KeyProperty(kind="User")
     exercise = ndb.KeyProperty(kind="Exercise")
     join_date = ndb.DateProperty(auto_now_add=True)
-    status = ndb.StringProperty(choices=('passed', 'working'))
-    current_checkpoint = ndb.KeyProperty(kind="ExerciseCheckpoint")
+    status = ndb.StringProperty(choices=('passed', 'working', 'cancel'))
+    current_item = ndb.KeyProperty(kind="ExerciseCheckpoint")
     passed_checkpoint = ndb.KeyProperty(kind="ExerciseCheckpoint", repeated=True)
 
     @classmethod
     def get_by_user(cls, user):
         return cls.query(cls.user == user).fetch()
+
+
+class ExerciseItemUser(UtilModel, ndb.Model):
+    user = ndb.KeyProperty(kind='User')
+    exercise_item = ndb.KeyProperty(kind='ExerciseItem')
+    join_date = ndb.DateProperty(auto_now_add=True)
+    current_checkpoint = ndb.KeyProperty(kind='ExerciseCheckpoint')
+    passed_checkpoint = ndb.KeyProperty(kind='ExerciseCheckpoint', repeated=True)
+
+    @classmethod
+    def get_by_user(cls, user):
+        return cls.query(cls.user == user).fetch()
+
+    @classmethod
+    def get_by_user_and_exercise_item(cls, user, exercise_item):
+        return cls.query(cls.user == user, cls.exercise_item == exercise_item).fetch()
 
 
 class WeeklyQuizUser(UtilModel, ndb.Model):
