@@ -470,8 +470,8 @@ class WeeklyQuizUser(UtilModel, ndb.Model):
         return weekly_week_current_user
 
     @classmethod
-    def get_top_player_by_weekly_quiz(cls, weekly_quiz, quantity=5):
+    def get_top_player_by_weekly_quiz(cls, weekly_quiz):
         return [
             {'user':obj.user, 'score':obj.score} for obj in cls.query(
-                cls.weekly_quiz == weekly_quiz, cls.score > 0).order(-cls.score).fetch(quantity)
+                cls.weekly_quiz == weekly_quiz, cls.score > 0).order(-cls.score).fetch()
         ]

@@ -9,7 +9,7 @@ from google.appengine.ext import ndb
 from webapp2_extras import auth
 
 from application.models import Course, Exercise, WeeklyQuiz, WeeklyQuizLevel, Lesson, Lecture, User, Code, Test, Quiz, \
-    QuizAnswer
+    QuizAnswer, WeeklyQuizRunCodeResult
 from util import AppError, LoginError, BreakError
 from util import as_json, parse_body
 from application.handlers import BaseHandler
@@ -21,7 +21,7 @@ class _ConfigDefaults(object):
     # list of valid models, None means anything goes
     DEFINED_MODELS = {"courses": Course, "exercises": Exercise, "quizs": WeeklyQuiz, "levels": WeeklyQuizLevel,
                       "lessons": Lesson, "lectures": Lecture, "codes": Code, "tests": Test, "lecture_quizs": Quiz,
-                      "answers": QuizAnswer, "users": User}
+                      "answers": QuizAnswer, "users": User, "quizresults": WeeklyQuizRunCodeResult}
     RESTRICT_TO_DEFINED_MODELS = True
     PROTECTED_MODEL_NAMES = ["(?i)(mesh|messages|files|events|admin|proxy)",
                              "(?i)tailbone.*"]
@@ -319,7 +319,7 @@ def validate(cls_name, data):
         if val:
             # TODO(doug): validate list, can't be empty list, must contain id like objects
             pass
-    # run validation over remaining properties
+        # run validation over remaining properties
     if _validation:
         validations = _validation.get(cls_name)
         if not validations:
@@ -481,7 +481,6 @@ class RestfulHandler(BaseHandler):
     @as_json
     def delete(self, *args, **kwargs):
         return self._delete(*args, **kwargs)
-
 
 
 _validation = None

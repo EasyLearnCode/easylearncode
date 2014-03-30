@@ -1111,6 +1111,7 @@ class ChangePasswordHander(BaseHandler):
     def post(self):
         """ Get fields from POST dict """
         import json
+
         data = json.loads(self.request.body)
         current_password = data.get('currentpassword').strip()
         password = data.get('newpassword').strip()
@@ -1574,6 +1575,14 @@ class ResultContestHandler(BaseHandler):
         params = {}
         params.update({'angular_app_name': "easylearncode.contest_result"})
         return self.render_template("contest_result.html", **params)
+
+
+class ResultContestUserHandler(BaseHandler):
+    @user_required
+    def get(self):
+        params = {}
+        params.update({'angular_app_name': "easylearncode.contest_result_user"})
+        return self.render_template("contest_result_user.html", **params)
 
 
 class PractiseHandler(BaseHandler):
