@@ -17,7 +17,7 @@ class SubmitContestHandler(BaseHandler):
         deferred.defer(
             run_test_case,
             weekly_quiz_level=body_data['weekly_quiz_level_key'],
-            code=body_data['source'], lang=body_data['lang'],
+            code=body_data['source'], lang=body_data['lang'], filename=body_data['filename'],
             user=self.user_key, is_submit=True if body_data['type'].lower() == 'submit' else False
         )
         return {
@@ -43,6 +43,7 @@ def run_test_case(weekly_quiz_level, **kwargs):
     is_submit = kwargs['is_submit']
     code = kwargs['code']
     lang = kwargs['lang']
+    filename = kwargs['filename']
     test_results = []
 
     def handle_result(handle_result_rpc, **handle_result_kwargs):
@@ -92,7 +93,7 @@ def run_test_case(weekly_quiz_level, **kwargs):
                         score -= (avg_time * 10 + avg_memory / 100)
                     code_file = File()
                     code_file.content = code
-                    code_file.filename = 'script'
+                    code_file.filename = filename
                     code_file.put()
                     run_code_result = WeeklyQuizRunCodeResult()
                     run_code_result.level = weekly_quiz_level.key
@@ -110,7 +111,8 @@ def run_test_case(weekly_quiz_level, **kwargs):
                     _next_level_key = None
                     if result:
                         weekly_quiz_user.passed_level.append(weekly_quiz_level.key)
-                        _next_level_key = weekly_quiz_user.current_level = weekly_quiz.get_next_level(weekly_quiz_level.key)
+                        _next_level_key = weekly_quiz_user.current_level = weekly_quiz.get_next_level(
+                            weekly_quiz_level.key)
                     else:
                         weekly_quiz_user.current_level = weekly_quiz_level.key
                     weekly_quiz_user.score = sum(
@@ -119,13 +121,15 @@ def run_test_case(weekly_quiz_level, **kwargs):
                             level=level), 'score', 0) for level in weekly_quiz.level_keys)
                     weekly_quiz_user.put()
                     #TODO: Recalc rank of all user
+                    print  _next_level_key
                     channel.send_message(str(user.id()), json.dumps(dict(
                         {
                             'type': 'submit_sumary_result',
                             'result': result,
                             'time_used': avg_time,
                             'memory_used': avg_memory,
-                            'next_level_key': _next_level_key if _next_level_key else 'You not passed current level'
+                            'score':score,
+                            'next_level_key': _next_level_key.urlsafe() if _next_level_key else 'You not passed current level'
                         })
                     ))
                     logging.debug("Finshed run test case")

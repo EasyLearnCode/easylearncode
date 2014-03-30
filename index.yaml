@@ -105,6 +105,12 @@ indexes:
   - name: score
     direction: desc
 
+- kind: WeeklyQuizRunCodeResult
+  properties:
+  - name: level_key
+  - name: score
+    direction: desc
+
 - kind: WeeklyQuizUser
   properties:
   - name: weekly_quiz
