@@ -8,8 +8,10 @@ from google.appengine import api
 from google.appengine.ext import ndb
 from webapp2_extras import auth
 
-from application.models import Course, Exercise, WeeklyQuiz, WeeklyQuizLevel, Lesson, Lecture, User, Code, Test, Quiz, \
+from application.models import Course, WeeklyQuiz, WeeklyQuizLevel, Lesson, Lecture, User, Code, Test, Quiz, \
     QuizAnswer
+#import for module exercise
+from application.models import Exercise, ExerciseUnit, ExerciseItem, ExerciseProject, ExerciseCheckpoint
 from util import AppError, LoginError, BreakError
 from util import as_json, parse_body
 from application.handlers import BaseHandler
@@ -19,9 +21,17 @@ class _ConfigDefaults(object):
     # store total model count in metadata field HEAD query
     METADATA = False
     # list of valid models, None means anything goes
-    DEFINED_MODELS = {"courses": Course, "exercises": Exercise, "quizs": WeeklyQuiz, "levels": WeeklyQuizLevel,
+    DEFINED_MODELS = {"courses": Course, "quizs": WeeklyQuiz, "levels": WeeklyQuizLevel,
                       "lessons": Lesson, "lectures": Lecture, "codes": Code, "tests": Test, "lecture_quizs": Quiz,
                       "answers": QuizAnswer, "users": User}
+    #Update for module exercise
+    DEFINED_MODELS.update({
+        "exercises": Exercise,
+        "exercise_units": ExerciseUnit,
+        "exercise_items": ExerciseItem,
+        "exercise_projects": ExerciseProject,
+        "exercise_checkpoints": ExerciseCheckpoint
+    })
     RESTRICT_TO_DEFINED_MODELS = True
     PROTECTED_MODEL_NAMES = ["(?i)(mesh|messages|files|events|admin|proxy)",
                              "(?i)tailbone.*"]
