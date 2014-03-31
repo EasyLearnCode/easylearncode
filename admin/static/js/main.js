@@ -21,7 +21,7 @@
 
 })();
 angular.module("services.utility", []);
-angular.module("easylearncode.admin.core", ["ngRoute", "ngResource", "services.utility", "angularjsFormBuilder", "ui.bootstrap", "ng-breadcrumbs"])
+angular.module("easylearncode.admin.core", ["ngRoute", "ngResource", "services.utility", "angularjsFormBuilder", "ui.bootstrap", "ng-breadcrumbs", "ngTable"])
     .service("api", ["$resource", function ($resource) {
         this.Model = $resource('/api/:type/:id');
 
@@ -51,8 +51,38 @@ angular.module("easylearncode.admin.core", ["ngRoute", "ngResource", "services.u
             });
             modalInstance.result.then(successCallback, dismissCallback);
         }
-
     }])
+    .service("formService", function(){
+        var cleanData, parseData;
+        this.setCleanDataFunc = function(cleanDataFunc){
+            cleanData = cleanDataFunc;
+        }
+        this.setParseDataFunc = function(parseDataFunc){
+            parseData = parseDataFunc;
+        }
+        this.getDataFromForm = function(form){
+            if(cleanData){
+                _form = cleanData(form);
+            }else{
+                _form = angular.copy(form);
+            }
+            var data = {}
+            _.each(_form.form_fields, function (field) {
+                data[field.field_name] = field.field_value;
+            });
+            return data;
+        }
+        this.fillFormData = function(form,data){
+            if(parseData){
+                _data = parseData(data);
+            }else{
+                _data = angular.copy(data);
+            }
+            _.each(form.form_fields, function (field) {
+                field.field_value = _data[field.field_name];
+            });
+        }
+    })
     .run(function run($http, csrf_token) {
         $http.defaults.headers.post['X-CSRFToken'] = csrf_token;
     })
@@ -104,6 +134,12 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
                 controller: "ExerciseAdminCtrl",
                 label: 'Exercise'
             })
+            .when("/:courseId/exercise/:exerciseId/item",
+            {
+                templateUrl: "template/angular/courses/exercise_item.html",
+                controller: "ExerciseItemAdminCtrl",
+                label: 'Exercise Item'
+            })
             .when("/:courseId/lessons",
             {
                 templateUrl: "template/angular/courses/lesson.html",
@@ -124,40 +160,114 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
             })
             .otherwise({redirectTo: "/"})
     }])
-    .controller("CourseAdminCtrl", ["$scope", "api", "formModalService", "$http" , function ($scope, api, formModalService, $http) {
+    .controller("CourseAdminCtrl", ["$scope", "api", "formModalService", "$http", "formService", function ($scope, api, formModalService, $http, formService) {
         $scope.courses = api.Model.query({type: 'courses', page_size: 10, order: '-created'});
         var form = {
             "form_id": 1,
             "form_name": "Add Course",
             "form_fields": [
                 {
-                    "field_id": 1,
-                    "field_title": "title",
-                    "field_type": "textfield",
-                    "field_value": "",
-                    "field_required": true
+                  "field_title": "Key",
+                  "field_type": "textfield",
+                  "field_value": "",
+                  "field_required": true,
+                  "field_name": "adminKey"
                 },
                 {
-                    "field_id": 2,
-                    "field_title": "description",
-                    "field_type": "textarea",
-                    "field_value": "",
-                    "field_required": true
+                  "field_title": "Title",
+                  "field_type": "textfield",
+                  "field_value": "",
+                  "field_required": true,
+                  "field_name": "title"
+                },
+                {
+                  "field_id": 3,
+                  "field_title": "Level",
+                  "field_type": "dropdown",
+                  "field_value": "Beginning",
+                  "field_required": true,
+                  "field_name": "level",
+                  "field_options": [
+                    {
+                      "option_title": "Beginning",
+                      "option_value": "Beginning"
+                    },
+                    {
+                      "option_title": "Intermediate",
+                      "option_value": "Intermediate"
+                    },
+                    {
+                      "option_title": "Advanced",
+                      "option_value": "Advanced"
+                    },
+                    {
+                      "option_title": "Other",
+                      "option_value": "Other"
+                    }
+                  ]
+                },
+                {
+                  "field_title": "Short description",
+                  "field_type": "textfield",
+                  "field_value": "",
+                  "field_required": true,
+                  "field_name": "short_desc"
+                },
+                {
+                  "field_title": "Description",
+                  "field_type": "textarea",
+                  "field_value": "",
+                  "field_required": true,
+                  "field_name": "long_desc"
+                },
+                {
+                  "field_title": "Tag",
+                  "field_type": "textfield",
+                  "field_value": "",
+                  "field_required": true,
+                  "field_name": "tags"
+                },
+                {
+                  "field_title": "Available",
+                  "field_type": "checkbox",
+                  "field_value": false,
+                  "field_name": "is_available"
+                },
+                {
+                  "field_title": "New",
+                  "field_type": "checkbox",
+                  "field_value": true,
+                  "field_name": "is_new"
                 }
             ]
         }
-        $scope.delete = function (obj) {
-            api.Model.delete({type: 'courses', id: obj.Id}, function () {
-                $scope.courses = _.without($scope.courses, obj);
-            });
+        var cleanData = function(form){
+           var _form = angular.copy(form);
+           _.each(_form.form_fields, function (field) {
+               if(field.field_name == "tags"){
+                    field.field_value = field.field_value.split(',');
+               }
+               if(field.field_name == "is_available" || field.field_name == "is_new"){
+                    field.field_value = field.field_value?true:false;
+               }
+           });
+           return _form;
         }
+        var parseData = function(data){
+            var _data = angular.copy(data);
+            for (prop in _data) {
+               if(prop == "tags"){
+                   _data[prop] = _data[prop].join(",");
+               }
+            };
+            return _data;
+        }
+        formService.setCleanDataFunc(cleanData);
+        formService.setParseDataFunc(parseData);
         $scope.showAddModal = function () {
             var addForm = $.extend(true, {}, form);
             formModalService.showFormModal(addForm, function (form) {
-                var data = {}
-                _.each(form.form_fields, function (field) {
-                    data[field.field_title] = field.field_value;
-                });
+                var data = formService.getDataFromForm(form);
                 api.Model.save({type: 'courses'}, data, function (result) {
                     $scope.courses.push(result);
                 })
@@ -168,21 +278,20 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
         $scope.showEditModal = function (obj) {
             var editForm = $.extend(true, {}, form);
             editForm["form_name"] = "Edit Course";
-            _.each(editForm.form_fields, function (field) {
-                field.field_value = obj[field.field_title];
-            });
+            editForm.form_fields = _.reject(editForm.form_fields,function(field){ return field.field_name == "adminKey"});
+            formService.fillFormData(editForm, obj);
             formModalService.showFormModal(editForm, function (form) {
-                var data = {}
-                _.each(form.form_fields, function (ele) {
-                    data[ele.field_title] = ele.field_value;
-                });
+                var data = formService.getDataFromForm(form);
                 api.Model.save({type: 'courses', id: obj.Id}, data, function (result) {
-                    //$scope.courses.push(data);
                     obj = _.extend(obj, data);
-                    $scope.$apply();
                 })
             }, function () {
                 console.log('Modal dismissed at: ' + new Date());
+            });
+        }
+        $scope.delete = function (obj) {
+            api.Model.delete({type: 'courses', id: obj.Id}, function () {
+                $scope.courses = _.without($scope.courses, obj);
             });
         }
         $scope.uploadFile = function (files, course) {
@@ -201,29 +310,45 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
         };
 
     }])
-    .controller("ExerciseAdminCtrl", ["$scope", "api", "$routeParams", 'formModalService', function ($scope, api, $routeParams, formModalService) {
-        //console.log($routeParams)
+    .controller("ExerciseAdminCtrl", ["$scope", "api", "$routeParams", 'formModalService', 'formService', function ($scope, api, $routeParams, formModalService, formService) {
         $scope.course = api.Model.get({type: 'courses', id: $routeParams.courseId, recurse: true});
         var form = {
             "form_id": 1,
             "form_name": "Add Exercise",
             "form_fields": [
                 {
-                    "field_id": 1,
-                    "field_title": "title",
+                    "field_title": "Title",
                     "field_type": "textfield",
                     "field_value": "",
-                    "field_required": true
+                    "field_required": true,
+                    "field_name": "title"
                 },
                 {
-                    "field_id": 2,
-                    "field_title": "description",
+                    "field_title": "Description",
                     "field_type": "textarea",
                     "field_value": "",
-                    "field_required": true
+                    "field_required": true,
+                    "filed_name": "description"
+                },
+                {
+                    "field_title": "Index",
+                    "field_type": "textfield",
+                    "field_value": "",
+                    "field_required": true,
+                    "field_name": "index"
                 }
             ]
         }
+        var cleanData = function(form){
+           var _form = angular.copy(form);
+           _.each(_form.form_fields, function (field) {
+               if(field.field_name == "index"){
+                    field.field_value = parseInt(field.field_value);
+               }
+           });
+           return _form;
+        }
+        formService.setCleanDataFunc(cleanData);
         $scope.delete = function (obj) {
             api.Model.delete({type: 'exercises', id: obj.Id}, function () {
                 api.Model.get({type: 'courses', id: $routeParams.courseId}, function (course) {
@@ -237,10 +362,7 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
         $scope.showAddModal = function () {
             var addForm = $.extend(true, {}, form);
             formModalService.showFormModal(addForm, function (form) {
-                var data = {}
-                _.each(form.form_fields, function (ele) {
-                    data[ele.field_title] = ele.field_value;
-                });
+                var data = formService.getDataFromForm(form);
                 api.Model.save({type: 'exercises'}, data, function (result) {
                     api.Model.get({type: 'courses', id: $routeParams.courseId}, function (course) {
                         course.exercise_keys.push(result.Id);
@@ -258,17 +380,11 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
         $scope.showEditModal = function (obj) {
             var editForm = $.extend(true, {}, form);
             editForm["form_name"] = "Edit Course";
-            _.each(editForm.form_fields, function (field) {
-                field.field_value = obj[field.field_title];
-            });
+            formService.fillFormData(editForm, obj);
             formModalService.showFormModal(editForm, function (form) {
-                var data = {}
-                _.each(addForm.form_fields, function (ele) {
-                    data[ele.field_title] = ele.field_value;
-                });
+                var data = formService.getDataFromForm(form);
                 api.Model.save({type: 'courses', id: obj.Id}, data, function (result) {
                     obj = _.extend(obj, data);
-                    $scope.$apply();
                 })
             }, function () {
                 console.log('Modal dismissed at: ' + new Date());
@@ -344,7 +460,6 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
                 api.Model.save({type: 'lessons', id: lesson.Id}, lesson_tmp, function (data) {
                     //$scope.courses.push(data);
                     lesson = _.extend(lesson, data);
-                    $scope.$apply();
                 })
             }, function () {
                 console.log('Modal dismissed at: ' + new Date());
@@ -474,7 +589,6 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
                 });
                 api.Model.save({type: 'lectures', id: lecture.Id}, lecture_tmp, function (data) {
                     lecture = _.extend(lecture, lecture_tmp);
-                    $scope.$apply();
                 })
             }, function () {
                 console.log('Modal dismissed at: ' + new Date());

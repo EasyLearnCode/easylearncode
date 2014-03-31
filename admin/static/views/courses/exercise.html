@@ -16,17 +16,17 @@
                 <thead>
                 <tr>
                     <th>Title</th>
-                    <th>Created</th>
                     <th>Description</th>
-                    <th>Project</th>
+                    <th>Index</th>
+                    <th>Exercise Item</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr ng-repeat="exercise in course.exercise_keys">
                     <td>{{ exercise.title }}</td>
-                    <td class="center">{{ exercise.created }}</td>
                     <td class="center">{{ exercise.description }}</td>
-                    <td class="center"><a class="btn btn-success" ng-href="#!/exercise/project/{{ exercise.Id }}">
+                    <td class="center">{{ exercise.index }}</td>
+                    <td class="center"><a class="btn btn-success" ng-href="#!/exercise/{{ exercise.Id }}/items">
                         <i class="icon-zoom-in icon-white"></i>
                     </a></td>
                     <td class="center">

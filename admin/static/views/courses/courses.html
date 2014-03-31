@@ -15,7 +15,6 @@
                 <thead>
                 <tr>
                     <th>Title</th>
-                    <th>Created</th>
                     <th>Description</th>
                     <th>Image</th>
                     <th>Lesson</th>
@@ -25,16 +24,15 @@
                 <tbody>
                 <tr ng-repeat="course in courses">
                     <td>{{ course.title }}</td>
-                    <td class="center">{{ course.created }}</td>
-                    <td class="center">{{ course.description }}</td>
+                    <td class="center">{{ course.long_desc }}</td>
                     <td class="center">
                         <div><img ng-src="{{ course.img }}=s150"></div>
                         <div><input type="file" name="file" ng-file-select="uploadFile($files, course)"/></div>
                     </td>
-                    <td class="center"><a class="btn btn-success" ng-href="#!/{{ course.Id }}/lessons">
+                    <td class="center"><a class="btn btn-success" ng-href="#!/{{ course.key }}/lessons">
                         <i class="icon-zoom-in icon-white"></i>
                     </a></td>
-                    <td class="center"><a class="btn btn-success" ng-href="#!/{{ course.Id }}/exercise">
+                    <td class="center"><a class="btn btn-success" ng-href="#!/{{ course.key }}/exercise">
                         <i class="icon-zoom-in icon-white"></i>
                     </a></td>
                     <td class="center">
