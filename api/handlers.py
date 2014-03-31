@@ -209,3 +209,24 @@ class GetWeekContestInfoOfMeHandler(BaseHandler):
             'data': result_data,
             'msg': msg
         }
+
+
+class RunCodeInHackerEarthHandle(BaseHandler):
+    @user_required
+    @as_json
+    def post(self):
+        import json
+        import urllib
+        from application.config import config
+        from google.appengine.api import urlfetch
+        body_data = json.loads(self.request.body)
+        data = {
+            'client_secret': config.get("HACKEREARTH_CLIENT_SECRET"),
+            'async': 0,
+            'source': body_data['source'],
+            'lang': body_data['lang'],
+            'time_limit': 5,
+            'memory_limit': 262144,
+        }
+        result = urlfetch.fetch(url= config.get("HACKEREARTH_RUN_URL"), payload= urllib.urlencode(data), method=urlfetch.POST)
+        return result.content

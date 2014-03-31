@@ -20,3 +20,8 @@ vg-quiz .quiz-status {
     bottom: 0px;
     width: 40%;
 }
+
+.quiz-question-text{
+    height: 200px;
+    padding: 10px;
+}

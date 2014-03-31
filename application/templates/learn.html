@@ -104,22 +104,22 @@
                                 data-description="current_description"
                                 data-image="'http://easylearncode.appspot.com/application/img/logo.png'">
                                 <li style="font-weight: bold"></li>
-                                <li class="ng-social-facebook" rel="tooltip" data-placement="bottom"
-                                    title="Chia sẻ trên facebook">Facebook
+                                <li class="ng-social-facebook" tooltip-placement="bottom"
+                                    tooltip="Chia sẻ trên facebook">Facebook
                                 </li>
-                                <li class="ng-social-google-plus" rel="tooltip" data-placement="bottom"
-                                    title="Chia sẻ trên google plus">Google+
+                                <li class="ng-social-google-plus" tooltip-placement="bottom"
+                                    tooltip="Chia sẻ trên google plus">Google+
                                 </li>
-                                <li class="ng-social-twitter" rel="tooltip" data-placement="bottom"
-                                    title="Chia sẻ trên twitter">Twitter
+                                <li class="ng-social-twitter" tooltip-placement="bottom"
+                                    tooltip="Chia sẻ trên twitter">Twitter
                                 </li>
-                                <li class="ng-social-pinterest" rel="tooltip" data-placement="bottom"
-                                    title="Chia sẻ trên printerest">Pinterest
+                                <li class="ng-social-pinterest" tooltip-placement="bottom"
+                                    tooltip="Chia sẻ trên printerest">Pinterest
                                 </li>
                                 <li style="cursor: pointer"><img
                                         src="https://cdn1.iconfinder.com/data/icons/sweetsocial/32/youtube.png"
                                         ng-click="ViewOnYoutube()"
-                                        title="Xem tại trang youtube" rel="tooltip" data-placement="bottom"/></li>
+                                        tooltip="Xem trên youtube" tooltip-placement="bottom"/></li>
                             </ul>
                         </div>
                         <div class="clearfix"></div>
@@ -158,7 +158,7 @@
                         <div class="panel-body">
                             <div  ui-ace="{ theme:'chrome',
                         mode:lang.mode, onLoad: aceLoaded}" data-ng-model="code" id="code-content"
-                                 ng-class="{'editor-full-screen':isEditorFullScreen}">Khung code</div>
+                                 ng-class="{'editor-full-screen':isEditorFullScreen}"></div>
                             </br>
                             <button type="button" class="btn btn-success" ng-click="runCode()" rel="tooltip"
                                     data-placement="bottom" ng-class="{'run-btn-full-screen':isEditorFullScreen}"
@@ -181,8 +181,9 @@
     {% endraw %}
 {% endblock %}
 {% block pluginJS %}
+    <script src="//ace.c9.io/build/src-noconflict/ace.js"></script>
+    <script src="//ace.c9.io/build/src-noconflict/ext-language_tools.js"></script>
     <script type="text/javascript" src="http://apis.google.com/js/plusone.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js"></script>
     <script src="/application/js/libs/videogular/videogular.js"></script>
     <script src="/application/js/libs/angularjs/ui-ace.min.js"></script>
     <script src="/application/js/libs/angularjs/angular-sanitize.min.js"></script>

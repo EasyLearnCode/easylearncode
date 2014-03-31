@@ -657,8 +657,11 @@ angular.module("easylearncode.home").controller('HomeCarouselCtrl', ['$scope', f
 angular.module("easylearncode.learn").run(function () {
     $('#myTab a:last').tab('show');
     $("[rel='tooltip']").tooltip();
-}).controller('LearnCtrl', ['$scope', '$http', '$location', '$sce', '$compile', '$window', 'api', '$timeout', 'localStorageService', function ($scope, $http, $location, $sce, $compile, $window, api, $timeout, localStorageService) {
+}).controller('LearnCtrl', ['$scope', '$http', '$location', '$sce', '$compile', '$window', 'api', '$timeout', 'localStorageService','csrf_token', function ($scope, $http, $location, $sce, $compile, $window, api, $timeout, localStorageService, csrf_token) {
         $scope.showAlert = false;
+        $scope.isTestingCode = false;
+        $scope.result = false;
+        $scope.description = "";
         $scope.lectures = [];
         api.Model.query({type: 'lessons', filter: 'Lecture==' + $location.search()['lecture_id'] + '' }, function (data) {
             api.Model.query({type: 'courses', filter: 'Lesson==' + data[0].Id + '', recurse: true  }, function (data) {
@@ -689,6 +692,9 @@ angular.module("easylearncode.learn").run(function () {
         $scope.isEditorFullScreen = false;
         $scope.aceLoaded = function (_editor) {
             $scope.editor = _editor;
+            _editor.setOptions({
+                enableBasicAutocompletion: true
+            });
         }
         $scope.toggleFullScreen = function () {
             $scope.isEditorFullScreen = !$scope.isEditorFullScreen;
@@ -735,7 +741,125 @@ angular.module("easylearncode.learn").run(function () {
 
         $scope.resultCallback = function (result) {
             console.log(result);
+            var code, error_msg, isSuccess, output, resultObj, result_val, _ref;
+            if (result && typeof result === 'object') {
+                resultObj = result;
+                result_val = resultObj.result;
+                code = resultObj.code;
+                output = resultObj.output;
+                if (result_val) {
+                    if (result_val[-1] !== '\n') {
+                        result = result_val + '\n';
+                    }
+                } else {
+                    result = '';
+                }
+                error_msg = null;
+                isSuccess = false;
+                if (resultObj.type === 'evalSolution') {
+                    if (result_val === 'true' || result_val === 'True') {
+                        isSuccess = true;
+                    } else if (result_val !== 'false' && result_val !== 'False') {
+                        error_msg = result_val;
+                    }
+                    if (isSuccess) {
+                        $scope.$apply(function () {
+                            $scope.showAlert = true;
+                            $scope.alert = {
+                                type: 'info',
+                                msg: '<i class="fa fa-sun-o"></i> <strong>Tuyệt vời ông mặt trời!!!</strong><br>Tiếp tục nào<a class="btn btn-primary pull-right" onclick="nextCheckpoint()">Tiếp tục</a><div class="clearfix"></div>'
+                            }
+                            $timeout($compile($('.console-alert span').contents())($scope), 10);
+                            $scope.isTestingCode = true;
+                        })
+
+                    } else {
+                        $scope.$apply(function () {
+                            $scope.showAlert = true;
+                            $scope.alert = {
+                                type: 'danger',
+                                msg: '<i class="fa fa-exclamation-triangle"></i><strong> Có điều gì lầm lẫn! </strong><br>' + utf8_decode(result_val)
+                            }
+                            $scope.isTestingCode = true;
+                        })
+
+                    }
+                } else if (resultObj.type === 'evalUser') {
+                    if (result) {
+                        $scope.jqconsole.Write('==> ' + result, 'output');
+                    }
+                    result = result_val;
+                    if (!result) {
+                        result = '';
+                    }
+                    if (!code) {
+                        code = '';
+                    }
+                    if (!output) {
+                        output = '';
+                    }
+                    result = JSON.stringify(result);
+                    code = JSON.stringify(code);
+                    output = JSON.stringify(output);
+                    command = 'easylearncode_validate(' + result + ', ' + code + ', ' + output + ')';
+                    command = command.replace(/#{/g, '\\#{');
+                    dataObj = {
+                        command: command,
+                        testScript: $scope.current_test.test_script,
+                        type: 'evalSolution'
+                    };
+                   $scope.jsrepl.sandbox.post({
+                        type: 'engine.EasyLearnCode_Eval',
+                        data: dataObj
+                    });
+                }
+            } else if (result) {
+                //$scope.jqconsole.Write('==> ' + result, 'output');
+            }
         };
+
+        $scope.onQuizSubmit = function (data) {
+            if(data.type == "Quiz"){
+                quizs = _.where($scope.lecture.quiz_keys, {Id: data.id});
+                result = false;
+                description = "";
+                if(quizs.length == 0){
+                    description: "Có l?i x?y ra, xin vui lòng th? l?i!";
+                }
+                else{
+                    answer = _.where(quizs[0].answer_keys, {Id: data.answer})
+                    if(answer[0].is_true == true){
+                        result = true;
+                        description = "Ok!";
+                        if(localStorageService.get("score") == null){
+                            localStorageService.add("score", 1);
+                        }
+                        else localStorageService.add("score",localStorageService.get("score")+1);
+                    }
+                }
+                return {
+                    result:result,
+                    description:description
+                }
+            }else if(data.type == "Test"){
+                tests  = _.where($scope.lecture.test_keys, {Id: data.id});
+                $scope.current_test = tests[0];
+                $scope.isTestingCode = false;
+                dataObj = {
+                    command: data.code,
+                    testScript: '',
+                    type: 'evalUser'
+                };
+                $scope.jsrepl.sandbox.post({
+                    type: 'engine.EasyLearnCode_Eval',
+                    data: dataObj
+                });
+                return {
+                    result:$scope.result,
+                    description:$scope.description
+                }
+            }
+        }
         $scope.jsrepl = new JSREPL({
             input: $scope.inputCallback,
             output: $scope.outputCallback,
@@ -760,6 +884,13 @@ angular.module("easylearncode.learn").run(function () {
                 data: dataObj
             });
         };
+
+        $scope.runCodeInHackerEarth = function(){
+            $http.post('/api/runcode',{"lang": "PYTHON", "source": "print 'hello world'",
+                        "_csrf_token": csrf_token}).success(function (data) {
+                        console.log(data);
+                    });
+        }
 
         $scope.reSet = function () {
             $scope.code = "";
@@ -821,37 +952,6 @@ angular.module("easylearncode.learn").run(function () {
             $scope.config.width = width;
             $scope.config.height = height;
         };
-
-        $scope.onQuizSubmit = function (data) {
-            if(data.type == "Quiz"){
-                quizs = _.where($scope.lecture.quiz_keys, {Id: data.id});
-                result = false;
-                description = "";
-                if(quizs.length == 0){
-                    description: "Có lỗi xảy ra, xin vui lòng thử lại!";
-                }
-                else{
-                    answer = _.where(quizs[0].answer_keys, {Id: data.answer})
-                    if(answer[0].is_true == true){
-                        result = true;
-                        description = "Ok!";
-                        if(localStorageService.get("score") == null){
-                            localStorageService.add("score", 1);
-                        }
-                        else localStorageService.add("score",localStorageService.get("score")+1);
-                    }
-                }
-                return {
-                    result:result,
-                    description:description
-                }
-            }else if(data.type == "Test"){
-                return {
-                    result:true,
-                    description:"Ok"
-                }
-            }
-        }
 
         $scope.stretchModes = [
             {
@@ -926,6 +1026,12 @@ angular.module("easylearncode.learn").run(function () {
                 api.Model.query({type: 'rates', fitler: 'user_key=='+data.Id+''}, function(rate){
                     if(rate.length == 0){
                         api.Model.save({type: 'rates'}, {user_key: data.Id, lecture_key: $scope.lecture.Id, rate:$scope.rate}, function(data){})
+                    }
+                    else{
+                        rate[0].rate = $scope.rate;
+                        api.Model.save({type: 'rates', id: rate[0].Id}, rate[0], function(result){
+
+                        });
                     }
                 })
             });
@@ -1230,7 +1336,6 @@ angular.module("easylearncode.course_paractice_viewer", ["ui.bootstrap", "ui.ace
                     }
                     if (isSuccess) {
                         $scope.$apply(function () {
-                            $scope.showConsole = false;
                             $scope.showAlert = true;
                             $scope.alert = {
                                 type: 'info',
@@ -1240,7 +1345,6 @@ angular.module("easylearncode.course_paractice_viewer", ["ui.bootstrap", "ui.ace
                         })
                     } else {
                         $scope.$apply(function () {
-                            $scope.showConsole = false;
                             $scope.showAlert = true;
                             $scope.alert = {
                                 type: 'danger',
@@ -1250,7 +1354,7 @@ angular.module("easylearncode.course_paractice_viewer", ["ui.bootstrap", "ui.ace
                     }
                 } else if (resultObj.type === 'evalUser') {
                     if (result) {
-                        $scope.jqconsole.Write('==> ' + result, 'output');
+                        //$scope.jqconsole.Write('==> ' + result, 'output');
                     }
                     result = result_val;
                     if (!result) {
