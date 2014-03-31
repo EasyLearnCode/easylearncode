@@ -94,31 +94,31 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
         $routeProvider
             .when("/",
             {
-                templateUrl: "template/angular/admin/courses/courses.html",
+                templateUrl: "template/angular/courses/courses.html",
                 controller: "CourseAdminCtrl",
                 label: 'Courses'
             })
             .when("/:courseId/exercise",
             {
-                templateUrl: "template/angular/admin/courses/exercise.html",
+                templateUrl: "template/angular/courses/exercise.html",
                 controller: "ExerciseAdminCtrl",
                 label: 'Exercise'
             })
             .when("/:courseId/lessons",
             {
-                templateUrl: "template/angular/admin/courses/lesson.html",
+                templateUrl: "template/angular/courses/lesson.html",
                 controller: "LessonAdminCtrl",
                 label: 'Lessons'
             })
             .when("/:courseId/lessons/:lessonId/lectures",
             {
-                templateUrl: "template/angular/admin/courses/lessons/lecture.html",
+                templateUrl: "template/angular/courses/lecture.html",
                 controller: "LectureAdminCtrl",
                 label: 'Lectures'
             })
             .when("/:courseId/lessons/:lessonId/lectures/:lectureId/questions",
             {
-                templateUrl: "template/angular/admin/courses/lessons/lectures/question.html",
+                templateUrl: "template/angular/courses/question.html",
                 controller: "QuestionAdminCtrl",
                 label: 'Questions'
             })

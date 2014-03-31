@@ -59,6 +59,9 @@ handlers:
 - url: /admin/font
   static_dir: admin/static/font
 
+- url: /admin/template/angular/
+  static_dir: admin/static/views
+
 - url: /admin.*
   script: main.app
   login: admin
