@@ -60,6 +60,7 @@ handlers:
   static_dir: admin/static/font
 
 - url: /admin/template/angular/
+  mime_type: text/html
   static_dir: admin/static/views
 
 - url: /admin.*
@@ -93,6 +94,10 @@ handlers:
 
 - url: /application/img
   static_dir: application/static/img
+
+- url: /templates/angular
+  mime_type: text/html
+  static_dir: application/static/views
 
 - url: /img/(.*\.(gif|png|jpg|jpeg))
   static_files: static/img/\1
