@@ -155,7 +155,7 @@ class BaseHandler(webapp2.RequestHandler):
                     self.auth.unset_session()
                     self.redirect_to('home')
                 else:
-                    return str(user_info.username)
+                    return user_info.username
             except AttributeError, e:
                 # avoid AttributeError when the session was delete from the server
                 logging.error(e)
