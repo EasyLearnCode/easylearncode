@@ -24,7 +24,7 @@
                 <tbody>
                 <tr ng-repeat="exercise in course.exercise_keys">
                     <td>{{ exercise.title }}</td>
-                    <td class="center">{{ exercise.description }}</td>
+                    <td class="center word-wrap">{{ exercise.description }}</td>
                     <td class="center">{{ exercise.index }}</td>
                     <td class="center"><a class="btn btn-success" ng-href="#!/exercise/{{ exercise.Id }}/items">
                         <i class="icon-zoom-in icon-white"></i>
