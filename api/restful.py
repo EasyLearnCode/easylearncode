@@ -11,7 +11,7 @@ from webapp2_extras import auth
 from application.models import Course, WeeklyQuiz, WeeklyQuizLevel, Lesson, Lecture, User, Code, Test, Quiz, \
     QuizAnswer
 #import for module exercise
-from application.models import Exercise, ExerciseUnit, ExerciseItem, ExerciseProject, ExerciseCheckpoint
+from application.models import Exercise, ExerciseItem, ExerciseProject, ExerciseCheckpoint
 from util import AppError, LoginError, BreakError
 from util import as_json, parse_body
 from application.handlers import BaseHandler
@@ -27,7 +27,6 @@ class _ConfigDefaults(object):
     #Update for module exercise
     DEFINED_MODELS.update({
         "exercises": Exercise,
-        "exercise_units": ExerciseUnit,
         "exercise_items": ExerciseItem,
         "exercise_projects": ExerciseProject,
         "exercise_checkpoints": ExerciseCheckpoint
@@ -120,7 +119,10 @@ def reflective_create(cls, data):
             v = float(v)
         elif t == int:  # currently all numbers are floats for purpose of quering TODO find better solution
             v = float(v)
-        setattr(m, k, v)
+        if k == "adminKey":
+            m.key = ndb.Key(m.__class__.__name__, v)
+        else:
+            setattr(m, k, v)
     return m
 
 
