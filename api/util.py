@@ -26,6 +26,7 @@ DEBUG = os.environ.get("SERVER_SOFTWARE", "").startswith("Dev")
 
 
 def json_extras(obj):
+    global recurse_excute
     """Extended json processing of types."""
     if hasattr(obj, "get_result"):  # RPC
         return obj.get_result()
@@ -36,7 +37,8 @@ def json_extras(obj):
     if isinstance(obj, ndb.Key):
         r = webapp2.get_request()
         recurse = r.get("recurse", default_value=False)
-        if recurse:
+        if recurse and recurse_depth > recurse_excute:
+            recurse_excute += 1
             item = obj.get()
             if item is None:
                 return obj.urlsafe()
@@ -60,6 +62,9 @@ def as_json(func):
 
     @functools.wraps(func)
     def wrapper(self, *args, **kwargs):
+        global recurse_excute, recurse_depth
+        recurse_depth = int(self.request.get("depth", default_value=2))
+        recurse_excute = 0
         self.response.headers["Content-Type"] = "application/json"
         if DEBUG:
             self.response.headers["Access-Control-Allow-Origin"] = "*"
@@ -94,6 +99,7 @@ def as_json(func):
                 self.response.headers.add_header("Access-Control-Allow-Origin", "*")
             elif origin in config['CORS_RESTRICTED_DOMAINS']:
                 self.response.headers.add_header("Access-Control-Allow-Origin", origin)
+        self.response.out.write(")]}'\n")
         self.response.out.write(resp)
 
     return wrapper
