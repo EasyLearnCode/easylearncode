@@ -140,6 +140,18 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
                 controller: "ExerciseItemAdminCtrl",
                 label: 'Exercise Item'
             })
+            .when("/:courseId/exercise/:exerciseId/item/:itemId/project",
+            {
+                templateUrl: "template/angular/courses/exercise_project.html",
+                controller: "ExerciseProjectAdminCtrl",
+                label: 'Exercise Project'
+            })
+            .when("/:courseId/exercise/:exerciseId/item/:itemId/project/:projectId/checkpoint",
+            {
+                templateUrl: "template/angular/courses/exercise_checkpoint.html",
+                controller: "ExerciseCheckpointAdminCtrl",
+                label: 'Exercise Checkpoint'
+            })
             .when("/:courseId/lessons",
             {
                 templateUrl: "template/angular/courses/lesson.html",
@@ -311,7 +323,7 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
 
     }])
     .controller("ExerciseAdminCtrl", ["$scope", "api", "$routeParams", 'formModalService', 'formService', function ($scope, api, $routeParams, formModalService, formService) {
-        $scope.course = api.Model.get({type: 'courses', id: $routeParams.courseId, recurse: true});
+        $scope.course = api.Model.get({type: 'courses', id: $routeParams.courseId, recurse: true, depth:1});
         var form = {
             "form_id": 1,
             "form_name": "Add Exercise",
@@ -328,7 +340,7 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
                     "field_type": "textarea",
                     "field_value": "",
                     "field_required": true,
-                    "filed_name": "description"
+                    "field_name": "description"
                 },
                 {
                     "field_title": "Index",
@@ -383,13 +395,325 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
             formService.fillFormData(editForm, obj);
             formModalService.showFormModal(editForm, function (form) {
                 var data = formService.getDataFromForm(form);
-                api.Model.save({type: 'courses', id: obj.Id}, data, function (result) {
+                api.Model.save({type: 'exercises', id: obj.Id}, data, function (result) {
                     obj = _.extend(obj, data);
                 })
             }, function () {
                 console.log('Modal dismissed at: ' + new Date());
             });
         }
+    }])
+    .controller("ExerciseItemAdminCtrl", ["$scope", "api", "formModalService", "$http", "formService", "$routeParams", function ($scope, api, formModalService, $http, formService, $routeParams) {
+        $scope.course = {Id: $routeParams.courseId};
+        $scope.exercise = api.Model.get({type:"exercises", id:$routeParams.exerciseId, recurse:true, depth:1});
+        var form = {
+            "form_id": 1,
+            "form_name": "Add Exercise Item",
+            "form_fields": [
+                {
+                    "field_title": "Title",
+                    "field_type": "textfield",
+                    "field_value": "",
+                    "field_required": true,
+                    "field_name": "title"
+                },
+                {
+                    "field_title": "Index",
+                    "field_type": "textfield",
+                    "field_value": "",
+                    "field_required": true,
+                    "field_name": "index"
+                }
+            ]
+        }
+        var cleanData = function(form){
+           var _form = angular.copy(form);
+           _.each(_form.form_fields, function (field) {
+               if(field.field_name == "index"){
+                    field.field_value = parseInt(field.field_value);
+               }
+           });
+           return _form;
+        }
+        formService.setCleanDataFunc(cleanData);
+        $scope.delete = function (obj) {
+            api.Model.delete({type: 'exercise_items', id: obj.Id}, function () {
+                api.Model.get({type: 'exercises', id: $routeParams.exerciseId}, function (exercise) {
+                    exercise.items.pop(obj.Id);
+                    api.Model.save({type: 'exercises', id: $routeParams.exerciseId}, exercise, function () {
+                        $scope.exercise.items = _.without($scope.exercise.items, obj);
+                    });
+                });
+            });
+        }
+        $scope.showAddModal = function () {
+            var addForm = $.extend(true, {}, form);
+            formModalService.showFormModal(addForm, function (form) {
+                var data = formService.getDataFromForm(form);
+                api.Model.save({type: 'exercise_items'}, data, function (result) {
+                    api.Model.get({type: 'exercises', id: $routeParams.exerciseId}, function (exercise) {
+                        exercise.items.push(result.Id);
+                        api.Model.save({type: 'exercises', id: $routeParams.exerciseId}, exercise, function () {
+                            $scope.exercise.items.push(result);
+                        });
+                    });
+
+                })
+            }, function () {
+                console.log('Modal dismissed at: ' + new Date());
+            });
+
+        };
+        $scope.showEditModal = function (obj) {
+            var editForm = $.extend(true, {}, form);
+            editForm["form_name"] = "Edit Exercise Item";
+            formService.fillFormData(editForm, obj);
+            formModalService.showFormModal(editForm, function (form) {
+                var data = formService.getDataFromForm(form);
+                api.Model.save({type: 'exercise_items', id: obj.Id}, data, function (result) {
+                    obj = _.extend(obj, data);
+                })
+            }, function () {
+                console.log('Modal dismissed at: ' + new Date());
+            });
+        }
+
+    }])
+    .controller("ExerciseProjectAdminCtrl", ["$scope", "api", "formModalService", "$http", "formService", "$routeParams", function ($scope, api, formModalService, $http, formService, $routeParams) {
+        $scope.course = {Id:$routeParams.courseId};
+        $scope.exercise = {Id: $routeParams.exerciseId}
+        $scope.exercise_item = api.Model.get({type:"exercise_items", id:$routeParams.itemId, recurse:true, depth:1});
+        var form = {
+            "form_id": 1,
+            "form_name": "Add Exercise Project",
+            "form_fields": [
+                {
+                    "field_title": "Title",
+                    "field_type": "textfield",
+                    "field_value": "",
+                    "field_required": true,
+                    "field_name": "title"
+                },
+                {
+                    "field_title": "Index",
+                    "field_type": "textfield",
+                    "field_value": "",
+                    "field_required": true,
+                    "field_name": "index"
+                },
+                {
+                    "field_title": "Language",
+                    "field_type": "dropdown",
+                    "field_value": "Python",
+                    "field_required": true,
+                    "field_name": "language",
+                    "field_options": [
+                        {
+                            "option_title": "Python",
+                            "option_value": "Python"
+                        },
+                        {
+                            "option_title": "Javascript",
+                            "option_value": "Javascript"
+                        },
+                        {
+                            "option_title": "CPP",
+                            "option_value": "CPP"
+                        }
+                    ]
+                }
+            ]
+        }
+        var cleanData = function(form){
+           var _form = angular.copy(form);
+           _.each(_form.form_fields, function (field) {
+               if(field.field_name == "index"){
+                    field.field_value = parseInt(field.field_value);
+               }
+           });
+           return _form;
+        }
+        formService.setCleanDataFunc(cleanData);
+        $scope.delete = function (obj) {
+            api.Model.delete({type: 'exercise_projects', id: obj.Id}, function () {
+                api.Model.get({type: 'exercise_items', id: $routeParams.itemId}, function (exercise_item) {
+                    exercise_item.projects.pop(obj.Id);
+                    api.Model.save({type: 'exercise_items', id: $routeParams.itemId}, exercise_item, function () {
+                        $scope.exercise_item.projects = _.without($scope.exercise_item.projects, obj);
+                    });
+                });
+            });
+        }
+        $scope.showAddModal = function () {
+            var addForm = $.extend(true, {}, form);
+            formModalService.showFormModal(addForm, function (form) {
+                var data = formService.getDataFromForm(form);
+                api.Model.save({type: 'exercise_projects'}, data, function (result) {
+                    api.Model.get({type: 'exercise_items', id: $routeParams.itemId}, function (exercise_item) {
+                        exercise_item.projects.push(result.Id);
+                        api.Model.save({type: 'exercise_items', id: $routeParams.itemId}, exercise_item, function () {
+                            $scope.exercise_item.projects.push(result);
+                        });
+                    });
+
+                })
+            }, function () {
+                console.log('Modal dismissed at: ' + new Date());
+            });
+
+        };
+        $scope.showEditModal = function (obj) {
+            var editForm = $.extend(true, {}, form);
+            editForm["form_name"] = "Edit Exercise Project";
+            formService.fillFormData(editForm, obj);
+            formModalService.showFormModal(editForm, function (form) {
+                var data = formService.getDataFromForm(form);
+                api.Model.save({type: 'exercise_projects', id: obj.Id}, data, function (result) {
+                    obj = _.extend(obj, data);
+                })
+            }, function () {
+                console.log('Modal dismissed at: ' + new Date());
+            });
+        }
+
+    }])
+    .controller("ExerciseCheckpointAdminCtrl", ["$scope", "api", "formModalService", "$http", "formService", "$routeParams", "$q", "$timeout", function ($scope, api, formModalService, $http, formService, $routeParams, $q, $timeout) {
+        $scope.course = {Id:$routeParams.courseId};
+        $scope.exercise = {Id: $routeParams.exerciseId}
+        $scope.exercise_item = {Id: $routeParams.itemId}
+        $scope.exercise_project = api.Model.get({type:"exercise_projects", id: $routeParams.projectId, recurse:true, depth:2});
+        var form;
+        $scope.exercise_project.$promise.then(function(){
+            form = {
+                    "form_id": 1,
+                    "form_name": "Add Exercise Checkpoint",
+                    "form_fields": [
+                        {
+                            "field_title": "Title",
+                            "field_type": "textfield",
+                            "field_value": "",
+                            "field_required": true,
+                            "field_name": "title"
+                        },
+                        {
+                            "field_title": "Index",
+                            "field_type": "textfield",
+                            "field_value": "",
+                            "field_required": true,
+                            "field_name": "index"
+                        },
+                        {
+                            "field_title": "Entry",
+                            "field_type": "textarea",
+                            "field_value": "",
+                            "field_required": true,
+                            "field_name": "entry"
+                        },
+                        {
+                            "field_title": "Instruction",
+                            "field_type": "textarea",
+                            "field_value": "",
+                            "field_required": true,
+                            "field_name": "instruction"
+                        },
+                        {
+                            "field_title": "Hint",
+                            "field_type": "textarea",
+                            "field_value": "",
+                            "field_required": false,
+                            "field_name": "hint"
+                        },
+                        {
+                            "field_title": "Test Function",
+                            "field_type": "code",
+                            "field_value": "def easylearncode_validate(result,code,output):\n    #validate code in here\n    return True" ,
+                            "field_required": true,
+                            "field_name": "test_functions",
+                            "field_language": $scope.exercise_project.language.toLowerCase()
+
+                        },
+                        {
+                            "field_title": "Default File",
+                            "field_type": "code",
+                            "field_value": "",
+                            "field_required": true,
+                            "field_name": "_default_files",
+                            "field_language": "python"
+                        }
+                    ]
+                }
+        })
+        var cleanData = function(form){
+           var _form = angular.copy(form);
+           _.each(_form.form_fields, function (field) {
+               if(field.field_name == "index"){
+                    field.field_value = parseInt(field.field_value);
+               }
+           });
+           return _form;
+        }
+        var parseData = function(data){
+            var _data = angular.copy(data);
+            for (prop in _data) {
+               if(prop == "default_files" && _data["default_files"].length>0){
+                    _data['_default_files'] = _data["default_files"][0].content;
+               }
+            };
+            return _data;
+        }
+        formService.setCleanDataFunc(cleanData);
+        formService.setParseDataFunc(parseData);
+        $scope.delete = function (obj) {
+            api.Model.delete({type: 'exercise_checkpoints', id: obj.Id}, function () {
+                api.Model.get({type: 'exercise_projects', id: $routeParams.projectId}, function (exercise_project) {
+                    exercise_project.checkpoints.pop(obj.Id);
+                    api.Model.save({type: 'exercise_projects', id: $routeParams.projectId}, exercise_project, function () {
+                        $scope.exercise_project.checkpoints = _.without($scope.exercise_project.checkpoints, obj);
+                    });
+                });
+            });
+        }
+        $scope.showAddModal = function () {
+            var addForm = $.extend(true, {}, form);
+            formModalService.showFormModal(addForm, function (form) {
+                var data = formService.getDataFromForm(form);
+                //Save file
+                api.Model.save({type:"files"},{filename:'script', content:data['_default_files']},function(file){
+                    delete data["_default_files"]
+                    data = _.extend(data,{'default_files' :[file.Id]})
+                    api.Model.save({type: 'exercise_checkpoints', recurse:true, depth:1}, data, function (result) {
+                        api.Model.get({type: 'exercise_projects', id: $routeParams.projectId}, function (exercise_project) {
+                            exercise_project.checkpoints.push(result.Id);
+                            api.Model.save({type: 'exercise_projects', id: $routeParams.projectId}, exercise_project, function () {
+                                $scope.exercise_project.checkpoints.push(result);
+                            });
+                        });
+
+                    })
+                })
+
+            }, function () {
+                console.log('Modal dismissed at: ' + new Date());
+            });
+
+        };
+        $scope.showEditModal = function (obj) {
+            var editForm = $.extend(true, {}, form);
+            editForm["form_name"] = "Edit Exercise Checkpoint";
+            formService.fillFormData(editForm, obj);
+            formModalService.showFormModal(editForm, function (form) {
+                var data = formService.getDataFromForm(form);
+                api.Model.save({type:"files", id:obj["default_files"][0].Id},{content:data['_default_files']},function(){
+                    api.Model.save({type: 'exercise_checkpoints', id: obj.Id, recurse:true, depth:1}, data, function (result) {
+                        obj = _.extend(obj, result);
+                    })
+                })
+
+            }, function () {
+                console.log('Modal dismissed at: ' + new Date());
+            });
+        }
+
     }])
     .controller("LessonAdminCtrl", ["$scope", "api", "$routeParams", "formModalService", function ($scope, api, $routeParams, formModalService) {
         $scope.course = api.Model.get({type: 'courses', id: $routeParams.courseId, recurse: true});

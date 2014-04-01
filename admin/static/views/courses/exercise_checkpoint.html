@@ -1,8 +1,8 @@
-<h2>Exercise manage of course {{ course.title }}</h2>
+<h2>Exercise checkpoint manage of exercise project {{ exercise_project.title }}</h2>
 <div class="row-fluid sortable">
     <div class="box span12">
         <div class="box-header" data-original-title>
-            <h2><i class="icon-user"></i><span class="break"></span>Exercise</h2>
+            <h2><i class="icon-user"></i><span class="break"></span>Exercise Checkpoint</h2>
 
             <div class="box-icon">
                 <a href="#" class="btn-setting"><i class="icon-wrench"></i></a>
@@ -16,24 +16,18 @@
                 <thead>
                 <tr>
                     <th>Title</th>
-                    <th>Description</th>
                     <th>Index</th>
-                    <th>Exercise Item</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr ng-repeat="exercise in course.exercise_keys">
-                    <td>{{ exercise.title }}</td>
-                    <td class="center word-wrap">{{ exercise.description }}</td>
-                    <td class="center">{{ exercise.index }}</td>
-                    <td class="center"><a class="btn btn-success" ng-href="#!/{{ course.key }}/exercise/{{ exercise.Id }}/item">
-                        <i class="icon-zoom-in icon-white"></i>
-                    </a></td>
+                <tr ng-repeat="checkpoint in exercise_project.checkpoints">
+                    <td>{{ checkpoint.title }}</td>
+                    <td class="center">{{ checkpoint.index }}</td>
                     <td class="center">
-                        <a class="btn btn-info" ng-click="showEditModal(exercise)">
+                        <a class="btn btn-info" ng-click="showEditModal(checkpoint)">
                             <i class="icon-edit icon-white"></i>
                         </a>
-                        <a class="btn btn-danger" ng-click="delete(exercise)">
+                        <a class="btn btn-danger" ng-click="delete(checkpoint)">
                             <i class="icon-trash icon-white"></i>
                         </a>
                     </td>

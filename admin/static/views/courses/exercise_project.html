@@ -1,8 +1,8 @@
-<h2>Exercise manage of course {{ course.title }}</h2>
+<h2>Exercise project manage of exercise item {{ exercise_item.title }}</h2>
 <div class="row-fluid sortable">
     <div class="box span12">
         <div class="box-header" data-original-title>
-            <h2><i class="icon-user"></i><span class="break"></span>Exercise</h2>
+            <h2><i class="icon-user"></i><span class="break"></span>Exercise Projects</h2>
 
             <div class="box-icon">
                 <a href="#" class="btn-setting"><i class="icon-wrench"></i></a>
@@ -16,24 +16,24 @@
                 <thead>
                 <tr>
                     <th>Title</th>
-                    <th>Description</th>
                     <th>Index</th>
-                    <th>Exercise Item</th>
+                    <th>Language</th>
+                    <th>Checkpoints</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr ng-repeat="exercise in course.exercise_keys">
-                    <td>{{ exercise.title }}</td>
-                    <td class="center word-wrap">{{ exercise.description }}</td>
-                    <td class="center">{{ exercise.index }}</td>
-                    <td class="center"><a class="btn btn-success" ng-href="#!/{{ course.key }}/exercise/{{ exercise.Id }}/item">
+                <tr ng-repeat="project in exercise_item.projects">
+                    <td>{{ project.title }}</td>
+                    <td class="center">{{ project.index }}</td>
+                    <td class="center">{{ project.language }}</td>
+                    <td class="center"><a class="btn btn-success"  ng-href="#!/{{ course.Id }}/exercise/{{ exercise.Id }}/item/{{ exercise_item.Id }}/project/{{ project.Id }}/checkpoint">
                         <i class="icon-zoom-in icon-white"></i>
                     </a></td>
                     <td class="center">
-                        <a class="btn btn-info" ng-click="showEditModal(exercise)">
+                        <a class="btn btn-info" ng-click="showEditModal(project)">
                             <i class="icon-edit icon-white"></i>
                         </a>
-                        <a class="btn btn-danger" ng-click="delete(exercise)">
+                        <a class="btn btn-danger" ng-click="delete(project)">
                             <i class="icon-trash icon-white"></i>
                         </a>
                     </td>
