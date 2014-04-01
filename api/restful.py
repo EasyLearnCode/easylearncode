@@ -11,7 +11,7 @@ from webapp2_extras import auth
 from application.models import Course, WeeklyQuiz, WeeklyQuizLevel, Lesson, Lecture, User, Code, Test, Quiz, \
     QuizAnswer
 #import for module exercise
-from application.models import Exercise, ExerciseItem, ExerciseProject, ExerciseCheckpoint
+from application.models import Exercise, ExerciseItem, ExerciseProject, ExerciseCheckpoint, File
 from util import AppError, LoginError, BreakError
 from util import as_json, parse_body
 from application.handlers import BaseHandler
@@ -23,7 +23,7 @@ class _ConfigDefaults(object):
     # list of valid models, None means anything goes
     DEFINED_MODELS = {"courses": Course, "quizs": WeeklyQuiz, "levels": WeeklyQuizLevel,
                       "lessons": Lesson, "lectures": Lecture, "codes": Code, "tests": Test, "lecture_quizs": Quiz,
-                      "answers": QuizAnswer, "users": User}
+                      "answers": QuizAnswer, "users": User, "files": File}
     #Update for module exercise
     DEFINED_MODELS.update({
         "exercises": Exercise,
