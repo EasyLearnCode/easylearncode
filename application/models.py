@@ -6,6 +6,7 @@ class UtilModel(object):
     def to_dict(self, *args, **kwargs):
         result = super(UtilModel, self).to_dict(*args, **kwargs)
         result['Id'] = self.key.urlsafe()
+        result['key'] = self.key.id()
         return result
 
 
@@ -194,16 +195,14 @@ class SocialUser(UtilModel, ndb.Model):
 
 
 class ExerciseCheckpoint(UtilModel, ndb.Model):
-    entry = ndb.StringProperty()
+    entry = ndb.StringProperty(required=True)
     hint = ndb.StringProperty()
-    hint_html = ndb.StringProperty()
-    instruction = ndb.StringProperty()
-    instruction_html = ndb.StringProperty()
+    instruction = ndb.StringProperty(required=True)
     title = ndb.StringProperty()
-    test_functions = ndb.StringProperty()
+    test_functions = ndb.TextProperty()
     index = ndb.FloatProperty()
     created = ndb.DateTimeProperty(auto_now_add=True)
-    files = ndb.KeyProperty(kind="File", repeated=True)
+    default_files = ndb.KeyProperty(kind="File", repeated=True)
 
     @property
     def entry_html(self):
@@ -221,13 +220,15 @@ class ExerciseCheckpoint(UtilModel, ndb.Model):
         return markdown2.markdown(self.instruction)
 
     def to_dict(self, *args, **kwargs):
+        from api.restful import current_user
+        from api.util import is_request_from_admin
         result = super(ExerciseCheckpoint, self).to_dict(*args, **kwargs)
         result['_entry_html'] = self.entry_html
         result['_hint_html'] = self.hint_html
         result['_instruction_html'] = self.instruction_html
-        from api.restful import current_user
         _current_user = current_user()
-        if _current_user:
+        _is_request_from_admin = is_request_from_admin()
+        if _current_user and not _is_request_from_admin:
             _exercise_item = ExerciseItem.get_by_checkpoint(self.key).key
             _exercise_item_user = ExerciseItemUser.get_by_user_and_exercise_item(_current_user, _exercise_item)
             if _exercise_item_user:
@@ -251,7 +252,6 @@ class ExerciseProject(UtilModel, ndb.Model):
         return cls.query(cls.checkpoints == checkpoint).get()
 
 
-
 class ExerciseItem(UtilModel, ndb.Model):
     title = ndb.StringProperty()
     created = ndb.DateTimeProperty(auto_now_add=True)
@@ -265,7 +265,7 @@ class ExerciseItem(UtilModel, ndb.Model):
     @classmethod
     def get_by_checkpoint(cls, checkpoint):
         _project = ExerciseProject.get_by_checkpoint(checkpoint)
-        return cls.get_by_project(_project)
+        return cls.get_by_project(_project.key)
 
     def to_dict(self, *args, **kwargs):
         result = super(ExerciseItem, self).to_dict(*args, **kwargs)
@@ -279,20 +279,13 @@ class ExerciseItem(UtilModel, ndb.Model):
         return result
 
 
-class ExerciseUnit(UtilModel, ndb.Model):
-    title = ndb.StringProperty()
-    created = ndb.DateTimeProperty(auto_now_add=True)
-    index = ndb.FloatProperty()
-    items = ndb.KeyProperty(kind='ExerciseItem', repeated=True)
-
-
 class Exercise(UtilModel, ndb.Model):
     author = ndb.KeyProperty(kind="User")
     title = ndb.StringProperty()
-    description = ndb.StringProperty()
+    description = ndb.TextProperty()
     index = ndb.FloatProperty()
     created = ndb.DateTimeProperty(auto_now_add=True)
-    units = ndb.KeyProperty(kind='ExerciseUnit', repeated=True)
+    items = ndb.KeyProperty(kind='ExerciseItem', repeated=True)
 
 
 LEVELS = ('Beginning', 'Intermediate', 'Advanced', 'Other')
@@ -301,17 +294,17 @@ LEVELS = ('Beginning', 'Intermediate', 'Advanced', 'Other')
 class Course(UtilModel, ndb.Model):
     created = ndb.DateTimeProperty(auto_now_add=True)
     updated = ndb.DateTimeProperty(auto_now=True)
-    title = ndb.StringProperty()
+    title = ndb.StringProperty(required=True)
     img = ndb.BlobKeyProperty()
     exercise_keys = ndb.KeyProperty(kind='Exercise', repeated=True)
     lesson_keys = ndb.KeyProperty('Lesson', repeated=True)
-    user_keys = ndb.KeyProperty(User, repeated=True)
-    level = ndb.StringProperty(choices=LEVELS)
-    short_desc = ndb.StringProperty()
-    long_desc = ndb.TextProperty()
-    tag = ndb.StringProperty(repeated=True)
-    is_available = ndb.BooleanProperty()
-    is_new = ndb.BooleanProperty()
+    author = ndb.KeyProperty(User)
+    level = ndb.StringProperty(choices=LEVELS, required=True, default='Beginning')
+    short_desc = ndb.StringProperty(required=True)
+    long_desc = ndb.TextProperty(required=True)
+    tags = ndb.StringProperty(repeated=True)
+    is_available = ndb.BooleanProperty(default=False)
+    is_new = ndb.BooleanProperty(default=True)
 
 
 class WeeklyQuizTest(UtilModel, ndb.Model):
@@ -488,6 +481,23 @@ class File(UtilModel, ndb.Model):
     content = ndb.StringProperty(indexed=False)
 
 
+class CourseUser(UtilModel, ndb.Model):
+    user = ndb.KeyProperty(kind="User")
+    course = ndb.KeyProperty(kind='Course')
+    current_lesson = ndb.KeyProperty(Lesson)
+    current_exercise = ndb.KeyProperty(Exercise)
+    passed_lessons = ndb.KeyProperty(Lesson, repeated=True)
+    passed_exercises = ndb.KeyProperty(Exercise, repeated=True)
+
+    @classmethod
+    def get_by_user(cls, user):
+        return cls.query(cls.user == user).fetch()
+
+    @classmethod
+    def get_by_user_and_course(cls, user, course):
+        return cls.query(cls.user == user, cls.course == course).get()
+
+
 class LessonUser(UtilModel, ndb.Model):
     user = ndb.KeyProperty(kind="User")
     lesson = ndb.KeyProperty(kind="Lesson")
@@ -499,6 +509,10 @@ class LessonUser(UtilModel, ndb.Model):
     @classmethod
     def get_by_user(cls, user):
         return cls.query(cls.user == user).fetch()
+
+    @classmethod
+    def get_by_user_and_lesson(cls, user, lesson):
+        return cls.query(cls.user == user, cls.lesson == lesson).get()
 
 
 class ExerciseUser(UtilModel, ndb.Model):
@@ -512,6 +526,10 @@ class ExerciseUser(UtilModel, ndb.Model):
     @classmethod
     def get_by_user(cls, user):
         return cls.query(cls.user == user).fetch()
+
+    @classmethod
+    def get_by_user_and_exercise(cls, user, exercise):
+        return cls.query(cls.user == user, cls.exercise == exercise).get()
 
 
 class ExerciseItemUser(UtilModel, ndb.Model):
