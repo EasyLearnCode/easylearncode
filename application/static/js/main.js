@@ -49,7 +49,7 @@
     angular.module("oldeasylearncode", ["easylearncode.core"]);
     angular.module("easylearncode.viewer", ["easylearncode.core", "youtube", "services.lesson", "directives.lesson", "controllers.lesson"]);
     angular.module("easylearncode.overview", ["easylearncode.core", "youtube"]);
-    angular.module("easylearncode.courseCatalog", ["easylearncode.core"]);
+    angular.module("easylearncode.courseCatalog", ["ngRoute","easylearncode.core"]);
     angular.module("easylearncode.editor", ["easylearncode.core", "services.editor", "directives.editor", "controllers.editor", "services.lesson"]);
     angular.module("easylearncode.settings", ["easylearncode.core", "controllers.settings", "directives.location"]);
     angular.module("easylearncode.payment", ["easylearncode.core"]);
@@ -95,11 +95,30 @@ angular.module("easylearncode.core").service("api", ["$resource", function ($res
     this.Model = $resource('/api/:type/:id');
 
 }])
-angular.module("easylearncode.core").filter('to_trusted', ['$sce', function ($sce) {
-    return function (text) {
-        return $sce.trustAsHtml(text);
-    };
-}]);
+angular.module("easylearncode.core")
+    .filter('to_trusted', ['$sce', function ($sce) {
+        return function (text) {
+            return $sce.trustAsHtml(text);
+        };
+    }])
+    .filter("imageSize", ["$filter", function() {
+        return function(a, d, b) {
+            if (a) {
+                b = 0 === b ? void 0 : b;
+                d = 0 === d ? void 0 : d;
+                if ("number" !== typeof d && "number" !== typeof b)
+                    return a;
+                var c = Math.max(b, d) || b || d;
+                if (a.match(/\/\/[^.\/]+\.ggpht\.com\//) || a.match(/\/_ah\/img\//)) {
+                    var e =
+                    /#[\w=_\-&]*w=(\d+)&h=(\d+)/.exec(a);
+                    e && (c = 1 * e[1], e = 1 * e[2], d = Math.min(b / e, d / c) || b / e || d / c, d = [c * d, e * d], a = a.replace(/\=s\d+(-c)?/, "=s" + Math.round(Math.max(d[0], d[1]))))
+                } else
+                    a.match(/\/\/robohash\.org\//) && c && (a = a + "?size=" + c + "x" + c);
+                return a
+            }
+        }
+    }]);
 angular.module("controllers.header").controller('HeaderController', ['$scope', '$window', function ($scope, $window) {
     $scope.isActive = function (viewLocation) {
         return viewLocation === $window.location.pathname;
@@ -991,7 +1010,6 @@ angular.module("easylearncode.info").controller('InfoCtrl', ['$scope', '$http', 
             e >= i ? r.css({position: "fixed", top: 100 + "px"}) : e < i && r.css(o)
     };
 }]);
-angular.module("easylearncode.courses", ["easylearncode.core"]);
 angular.module("easylearncode.course_paractice_detail", ["ui.bootstrap", "easylearncode.core", "ngAnimate"]).controller('InfoCtrl', ['$scope', '$http', '$location', function ($scope, $http, $location) {
     var course_id = $location.search()['course_id'];
     $scope.course_name = "Python";
@@ -1242,7 +1260,7 @@ angular.module("easylearncode.course_paractice_viewer", ["ui.bootstrap", "ui.ace
                     return obj._id == $scope.current_checkpoint._id;
                 })
                 if (_index >= 0 && _index < $scope.exercise.projects[0].checkpoints.length - 1) {
-                    $scope.changeCurrentCheckpoint($scope.exercise.projects[0].checkpoints[_index + 1]);
+                    $scope.cangeCurrentCheckpoint($scope.exercise.projects[0].checkpoints[_index + 1]);
                     $scope.showAlert = false;
                     $scope.$apply();
                 }
@@ -1524,3 +1542,42 @@ angular.module("easylearncode.account")
             }
         }
     }])
+angular.module("easylearncode.courseCatalog")
+    .config(["$locationProvider", "$routeProvider",function($locationProvider, $routeProvider) {
+        $routeProvider
+            .when("/:collectionTitle",
+            {
+                templateUrl: "/templates/angular/course_catalog/all.html",
+                controller: "courseList"
+            }).otherwise({redirectTo: "/All"})
+    }])
+    .controller("courseCatalog", ["$scope","api", function($scope, api) {
+        $scope.loaded = !1;
+        $scope.loadingComplete = function() {
+            $scope.loaded = !0
+        };
+        $scope.catalogPromise = api.Model.query({type:'courses'});
+    }])
+    .controller("courseList", ["$scope", "$routeParams", "$timeout", "$location", "api", function($scope, $routeParams, $timeout, $location, api) {
+        $scope.activeCategoryTitle = $routeParams.collectionTitle || "All";
+        $scope.catalogPromise || ($scope.catalogPromise = api.Model.query({type:'courses'}));
+        $scope.catalogPromise.$promise.then(function(data) {
+            $scope.fullCourses = data;
+            $scope.loadingComplete()
+        })
+    }])
+    .directive("courseSummary", function() {
+        var c = {beginner: 1,intermediate: 2,advanced: 3};
+        return {
+            scope:
+            {
+                course: "=",
+                catagories: "="
+            },
+            templateUrl: "/templates/angular/course_catalog/course_summary.html",
+            link: function(scope) {
+                scope.scrollTop = function() {
+                    $("html, body").animate({scrollTop: 0}, 500)
+                }
+            }}
+    });

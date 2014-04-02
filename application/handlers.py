@@ -1584,7 +1584,7 @@ class CoursesHandler(BaseHandler):
     @user_required
     def get(self):
         params = {}
-        params.update({'angular_app_name': 'easylearncode.courses'})
+        params.update({'angular_app_name': 'easylearncode.courseCatalog'})
         return self.render_template("courses.html", **params)
 
 
