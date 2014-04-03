@@ -657,14 +657,17 @@ angular.module("easylearncode.home").controller('HomeCarouselCtrl', ['$scope', f
 angular.module("easylearncode.learn").run(function () {
     $('#myTab a:last').tab('show');
     $("[rel='tooltip']").tooltip();
-}).controller('LearnCtrl', ['$scope', '$http', '$location', '$sce', '$compile', '$window', 'api', '$timeout', 'localStorageService','csrf_token', function ($scope, $http, $location, $sce, $compile, $window, api, $timeout, localStorageService, csrf_token) {
+}).controller('LearnCtrl', ['$scope', '$http', '$location', '$sce', '$compile', '$window', 'api', '$timeout', 'localStorageService','csrf_token', "$q",'$rootScope', 'VG_EVENTS', function ($scope, $http, $location, $sce, $compile, $window, api, $timeout, localStorageService, csrf_token, $q, $rootScope, VG_EVENTS) {
+        var runCodeDeferred = $q.defer()
         $scope.showAlert = false;
-        $scope.isTestingCode = false;
-        $scope.result = false;
-        $scope.description = "";
         $scope.lectures = [];
+        $scope.rate_lecture = null;
+        $scope.rate = 3;
+        $scope.max = 5;
+        $scope.isReadonly = false;
         api.Model.query({type: 'lessons', filter: 'Lecture==' + $location.search()['lecture_id'] + '' }, function (data) {
-            api.Model.query({type: 'courses', filter: 'Lesson==' + data[0].Id + '', recurse: true  }, function (data) {
+            api.Model.query({type: 'courses', filter: 'Lesson==' + data[0].Id + '', recurse: true, depth: 1000  }, function (data) {
+                console.log(data);
                 angular.forEach(data[0].lesson_keys, function (lesson) {
                     angular.forEach(lesson.lecture_keys, function (lecture) {
                         $scope.lectures.push(lecture);
@@ -716,21 +719,11 @@ angular.module("easylearncode.learn").run(function () {
         };
 
         $scope.inputCallback = function (callback) {
-            $scope.jqconsole.Input(function (result) {
-                var e;
-                try {
-                    callback(result);
-                } catch (_error) {
 
-                }
-            });
         };
 
         $scope.outputCallback = function (output, cls) {
-            if (output) {
-                $scope.kq = '>> ' + output;
-                console.log(output);
-            }
+
         };
 
         $scope.errorCallback = function (e) {
@@ -756,7 +749,10 @@ angular.module("easylearncode.learn").run(function () {
                 }
                 error_msg = null;
                 isSuccess = false;
-                if (resultObj.type === 'evalSolution') {
+                if(resultObj.type === 'eval_User'){
+                    $scope.kq = '>> ' + output;
+                }
+                else if (resultObj.type === 'evalSolution') {
                     if (result_val === 'true' || result_val === 'True') {
                         isSuccess = true;
                     } else if (result_val !== 'false' && result_val !== 'False') {
@@ -764,23 +760,20 @@ angular.module("easylearncode.learn").run(function () {
                     }
                     if (isSuccess) {
                         $scope.$apply(function () {
-                            $scope.showAlert = true;
-                            $scope.alert = {
-                                type: 'info',
-                                msg: '<i class="fa fa-sun-o"></i> <strong>Tuyệt vời ông mặt trời!!!</strong><br>Tiếp tục nào<a class="btn btn-primary pull-right" onclick="nextCheckpoint()">Tiếp tục</a><div class="clearfix"></div>'
+                            data = {
+                                result:true,
+                                description:'Chúc mừng bạn :D'
                             }
-                            $timeout($compile($('.console-alert span').contents())($scope), 10);
-                            $scope.isTestingCode = true;
+                            runCodeDeferred.resolve(data);
                         })
 
                     } else {
                         $scope.$apply(function () {
-                            $scope.showAlert = true;
-                            $scope.alert = {
-                                type: 'danger',
-                                msg: '<i class="fa fa-exclamation-triangle"></i><strong> Có điều gì lầm lẫn! </strong><br>' + utf8_decode(result_val)
+                            data = {
+                                result:false,
+                                description:utf8_decode(result_val)
                             }
-                            $scope.isTestingCode = true;
+                            runCodeDeferred.resolve(data);
                         })
 
                     }
@@ -824,7 +817,7 @@ angular.module("easylearncode.learn").run(function () {
                 result = false;
                 description = "";
                 if(quizs.length == 0){
-                    description: "Có l?i x?y ra, xin vui lòng th? l?i!";
+                    description: "Co loi xay ra vui long coi lai!";
                 }
                 else{
                     answer = _.where(quizs[0].answer_keys, {Id: data.answer})
@@ -842,9 +835,9 @@ angular.module("easylearncode.learn").run(function () {
                     description:description
                 }
             }else if(data.type == "Test"){
+                runCodeDeferred = $q.defer();
                 tests  = _.where($scope.lecture.test_keys, {Id: data.id});
                 $scope.current_test = tests[0];
-                $scope.isTestingCode = false;
                 dataObj = {
                     command: data.code,
                     testScript: '',
@@ -854,10 +847,7 @@ angular.module("easylearncode.learn").run(function () {
                     type: 'engine.EasyLearnCode_Eval',
                     data: dataObj
                 });
-                return {
-                    result:$scope.result,
-                    description:$scope.description
-                }
+                return runCodeDeferred.promise;
             }
         }
         $scope.jsrepl = new JSREPL({
@@ -877,7 +867,7 @@ angular.module("easylearncode.learn").run(function () {
             dataObj = {
                 command: $scope.code,
                 testScript: '',
-                type: 'evalUser'
+                type: 'eval_User'
             };
             $scope.jsrepl.sandbox.post({
                 type: 'engine.EasyLearnCode_Eval',
@@ -912,13 +902,19 @@ angular.module("easylearncode.learn").run(function () {
             $scope.API = API;
         };
 
+        $rootScope.$on(VG_EVENTS.ON_EXIT_FULLSCREEN, function () {
+            $scope.API.setSize(700, 380);
+        })
+
         $scope.onCompleteVideo = function () {
             $scope.isCompleted = true;
-            $scope.showAlert = true;
-            $scope.alert = {
-                type: 'info',
-                msg: '<strong>Chúc mừng bạn đã hoàn thành bài học này !!!</strong><br>Bài kế tiếp<button class="btn btn-primary pull-right" onclick="nextLecture()">Tiếp tục</button><div class="clearfix"></div>'
-            }
+            $scope.$apply(function(){
+                $scope.showAlert = true;
+                $scope.alert = {
+                    type: 'info',
+                    msg: '<strong>Chúc mừng bạn đã hoàn thành bài học này !!!</strong><br>Bài kế tiếp<button class="btn btn-primary pull-right" onclick="nextLecture()">Tiếp tục</button><div class="clearfix"></div>'
+                }
+            })
         };
         $window.nextLecture = function(){
             cur_index = _.indexOf($scope.lectures, function(obj){
@@ -979,11 +975,22 @@ angular.module("easylearncode.learn").run(function () {
                 $scope.vgScope.$destroy();
             }
             $scope.vgScope = $scope.$new(false);
-            $('#video').html($compile("<videogular id=\"khung-video\"\r\n                                    vg-player-ready=\"onPlayerReady\" vg-complete=\"onCompleteVideo\" vg-update-time=\"onUpdateTime\" vg-update-size=\"onUpdateSize\" vg-update-volume=\"onUpdateVolume\" vg-update-state=\"onUpdateState\"\r\n                                    vg-width=\"config.width\" vg-height=\"config.height\" vg-theme=\"config.theme.url\" vg-autoplay=\"config.autoPlay\" vg-stretch=\"config.stretch.value\" vg-responsive=\"config.responsive\">\r\n<video preload='metadata' id=\"video_content\">\r\n<source type=\"video/youtube\" src=\"" + $scope.youtubeUrl + "\"  /></video>\r\n                                    <vg-youtube></vg-youtube>\r\n                                    <vg-quiz vg-data='config.plugins.quiz.data' vg-quiz-submit=\"onQuizSubmit\" vg-quiz-skip=\"onQuizSkip\" vg-quiz-continue=\"onQuizContinue\" vg-quiz-show-explanation=\"onQuizShowExplanation\"></vg-quiz>\r\n                                    <vg-poster-image vg-url='config.plugins.poster.url' vg-stretch=\"config.stretch.value\"></vg-poster-image>\r\n                                    <vg-buffering></vg-buffering>\r\n                                    <vg-overlay-play vg-play-icon=\"config.theme.playIcon\"></vg-overlay-play>\r\n\r\n                                    <vg-controls vg-autohide=\"config.autoHide\" vg-autohide-time=\"config.autoHideTime\" style=\"height: 50px;\">\r\n                                        <vg-play-pause-button vg-play-icon=\"config.theme.playIcon\" vg-pause-icon=\"config.theme.pauseIcon\"></vg-play-pause-button>\r\n                                        <vg-timeDisplay>{{ currentTime }}</vg-timeDisplay>\r\n                                        <vg-scrubBar>\r\n                                            <vg-scrubbarcurrenttime></vg-scrubbarcurrenttime>\r\n                                        </vg-scrubBar>\r\n                                        <vg-timeDisplay>{{ totalTime }}</vg-timeDisplay>\r\n                                        <vg-volume>\r\n                                            <vg-mutebutton\r\n                                                vg-volume-level-3-icon=\"config.theme.volumeLevel3Icon\"\r\n                                                vg-volume-level-2-icon=\"config.theme.volumeLevel2Icon\"\r\n                                                vg-volume-level-1-icon=\"config.theme.volumeLevel1Icon\"\r\n                                                vg-volume-level-0-icon=\"config.theme.volumeLevel0Icon\"\r\n                                                vg-mute-icon=\"config.theme.muteIcon\">\r\n                                            </vg-mutebutton>\r\n                                            <vg-volumebar></vg-volumebar>\r\n                                        </vg-volume>\r\n                                        <vg-fullscreenButton vg-enter-full-screen-icon=\"config.theme.enterFullScreenIcon\" vg-exit-full-screen-icon=\"config.theme.exitFullScreenIcon\"></vg-fullscreenButton>\r\n                                    </vg-controls>\r\n                                </videogular><alert ng-show=\"showAlert\" type=\"alert.type\" close=\"showAlert=false\" class=\"console-alert\"><span ng-bind-html=\"alert.msg|to_trusted\"></span></alert>")($scope.vgScope));
+            $('#video').html($compile("<videogular id=\"khung-video\"\r\n                                    vg-player-ready=\"onPlayerReady\" vg-complete=\"onCompleteVideo\" vg-update-time=\"onUpdateTime\" vg-update-size=\"onUpdateSize\" vg-update-volume=\"onUpdateVolume\" vg-update-state=\"onUpdateState\"\r\n                                    vg-width=\"config.width\" vg-height=\"config.height\" vg-theme=\"config.theme.url\" vg-autoplay=\"config.autoPlay\" vg-stretch=\"config.stretch.value\" vg-responsive=\"config.responsive\">\r\n<video preload='metadata' id=\"video_content\">\r\n<source type=\"video/youtube\" src=\"" + $scope.youtubeUrl + "\"  /></video>\r\n                                    <vg-youtube></vg-youtube>\r\n                                    <vg-quiz vg-data='config.plugins.quiz.data' vg-quiz-submit=\"onQuizSubmit\" vg-quiz-skip=\"onQuizSkip\" vg-quiz-continue=\"onQuizContinue\" vg-quiz-show-explanation=\"onQuizShowExplanation\"></vg-quiz>\r\n                                    <vg-poster-image vg-url='config.plugins.poster.url' vg-stretch=\"config.stretch.value\"></vg-poster-image>\r\n                                    <vg-buffering></vg-buffering>\r\n                                    <vg-overlay-play vg-play-icon=\"config.theme.playIcon\"></vg-overlay-play>\r\n\r\n                                    <vg-controls vg-autohide=\"config.autoHide\" vg-autohide-time=\"config.autoHideTime\" style=\"height: 50px;\">\r\n                                        <vg-play-pause-button vg-play-icon=\"config.theme.playIcon\" vg-pause-icon=\"config.theme.pauseIcon\"></vg-play-pause-button>\r\n                                        <vg-timeDisplay>{{ currentTime }}</vg-timeDisplay>\r\n                                        <vg-scrubBar>\r\n                                            <vg-scrubbarcurrenttime></vg-scrubbarcurrenttime>\r\n                                        </vg-scrubBar>\r\n                                        <vg-timeDisplay>{{ totalTime }}</vg-timeDisplay>\r\n                                        <vg-volume>\r\n                                            <vg-mutebutton\r\n                                                vg-volume-level-3-icon=\"config.theme.volumeLevel3Icon\"\r\n                                                vg-volume-level-2-icon=\"config.theme.volumeLevel2Icon\"\r\n                                                vg-volume-level-1-icon=\"config.theme.volumeLevel1Icon\"\r\n                                                vg-volume-level-0-icon=\"config.theme.volumeLevel0Icon\"\r\n                                                vg-mute-icon=\"config.theme.muteIcon\">\r\n                                            </vg-mutebutton>\r\n                                            <vg-volumebar></vg-volumebar>\r\n                                        </vg-volume>\r\n                                        <vg-fullscreenButton vg-enter-full-screen-icon=\"config.theme.enterFullScreenIcon\" vg-exit-full-screen-icon=\"config.theme.exitFullScreenIcon\"></vg-fullscreenButton>\r\n                                    </vg-controls>\r\n                                </videogular>")($scope.vgScope));
             localStorageService.remove("score");
             $scope.config.plugins.quiz.data = $scope.lecture.quiz_keys;
             $scope.config.plugins.quiz.data = _.extend($scope.config.plugins.quiz.data, $scope.lecture.test_keys);
-            console.log($scope.config.plugins.quiz.data);
+            $scope.rate_lecture = null;
+            $http.get("/api/users/me").success(function(data){
+                $http.get("/api/rates?filter=User=="+data.Id+"&filter=Lecture=="+$scope.lecture.Id+"").success(function(rate){
+                    console.log(rate[0]);
+                    if(rate.length > 0)
+                        $scope.rate_lecture = rate[0];
+                    if($scope.rate_lecture != null){
+                        $scope.rate = $scope.rate_lecture.rate;
+                        $scope.isReadonly = true;
+                    }
+                })
+            });
         }
 
         $scope.config = {
@@ -1015,25 +1022,24 @@ angular.module("easylearncode.learn").run(function () {
                 }
             }
         };
-        $scope.rate = 3;
-        $scope.max = 5;
-        $scope.isReadonly = false;
+
         $scope.setRate = function(){
             if($scope.isReadonly == true) return;
             $scope.isReadonly = true;
             $http.get("/api/users/me").success(function(data){
                 console.log(data);
-                api.Model.query({type: 'rates', fitler: 'user_key=='+data.Id+''}, function(rate){
-                    if(rate.length == 0){
-                        api.Model.save({type: 'rates'}, {user_key: data.Id, lecture_key: $scope.lecture.Id, rate:$scope.rate}, function(data){})
+                if($scope.rate_lecture == null)
+                {
+                    $scope.rate_lecture = {
+                        rate: $scope.rate,
+                        lecture_key: $scope.lecture.Id,
+                        user_key: data.Id
                     }
-                    else{
-                        rate[0].rate = $scope.rate;
-                        api.Model.save({type: 'rates', id: rate[0].Id}, rate[0], function(result){
-
-                        });
-                    }
-                })
+                     api.Model.save({type: 'rates'}, $scope.rate_lecture);
+                }else{
+                    $scope.rate_lecture.rate = $scope.rate;
+                    api.Model.save({type: 'rates', id: $scope.rate_lecture.Id}, $scope.rate_lecture)
+                }
             });
         }
         $scope.editRate = function(){
@@ -1152,7 +1158,11 @@ angular.module("easylearncode.contest_result").controller('ContestResultCtrl', [
 
 angular.module("easylearncode.info").controller('InfoCtrl', ['$scope', '$http', '$location', 'api', '$window', function ($scope, $http, $location, api, $window) {
     var course_id = $location.search()['course_id'];
-    $scope.course = api.Model.get({type: 'courses', id: course_id, recurse: true});
+    $scope.loaded = false;
+     api.Model.get({type: 'courses', id: course_id, recurse: true, depth: 1000}, function(data){
+        $scope.loaded = true;
+        $scope.course = data;
+    });
     $scope.toggle = function (section) {
         section.toggle = !section.toggle;
         section.status = section.toggle ? "Ẩn" : "Hiện";
@@ -1737,3 +1747,7 @@ angular.module("easylearncode.courseCatalog")
                 }
             }}
     });
+angular.module("easylearncode.teacher", ["ui.bootstrap", "ui.ace", 'easylearncode.core'])
+    .controller("TeacherCtrl", ["$scope", "$sce", "$timeout", function ($scope, $sce, $timeout) {
+
+    }]);

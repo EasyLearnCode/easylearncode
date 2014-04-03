@@ -59,8 +59,7 @@
                                                         <li ng-click="goLecture(l, $index)"
                                                             class="list-group-item list-group-item-info" hover-class
                                                             add-class="list-group-item-success"
-                                                            remove-class="list-group-item-info"><i
-                                                                class="fa fa-arrow-circle-o-right"></i>{{ l.title }}
+                                                            remove-class="list-group-item-info"><i class="fa fa-circle-o" ng-class="{'fa-check-circle-o':!l._is_passed_lecture, 'fa-arrow-circle-o-righ':!l._is_current_lecture}"></i>{{ l.title }}
                                                         </li>
                                                     </ul>
                                                 </div>
@@ -86,24 +85,30 @@
                                 </span>
                                 <div class="clearfix"></div>
                             </div>
-                            <div class="panel-body" id="video">
+                            <div class="panel-body">
+                                <div id="video"></div>
+                                <alert ng-show="showAlert" type="alert.type" close="showAlert=false" class="console-alert"><span ng-bind-html="alert.msg|to_trusted"></span></alert>
                             </div>
                         </div>
                         <div class="pull-left" style="padding-top: 20px"><span
                                 style="font-weight: bold">Đánh giá:</span>
-                            <rating value="rate" max="max" readonly="isReadonly" style="cursor: pointer"
+                            <rating value="rate" max="max" readonly="isReadonly" ng-class="{'cursor-rating':!isReadonly}"
                                     on-hover="hoveringOver(value)" ng-click="setRate()"
                                     on-leave="overStar = null"></rating>
                             <span class="label"
-                                  ng-class="{'label-warning': percent<30, 'label-info': percent>=30 && percent<70, 'label-success': percent>=70}"
-                                  ng-show="overStar && !isReadonly">{{ strRate }}</span><span ng-click="editRate()" class="label label-warning"  ng-show="!overStar || isReadonly">13/25</span> <span ng-click="editRate()" class="label label-info" ng-show="!overStar || isReadonly">12/25</span></div>
-                        <div class="pull-right" style="padding-top: 15px">
+                                  ng-class="{'label-warning': percent<=40, 'label-info': percent>40}"
+                                  ng-show="overStar && !isReadonly">{{ strRate }}</span>
+                            <div style="margin: 0 0 5px 0px">
+                                <span ng-click="editRate()" class="label label-warning">13/25</span> <span ng-click="editRate()" class="label label-info">12/25</span>
+                            </div>
+                        </div>
+                        <div class="pull-right" style="padding-top: 15px;">
                             <ul ng-social-buttons
                                 data-url="current_url"
                                 data-title="current_title"
                                 data-description="current_description"
                                 data-image="'http://easylearncode.appspot.com/application/img/logo.png'">
-                                <li style="font-weight: bold"></li>
+                                <li style="font-weight: bold">Chia sẻ:</li>
                                 <li class="ng-social-facebook" tooltip-placement="bottom"
                                     tooltip="Chia sẻ trên facebook">Facebook
                                 </li>

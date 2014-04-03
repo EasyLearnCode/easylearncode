@@ -39,6 +39,10 @@
                                         class="caret"></b></a>
                                 <ul class="dropdown-menu">
                                     <li><a href="{{ uri_for("edit-profile") }}"> Thông tin cá nhân</a></li>
+                                    {% if is_teacher %}
+                                    <li class="divider"></li>
+                                    <li><a href="{{ uri_for("teacher-page") }}">Quản lý khóa học</a></li>
+                                    {% endif %}
                                     <li class="divider"></li>
                                     <li><a href="{{ logout_url }}" target="_self"> Đăng xuất</a></li>
                                 </ul>

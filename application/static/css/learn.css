@@ -119,5 +119,10 @@
     position: absolute;
     z-index: 1000;
     top: 365px;
-    width: 92%;
+    width: 92.1%;
+    border-radius: 0px!important;
+}
+
+.cursor-rating{
+    cursor: pointer;
 }

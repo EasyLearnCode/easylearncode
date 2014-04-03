@@ -98,13 +98,29 @@ angular.module("info.vietnamcode.nampnq.videogular.plugins.quiz", ['nampnq.util.
                                     }
                                 });
                                 var result = vgQuizSubmitCallBack(paramObj);
-                                scope.status = result.description;
-                                if (result.result) {
-                                    scope.submit = false;
-                                    scope.skip = false;
-                                    scope.continue_btn = true;
-                                    scope.explanation = true;
+                                if(paramObj.type=="Quiz"){
+                                    scope.status = result.description;
+                                    if (result.result) {
+                                        scope.submit = false;
+                                        scope.skip = false;
+                                        scope.continue_btn = true;
+                                        scope.explanation = true;
 
+                                    }
+                                }
+                                else if(paramObj.type == "Test"){
+                                    result.then(function(data){
+                                        scope.status = data.description;
+                                        if (data.result) {
+                                            scope.submit = false;
+                                            scope.skip = false;
+                                            scope.continue_btn = true;
+                                            scope.explanation = true;
+
+                                        }else{
+                                            scope.status = data.description;
+                                        }
+                                    })
                                 }
                             }
 
