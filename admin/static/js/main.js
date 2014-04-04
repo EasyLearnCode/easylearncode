@@ -418,6 +418,20 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
                     "field_name": "title"
                 },
                 {
+                    "field_title": "Description",
+                    "field_type": "textarea",
+                    "field_value": "",
+                    "field_required": true,
+                    "field_name": "description"
+                },
+                {
+                    "field_title": "Success message",
+                    "field_type": "textarea",
+                    "field_value": "",
+                    "field_required": true,
+                    "field_name": "success"
+                },
+                {
                     "field_title": "Index",
                     "field_type": "textfield",
                     "field_value": "",

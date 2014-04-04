@@ -16,6 +16,7 @@
                 <thead>
                 <tr>
                     <th>Title</th>
+                    <th>Description</th>
                     <th>Index</th>
                     <th>Projects</th>
                 </tr>
@@ -23,6 +24,7 @@
                 <tbody>
                 <tr ng-repeat="item in exercise.items">
                     <td>{{ item.title }}</td>
+                    <td class="center">{{ item.description }}</td>
                     <td class="center">{{ item.index }}</td>
                     <td class="center"><a class="btn btn-success"  ng-href="#!/{{ course.Id }}/exercise/{{ exercise.Id }}/item/{{ item.Id }}/project">
                         <i class="icon-zoom-in icon-white"></i>
