@@ -16,6 +16,7 @@ import json
 import webapp2
 import httpagentparser
 from webapp2_extras import security
+from webapp2_extras.appengine.auth.models import Unique
 from webapp2_extras.auth import InvalidAuthIdError, InvalidPasswordError
 from webapp2_extras.i18n import gettext as _
 from google.appengine.api import taskqueue
