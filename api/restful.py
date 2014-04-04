@@ -23,7 +23,7 @@ class _ConfigDefaults(object):
     # list of valid models, None means anything goes
     DEFINED_MODELS = {"courses": Course, "quizs": WeeklyQuiz, "levels": WeeklyQuizLevel,
                       "lessons": Lesson, "lectures": Lecture, "codes": Code, "tests": Test, "lecture_quizs": Quiz,
-                      "answers": QuizAnswer, "users": User, "files": File, "quizresults": WeeklyQuizRunCodeResult}
+                      "answers": QuizAnswer, "users": User, "files": File, "quizresults": WeeklyQuizRunCodeResult, "rates": Rate}
     #Update for module exercise
     DEFINED_MODELS.update({
         "exercises": Exercise,

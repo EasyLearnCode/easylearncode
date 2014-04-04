@@ -1,5 +1,5 @@
 <form>
-    <div class="quiz-question-text" bind-html-unsafe="content"></div>
+    <div class="quiz-question-text" bind-html-unsafe="content" data-ng-show="submit"></div>
     <div ng-show="is_quiz" class="quiz-option" style="position:absolute; left:10px; top: 250px; width:330px;  height:80px;"><input dir="auto" class="quiz-input" type="radio" name="answer" id="{{ answers[0].Id }}" value="{{ answers[0].Id }}"> <label for="{{ answers[0].Id }}" style="cursor:pointer; display: inline!important; font-weight: normal"  bind-html-unsafe="answers[0].title"></label></div>
 	<div ng-show="is_quiz" class="quiz-option" style="position:absolute; left:10px; top: 310px; width:330px;  height:80px;"><input dir="auto" class="quiz-input" type="radio" name="answer" id="{{ answers[1].Id }}" value="{{ answers[1].Id }}"> <label for="{{ answers[1].Id }}" style="cursor:pointer;  display: inline!important; font-weight: normal" bind-html-unsafe="answers[1].title"></label></div>
 	<div ng-show="is_quiz" class="quiz-option" style="position:absolute; left:350px; top: 250px; width:330px;  height:80px;"><input dir="auto" class="quiz-input" type="radio" name="answer" id="{{ answers[2].Id }}" value="{{ answers[2].Id }}"> <label for="{{ answers[2].Id }}" style="cursor:pointer;  display: inline!important; font-weight: normal " bind-html-unsafe="answers[2].title"></label></div>
