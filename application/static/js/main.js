@@ -49,7 +49,7 @@
     angular.module("oldeasylearncode", ["easylearncode.core"]);
     angular.module("easylearncode.viewer", ["easylearncode.core", "youtube", "services.lesson", "directives.lesson", "controllers.lesson"]);
     angular.module("easylearncode.overview", ["easylearncode.core", "youtube"]);
-    angular.module("easylearncode.courseCatalog", ["ngRoute","easylearncode.core"]);
+    angular.module("easylearncode.courseCatalog", ["ngRoute", "easylearncode.core"]);
     angular.module("easylearncode.editor", ["easylearncode.core", "services.editor", "directives.editor", "controllers.editor", "services.lesson"]);
     angular.module("easylearncode.settings", ["easylearncode.core", "controllers.settings", "directives.location"]);
     angular.module("easylearncode.payment", ["easylearncode.core"]);
@@ -60,6 +60,7 @@
     angular.module("easylearncode.learn", ["ui.bootstrap", "ui.ace", "easylearncode.core", "com.2fdevs.videogular", "com.2fdevs.videogular.plugins.controls", "com.2fdevs.videogular.plugins.overlayplay", "com.2fdevs.videogular.plugins.buffering", "com.2fdevs.videogular.plugins.poster", "info.vietnamcode.nampnq.videogular.plugins.youtube", "info.vietnamcode.nampnq.videogular.plugins.quiz", "ngSocial", "ngDisqus", "LocalStorageModule"]);
     angular.module("easylearncode.info", ["ui.bootstrap", "easylearncode.core", "ngAnimate"]);
     angular.module("easylearncode.contest_result", ["easylearncode.core"]);
+    angular.module("easylearncode.contest_result_user", ["easylearncode.core"]);
     angular.module("easylearncode.core").config(["$locationProvider",
         function ($locationProvider) {
             $locationProvider.html5Mode(!1);
@@ -89,16 +90,16 @@ angular.module("easylearncode.core").run(function () {
     });
 })
 angular.module("easylearncode.core").run(function run($http, csrf_token) {
-        $http.defaults.headers.post['X-CSRFToken'] = csrf_token;
-    });
+    $http.defaults.headers.post['X-CSRFToken'] = csrf_token;
+});
 angular.module("easylearncode.core").service("api", ["$resource", function ($resource) {
     this.Model = $resource('/api/:type/:id');
 
 }])
 angular.module('easylearncode.learn')
-.config(['localStorageServiceProvider', function(localStorageServiceProvider){
-  localStorageServiceProvider.setPrefix('easylearncode');
-}]);
+    .config(['localStorageServiceProvider', function (localStorageServiceProvider) {
+        localStorageServiceProvider.setPrefix('easylearncode');
+    }]);
 angular.module("easylearncode.core").filter('to_trusted', ['$sce', function ($sce) {
     return function (text) {
         return $sce.trustAsHtml(text);
@@ -110,8 +111,8 @@ angular.module("easylearncode.core")
             return $sce.trustAsHtml(text);
         };
     }])
-    .filter("imageSize", ["$filter", function() {
-        return function(a, d, b) {
+    .filter("imageSize", ["$filter", function () {
+        return function (a, d, b) {
             if (a) {
                 b = 0 === b ? void 0 : b;
                 d = 0 === d ? void 0 : d;
@@ -120,7 +121,7 @@ angular.module("easylearncode.core")
                 var c = Math.max(b, d) || b || d;
                 if (a.match(/\/\/[^.\/]+\.ggpht\.com\//) || a.match(/\/_ah\/img\//)) {
                     var e =
-                    /#[\w=_\-&]*w=(\d+)&h=(\d+)/.exec(a);
+                        /#[\w=_\-&]*w=(\d+)&h=(\d+)/.exec(a);
                     e && (c = 1 * e[1], e = 1 * e[2], d = Math.min(b / e, d / c) || b / e || d / c, d = [c * d, e * d], a = a.replace(/\=s\d+(-c)?/, "=s" + Math.round(Math.max(d[0], d[1]))))
                 } else
                     a.match(/\/\/robohash\.org\//) && c && (a = a + "?size=" + c + "x" + c);
@@ -469,168 +470,214 @@ angular.module("services.utility").factory("md5", [ function () {
     };
     return md5;
 } ]);
-angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "api", "$http", "csrf_token", "channelToken", function ($scope, api, $http, csrf_token, channelToken) {
-    $scope.firstDayOfWeek = Date.parse("last monday");
-    $scope.lastDayOfWeek = Date.parse("next sunday");
-    $scope.loaded = false;
-    $scope.compiling = false;
-    $scope.resultQuantity = 3;
-    $scope.isShowCompileResult = false;
-    $scope.compile_result = [];
-    $scope.langs = [
-        {
-            name: 'Python',
-            mode: 'python',
-            lang: 'PYTHON',
-            active: true,
-            source: ""
-        },
-        {
-            name: 'Java',
-            mode: 'java',
-            lang: 'JAVA',
-            active: false,
-            source: ""
-        },
-        {
-            name: 'C++',
-            mode: 'c_cpp',
-            lang: 'CPP',
-            active: false,
-            source: ""
+angular.module("easylearncode.contest").controller("ContestCtrl",
+    ["$scope", "api", "$http", "csrf_token", "channelToken", "$location",
+        function ($scope, api, $http, csrf_token, channelToken, $location) {
+            $scope.firstDayOfWeek = Date.parse("last monday");
+            $scope.lastDayOfWeek = Date.parse("next sunday");
+            $scope.nextfirstDayOfWeek = Date.parse("next monday");
+            $scope.loaded = false;
+            $scope.compiling = false;
+            $scope.resultQuantity = 3;
+            $scope.isShowCompileResult = false;
+            $scope.compile_result = [];
+            $scope.langs = [
+                {
+                    name: 'Python',
+                    mode: 'python',
+                    lang: 'PYTHON',
+                    active: true,
+                    source: ""
+                },
+                {
+                    name: 'Java',
+                    mode: 'java',
+                    lang: 'JAVA',
+                    active: false,
+                    source: ""
+                },
+                {
+                    name: 'C++',
+                    mode: 'c_cpp',
+                    lang: 'CPP',
+                    active: false,
+                    source: ""
 
-        }
-    ];
-    $scope.aceLoaded = function (_editor) {
-        _editor.setOptions({
-            enableBasicAutocompletion: true
-        });
-    };
-    $scope.viewResult = function (result) {
-//        api.Model.get({type: 'quizresults', id: ID}, function (data) {
-//            var code = data;
-//            $http.get('/api/contest/get_thisweek_contest/' + code.level_key).success(function (data) {
-//                if (data.status == 1) {
-//                }
-//                else {
-//                    $scope.thisweek_contest = data;
-//                }
-//
-//            });
-//            _.find($scope.langs, function (lang) {
-//                if (lang.lang.toLocaleLowerCase() == code.language.toLocaleLowerCase()) {
-//                    lang.active = true;
-//                    lang.source = code.code;
-//                    return {}
-//                }
-//            })
-//        });
-    }
-    $scope.showMoreResult = function () {
-        $scope.resultQuantity += 2;
-    }
-    $scope.changeCurrentLevel = function (level) {
-        $scope.current_level = level;
-
-    }
-    $scope.resetCode = function () {
-        $scope.langs = [
-            {
-                name: 'Python',
-                mode: 'python',
-                lang: 'PYTHON',
-                active: true,
-                source: ""
-            },
-            {
-                name: 'Java',
-                mode: 'java',
-                lang: 'JAVA',
-                active: false,
-                source: ""
-            },
-            {
-                name: 'C++',
-                mode: 'c_cpp',
-                lang: 'CPP',
-                active: false,
-                source: ""
+                }
+            ];
+            $scope.aceLoaded = function (_editor) {
+                _editor.setOptions({
+                    enableBasicAutocompletion: true
+                });
+            };
+            $scope.viewResult = function (result) {
+                $scope.current_level = result.level;
+                $scope.resetCode();
+                _.find($scope.langs, function (lang) {
+                    if (lang.lang.toLocaleLowerCase() == result.language.toLocaleLowerCase()) {
+                        lang.active = true;
+                        lang.source = result.code.content;
+                        return {}
+                    }
+                })
+            }
+            $scope.showMoreResult = function () {
+                $scope.resultQuantity += 2;
+            }
+            $scope.changeCurrentLevel = function (level) {
+                $scope.current_level = level;
 
             }
-        ]
-    };
-    $scope.submitCode = function (type) {
-        type = type || "run";
-        _.find($scope.langs, function (lang) {
-            if (lang.active) {
-                if (lang.source) {
-                    $http.post('/api/contest/submit', {"weekly_quiz_level_key": $scope.current_level.Id, "source": lang.source,
-                        "_csrf_token": csrf_token, "lang": lang.lang, "type": type}).success(function (data) {
-                        $scope.isShowCompileResult = true;
-                        $scope.compile_result = [];
+            $scope.resetCode = function () {
+                $scope.langs = [
+                    {
+                        name: 'Python',
+                        mode: 'python',
+                        lang: 'PYTHON',
+                        active: true,
+                        source: ""
+                    },
+                    {
+                        name: 'Java',
+                        mode: 'java',
+                        lang: 'JAVA',
+                        active: false,
+                        source: ""
+                    },
+                    {
+                        name: 'C++',
+                        mode: 'c_cpp',
+                        lang: 'CPP',
+                        active: false,
+                        source: ""
+
+                    }
+                ]
+            };
+
+
+            $scope.submitCode = function (type) {
+
+                type = type || "run";
+                _.find($scope.langs, function (lang) {
+                        if (lang.active) {
+                            if (lang.source) {
+                                if (type == 'submit') {
+
+                                    bootbox.prompt("Nhập tên file", function (result) {
+                                        if (result === null) {
+
+
+                                        } else {
+                                            $scope.compiling = true;
+                                            $http.post('/api/contest/submit', {"weekly_quiz_level_key": $scope.current_level.Id, "source": lang.source,
+                                                "_csrf_token": csrf_token, "lang": lang.lang, "type": type, 'filename': result}).success(function (data) {
+                                                $scope.isShowCompileResult = true;
+                                                $scope.compile_result = [];
+                                            });
+                                        }
+                                    });
+                                }
+                                else {
+                                    $scope.compiling = true;
+                                    $http.post('/api/contest/submit', {"weekly_quiz_level_key": $scope.current_level.Id, "source": lang.source,
+                                        "_csrf_token": csrf_token, "lang": lang.lang, "type": type, 'filename': ""}).success(function (data) {
+                                        $scope.isShowCompileResult = true;
+                                        $scope.compile_result = [];
+                                    });
+                                }
+
+                            } else {
+                                $(function () {
+                                    $('#codeEmptyModal').modal();
+                                });
+                            }
+                            return {};
+                        }
+                    }
+                )
+                ;
+            }
+            $http.get('/api/contest?recurse=True').success(function (data) {
+                if (_.isEmpty(data.data)) {
+                    $(function () {
+                        $('#noContestModal').modal();
                     });
                 } else {
-                    $(function () {
-                        $('#codeEmptyModal').modal();
+                    $scope.current_week_data = data.data;
+                    $scope.current_week_data.level_keys = _.sortBy($scope.current_week_data.level_keys, function (level) {
+                        return level.level;
+                    })
+                    $scope.current_level = _.find($scope.current_week_data.level_keys, function (level) {
+                        return level.is_current_level;
                     });
+                    $http.get('/api/contest/info?user_id=me&recurse=True').success(function (data) {
+                        $scope.current_week_user_data = data.data;
+                        $scope.current_week_user_data.run_code_result = _.sortBy($scope.current_week_user_data.run_code_result,function (result) {
+                            return result.created;
+                        }).reverse();
+                    })
+                    $scope.loaded = true;
                 }
-                return {};
-            }
-        });
-    }
-    $http.get('/api/contest?recurse=True').success(function (data) {
-        if (_.isEmpty(data.data)) {
-            $(function () {
-                $('#noContestModal').modal();
-            });
-        } else {
-            $scope.current_week_data = data.data;
-            $scope.current_week_data.level_keys = _.sortBy($scope.current_week_data.level_keys, function (level) {
-                return level.level;
-            })
-            $scope.current_level = _.find($scope.current_week_data.level_keys, function (level) {
-                return level.is_current_level;
-            });
-            $http.get('/api/contest/me?recurse=True').success(function (data) {
-                $scope.current_week_user_data = data.data;
-                $scope.current_week_user_data.run_code_result = _.sortBy($scope.current_week_user_data.run_code_result,function (result) {
-                    return result.created;
-                }).reverse();
-            })
-            $scope.loaded = true;
-        }
 
-    });
-    var channel = new goog.appengine.Channel(channelToken);
-    var handler = {
-        'onopen': function () {
-            console.log(arguments)
-        },
-        'onmessage': function (result) {
-            console.log(arguments);
-            result.data = JSON.parse(result.data);
-            if (result.data.type) {
-                if ((result.data.type == 'run_code_result' || result.data.type == 'submit_code_result')) {
-                    $scope.compile_result.push(result.data);
-                    $scope.$apply();
-                }
-                else if (result.data.type == "submit_sumary_result") {
-                    if (result.data.result) {
-                        //TODO: Show sumary submit result
-                        //TODO: Go to next level
+            });
+
+            var channel = new goog.appengine.Channel(channelToken);
+
+            var handler = {
+                'onopen': function () {
+                    console.log(arguments)
+                },
+                'onmessage': function (result) {
+                    console.log(arguments);
+                    result.data = JSON.parse(result.data);
+                    if (result.data.type) {
+                        if ((result.data.type == 'run_code_result' || result.data.type == 'submit_code_result')) {
+                            $scope.compiling = false;
+                            $scope.compile_result.push(result.data);
+                            $scope.$apply();
+                        }
+                        else if (result.data.type == "submit_sumary_result") {
+
+                            if (result.data.result) {
+                                time_used = result.data.time_used;
+                                memory_used = result.data.memory_used;
+                                score = result.data.score;
+                                bootbox.alert("Bạn đã qua level với thời gian " + time_used + " bộ nhớ " + memory_used + ". Điểm: " + score, function () {
+                                    $http.get('/api/contest?recurse=True').success(function (data) {
+                                        $scope.current_week_data = data.data;
+                                        $scope.current_week_data.level_keys = _.sortBy($scope.current_week_data.level_keys, function (level) {
+                                            return level.level;
+                                        })
+                                        $scope.current_level = api.Model.get({type: 'levels', id: result.data.next_level_key, recurse: true});
+                                        $scope.resetCode();
+                                    });
+                                });
+                                //TODO: Show sumary submit result
+                                //TODO: Go to next level
+                            } else {
+                                bootbox.alert("Bạn không vượt qua level!", function () {
+
+                                });
+                            }
+                            $http.get('/api/contest/info?user_id=me&recurse=True').success(function (data) {
+                                $scope.current_week_user_data = data.data;
+                                $scope.current_week_user_data.run_code_result = _.sortBy($scope.current_week_user_data.run_code_result,function (result) {
+                                    return result.created;
+                                }).reverse();
+                            })
+
+                        }
                     }
-
+                },
+                'onerror': function () {
+                },
+                'onclose': function () {
                 }
-            }
-        },
-        'onerror': function () {
-        },
-        'onclose': function () {
-        }
-    };
-    var socket = channel.open(handler);
+            };
+            var socket = channel.open(handler);
 
-}]);
+        }]);
 angular.module("easylearncode.home").controller('HomeCarouselCtrl', ['$scope', function ($scope) {
     $scope.myInterval = 5500;
     $scope.langs = [
@@ -657,7 +704,7 @@ angular.module("easylearncode.home").controller('HomeCarouselCtrl', ['$scope', f
 angular.module("easylearncode.learn").run(function () {
     $('#myTab a:last').tab('show');
     $("[rel='tooltip']").tooltip();
-}).controller('LearnCtrl', ['$scope', '$http', '$location', '$sce', '$compile', '$window', 'api', '$timeout', 'localStorageService','csrf_token', "$q",'$rootScope', 'VG_EVENTS', function ($scope, $http, $location, $sce, $compile, $window, api, $timeout, localStorageService, csrf_token, $q, $rootScope, VG_EVENTS) {
+}).controller('LearnCtrl', ['$scope', '$http', '$location', '$sce', '$compile', '$window', 'api', '$timeout', 'localStorageService', 'csrf_token', "$q", '$rootScope', 'VG_EVENTS', function ($scope, $http, $location, $sce, $compile, $window, api, $timeout, localStorageService, csrf_token, $q, $rootScope, VG_EVENTS) {
         var runCodeDeferred = $q.defer()
         $scope.showAlert = false;
         $scope.lectures = [];
@@ -749,7 +796,7 @@ angular.module("easylearncode.learn").run(function () {
                 }
                 error_msg = null;
                 isSuccess = false;
-                if(resultObj.type === 'eval_User'){
+                if (resultObj.type === 'eval_User') {
                     $scope.kq = '>> ' + output;
                 }
                 else if (resultObj.type === 'evalSolution') {
@@ -761,8 +808,8 @@ angular.module("easylearncode.learn").run(function () {
                     if (isSuccess) {
                         $scope.$apply(function () {
                             data = {
-                                result:true,
-                                description:'Chúc mừng bạn :D'
+                                result: true,
+                                description: 'Chúc mừng bạn :D'
                             }
                             runCodeDeferred.resolve(data);
                         })
@@ -770,8 +817,8 @@ angular.module("easylearncode.learn").run(function () {
                     } else {
                         $scope.$apply(function () {
                             data = {
-                                result:false,
-                                description:utf8_decode(result_val)
+                                result: false,
+                                description: utf8_decode(result_val)
                             }
                             runCodeDeferred.resolve(data);
                         })
@@ -801,7 +848,7 @@ angular.module("easylearncode.learn").run(function () {
                         testScript: $scope.current_test.test_script,
                         type: 'evalSolution'
                     };
-                   $scope.jsrepl.sandbox.post({
+                    $scope.jsrepl.sandbox.post({
                         type: 'engine.EasyLearnCode_Eval',
                         data: dataObj
                     });
@@ -812,31 +859,31 @@ angular.module("easylearncode.learn").run(function () {
         };
 
         $scope.onQuizSubmit = function (data) {
-            if(data.type == "Quiz"){
+            if (data.type == "Quiz") {
                 quizs = _.where($scope.lecture.quiz_keys, {Id: data.id});
                 result = false;
                 description = "";
-                if(quizs.length == 0){
+                if (quizs.length == 0) {
                     description: "Co loi xay ra vui long coi lai!";
                 }
-                else{
+                else {
                     answer = _.where(quizs[0].answer_keys, {Id: data.answer})
-                    if(answer[0].is_true == true){
+                    if (answer[0].is_true == true) {
                         result = true;
                         description = "Ok!";
-                        if(localStorageService.get("score") == null){
+                        if (localStorageService.get("score") == null) {
                             localStorageService.add("score", 1);
                         }
-                        else localStorageService.add("score",localStorageService.get("score")+1);
+                        else localStorageService.add("score", localStorageService.get("score") + 1);
                     }
                 }
                 return {
-                    result:result,
-                    description:description
+                    result: result,
+                    description: description
                 }
-            }else if(data.type == "Test"){
+            } else if (data.type == "Test") {
                 runCodeDeferred = $q.defer();
-                tests  = _.where($scope.lecture.test_keys, {Id: data.id});
+                tests = _.where($scope.lecture.test_keys, {Id: data.id});
                 $scope.current_test = tests[0];
                 dataObj = {
                     command: data.code,
@@ -867,7 +914,7 @@ angular.module("easylearncode.learn").run(function () {
             dataObj = {
                 command: $scope.code,
                 testScript: '',
-                type: 'eval_User'
+                type: 'evalUser'
             };
             $scope.jsrepl.sandbox.post({
                 type: 'engine.EasyLearnCode_Eval',
@@ -875,11 +922,11 @@ angular.module("easylearncode.learn").run(function () {
             });
         };
 
-        $scope.runCodeInHackerEarth = function(){
-            $http.post('/api/runcode',{"lang": "PYTHON", "source": "print 'hello world'",
-                        "_csrf_token": csrf_token}).success(function (data) {
-                        console.log(data);
-                    });
+        $scope.runCodeInHackerEarth = function () {
+            $http.post('/api/runcode', {"lang": "PYTHON", "source": "print 'hello world'",
+                "_csrf_token": csrf_token}).success(function (data) {
+                console.log(data);
+            });
         }
 
         $scope.reSet = function () {
@@ -908,7 +955,7 @@ angular.module("easylearncode.learn").run(function () {
 
         $scope.onCompleteVideo = function () {
             $scope.isCompleted = true;
-            $scope.$apply(function(){
+            $scope.$apply(function () {
                 $scope.showAlert = true;
                 $scope.alert = {
                     type: 'info',
@@ -916,12 +963,12 @@ angular.module("easylearncode.learn").run(function () {
                 }
             })
         };
-        $window.nextLecture = function(){
-            cur_index = _.indexOf($scope.lectures, function(obj){
+        $window.nextLecture = function () {
+            cur_index = _.indexOf($scope.lectures, function (obj) {
                 return obj.Id = $scope.lecture.Id;
             });
-            if(cur_index < $scope.lectures-1 && cur_index > 0) return;
-            $scope.goLecture($scope.lectures[cur_index+1]);
+            if (cur_index < $scope.lectures - 1 && cur_index > 0) return;
+            $scope.goLecture($scope.lectures[cur_index + 1]);
             $scope.showAlert = false;
         }
 
@@ -980,12 +1027,12 @@ angular.module("easylearncode.learn").run(function () {
             $scope.config.plugins.quiz.data = $scope.lecture.quiz_keys;
             $scope.config.plugins.quiz.data = _.extend($scope.config.plugins.quiz.data, $scope.lecture.test_keys);
             $scope.rate_lecture = null;
-            $http.get("/api/users/me").success(function(data){
-                $http.get("/api/rates?filter=User=="+data.Id+"&filter=Lecture=="+$scope.lecture.Id+"").success(function(rate){
+            $http.get("/api/users/me").success(function (data) {
+                $http.get("/api/rates?filter=User==" + data.Id + "&filter=Lecture==" + $scope.lecture.Id + "").success(function (rate) {
                     console.log(rate[0]);
-                    if(rate.length > 0)
+                    if (rate.length > 0)
                         $scope.rate_lecture = rate[0];
-                    if($scope.rate_lecture != null){
+                    if ($scope.rate_lecture != null) {
                         $scope.rate = $scope.rate_lecture.rate;
                         $scope.isReadonly = true;
                     }
@@ -1023,32 +1070,31 @@ angular.module("easylearncode.learn").run(function () {
             }
         };
 
-        $scope.setRate = function(){
-            if($scope.isReadonly == true) return;
+        $scope.setRate = function () {
+            if ($scope.isReadonly == true) return;
             $scope.isReadonly = true;
-            $http.get("/api/users/me").success(function(data){
+            $http.get("/api/users/me").success(function (data) {
                 console.log(data);
-                if($scope.rate_lecture == null)
-                {
+                if ($scope.rate_lecture == null) {
                     $scope.rate_lecture = {
                         rate: $scope.rate,
                         lecture_key: $scope.lecture.Id,
                         user_key: data.Id
                     }
-                     api.Model.save({type: 'rates'}, $scope.rate_lecture);
-                }else{
+                    api.Model.save({type: 'rates'}, $scope.rate_lecture);
+                } else {
                     $scope.rate_lecture.rate = $scope.rate;
                     api.Model.save({type: 'rates', id: $scope.rate_lecture.Id}, $scope.rate_lecture)
                 }
             });
         }
-        $scope.editRate = function(){
+        $scope.editRate = function () {
             $scope.isReadonly = false;
         }
         $scope.hoveringOver = function (value) {
             $scope.overStar = value;
-            if(value < 3) $scope.strRate = "Chưa tốt";
-            else if(value == 3) $scope.strRate = "Tốt";
+            if (value < 3) $scope.strRate = "Chưa tốt";
+            else if (value == 3) $scope.strRate = "Tốt";
             else $scope.strRate = "Rất tốt"
             $scope.percent = 100 * (value / $scope.max);
         };
@@ -1087,9 +1133,18 @@ angular.module("easylearncode.learn").run(function () {
     };
 });
 
+angular.module("easylearncode.contest_result_user").controller('ContestResultUserCtrl',
+    ['$scope', 'api', '$http', 'csrf_token', '$location', function ($scope, api, $http, csrf_token, $location) {
+        $http.get('/api/contest/info?user_id=me&recurse=True').success(function (data) {
+            $scope.current_week_user_data = data.data;
+            $scope.current_week_user_data.run_code_result = _.sortBy($scope.current_week_user_data.run_code_result,function (result) {
+                return result.created;
+            }).reverse();
+        })
+    }]);
 angular.module("easylearncode.contest_result").controller('ContestResultCtrl', ['$scope', 'api', '$http', 'csrf_token', '$location', function ($scope, api, $http, csrf_token, $location) {
-    $scope.weeks = api.Model.query({type: 'quizs', page_size: 5, order: '-week', recurse: true});
-
+    yearcurrent = (new Date()).getFullYear();
+    monthcurrent = (new Date()).getMonth() + 1;
     $scope.months = [
         {value: 1},
         {value: 2},
@@ -1104,8 +1159,12 @@ angular.module("easylearncode.contest_result").controller('ContestResultCtrl', [
         {value: 11},
         {value: 12}
     ];
-    $scope.month = $scope.months[0];
-    yearcurrent = (new Date()).getFullYear();
+    _.find($scope.months, function (month) {
+        if (month.value == monthcurrent) {
+            $scope.month = month;
+            return {}
+        }
+    })
     $scope.years = [
         {value: yearcurrent},
         {value: yearcurrent - 1},
@@ -1115,51 +1174,59 @@ angular.module("easylearncode.contest_result").controller('ContestResultCtrl', [
         {value: yearcurrent - 5}
     ]
     $scope.year = $scope.years[0];
+    $scope.weeks = new Array();
+    var date_start = (new Date($scope.year.value, $scope.month.value - 1, 1)).toISOString();
+    var date_finish = (new Date($scope.year.value, $scope.month.value, 0)).toISOString();
+    $http.get('/api/quizs?recurse=true&filter=start_date>=' + date_start + '&filter=start_date<=' + date_finish).success(function (data) {
+        $scope.weeks = data;
+    });
+    $http.get('/api/contest?recurse=True').success(function (data) {
+        if (_.isEmpty(data.data)) {
+        } else {
+            $scope.results = data.data.top_player;
+            $scope.currentWeek = data.data.Id;
+        }
+
+    });
     $scope.get_weeks = function () {
         $scope.weeks = new Array();
         var date_start = (new Date($scope.year.value, $scope.month.value - 1, 1)).toISOString();
         var date_finish = (new Date($scope.year.value, $scope.month.value, 0)).toISOString();
         $http.get('/api/quizs?recurse=true&filter=start_date>=' + date_start + '&filter=start_date<=' + date_finish).success(function (data) {
             $scope.weeks = data;
+            $scope.results = new Array();
+            $scope.currentWeek = 0;
+            $scope.details = new Array();
         });
     }
-    $http.get('/api/contest/week_result/current').success(function (data) {
-        if (data.status == 1) {
-        }
-        else {
-            $scope.results = data;
-            $scope.currentWeek = data[0].test_key;
-        }
-    });
+
     $scope.getThisResult = function (key) {
-        //scope.thisweek_contest = api.Model.get({type: 'quizs', id: key, recurse: true});
-        /*$http.get('/api/quizresults?filter=test_key==' + key + '&order=-score&recurse=true').success(function (data) {
-         $scope.results = data;
-         $scope.currentWeek = key;
-         console.log($scope.currentWeek);
-         });*/
-        $http.get('/api/contest/week_result/' + key).success(function (data) {
-            if (data.status == 1) {
-            }
-            else {
-                $scope.results = data;
-                $scope.currentWeek = key;
+        $http.get('/api/contest?recurse=True&Id=' + key).success(function (data) {
+            if (_.isEmpty(data.data)) {
+            } else {
+                $scope.results = data.data.top_player;
+                $scope.currentWeek = data.data.Id;
+                $scope.details = new Array();
             }
 
         });
     }
     $scope.get_detail = function (key) {
-        $http.get('/api/quizresults?filter=test_key==' + $scope.currentWeek + '&filter=user_key==' + key +
-                '&order=-score&recurse=true').success(function (data) {
-            $scope.details = data;
-        });
+        $http.get('/api/contest/info?recurse=True&Id=' + $scope.currentWeek + "&user_id=" + key).success(function (data) {
+            $scope.details = data.data;
+            $scope.details.run_code_result = _.sortBy($scope.details.run_code_result,function (result) {
+                return result.created;
+            }).reverse();
+        })
     }
+    $scope.resultQuantity = 5;
+
 }]);
 
 angular.module("easylearncode.info").controller('InfoCtrl', ['$scope', '$http', '$location', 'api', '$window', function ($scope, $http, $location, api, $window) {
     var course_id = $location.search()['course_id'];
     $scope.loaded = false;
-     api.Model.get({type: 'courses', id: course_id, recurse: true, depth: 1000}, function(data){
+    api.Model.get({type: 'courses', id: course_id, recurse: true, depth: 1000}, function (data) {
         $scope.loaded = true;
         $scope.course = data;
     });
@@ -1180,24 +1247,24 @@ angular.module("easylearncode.info").controller('InfoCtrl', ['$scope', '$http', 
 }]);
 angular.module("easylearncode.course_practice_detail", ["ui.bootstrap", "easylearncode.core", "ngAnimate"])
     .controller('InfoCtrl', ['$scope', 'api', '$location', '$window', function ($scope, api, $location, $window) {
-    var course_id = $location.search()['course_id'];
-    $scope.course = api.Model.get({type:'courses', id:course_id, recurse:true, depth:2});
-    $window.onscroll = function () {
-        var e = $(window).scrollTop(), n = $("#footer").offset().top - 130, r = $("#current-curriculum"), i = r.offset().top - 100, o = {position: r[0].style.position, top: r[0].style.top};
-        if (e + r.height() >= n) {
-            if (r.css("position") === "fixed") {
-                var s = n - r.height() + 30;
-                r.css({position: "absolute", top: s > 0 ? s : 0})
-            }
-        } else
-            e >= i ? r.css({position: "fixed", top: 100 + "px"}) : e < i && r.css(o)
-    };
-}]);
+        var course_id = $location.search()['course_id'];
+        $scope.course = api.Model.get({type: 'courses', id: course_id, recurse: true, depth: 2});
+        $window.onscroll = function () {
+            var e = $(window).scrollTop(), n = $("#footer").offset().top - 130, r = $("#current-curriculum"), i = r.offset().top - 100, o = {position: r[0].style.position, top: r[0].style.top};
+            if (e + r.height() >= n) {
+                if (r.css("position") === "fixed") {
+                    var s = n - r.height() + 30;
+                    r.css({position: "absolute", top: s > 0 ? s : 0})
+                }
+            } else
+                e >= i ? r.css({position: "fixed", top: 100 + "px"}) : e < i && r.css(o)
+        };
+    }]);
 angular.module("easylearncode.course_practice_viewer", ["ui.bootstrap", "ui.ace", 'easylearncode.core'])
     .controller("PracticeCtrl", ["$scope", "$sce", "$timeout", "api", '$compile', "$window", '$location', function ($scope, $sce, $timeout, api, $compile, $window, $location) {
         var jqconsole = $('#console').jqconsole('  >> EasyLearnCode Python Compiler v0.1 <<\n', '>>>');
         var exercise_item_id = $location.search()['exercise_item_id'];
-        $scope.exercise_item = api.Model.get({type:'exercise_items', id: exercise_item_id, recurse:true, depth:3});
+        $scope.exercise_item = api.Model.get({type: 'exercise_items', id: exercise_item_id, recurse: true, depth: 3});
         $scope.jsreplReady = false;
         $scope.isEditorFullScreen = false;
         $scope.showAlert = false;
@@ -1205,7 +1272,7 @@ angular.module("easylearncode.course_practice_viewer", ["ui.bootstrap", "ui.ace"
         $scope.aceLoaded = function (_editor) {
             $scope.editor = _editor;
         }
-        $scope.changeLanguage = function(lang){
+        $scope.changeLanguage = function (lang) {
             $scope.editor.getSession().setMode("ace/mode/" + lang);
         }
         $scope.toggleFullScreen = function () {
@@ -1349,15 +1416,15 @@ angular.module("easylearncode.course_practice_viewer", ["ui.bootstrap", "ui.ace"
             }
         });
         $scope.exercise_item.$promise.then(
-        function(){
-            $scope.changeCurrentCheckpoint($scope.exercise_item.projects[0].checkpoints[0]);
-            jsrepl.loadLanguage($scope.exercise_item.projects[0].language.toLowerCase(), function () {
-                $scope.$apply(function () {
-                    $scope.jsreplReady = true;
-                })
+            function () {
+                $scope.changeCurrentCheckpoint($scope.exercise_item.projects[0].checkpoints[0]);
+                jsrepl.loadLanguage($scope.exercise_item.projects[0].language.toLowerCase(), function () {
+                    $scope.$apply(function () {
+                        $scope.jsreplReady = true;
+                    })
+                });
+                $scope.changeLanguage($scope.exercise_item.projects[0].language.toLowerCase());
             });
-            $scope.changeLanguage($scope.exercise_item.projects[0].language.toLowerCase());
-        });
 
         $timeout(function () {
             $window.nextCheckpoint = function () {
@@ -1543,7 +1610,7 @@ angular.module("easylearncode.visualization", ["ui.bootstrap", "ui.ace", 'easyle
     }]);
 angular.module("easylearncode.account", ["easylearncode.core", "ngRoute"]);
 angular.module("easylearncode.account")
-    .config(["$routeProvider", function($routeProvider) {
+    .config(["$routeProvider", function ($routeProvider) {
         $routeProvider
             .when("/password",
             {
@@ -1552,7 +1619,7 @@ angular.module("easylearncode.account")
             })
             .when("/my-courses",
             {
-                templateUrl: "/templates/angular/account/my_courses.html" ,
+                templateUrl: "/templates/angular/account/my_courses.html",
                 controller: "myCoursesTab"
             })
             .when("/linked-accounts",
@@ -1571,76 +1638,93 @@ angular.module("easylearncode.account")
             return $location.path() ? $location.path() === path : "/contact-info" === path
         }
     }])
-    .controller("contactInfoTab", ["$scope", "api", "validator", "$window", '$http', function($scope, api, validator, $window, $http) {
+    .controller("contactInfoTab", ["$scope", "api", "validator", "$window", '$http', function ($scope, api, validator, $window, $http) {
         $scope.saveDisabled = !1;
         $scope.showForm = !1;
         $scope.serverSuccess = "";
         $scope.serverError = "";
         $scope.contactInfoErrors = {};
-        api.Model.get({'type':'users','id':'me'},function(data){
+        api.Model.get({'type': 'users', 'id': 'me'}, function (data) {
             $scope.user = data;
             $scope.showForm = !0
         })
-        $scope.saveContactInfo = function() {
+        $scope.saveContactInfo = function () {
             if (!$scope.saveDisabled) {
                 $scope.saveDisabled = !0;
                 $scope.serverSuccess = "";
                 $scope.serverError = "";
                 var b;
-                b = validator.check({setsFirstName: {pretty: "first name",value: $scope.user.name,validators: [{type: "required"}]},setsLastName: {pretty: "last name",value: $scope.user.last_name,validators: [{type: "required"}]},setsEmail: {pretty: "email address",value: $scope.user.email,validators: [{type: "required",chained: [{type: "email"}]}]}});
+                b = validator.check({setsFirstName: {pretty: "first name", value: $scope.user.name, validators: [
+                    {type: "required"}
+                ]}, setsLastName: {pretty: "last name", value: $scope.user.last_name, validators: [
+                    {type: "required"}
+                ]}, setsEmail: {pretty: "email address", value: $scope.user.email, validators: [
+                    {type: "required", chained: [
+                        {type: "email"}
+                    ]}
+                ]}});
                 $scope.contactInfoErrors = b.errorText;
-                b.valid ? $http.post('/settings/profile',{'name':$scope.user.name,'last_name':$scope.user.last_name, 'username': $scope.user.username}).success(function(b) {
-                    if(b.type=='success'){
+                b.valid ? $http.post('/settings/profile', {'name': $scope.user.name, 'last_name': $scope.user.last_name, 'username': $scope.user.username}).success(function (b) {
+                    if (b.type == 'success') {
                         $scope.serverSuccess = "Contact Information Saved";
                         $window.location.reload()
-                    }else{
+                    } else {
                         $scope.serverError = b.msg;
 
                     }
                     $scope.saveDisabled = !1
                 }).error(
-                function(b) {
-                    $scope.serverError = b.error;
-                    $scope.saveDisabled = !1
-                }): $scope.saveDisabled = !1
+                    function (b) {
+                        $scope.serverError = b.error;
+                        $scope.saveDisabled = !1
+                    }) : $scope.saveDisabled = !1
             }
         }
     }])
-    .controller("passwordTab", ["$scope", "api", "validator", "$http", function($scope, api, validator, $http) {
+    .controller("passwordTab", ["$scope", "api", "validator", "$http", function ($scope, api, validator, $http) {
         function reset() {
             $scope.currentPassword = "";
             $scope.newPassword = "";
             $scope.confirmedNewPassword = "";
             $scope.saveDisabled = !1
         }
+
         $scope.serverSuccess = "";
         $scope.serverError = "";
         reset();
         $scope.passwordErrors = {};
         $scope.showForm = !1;
-        api.Model.get({'type':'users', 'id':'me'}, function(b) {
+        api.Model.get({'type': 'users', 'id': 'me'}, function (b) {
             $scope.user = b;
             $scope.showForm = !0
         });
-        $scope.resetPassword = function() {
+        $scope.resetPassword = function () {
             if (!$scope.saveDisabled) {
                 $scope.saveDisabled = !0;
                 $scope.serverSuccess = "";
                 $scope.serverError = "";
                 var f;
-                f = {setsNewPass: {pretty: "new password",value: $scope.newPassword,
-                        validators: [{type: "strLen",args: [6, void 0]}]},setsConfirmedNewPass: {pretty: "new password confirmation",value: $scope.confirmedNewPassword,validators: [{type: "required",failMsg: "A password confirmation is required.",disabled: "" === $scope.newPassword,chained: [{type: "equal",args: [$scope.newPassword, "password"]}]}]}};
-                $scope.user.password !== null && (f.setsCurrPass = {pretty: "password",value: $scope.currentPassword,validators: [{type: "required",failMsg: "The current password is required.",disabled: "" === $scope.newPassword && "" === $scope.confirmedNewPassword}]});
+                f = {setsNewPass: {pretty: "new password", value: $scope.newPassword,
+                    validators: [
+                        {type: "strLen", args: [6, void 0]}
+                    ]}, setsConfirmedNewPass: {pretty: "new password confirmation", value: $scope.confirmedNewPassword, validators: [
+                    {type: "required", failMsg: "A password confirmation is required.", disabled: "" === $scope.newPassword, chained: [
+                        {type: "equal", args: [$scope.newPassword, "password"]}
+                    ]}
+                ]}};
+                $scope.user.password !== null && (f.setsCurrPass = {pretty: "password", value: $scope.currentPassword, validators: [
+                    {type: "required", failMsg: "The current password is required.", disabled: "" === $scope.newPassword && "" === $scope.confirmedNewPassword}
+                ]});
                 f = validator.check(f);
                 $scope.passwordErrors = f.errorText;
-                f.valid ? (f = {"current_password": $scope.currentPassword,"password": $scope.newPassword}, $http.post('/settings/password',f).success(function(b) {
-                    if(b.type=='success'){
+                f.valid ? (f = {"current_password": $scope.currentPassword, "password": $scope.newPassword}, $http.post('/settings/password', f).success(function (b) {
+                    if (b.type == 'success') {
                         $scope.serverSuccess = "Password successfully updated!";
-                    }else{
+                    } else {
                         $scope.serverError = b.msg;
                     }
                     reset()
-                }).error(function(b) {
+                }).error(function (b) {
                     $scope.serverError = b.error;
                     reset()
                 })) : reset()
@@ -1648,7 +1732,7 @@ angular.module("easylearncode.account")
         }
     }])
 angular.module("easylearncode.courseCatalog")
-    .config(["$locationProvider", "$routeProvider",function($locationProvider, $routeProvider) {
+    .config(["$locationProvider", "$routeProvider", function ($locationProvider, $routeProvider) {
         $routeProvider
             .when("/:collectionTitle",
             {
@@ -1656,32 +1740,31 @@ angular.module("easylearncode.courseCatalog")
                 controller: "courseList"
             }).otherwise({redirectTo: "/All"})
     }])
-    .controller("courseCatalog", ["$scope","api", function($scope, api) {
+    .controller("courseCatalog", ["$scope", "api", function ($scope, api) {
         $scope.loaded = !1;
-        $scope.loadingComplete = function() {
+        $scope.loadingComplete = function () {
             $scope.loaded = !0
         };
-        $scope.catalogPromise = api.Model.query({type:'courses'});
+        $scope.catalogPromise = api.Model.query({type: 'courses'});
     }])
-    .controller("courseList", ["$scope", "$routeParams", "$timeout", "$location", "api", function($scope, $routeParams, $timeout, $location, api) {
+    .controller("courseList", ["$scope", "$routeParams", "$timeout", "$location", "api", function ($scope, $routeParams, $timeout, $location, api) {
         $scope.activeCategoryTitle = $routeParams.collectionTitle || "All";
-        $scope.catalogPromise || ($scope.catalogPromise = api.Model.query({type:'courses'}));
-        $scope.catalogPromise.$promise.then(function(data) {
+        $scope.catalogPromise || ($scope.catalogPromise = api.Model.query({type: 'courses'}));
+        $scope.catalogPromise.$promise.then(function (data) {
             $scope.fullCourses = data;
             $scope.loadingComplete()
         })
     }])
-    .directive("courseSummary", function() {
-        var c = {beginner: 1,intermediate: 2,advanced: 3};
+    .directive("courseSummary", function () {
+        var c = {beginner: 1, intermediate: 2, advanced: 3};
         return {
-            scope:
-            {
+            scope: {
                 course: "=",
                 catagories: "="
             },
             templateUrl: "/templates/angular/course_catalog/course_summary.html",
-            link: function(scope) {
-                scope.scrollTop = function() {
+            link: function (scope) {
+                scope.scrollTop = function () {
                     $("html, body").animate({scrollTop: 0}, 500)
                 }
             }}

@@ -8,8 +8,8 @@ from google.appengine import api
 from google.appengine.ext import ndb
 from webapp2_extras import auth
 
-from application.models import Course, WeeklyQuiz, WeeklyQuizLevel, Lesson, Lecture, User, Code, Test, Quiz, \
-    QuizAnswer, Rate
+from application.models import Course, Exercise, WeeklyQuiz, WeeklyQuizLevel, Lesson, Lecture, User, Code, Test, Quiz, \
+    QuizAnswer, Rate, WeeklyQuizRunCodeResult
 #import for module exercise
 from application.models import Exercise, ExerciseItem, ExerciseProject, ExerciseCheckpoint, File
 from util import AppError, LoginError, BreakError
@@ -23,7 +23,7 @@ class _ConfigDefaults(object):
     # list of valid models, None means anything goes
     DEFINED_MODELS = {"courses": Course, "quizs": WeeklyQuiz, "levels": WeeklyQuizLevel,
                       "lessons": Lesson, "lectures": Lecture, "codes": Code, "tests": Test, "lecture_quizs": Quiz,
-                      "answers": QuizAnswer, "users": User, "files": File}
+                      "answers": QuizAnswer, "users": User, "files": File, "quizresults": WeeklyQuizRunCodeResult}
     #Update for module exercise
     DEFINED_MODELS.update({
         "exercises": Exercise,
@@ -331,7 +331,7 @@ def validate(cls_name, data):
         if val:
             # TODO(doug): validate list, can't be empty list, must contain id like objects
             pass
-    # run validation over remaining properties
+        # run validation over remaining properties
     if _validation:
         validations = _validation.get(cls_name)
         if not validations:
@@ -494,7 +494,6 @@ class RestfulHandler(BaseHandler):
     @as_json
     def delete(self, *args, **kwargs):
         return self._delete(*args, **kwargs)
-
 
 
 _validation = None

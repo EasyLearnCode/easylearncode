@@ -18,7 +18,6 @@ import httpagentparser
 from webapp2_extras import security
 from webapp2_extras.auth import InvalidAuthIdError, InvalidPasswordError
 from webapp2_extras.i18n import gettext as _
-from webapp2_extras.appengine.auth.models import Unique
 from google.appengine.api import taskqueue
 from google.appengine.api import users
 from google.appengine.api import channel
@@ -1554,6 +1553,14 @@ class ResultContestHandler(BaseHandler):
         params = {}
         params.update({'angular_app_name': "easylearncode.contest_result"})
         return self.render_template("contest_result.html", **params)
+
+
+class ResultContestUserHandler(BaseHandler):
+    @user_required
+    def get(self):
+        params = {}
+        params.update({'angular_app_name': "easylearncode.contest_result_user"})
+        return self.render_template("contest_result_user.html", **params)
 
 
 class PractiseHandler(BaseHandler):

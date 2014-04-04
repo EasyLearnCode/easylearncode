@@ -44,6 +44,7 @@ def run_test_case(weekly_quiz_level, **kwargs):
     is_submit = kwargs['is_submit']
     code = kwargs['code']
     lang = kwargs['lang']
+    filename = kwargs.get('filename', 'script')
     test_results = []
 
     def handle_result(handle_result_rpc, **handle_result_kwargs):
@@ -61,15 +62,15 @@ def run_test_case(weekly_quiz_level, **kwargs):
                 else 'OK'
             }
             if compile_result_run_status and \
-                    compile_result_run_status['status'] not in ['CE', 'RE'] and \
-                    compile_result_run_status['output'].strip() == handle_result_kwargs['output']:
+                            compile_result_run_status['status'] not in ['CE', 'RE'] and \
+                            compile_result_run_status['output'].strip() == handle_result_kwargs['output']:
                 testcase['result'] = True
             else:
                 testcase['result'] = False
             test_results.append(testcase)
             channel.send_message(str(user.id()), json.dumps(
                 dict({
-                    'type': 'run_code_result' if not is_submit else 'submit_code_result'}, **testcase)))
+                         'type': 'run_code_result' if not is_submit else 'submit_code_result'}, **testcase)))
             if len(test_results) == len(weekly_quiz_level.test_case):
                 channel.send_message(str(user.id()), json.dumps(
                     {
@@ -80,20 +81,20 @@ def run_test_case(weekly_quiz_level, **kwargs):
                 if is_submit:
                     avg_time = sum(
                         test_result['time_used'] for test_result in test_results) / \
-                        len(test_results)
+                               len(test_results)
                     avg_memory = sum(
-                        test_result['memory_used'] for test_result in test_results) /\
-                        len(test_results)
+                        test_result['memory_used'] for test_result in test_results) / \
+                                 len(test_results)
                     result = all([test_result['result'] for test_result in test_results])
                     score = weekly_quiz_level.score
                     if not result or avg_memory > weekly_quiz_level.limit_memory \
-                            or avg_time > weekly_quiz_level.limit_time:
+                        or avg_time > weekly_quiz_level.limit_time:
                         score = 0
                     else:
-                        score -= (avg_time*10 + avg_memory / 100)
+                        score -= (avg_time * 10 + avg_memory / 100)
                     code_file = File()
                     code_file.content = code
-                    code_file.filename = 'script'
+                    code_file.filename = filename
                     code_file.put()
                     run_code_result = WeeklyQuizRunCodeResult()
                     run_code_result.level = weekly_quiz_level.key
@@ -105,11 +106,14 @@ def run_test_case(weekly_quiz_level, **kwargs):
                     run_code_result.language = lang
                     run_code_result.score = score
                     run_code_result.put()
-                    weekly_quiz_user = WeeklyQuizUser.get_by_user_and_weekly_quiz(user=user, weekly_quiz=weekly_quiz.key)
+                    weekly_quiz_user = WeeklyQuizUser.get_by_user_and_weekly_quiz(user=user,
+                                                                                  weekly_quiz=weekly_quiz.key)
                     weekly_quiz_user.run_code_result.append(run_code_result.key)
+                    _next_level_key = None
                     if result:
                         weekly_quiz_user.passed_level.append(weekly_quiz_level.key)
-                        weekly_quiz_user.current_level = weekly_quiz.get_next_level(weekly_quiz_level.key)
+                        _next_level_key = weekly_quiz_user.current_level = weekly_quiz.get_next_level(
+                            weekly_quiz_level.key)
                     else:
                         weekly_quiz_user.current_level = weekly_quiz_level.key
                     weekly_quiz_user.score = sum(
@@ -123,7 +127,9 @@ def run_test_case(weekly_quiz_level, **kwargs):
                             'type': 'submit_sumary_result',
                             'result': result,
                             'time_used': avg_time,
-                            'memory_used': avg_memory
+                            'memory_used': avg_memory,
+                            'score':score,
+                            'next_level_key': _next_level_key.urlsafe() if _next_level_key else 'You not passed current level'
                         })
                     ))
                     logging.debug("Finshed run test case")
@@ -162,14 +168,17 @@ class GetWeekContestHandler(BaseHandler):
         weekly_quiz_id = self.request.get('Id', None)
         if weekly_quiz_id:
             from google.appengine.ext import ndb
+
             weekly_quiz = ndb.Key(urlsafe=weekly_quiz_id).get()
         else:
             weekly_quiz = WeeklyQuiz.get_current_week_contest()
         if weekly_quiz:
             from application.models import WeeklyQuizUser
+
             weekly_week_current_user = WeeklyQuizUser.get_by_user(self.user_key)
             if not weekly_week_current_user:
                 from google.appengine.ext import deferred
+
                 deferred.defer(WeeklyQuizUser.create_new_by_user, user=self.user_key)
             result_data = weekly_quiz.to_dict()
         else:
@@ -181,28 +190,35 @@ class GetWeekContestHandler(BaseHandler):
         }
 
 
-class GetWeekContestInfoOfMeHandler(BaseHandler):
+class GetWeekContestInfoOfUserHandler(BaseHandler):
     @user_required
     @as_json
     def get(self):
         from application.models import WeeklyQuiz
+        from google.appengine.ext import ndb
 
         result_data = {}
         msg = ''
         status = 'ok'
         weekly_quiz_id = self.request.get('Id', None)
+        user_id = self.request.get('user_id', None)
         if weekly_quiz_id:
-            from google.appengine.ext import ndb
             weekly_quiz = ndb.Key(urlsafe=weekly_quiz_id).get()
         else:
             weekly_quiz = WeeklyQuiz.get_current_week_contest()
+        if user_id == "me":
+            user_key = self.user_key
+        else:
+            user_key = ndb.Key(urlsafe=user_id)
+
         result_data = {}
         msg = ''
         if weekly_quiz:
             from application.models import WeeklyQuizUser
-            weekly_week_current_user = WeeklyQuizUser.get_by_user_and_weekly_quiz(self.user_key, weekly_quiz.key)
+
+            weekly_week_current_user = WeeklyQuizUser.get_by_user_and_weekly_quiz(user_key, weekly_quiz.key)
             if not weekly_week_current_user:
-                result_data = WeeklyQuizUser.create_new_by_user(user=self.user_key).to_dict()
+                result_data = WeeklyQuizUser.create_new_by_user(user=user_key).to_dict()
             else:
                 result_data = weekly_week_current_user.to_dict()
         return {

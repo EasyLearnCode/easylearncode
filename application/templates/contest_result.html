@@ -7,30 +7,45 @@
                 <div class="col-xs-8 col-md-8 highlight">
 
                     <div class="well" style="height:300px">
-                        <div class="text-center text-success" style="font-size: 18px; font-weight: bold">Bảng thành tích</div>
-                        <table class="table table-bordered table-condensed table-hover">
+                        <div class="text-center text-success" style="font-size: 18px; font-weight: bold">Bảng xếp
+                            hạng
+                        </div>
+                        <table class="table table-bordered table-condensed table-hover" ng-show="results">
                             <tr class="success">
-                                <th>STT</th>
+                                <th>Hạng</th>
                                 <th>Họ tên</th>
-                                <th>Kết quả</th>
-
+                                <th>Điểm</th>
                                 <th>Xem</th>
                             </tr>
-                            <tr data-ng-repeat="player in results">
+                            <tr data-ng-repeat="player in results|limitTo:resultQuantity">
                                 <td>{{ $index+1 }}</td>
-                                <td>{{ player.username }}</td>
+                                <td>{{ player.user.email }}</td>
                                 <td>
                                     {{ player.score|number:2 }}
                                 </td>
 
-                                <td><a class="btn btn-info" ng-click="get_detail(player.user_key)"><span
+                                <td><a class="btn btn-info" ng-click="get_detail(player.user.Id)"><span
                                         class="glyphicon glyphicon-search"></span></a></td>
                             </tr>
                         </table>
+                        <div ng-hide="results">
+                            <p>Chưa có ai trong bảng xếp hạng của tuần. Chọn tuần khác để xem bảng xếp hạng trong
+                                tuần.</p>
+                        </div>
+                        <button class="btn btn-success" data-ng-click="showMoreResult()"
+                                ng-disabled="resultQuantity>=results.length"><i
+                                class="fa fa-info-circle"></i> Xem Thêm
+                        </button>
                     </div>
                     <div class="well" style="">
-                        <div class="text-center text-success" style="font-size: 18px; font-weight: bold;">Bảng chi tiết</div>
-                        <table class="table table-bordered table-condensed table-hover">
+                        <div class="text-center text-success" style="font-size: 18px; font-weight: bold;">Bảng chi
+                            tiết
+                        </div>
+                        <div ng-hide="details.run_code_result">Bạn hãy chọn xem trên bảng kết quả để xem chi tiết thành
+                            tích của người đó.
+                        </div>
+                        <table class="table table-bordered table-condensed table-hover"
+                               ng-show="details.run_code_result">
                             <tr class="success">
                                 <th>STT</th>
                                 <th>Họ tên</th>
@@ -39,10 +54,10 @@
                                 <th>Thời gian</th>
                                 <th>Bộ nhớ</th>
                             </tr>
-                            <tr data-ng-repeat="player in details">
+                            <tr data-ng-repeat="player in details.run_code_result">
                                 <td>{{ $index+1 }}</td>
-                                <td>{{ player.user_key.email }}</td>
-                                <td>{{ player.level_key.level }}</td>
+                                <td>{{ player.user.email }}</td>
+                                <td>{{ player.level.level }}</td>
                                 <td>
                                     <span ng-show="player.result" class="glyphicon glyphicon-ok"></span>
                                     <span ng-show="!player.result" class="glyphicon glyphicon-remove"></span>
@@ -63,6 +78,7 @@
                             <span>Chọn tuần:</span>
 
                             <div class="list-group col-md-12">
+                                <div ng-hide="weeks">Không có tuần thi trong tháng</div>
                                 <a data-ng-repeat="week in weeks" class="btn list-group-item"
                                    ng-class="{active:week.Id==currentWeek}"
                                    data-ng-click="getThisResult(week.Id)">Tuần {{ week.week }}</a>
