@@ -18,6 +18,7 @@ class SubmitContestHandler(BaseHandler):
         deferred.defer(
             run_test_case,
             weekly_quiz_level=body_data['weekly_quiz_level_key'],
+            filename=body_data.get("filename", "Script"),
             code=unicode(body_data['source']).encode('utf-8'), lang=body_data['lang'],
             user=self.user_key, is_submit=True if body_data['type'].lower() == 'submit' else False
         )
@@ -44,7 +45,7 @@ def run_test_case(weekly_quiz_level, **kwargs):
     is_submit = kwargs['is_submit']
     code = kwargs['code']
     lang = kwargs['lang']
-    filename = kwargs.get('filename', 'script')
+    filename = kwargs['filename']
     test_results = []
 
     def handle_result(handle_result_rpc, **handle_result_kwargs):
