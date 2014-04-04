@@ -9,6 +9,8 @@ import files
 PREFIX = "/api/"
 
 _routes = [
+    RedirectRoute('/api/runcode', handlers.RunCodeInHackerEarthHandle, name='run-code-in-hackerearth',
+                  strict_slash=True),
     RedirectRoute('/api/contest', handlers.GetWeekContestHandler, name='get-thisweek-contest',
                   strict_slash=True),
     RedirectRoute('/api/contest/me', handlers.GetWeekContestInfoOfMeHandler, name='get-thisweek-contest',

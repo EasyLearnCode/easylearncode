@@ -78,18 +78,18 @@ init = function() {
   }
   else {
     // Looking at the page for the first(?) time.
-    setTimeout(function() {
-      mgr.createCallout({
-        id: calloutId,
-        target: startBtnId,
-        placement: 'bottom',
-        title: 'Xin chào các bạn',
-        content: 'Hãy click vào đây để xem hướng dẫn!',
-        yOffset: -25,
-        arrowOffset: 20,
-        width: 240
-      });
-    }, 100);
+//    setTimeout(function() {
+//      mgr.createCallout({
+//        id: calloutId,
+//        target: startBtnId,
+//        placement: 'bottom',
+//        title: 'Xin chào các bạn',
+//        content: 'Hãy click vào đây để xem hướng dẫn!',
+//        yOffset: -25,
+//        arrowOffset: 20,
+//        width: 240
+//      });
+//    }, 100);
   }
 
   addClickListener(document.getElementById(startBtnId), function() {

@@ -140,6 +140,10 @@ class BaseHandler(webapp2.RequestHandler):
         return str(self.user['user_id']) if self.user else None
 
     @webapp2.cached_property
+    def is_teacher(self):
+        return self.user_key.get().is_teacher if self.user_key else None
+
+    @webapp2.cached_property
     def user_key(self):
         if self.user:
             user_info = models.User.get_by_id(long(self.user_id))
@@ -301,6 +305,7 @@ class BaseHandler(webapp2.RequestHandler):
             'google_analytics_code': self.app.config.get('google_analytics_code'),
             'app_name': self.app.config.get('app_name'),
             'user_id': self.user_id,
+            'is_teacher': self.is_teacher,
             'username': self.username,
             'email': self.email,
             'url': self.request.url,

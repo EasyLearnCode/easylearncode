@@ -47,9 +47,22 @@ angular.module("info.vietnamcode.nampnq.videogular.plugins.quiz", ['nampnq.util.
                                             //TODO: change varible in html, add css display
                                             elem.css('display', 'block');
                                             API.pause();
-                                            scope.html = triggered_cue_points[0].html;
-                                            var background_type = triggered_cue_points[0].background,
-                                                background_src = triggered_cue_points[0].background_src;
+                                            scope.id = triggered_cue_points[0].Id;
+                                            scope.type = triggered_cue_points[0].$class;
+                                            scope.is_quiz = false;
+                                            scope.is_test = false;
+                                            if(triggered_cue_points[0].$class == "Quiz"){
+                                                scope.content = triggered_cue_points[0].question;
+                                                scope.answers = triggered_cue_points[0].answer_keys;
+                                                scope.is_quiz = true;
+                                            }
+                                            else if(triggered_cue_points[0].$class == "Test"){
+                                                scope.content = triggered_cue_points[0].description;
+                                                scope.is_test = true;
+                                                scope.code = "#Viết code vào đây và nhấn submit"
+                                            }
+                                            var background_type = "color",//triggered_cue_points[0].background,
+                                                background_src = "white";//triggered_cue_points[0].background_src;
                                             if ("color" == background_type)
                                                 elem.css("background", background_src);
                                             else if ("image" == background_type)
@@ -85,13 +98,29 @@ angular.module("info.vietnamcode.nampnq.videogular.plugins.quiz", ['nampnq.util.
                                     }
                                 });
                                 var result = vgQuizSubmitCallBack(paramObj);
-                                scope.status = result.description;
-                                if (result.result) {
-                                    scope.submit = false;
-                                    scope.skip = false;
-                                    scope.continue_btn = true;
-                                    scope.explanation = true;
+                                if(paramObj.type=="Quiz"){
+                                    scope.status = result.description;
+                                    if (result.result) {
+                                        scope.submit = false;
+                                        scope.skip = false;
+                                        scope.continue_btn = true;
+                                        scope.explanation = true;
 
+                                    }
+                                }
+                                else if(paramObj.type == "Test"){
+                                    result.then(function(data){
+                                        scope.status = data.description;
+                                        if (data.result) {
+                                            scope.submit = false;
+                                            scope.skip = false;
+                                            scope.continue_btn = true;
+                                            scope.explanation = true;
+
+                                        }else{
+                                            scope.status = data.description;
+                                        }
+                                    })
                                 }
                             }
 

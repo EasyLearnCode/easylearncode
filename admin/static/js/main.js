@@ -1249,26 +1249,29 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
                     }
                     answer[ele.field_title] = ele.field_value;
                 });
-                api.Model.get({type: 'lecture_quizs', id: quiz.Id}, function (quiz_result) {
-                    quiz_result.answers.push(answer);
-                    api.Model.save({type: 'lecture_quizs', id: quiz_result.Id}, quiz_result, function (data) {
-                        quiz.answers.push(answer);
+                api.Model.save({type: 'answers'}, answer, function(answer_quiz_result){
+                    api.Model.get({type: 'lecture_quizs', id: quiz.Id}, function (quiz_result) {
+                        quiz_result.answer_keys.push(answer_quiz_result.Id);
+                        api.Model.save({type: 'lecture_quizs', id: quiz.Id}, quiz_result, function (data) {
+                            quiz.answer_keys.push(answer_quiz_result);
+                        });
                     });
                 });
+
             }, function () {
                 console.log('Modal dismissed at: ' + new Date());
             });
         };
 
         $scope.deleteAnswerQuiz = function (answer, quiz) {
-            //api.Model.delete({type: 'lecture_quizs', id: quiz.Id}, function () {
-            api.Model.get({type: 'lecture_quizs', id: quiz.Id}, function (quiz_result) {
-                quiz_result.answers.pop(answer);
-                api.Model.save({type: 'lecture_quizs', id: quiz.Id}, quiz_result, function (data) {
-                    quiz.answers = _.without(quiz.answers, answer);
+            api.Model.delete({type: 'answers', id: answer.Id}, function () {
+                api.Model.get({type: 'lecture_quizs', id: quiz.Id}, function (quiz_result) {
+                    quiz_result.answer_keys.pop(answer.Id);
+                    api.Model.save({type: 'lecture_quizs', id: quiz.Id}, quiz_result, function (data) {
+                        quiz.answer_keys = _.without(quiz.answer_keys, answer);
+                    });
                 });
             });
-            //});
         };
 
 
@@ -1287,9 +1290,8 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
                     }
                     answer_tmp[ele.field_title] = ele.field_value;
                 });
-                index = _.indexOf(quiz.answers, answer)
-                quiz.answers[index] = answer_tmp;
-                api.Model.save({type: 'lecture_quizs', id: quiz.Id}, quiz, function (data) {
+                api.Model.save({type: 'answers', id: answer.Id}, answer_tmp, function (data) {
+                    quiz.answer_keys = _.extend(quiz.answer_keys, data);
                     $scope.$apply();
                 })
             }, function () {

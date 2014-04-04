@@ -50,7 +50,6 @@
                                                 <h4 class="panel-title">
                                                     <a data-toggle="collapse" data-parent="#accordion"
                                                        href="#collapseOne">
-                                                        Phần 1: Kiến thức cơ bản
                                                     </a>
                                                 </h4>
                                             </div>
@@ -60,8 +59,7 @@
                                                         <li ng-click="goLecture(l, $index)"
                                                             class="list-group-item list-group-item-info" hover-class
                                                             add-class="list-group-item-success"
-                                                            remove-class="list-group-item-info"><i
-                                                                class="fa fa-arrow-circle-o-right"></i>{{ l.title }}
+                                                            remove-class="list-group-item-info"><i class="fa fa-circle-o" ng-class="{'fa-check-circle-o':!l._is_passed_lecture, 'fa-arrow-circle-o-righ':!l._is_current_lecture}"></i>{{ l.title }}
                                                         </li>
                                                     </ul>
                                                 </div>
@@ -72,7 +70,6 @@
                                                 <h4 class="panel-title">
                                                     <a data-toggle="collapse" data-parent="#accordion"
                                                        href="#collapseTwo">
-                                                        Phần 2: Python Nâng Cao
                                                     </a>
                                                 </h4>
                                             </div>
@@ -88,40 +85,46 @@
                                 </span>
                                 <div class="clearfix"></div>
                             </div>
-                            <div class="panel-body" id="video">
+                            <div class="panel-body">
+                                <div id="video"></div>
+                                <alert ng-show="showAlert" type="alert.type" close="showAlert=false" class="console-alert"><span ng-bind-html="alert.msg|to_trusted"></span></alert>
                             </div>
                         </div>
                         <div class="pull-left" style="padding-top: 20px"><span
                                 style="font-weight: bold">Đánh giá:</span>
-                            <rating value="rate" max="max" readonly="isReadonly" style="cursor: pointer"
-                                    on-hover="hoveringOver(value)"
+                            <rating value="rate" max="max" readonly="isReadonly" ng-class="{'cursor-rating':!isReadonly}"
+                                    on-hover="hoveringOver(value)" ng-click="setRate()"
                                     on-leave="overStar = null"></rating>
                             <span class="label"
-                                  ng-class="{'label-warning': percent<30, 'label-info': percent>=30 && percent<70, 'label-success': percent>=70}"
-                                  ng-show="overStar && !isReadonly">{{ percent }}%</span></div>
-                        <div class="pull-right" style="padding-top: 15px">
+                                  ng-class="{'label-warning': percent<=40, 'label-info': percent>40}"
+                                  ng-show="overStar && !isReadonly">{{ strRate }}</span>
+                            <div style="margin: 0 0 5px 0px">
+                                <span ng-click="editRate()" class="label label-warning">13/25</span> <span ng-click="editRate()" class="label label-info">12/25</span>
+                            </div>
+                        </div>
+                        <div class="pull-right" style="padding-top: 15px;">
                             <ul ng-social-buttons
                                 data-url="current_url"
                                 data-title="current_title"
                                 data-description="current_description"
                                 data-image="'http://easylearncode.appspot.com/application/img/logo.png'">
                                 <li style="font-weight: bold">Chia sẻ:</li>
-                                <li class="ng-social-facebook" rel="tooltip" data-placement="bottom"
-                                    title="Chia sẻ trên facebook">Facebook
+                                <li class="ng-social-facebook" tooltip-placement="bottom"
+                                    tooltip="Chia sẻ trên facebook">Facebook
                                 </li>
-                                <li class="ng-social-google-plus" rel="tooltip" data-placement="bottom"
-                                    title="Chia sẻ trên google plus">Google+
+                                <li class="ng-social-google-plus" tooltip-placement="bottom"
+                                    tooltip="Chia sẻ trên google plus">Google+
                                 </li>
-                                <li class="ng-social-twitter" rel="tooltip" data-placement="bottom"
-                                    title="Chia sẻ trên twitter">Twitter
+                                <li class="ng-social-twitter" tooltip-placement="bottom"
+                                    tooltip="Chia sẻ trên twitter">Twitter
                                 </li>
-                                <li class="ng-social-pinterest" rel="tooltip" data-placement="bottom"
-                                    title="Chia sẻ trên printerest">Pinterest
+                                <li class="ng-social-pinterest" tooltip-placement="bottom"
+                                    tooltip="Chia sẻ trên printerest">Pinterest
                                 </li>
                                 <li style="cursor: pointer"><img
                                         src="https://cdn1.iconfinder.com/data/icons/sweetsocial/32/youtube.png"
                                         ng-click="ViewOnYoutube()"
-                                        title="Xem tại trang youtube" rel="tooltip" data-placement="bottom"/></li>
+                                        tooltip="Xem trên youtube" tooltip-placement="bottom"/></li>
                             </ul>
                         </div>
                         <div class="clearfix"></div>
@@ -144,7 +147,7 @@
                         <div class="panel-heading">
                             <div class="panel-title"><span class="pull-left" id="step-1"> <h3 class="panel-title"><a
                                     class="second"><i
-                                    class="fa fa-code fa-lg"></i>Thực hành</a></h3></span><span class="pull-right"><button
+                                    class="fa fa-code fa-lg"></i> Phần thực hành</a></h3></span><span class="pull-right"><button
                                     type="button" class="btn btn-default"
                                     id="step-7"
                                     ng-click="toggleFullScreen()"
@@ -159,8 +162,8 @@
                         </div>
                         <div class="panel-body">
                             <div  ui-ace="{ theme:'chrome',
-                        mode:lang.mode}" data-ng-model="code" id="code-content"
-                                 ng-class="{'editor-full-screen':isEditorFullScreen}">Khung code</div>
+                        mode:lang.mode, onLoad: aceLoaded}" data-ng-model="code" id="code-content"
+                                 ng-class="{'editor-full-screen':isEditorFullScreen}"></div>
                             </br>
                             <button type="button" class="btn btn-success" ng-click="runCode()" rel="tooltip"
                                     data-placement="bottom" ng-class="{'run-btn-full-screen':isEditorFullScreen}"
@@ -183,14 +186,16 @@
     {% endraw %}
 {% endblock %}
 {% block pluginJS %}
+    <script src="//ace.c9.io/build/src-noconflict/ace.js"></script>
+    <script src="//ace.c9.io/build/src-noconflict/ext-language_tools.js"></script>
     <script type="text/javascript" src="http://apis.google.com/js/plusone.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js"></script>
     <script src="/application/js/libs/videogular/videogular.js"></script>
     <script src="/application/js/libs/angularjs/ui-ace.min.js"></script>
     <script src="/application/js/libs/angularjs/angular-sanitize.min.js"></script>
     <script src="/application/js/libs/angularjs/ui-bootstrap-tpls-0.7.0.min.js"></script>
     <script src="/application/js/libs/angularjs/angular-social.js"></script>
     <script src="/application/js/libs/angularjs/angular-disqus.min.js"></script>
+    <script src="/application/js/libs/angularjs/angular-local-storage.min.js"></script>
     <script src="/application/js/libs/videogular/videogular.js"></script>
     <script src="/application/js/libs/videogular/plugins/controls.js"></script>
     <script src="/application/js/libs/videogular/plugins/overlay-play.js"></script>

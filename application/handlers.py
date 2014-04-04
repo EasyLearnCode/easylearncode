@@ -33,7 +33,7 @@ import models
 import forms as forms
 from lib import utils, captcha, twitter
 from lib.basehandler import BaseHandler
-from lib.decorators import user_required
+from lib.decorators import user_required, teacher_required
 from lib.decorators import taskqueue_method
 from lib import facebook
 
@@ -1618,3 +1618,12 @@ class VisualizationHandler(BaseHandler):
         params = {}
         params.update({'angular_app_name': 'easylearncode.visualization'})
         return self.render_template("visualization.html", **params)
+
+
+class TeacherHandler(BaseHandler):
+    @user_required
+    @teacher_required
+    def get(self):
+        params = {}
+        params.update({'angular_app_name': 'easylearncode.teacher'})
+        return self.render_template("teacher.html", **params)

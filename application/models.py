@@ -435,6 +435,31 @@ class Lecture(UtilModel, ndb.Model):
     code_keys = ndb.KeyProperty('Code', repeated=True)
     level = ndb.FloatProperty()
 
+    def to_dict(self, *args, **kwargs):
+        result = super(Lecture, self).to_dict(*args, **kwargs)
+        from api.restful import current_user
+        _current_user = current_user()
+        if(_current_user):
+            _lesson_user = LessonUser.get_by_user(_current_user)
+            if (_lesson_user):
+                result['_is_current_lecture'] = True if _lesson_user.current_lecture == self.key else False
+                result['_is_passed_lecture'] = True if self.key ==_lesson_user.passed_lecture else False
+            else:
+                result['_is_current_lecture'] = False
+                result['_is_passed_lecture'] = False
+        else:
+            result['_is_current_lecture'] = False
+            result['_is_passed_lecture'] = False
+        return result
+
+
+
+
+class Rate(UtilModel, ndb.Model):
+    user_key = ndb.KeyProperty('User', repeated=False)
+    lecture_key = ndb.KeyProperty('Lecture', repeated=False)
+    rate = ndb.FloatProperty()
+
 
 class Code(UtilModel, ndb.Model):
     title = ndb.StringProperty()
@@ -453,7 +478,7 @@ class QuizAnswer(UtilModel, ndb.Model):
 class Quiz(UtilModel, ndb.Model):
     title = ndb.StringProperty()
     question = ndb.StringProperty()
-    answers = ndb.StructuredProperty(QuizAnswer, repeated=True)
+    answer_keys = ndb.KeyProperty('QuizAnswer', repeated=True)
     time = ndb.FloatProperty()
     created = ndb.DateTimeProperty(auto_now_add=True)
     score = ndb.FloatProperty()
@@ -523,6 +548,12 @@ class LessonUser(UtilModel, ndb.Model):
     @classmethod
     def get_by_user_and_lesson(cls, user, lesson):
         return cls.query(cls.user == user, cls.lesson == lesson).get()
+
+
+class LectureUser(UtilModel, ndb.Model):
+    score = ndb.FloatProperty()
+    lecture_key = ndb.KeyProperty(kind='Lecture')
+    user_key = ndb.KeyProperty(kind='User')
 
 
 class ExerciseUser(UtilModel, ndb.Model):

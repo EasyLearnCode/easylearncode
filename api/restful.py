@@ -9,7 +9,7 @@ from google.appengine.ext import ndb
 from webapp2_extras import auth
 
 from application.models import Course, WeeklyQuiz, WeeklyQuizLevel, Lesson, Lecture, User, Code, Test, Quiz, \
-    QuizAnswer
+    QuizAnswer, Rate
 #import for module exercise
 from application.models import Exercise, ExerciseItem, ExerciseProject, ExerciseCheckpoint, File
 from util import AppError, LoginError, BreakError
