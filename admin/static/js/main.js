@@ -377,6 +377,7 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
                 var data = formService.getDataFromForm(form);
                 api.Model.save({type: 'exercises'}, data, function (result) {
                     api.Model.get({type: 'courses', id: $routeParams.courseId}, function (course) {
+                        delete course['img'];
                         course.exercise_keys.push(result.Id);
                         api.Model.save({type: 'courses', id: course.Id}, course, function () {
                             $scope.course.exercise_keys.push(result);
@@ -774,6 +775,7 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
                 });
                 api.Model.save({type: 'lessons'}, lesson, function (data) {
                     api.Model.get({type: 'courses', id: $routeParams.courseId}, function (course) {
+                        delete course['img'];
                         course.lesson_keys.push(data.Id);
                         api.Model.save({type: 'courses', id: course.Id}, course, function () {
                             $scope.course.lesson_keys.push(data);
