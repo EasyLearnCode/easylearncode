@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 __author__ = 'nampnq'
 
 from application.handlers import BaseHandler, user_required
@@ -17,7 +18,7 @@ class SubmitContestHandler(BaseHandler):
         deferred.defer(
             run_test_case,
             weekly_quiz_level=body_data['weekly_quiz_level_key'],
-            code=body_data['source'], lang=body_data['lang'],
+            code=unicode(body_data['source']).encode('utf-8'), lang=body_data['lang'],
             user=self.user_key, is_submit=True if body_data['type'].lower() == 'submit' else False
         )
         return {
