@@ -1,7 +1,7 @@
 "use strict";
 angular.module('nampnq.util.bindHtml', [])
-    .directive('bindHtmlUnsafe', function() {
-        return function(scope, element, attr) {
+    .directive('bindHtmlUnsafe', function () {
+        return function (scope, element, attr) {
             element.addClass('ng-binding').data('$binding', attr.bindHtmlUnsafe);
             scope.$watch(attr.bindHtmlUnsafe, function bindHtmlUnsafeWatchAction(value) {
                 element.html(value || '');
@@ -11,7 +11,7 @@ angular.module('nampnq.util.bindHtml', [])
 angular.module("info.vietnamcode.nampnq.videogular.plugins.quiz", ['nampnq.util.bindHtml'])
     .directive(
         "vgQuiz", ["VG_EVENTS",
-            function(VG_EVENTS) {
+            function (VG_EVENTS) {
                 return {
                     restrict: "E",
                     require: "^videogular",
@@ -23,7 +23,7 @@ angular.module("info.vietnamcode.nampnq.videogular.plugins.quiz", ['nampnq.util.
                         vgQuizContinue: '&',
                         vgQuizShowExplanation: '&'
                     },
-                    link: function(scope, elem, attr, API) {
+                    link: function (scope, elem, attr, API) {
                         scope.previous_time = 0;
                         scope.submit = true;
                         scope.skip = true;
@@ -47,28 +47,36 @@ angular.module("info.vietnamcode.nampnq.videogular.plugins.quiz", ['nampnq.util.
                                             //TODO: change varible in html, add css display
                                             elem.css('display', 'block');
                                             API.pause();
-                                            scope.id = triggered_cue_points[0].Id;
-                                            scope.type = triggered_cue_points[0].$class;
-                                            scope.is_quiz = false;
-                                            scope.is_test = false;
-                                            if(triggered_cue_points[0].$class == "Quiz"){
-                                                scope.content = triggered_cue_points[0].question;
-                                                scope.answers = triggered_cue_points[0].answer_keys;
-                                                scope.is_quiz = true;
-                                            }
-                                            else if(triggered_cue_points[0].$class == "Test"){
-                                                scope.content = triggered_cue_points[0].description;
-                                                scope.is_test = true;
-                                                scope.code = "#Viết code vào đây và nhấn submit"
-                                            }
-                                            var background_type = "color",//triggered_cue_points[0].background,
-                                                background_src = "white";//triggered_cue_points[0].background_src;
-                                            if ("color" == background_type)
-                                                elem.css("background", background_src);
-                                            else if ("image" == background_type)
-                                                elem.css("background-image", "url(" + background_src + ")").css("background-size", "100% 100%");
-                                            else if ("transparent" == background_type)
-                                                elem.css("background", "transparent");
+                                            scope.submit = false;
+                                            scope.skip = false;
+                                            elem.css("background-image", "url('http://en.hdyo.org/assets/ask-question-1-ca45a12e5206bae44014e11cd3ced9f1.jpg')").css("background-size", "100% 100%");
+                                            setTimeout(function () {
+                                                scope.submit = true;
+                                                scope.skip = true;
+                                                scope.id = triggered_cue_points[0].Id;
+                                                scope.type = triggered_cue_points[0].$class;
+                                                scope.is_quiz = false;
+                                                scope.is_test = false;
+                                                if (triggered_cue_points[0].$class == "Quiz") {
+                                                    scope.content = triggered_cue_points[0].question;
+                                                    scope.answers = triggered_cue_points[0].answer_keys;
+                                                    scope.is_quiz = true;
+                                                }
+                                                else if (triggered_cue_points[0].$class == "Test") {
+                                                    scope.content = triggered_cue_points[0].description;
+                                                    scope.is_test = true;
+                                                    scope.code = "#Viết code vào đây và nhấn submit"
+                                                }
+                                                var background_type = "color",//triggered_cue_points[0].background,
+                                                    background_src = "white";//triggered_cue_points[0].background_src;
+                                                if ("color" == background_type)
+                                                    elem.css("background", background_src);
+                                                else if ("image" == background_type)
+                                                    elem.css("background-image", "url(" + background_src + ")").css("background-size", "100% 100%");
+                                                else if ("transparent" == background_type)
+                                                    elem.css("background", "transparent");
+                                            }, 3000);
+
                                         }
                                     }
                                     scope.previous_time = currentTime
@@ -83,11 +91,12 @@ angular.module("info.vietnamcode.nampnq.videogular.plugins.quiz", ['nampnq.util.
                         function refreshOverlay() {
 
                         }
-                        scope.quizSubmit = function() {
+
+                        scope.quizSubmit = function () {
                             if (vgQuizSubmitCallBack) {
 
                                 var paramObj = {};
-                                angular.forEach(elem.find('form').serializeArray(), function(kv) {
+                                angular.forEach(elem.find('form').serializeArray(), function (kv) {
                                     if (paramObj.hasOwnProperty(kv.name)) {
                                         if (!paramObj[kv.name].push) {
                                             paramObj[kv.name] = [paramObj[kv.name]];
@@ -98,7 +107,7 @@ angular.module("info.vietnamcode.nampnq.videogular.plugins.quiz", ['nampnq.util.
                                     }
                                 });
                                 var result = vgQuizSubmitCallBack(paramObj);
-                                if(paramObj.type=="Quiz"){
+                                if (paramObj.type == "Quiz") {
                                     scope.status = result.description;
                                     if (result.result) {
                                         scope.submit = false;
@@ -108,8 +117,8 @@ angular.module("info.vietnamcode.nampnq.videogular.plugins.quiz", ['nampnq.util.
 
                                     }
                                 }
-                                else if(paramObj.type == "Test"){
-                                    result.then(function(data){
+                                else if (paramObj.type == "Test") {
+                                    result.then(function (data) {
                                         scope.status = data.description;
                                         if (data.result) {
                                             scope.submit = false;
@@ -117,7 +126,7 @@ angular.module("info.vietnamcode.nampnq.videogular.plugins.quiz", ['nampnq.util.
                                             scope.continue_btn = true;
                                             scope.explanation = true;
 
-                                        }else{
+                                        } else {
                                             scope.status = data.description;
                                         }
                                     })
@@ -125,13 +134,15 @@ angular.module("info.vietnamcode.nampnq.videogular.plugins.quiz", ['nampnq.util.
                             }
 
                         };
-                        scope.quizSkip = function() {
+                        scope.quizSkip = function () {
                             if (vgQuizSkipCallBack) vgQuizSkipCallBack();
                             scope.status = "";
                             elem.css('display', 'none');
                             API.play();
+                            scope.is_quiz = false;
+                            scope.is_test = false;
                         };
-                        scope.quizContinue = function() {
+                        scope.quizContinue = function () {
                             if (vgQuizContinueCallBack) vgQuizContinueCallBack();
                             scope.status = "";
                             scope.submit = true;
@@ -140,8 +151,10 @@ angular.module("info.vietnamcode.nampnq.videogular.plugins.quiz", ['nampnq.util.
                             scope.explanation = false;
                             elem.css('display', 'none');
                             API.play();
+                            scope.is_quiz = false;
+                            scope.is_test = false;
                         };
-                        scope.quizShowExplanation = function() {
+                        scope.quizShowExplanation = function () {
                             if (vgQuizShowExplanationCallBack) {
                                 var result = vgQuizShowExplanationCallBack();
                                 scope.status = result;
