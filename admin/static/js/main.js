@@ -730,24 +730,26 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
 
     }])
     .controller("LessonAdminCtrl", ["$scope", "api", "$routeParams", "formModalService", function ($scope, api, $routeParams, formModalService) {
-        $scope.course = api.Model.get({type: 'courses', id: $routeParams.courseId, recurse: true});
+        $scope.course = api.Model.get({type: 'courses', id: $routeParams.courseId, recurse: true, depth: 2});
         var form = {
             "form_id": 1,
             "form_name": "Add Lesson",
             "form_fields": [
                 {
                     "field_id": 1,
-                    "field_title": "title",
+                    "field_title": "Title",
                     "field_type": "textfield",
                     "field_value": "",
-                    "field_required": true
+                    "field_required": true,
+                    "field_name":"title"
                 },
                 {
                     "field_id": 2,
-                    "field_title": "description",
+                    "field_title": "Description",
                     "field_type": "textfield",
                     "field_value": "",
-                    "field_required": true
+                    "field_required": true,
+                    "field_name": "description"
                 }
             ]
         }
@@ -768,7 +770,7 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
             formModalService.showFormModal(addForm, function (form) {
                 lesson = {}
                 _.each(form.form_fields, function (ele) {
-                    lesson[ele.field_title] = ele.field_value;
+                    lesson[ele.field_name] = ele.field_value;
                 });
                 api.Model.save({type: 'lessons'}, lesson, function (data) {
                     api.Model.get({type: 'courses', id: $routeParams.courseId}, function (course) {
@@ -787,12 +789,12 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
             var editForm = $.extend(true, {}, form);
             editForm["form_name"] = "Edit Lesson";
             _.each(editForm.form_fields, function (field) {
-                field.field_value = lesson[field.field_title];
+                field.field_value = lesson[field.field_name];
             });
             formModalService.showFormModal(editForm, function (form) {
                 lesson_tmp = {}
                 _.each(form.form_fields, function (ele) {
-                    lesson_tmp[ele.field_title] = ele.field_value;
+                    lesson_tmp[ele.field_name] = ele.field_value;
                 });
                 delete lesson_tmp['img'];
                 api.Model.save({type: 'lessons', id: lesson.Id}, lesson_tmp, function (data) {
@@ -818,28 +820,30 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
     }])
     .controller("LectureAdminCtrl", ["$scope", "api", "$routeParams", '$modal', '$http', 'formModalService', function ($scope, api, $routeParams, $modal, $http, formModalService) {
         $scope.course = { Id: $routeParams.courseId };
-        $scope.lesson = api.Model.get({type: 'lessons', id: $routeParams.lessonId, recurse: true});
+        $scope.lesson = api.Model.get({type: 'lessons', id: $routeParams.lessonId, recurse: true, depth: 3});
         var form = {
             "form_id": 1,
             "form_name": "Add Lecture",
             "form_fields": [
                 {
                     "field_id": 1,
-                    "field_title": "title",
+                    "field_title": "Title",
                     "field_type": "textfield",
                     "field_value": "",
-                    "field_required": true
+                    "field_required": true,
+                    "field_name": "title"
                 },
                 {
                     "field_id": 2,
-                    "field_title": "description",
+                    "field_title": "Description",
                     "field_type": "textarea",
                     "field_value": "",
-                    "field_required": true
+                    "field_required": true,
+                    "field_name": "description"
                 },
                 {
                     "field_id": 3,
-                    "field_title": "level",
+                    "field_title": "Level",
                     "field_type": "dropdown",
                     "field_value": "1",
                     "field_required": true,
@@ -859,21 +863,24 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
                             "option_title": "Hard",
                             "option_value": 3
                         }
-                    ]
+                    ],
+                    "field_name": "level"
                 },
                 {
                     "field_id": 4,
-                    "field_title": "youtube_id",
+                    "field_title": "Youtube video id",
                     "field_type": "textfield",
                     "field_value": "",
-                    "field_required": true
+                    "field_required": true,
+                    "field_name": "youtube_id"
                 },
                 {
                     "field_id": 5,
-                    "field_title": "time",
+                    "field_title": "Time",
                     "field_type": "textfield",
                     "field_value": "",
-                    "field_required": true
+                    "field_required": true,
+                    "field_name": "time"
                 }
             ]
         }
@@ -894,10 +901,10 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
             formModalService.showFormModal(addForm, function (form) {
                 lecture = {}
                 _.each(form.form_fields, function (ele) {
-                    if (ele.field_title == "level" || ele.field_title == "time") {
+                    if (ele.field_name == "level" || ele.field_name == "time") {
                         ele.field_value = parseFloat(ele.field_value);
                     }
-                    lecture[ele.field_title] = ele.field_value;
+                    lecture[ele.field_name] = ele.field_value;
                 });
                 api.Model.save({type: 'lectures'}, lecture, function (data) {
                     api.Model.get({type: 'lessons', id: $routeParams.lessonId}, function (lesson) {
@@ -916,14 +923,14 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
             var editForm = $.extend(true, {}, form);
             editForm["form_name"] = "Edit Lecture";
             _.each(editForm.form_fields, function (field) {
-                field.field_value = lecture[field.field_title];
+                field.field_value = lecture[field.field_name];
             });
             formModalService.showFormModal(editForm, function (form) {
                 lecture_tmp = {}
                 _.each(form.form_fields, function (ele) {
-                    if (ele.field_title == "time")
-                        lecture_tmp[ele.field_title] = parseFloat(ele.field_value);
-                    else lecture_tmp[ele.field_title] = ele.field_value;
+                    if (ele.field_name == "time")
+                        lecture_tmp[ele.field_name] = parseFloat(ele.field_value);
+                    else lecture_tmp[ele.field_name] = ele.field_value;
                 });
                 api.Model.save({type: 'lectures', id: lecture.Id}, lecture_tmp, function (data) {
                     lecture = _.extend(lecture, lecture_tmp);
@@ -958,7 +965,6 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
                     lecture.img = data.image_url;
                 }).error();
             })
-
         };
 
 //        var ModalInstanceCtrl = function ($scope, $modalInstance, form) {
@@ -1094,7 +1100,7 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
                 }
             }
         };
-        $scope.lecture = api.Model.get({type: 'lectures', id: $routeParams.lectureId, recurse: true}, function () {
+        $scope.lecture = api.Model.get({type: 'lectures', id: $routeParams.lectureId, recurse: true, depth:4}, function () {
                 $scope.loadLecture();
         });
         var codeForm = {
@@ -1291,7 +1297,7 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
                     answer_tmp[ele.field_title] = ele.field_value;
                 });
                 api.Model.save({type: 'answers', id: answer.Id}, answer_tmp, function (data) {
-                    quiz.answer_keys = _.extend(quiz.answer_keys, data);
+                    answer = _.extend(answer, data);
                     $scope.$apply();
                 })
             }, function () {
@@ -1346,8 +1352,8 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
                         quiz_tmp[ele.field_title] = parseFloat(ele.field_value);
                     else quiz_tmp[ele.field_title] = ele.field_value;
                 });
-                api.Model.save({type: 'lecture_quizs', id: quiz.Id}, quiz_tmp, function (data) {
-                    quiz = _.extend(quiz, data);
+                api.Model.save({type: 'lecture_quizs', id: quiz.Id }, quiz_tmp, function (data) {
+                    quiz = _.extend(quiz, quiz_tmp);
                     $scope.$apply();
                 })
             }, function () {
