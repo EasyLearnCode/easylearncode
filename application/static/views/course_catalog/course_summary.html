@@ -31,7 +31,7 @@
             </div>
             </div>
         </div>
-        <div class="col-md-2 ">
+        <div class="col-md-2 " data-ng-show="course['is_available']">
             <a ng-href="/course/learn#!?course_id={{course['key']}}" class="btn btn-info" style="width: 200px; margin: 5px"><i class="fa fa-youtube-play"></i> Học qua video</a>
             <a ng-href="/course/practice#!?course_id={{course['key']}}" class="btn btn-info" style="width: 200px; margin: 5px"><i class="fa fa-magic"></i> Học qua bài tập</a>
         </div>

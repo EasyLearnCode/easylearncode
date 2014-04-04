@@ -1010,98 +1010,35 @@ angular.module("easylearncode.info").controller('InfoCtrl', ['$scope', '$http', 
             e >= i ? r.css({position: "fixed", top: 100 + "px"}) : e < i && r.css(o)
     };
 }]);
-angular.module("easylearncode.course_paractice_detail", ["ui.bootstrap", "easylearncode.core", "ngAnimate"]).controller('InfoCtrl', ['$scope', '$http', '$location', function ($scope, $http, $location) {
+angular.module("easylearncode.course_practice_detail", ["ui.bootstrap", "easylearncode.core", "ngAnimate"])
+    .controller('InfoCtrl', ['$scope', 'api', '$location', '$window', function ($scope, api, $location, $window) {
     var course_id = $location.search()['course_id'];
-    $scope.course_name = "Python";
-    $scope.course_description = "Khóa học ngôn ngữ lập trình python";
-    $scope.sections = [
-        {
-            name: 'Bài tập tính toán đơn giản',
-            units: [
-                {time: '05:00', description: 'Làm quen với cú pháp python', src: "/course/practice/viewer#!?exercise_id=cs101"},
-                {time: '05:00', description: 'Thực hành tính một phép tính cơ bản', src: "/course/practice/viewer#!?exercise_id=cs101"},
-            ]
-        },
-        {
-            name: 'Bài tập xem ngày và giờ',
-            units: [
-                {time: '02:00', description: 'Làm quen với chuỗi và màn hình conosle', src: "/course/practice/viewer#!?exercise_id=cs101"},
-                {time: '05:00', description: 'Bài tập xem ngày và giờ', src: "/course/practice/viewer#!?exercise_id=cs101"},
-            ]
-        },
-        {
-            name: 'Ứng dụng xếp loại học sinh',
-            units: [
-                {time: '05:00', description: 'Làm quen với điều kiện và cấu trúc rẽ nhánh', src: "/course/practice/viewer#!?exercise_id=cs101"},
-                {time: '05:00', description: 'Ứng dụng xếp loại học sinh', src: "/course/practice/viewer#!?exercise_id=cs101"},
-            ]
-        },
-        {
-            name: 'Tính chi phí chuyến du lịch',
-            units: [
-                {time: '05:00', description: 'Làm quen với hàm', src: "/course/practice/viewer#!?exercise_id=cs101"},
-                {time: '05:00', description: 'Ứng dụng tính chi phí chuyến du lịch', src: "/course/practice/viewer#!?exercise_id=cs101"},
-            ]
-        },
-        {
-            name: 'Tính tiền siêu thị',
-            units: [
-                {time: '05:00', description: 'Làm quen với cấu trúc danh sách và từ điến', src: "/course/practice/viewer#!?exercise_id=cs101"},
-                {time: '05:00', description: 'Ứng dụng tính tiền siêu thị', src: "/course/practice/viewer#!?exercise_id=cs101"},
-            ]
-        },
-        {
-            name: 'Trò chơi bắn tàu chiến',
-            units: [
-                {time: '05:00', description: 'Làm quen với danh sách và hàm', src: "/course/practice/viewer#!?exercise_id=cs101"},
-                {time: '05:00', description: 'Ứng dụng tính tiền siêu thị', src: "/course/practice/viewer#!?exercise_id=cs101"},
-            ]
-        },
-        {
-            name: 'Bài tập vòng lặp',
-            units: [
-                {time: '05:00', description: 'Làm quen với vòng lặp', src: "/course/practice/viewer#!?exercise_id=cs101"},
-                {time: '05:00', description: 'Bài tập vòng lặp', src: "/course/practice/viewer#!?exercise_id=cs101"},
-            ]
-        },
-        {
-            name: 'Bài kiểm tra tổng hợp',
-            units: [
-                {time: '05:00', description: 'Bài kiểm tra tổng hợp', src: "/course/practice/viewer#!?exercise_id=cs101"}
-            ]
-        },
-        {
-            name: 'Một vài chủ đề nâng cao trong Python',
-            units: [
-                {time: '05:00', description: 'Một vài chủ đề nâng cao trong Python', src: "/course/practice/viewer#!?exercise_id=cs101"},
-                {time: '05:00', description: 'Làm quen các thao tác trên bit', src: "/course/practice/viewer#!?exercise_id=cs101"},
-            ]
-        },
-        {
-            name: 'Bài tập class',
-            units: [
-                {time: '05:00', description: 'Làm quen với class', src: "/course/practice/viewer#!?exercise_id=cs101"},
-                {time: '05:00', description: 'Bài tập class', src: "/course/practice/viewer#!?exercise_id=cs101"},
-            ]
-        }
-
-
-    ];
-    $scope.toggle = function (section) {
-        section.toggle = !section.toggle;
-        section.status = section.toggle ? "Ẩn" : "Hiện";
-    }
+    $scope.course = api.Model.get({type:'courses', id:course_id, recurse:true, depth:2});
+    $window.onscroll = function () {
+        var e = $(window).scrollTop(), n = $("#footer").offset().top - 130, r = $("#current-curriculum"), i = r.offset().top - 100, o = {position: r[0].style.position, top: r[0].style.top};
+        if (e + r.height() >= n) {
+            if (r.css("position") === "fixed") {
+                var s = n - r.height() + 30;
+                r.css({position: "absolute", top: s > 0 ? s : 0})
+            }
+        } else
+            e >= i ? r.css({position: "fixed", top: 100 + "px"}) : e < i && r.css(o)
+    };
 }]);
-angular.module("easylearncode.course_paractice_viewer", ["ui.bootstrap", "ui.ace", 'easylearncode.core'])
-    .controller("PracticeCtrl", ["$scope", "$sce", "$timeout", "exercise", '$compile', "$window", function ($scope, $sce, $timeout, exercise, $compile, $window) {
+angular.module("easylearncode.course_practice_viewer", ["ui.bootstrap", "ui.ace", 'easylearncode.core'])
+    .controller("PracticeCtrl", ["$scope", "$sce", "$timeout", "api", '$compile', "$window", '$location', function ($scope, $sce, $timeout, api, $compile, $window, $location) {
         var jqconsole = $('#console').jqconsole('  >> EasyLearnCode Python Compiler v0.1 <<\n', '>>>');
-        $scope.exercise = exercise;
+        var exercise_item_id = $location.search()['exercise_item_id'];
+        $scope.exercise_item = api.Model.get({type:'exercise_items', id: exercise_item_id, recurse:true, depth:3});
         $scope.jsreplReady = false;
         $scope.isEditorFullScreen = false;
         $scope.showAlert = false;
         $scope.showConsole = false;
         $scope.aceLoaded = function (_editor) {
             $scope.editor = _editor;
+        }
+        $scope.changeLanguage = function(lang){
+            $scope.editor.getSession().setMode("ace/mode/" + lang);
         }
         $scope.toggleFullScreen = function () {
             $scope.isEditorFullScreen = !$scope.isEditorFullScreen;
@@ -1137,7 +1074,6 @@ angular.module("easylearncode.course_paractice_viewer", ["ui.bootstrap", "ui.ace
             $scope.source = $scope.current_checkpoint.default_files[0].content;
             $scope.show = false;
         }
-        $scope.changeCurrentCheckpoint(exercise.projects[0].checkpoints[0]);
         $scope.inputCallback = function (callback) {
             jqconsole.Input(function (result) {
                 var e;
@@ -1236,9 +1172,6 @@ angular.module("easylearncode.course_paractice_viewer", ["ui.bootstrap", "ui.ace
         $scope.timeoutCallback = function () {
 
         }
-        $scope.nextCheckpoint = function () {
-            alert('xxx');
-        }
         var jsrepl = new JSREPL({
             input: $scope.inputCallback,
             output: $scope.outputCallback,
@@ -1249,11 +1182,17 @@ angular.module("easylearncode.course_paractice_viewer", ["ui.bootstrap", "ui.ace
                 callback: $scope.timeoutCallback
             }
         });
-        jsrepl.loadLanguage($scope.exercise.language, function () {
-            $scope.$apply(function () {
-                $scope.jsreplReady = true;
-            })
+        $scope.exercise_item.$promise.then(
+        function(){
+            $scope.changeCurrentCheckpoint($scope.exercise_item.projects[0].checkpoints[0]);
+            jsrepl.loadLanguage($scope.exercise_item.projects[0].language.toLowerCase(), function () {
+                $scope.$apply(function () {
+                    $scope.jsreplReady = true;
+                })
+            });
+            $scope.changeLanguage($scope.exercise_item.projects[0].language.toLowerCase());
         });
+
         $timeout(function () {
             $window.nextCheckpoint = function () {
                 var _index = _.indexOf($scope.exercise.projects[0].checkpoints, function (obj) {

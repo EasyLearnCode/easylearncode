@@ -195,9 +195,9 @@ class SocialUser(UtilModel, ndb.Model):
 
 
 class ExerciseCheckpoint(UtilModel, ndb.Model):
-    entry = ndb.StringProperty(required=True)
-    hint = ndb.StringProperty()
-    instruction = ndb.StringProperty(required=True)
+    entry = ndb.StringProperty(required=True, indexed=False)
+    hint = ndb.StringProperty(indexed=False)
+    instruction = ndb.StringProperty(required=True, indexed=False)
     title = ndb.StringProperty()
     test_functions = ndb.TextProperty()
     index = ndb.FloatProperty()
@@ -256,7 +256,14 @@ class ExerciseItem(UtilModel, ndb.Model):
     title = ndb.StringProperty()
     created = ndb.DateTimeProperty(auto_now_add=True)
     index = ndb.FloatProperty()
+    description = ndb.TextProperty()
     projects = ndb.KeyProperty(kind='ExerciseProject', repeated=True)
+    success = ndb.StringProperty(indexed=False)
+
+    @property
+    def success_html(self):
+        import markdown2
+        return markdown2.markdown(self.success)
 
     @classmethod
     def get_by_project(cls, project):
@@ -276,6 +283,9 @@ class ExerciseItem(UtilModel, ndb.Model):
             if _exercise_user:
                 result['_is_current_item'] = True if _exercise_user.current_item == self.key else False
                 result['_is_passed_item'] = True if self.key in _exercise_user.passed_item else False
+            else:
+                result['_is_current_item'] = False
+                result['_is_passed_item'] = False
         return result
 
 
@@ -520,8 +530,8 @@ class ExerciseUser(UtilModel, ndb.Model):
     exercise = ndb.KeyProperty(kind="Exercise")
     join_date = ndb.DateProperty(auto_now_add=True)
     status = ndb.StringProperty(choices=('passed', 'working', 'cancel'))
-    current_item = ndb.KeyProperty(kind="ExerciseCheckpoint")
-    passed_checkpoint = ndb.KeyProperty(kind="ExerciseCheckpoint", repeated=True)
+    current_item = ndb.KeyProperty(kind='ExerciseItem')
+    passed_item = ndb.KeyProperty(kind="ExerciseItem", repeated=True)
 
     @classmethod
     def get_by_user(cls, user):
