@@ -37,6 +37,7 @@ class AdminGeoChartHandler(BaseHandler):
 
 class EditProfileForm(forms.EditProfileForm):
     activated = fields.BooleanField('Activated')
+    is_teacher = fields.BooleanField('Teacher')
 
 
 class AdminUserListHandler(BaseHandler):
@@ -86,6 +87,7 @@ class AdminUserListHandler(BaseHandler):
                              ('name', 'Name'),
                              ('last_name', 'Last Name'),
                              ('email', 'Email'),
+                             ('is_teacher', 'Teacher'),
                              ('country', 'Country'),
                              ('tz', 'TimeZone')],
             "users": users,

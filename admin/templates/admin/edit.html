@@ -1,7 +1,12 @@
 {% extends 'admin/base.html' %}
 
-{% block header_title %}
-  {% trans %}User Details{% endtrans %}
+{% block breadcrumb %}
+    <li>
+        <a href="{{ uri_for("admin-home") }}">Home</a> <span class="divider">/</span>
+    </li>
+    <li>
+        <span>User Detail</span>
+    </li>
 {% endblock %}
 
 {% block content %}

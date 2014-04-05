@@ -1,3 +1,4 @@
+{% import '/admin/admin_macros.html' as lib with context %}
 <!DOCTYPE html>
 <html lang="en" data-ng-app="{{ angular_app_name }}">
 <head>
@@ -14,10 +15,10 @@
     <!-- end: Mobile Specific -->
 
     <!-- start: CSS -->
-    <link id="bootstrap-style" href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
-    <link id="base-style" href="css/style.css" rel="stylesheet">
-    <link id="base-style-responsive" href="css/style-responsive.css" rel="stylesheet">
+    <link id="bootstrap-style" href="/admin/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/admin/css/bootstrap-responsive.min.css" rel="stylesheet">
+    <link id="base-style" href="/admin/css/style.css" rel="stylesheet">
+    <link id="base-style-responsive" href="/admin/css/style-responsive.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/application/css/videogular/quiz.css">
     {% block mediaCSS %}
     {% endblock %}
@@ -107,7 +108,7 @@
                             class="hidden-tablet">Quản lý khóa học</span></a></li>
                     <li><a href="{{ uri_for("admin-quiz") }}"><i class="icon-edit icon-white"></i><span
                             class="hidden-tablet"> Quản lý đố vui</span></a></li>
-                    <li><a href="chart.html"><i class="icon-list-alt icon-white"></i><span
+                    <li><a href="{{ uri_for("user-list") }}"><i class="icon-list-alt icon-white"></i><span
                             class="hidden-tablet"> Quản lý thành viên</span></a></li>
                 </ul>
             </div>
@@ -177,58 +178,58 @@
 <!-- start: JavaScript-->
 
 
-<script src="js/jquery-1.9.1.min.js"></script>
-<script src="js/bootstrap.min.js"></script>
-<script src="js/jquery-ui-1.10.0.custom.min.js"></script>
+<script src="/admin/js/jquery-1.9.1.min.js"></script>
+<script src="/admin/js/bootstrap.min.js"></script>
+<script src="/admin/js/jquery-ui-1.10.0.custom.min.js"></script>
 <!--
 <script src='js/fullcalendar.min.js'></script>
-<script src="js/jquery-migrate-1.0.0.min.js"></script>
+<script src="/admin/js/jquery-migrate-1.0.0.min.js"></script>
 
 
 
-<script src="js/jquery.ui.touch-punch.js"></script>
+<script src="/admin/js/jquery.ui.touch-punch.js"></script>
 
 
-<script src="js/jquery.cookie.js"></script>
+<script src="/admin/js/jquery.cookie.js"></script>
 
 
 
 <script src='js/jquery.dataTables.min.js'></script>
 
-<script src="js/excanvas.js"></script>
-<script src="js/jquery.flot.min.js"></script>
-<script src="js/jquery.flot.pie.min.js"></script>
-<script src="js/jquery.flot.stack.js"></script>
-<script src="js/jquery.flot.resize.min.js"></script>
+<script src="/admin/js/excanvas.js"></script>
+<script src="/admin/js/jquery.flot.min.js"></script>
+<script src="/admin/js/jquery.flot.pie.min.js"></script>
+<script src="/admin/js/jquery.flot.stack.js"></script>
+<script src="/admin/js/jquery.flot.resize.min.js"></script>
 
-<script src="js/jquery.chosen.min.js"></script>
+<script src="/admin/js/jquery.chosen.min.js"></script>
 
-<script src="js/jquery.uniform.min.js"></script>
+<script src="/admin/js/jquery.uniform.min.js"></script>
 
-<script src="js/jquery.cleditor.min.js"></script>
+<script src="/admin/js/jquery.cleditor.min.js"></script>
 
-<script src="js/jquery.noty.js"></script>
+<script src="/admin/js/jquery.noty.js"></script>
 
-<script src="js/jquery.elfinder.min.js"></script>
+<script src="/admin/js/jquery.elfinder.min.js"></script>
 
-<script src="js/jquery.raty.min.js"></script>
+<script src="/admin/js/jquery.raty.min.js"></script>
 
-<script src="js/jquery.iphone.toggle.js"></script>
+<script src="/admin/js/jquery.iphone.toggle.js"></script>
 
-<script src="js/jquery.uploadify-3.1.min.js"></script>
+<script src="/admin/js/jquery.uploadify-3.1.min.js"></script>
 
-<script src="js/jquery.gritter.min.js"></script>
+<script src="/admin/js/jquery.gritter.min.js"></script>
 
-<script src="js/jquery.imagesloaded.js"></script>
+<script src="/admin/js/jquery.imagesloaded.js"></script>
 
-<script src="js/jquery.masonry.min.js"></script>
+<script src="/admin/js/jquery.masonry.min.js"></script>
 
-<script src="js/jquery.knob.js"></script>
+<script src="/admin/js/jquery.knob.js"></script>
 
-<script src="js/jquery.sparkline.min.js"></script>
+<script src="/admin/js/jquery.sparkline.min.js"></script>
 -->
 
-<script src="js/custom.js"></script>
+<script src="/admin/js/custom.js"></script>
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.12/angular.min.js"></script>
