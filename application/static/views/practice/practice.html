@@ -24,7 +24,7 @@
 
                     </div>
                     <div class="panel-body">
-                        <div id="console" ng-show="showConsole" ng-class="{'full-screen':isEditorFullScreen}"></div>
+                        <div id="console" ng-class="{'full-screen':isEditorFullScreen, 'over-alert':showAlert}"></div>
                         <alert ng-show="showAlert" type="alert.type" close="showAlert=false" class="console-alert"><span
                                 ng-bind-html="alert.msg|to_trusted"></span></alert>
                         <div ui-ace="{theme:'chrome', onLoad: aceLoaded}"

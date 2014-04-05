@@ -502,8 +502,12 @@ a:hover {
     background-color: black;
     z-index: 100;
     right: 30px;
-    bottom: 120px;
+    bottom: 35px;
     opacity: .7;
+}
+#console.over-alert
+{
+    bottom: 120px;
 }
 
 /* The inner console element. */
@@ -649,8 +653,11 @@ a:hover {
 #console.full-screen{
     position: fixed !important;
     z-index: 10000000 !important;
-    bottom: 90px !important;
+    bottom: 0px !important;
     right: 10px !important;
+}
+#console.full-screen.over-alert{
+    bottom: 90px !important;
 }
 .console-alert.full-screen{
     position: fixed !important;
@@ -1495,4 +1502,7 @@ a:hover {
     position: relative;
     overflow: hidden;
     height: 0;
+}
+.article__inner ol {
+    padding: 0px;
 }

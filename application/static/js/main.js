@@ -1475,6 +1475,7 @@ angular.module("easylearncode.course_practice_viewer", ["ui.bootstrap", "ui.ace"
         $scope.runCode = function () {
             $scope.showConsole = true;
             jqconsole.Reset();
+            jqconsole.Write('>>>');
             dataObj = {
                 command: $scope.source,
                 testScript: '',
@@ -1593,12 +1594,22 @@ angular.module("easylearncode.course_practice_viewer", ["ui.bootstrap", "ui.ace"
                     });
                 }
             } else if (result) {
-                $scope.jqconsole.Write('==> ' + result, 'output');
+                jqconsole.Write('==> ' + result, 'output');
             }
         };
         $scope.errorCallback = function (e) {
-            $scope.jqconsole.Write(e, 'error');
-
+            var command = 'easylearncode_validate(\'\', ' + JSON.stringify($scope.source) + ', \'\')';
+            command = command.replace(/#{/g, '\\#{');
+            var dataObj = {
+                command: command,
+                testScript: $scope.current_checkpoint.test_functions,
+                type: 'evalSolution'
+            };
+            jsrepl.sandbox.post({
+                type: 'engine.EasyLearnCode_Eval',
+                data: dataObj
+            });
+            jqconsole.Write(e, 'error');
         };
         $scope.timeoutCallback = function () {
 
