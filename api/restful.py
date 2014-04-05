@@ -9,7 +9,7 @@ from google.appengine.ext import ndb
 from webapp2_extras import auth
 
 from application.models import Course, Exercise, WeeklyQuiz, WeeklyQuizLevel, Lesson, Lecture, User, Code, Test, Quiz, \
-    QuizAnswer, Rate, WeeklyQuizRunCodeResult
+    QuizAnswer, Rate, WeeklyQuizRunCodeResult, LessonUser
 #import for module exercise
 from application.models import Exercise, ExerciseItem, ExerciseProject, ExerciseCheckpoint, File
 from util import AppError, LoginError, BreakError
@@ -23,7 +23,8 @@ class _ConfigDefaults(object):
     # list of valid models, None means anything goes
     DEFINED_MODELS = {"courses": Course, "quizs": WeeklyQuiz, "levels": WeeklyQuizLevel,
                       "lessons": Lesson, "lectures": Lecture, "codes": Code, "tests": Test, "lecture_quizs": Quiz,
-                      "answers": QuizAnswer, "users": User, "files": File, "quizresults": WeeklyQuizRunCodeResult, "rates": Rate}
+                      "answers": QuizAnswer, "users": User, "files": File, "quizresults": WeeklyQuizRunCodeResult,
+                      "rates": Rate, 'lesson_users':LessonUser}
     #Update for module exercise
     DEFINED_MODELS.update({
         "exercises": Exercise,

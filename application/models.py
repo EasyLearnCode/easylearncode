@@ -316,6 +316,10 @@ class Course(UtilModel, ndb.Model):
     is_available = ndb.BooleanProperty(default=False)
     is_new = ndb.BooleanProperty(default=True)
 
+    @classmethod
+    def get_by_lesson(cls, lesson):
+        return cls.query(cls.lesson_keys == lesson).get()
+
 
 class WeeklyQuizTest(UtilModel, ndb.Model):
     input = ndb.StringProperty()
@@ -421,6 +425,10 @@ class Lesson(UtilModel, ndb.Model):
     created = ndb.DateTimeProperty(auto_now_add=True)
     lecture_keys = ndb.KeyProperty('Lecture', repeated=True)
 
+    @classmethod
+    def get_by_lecture(cls, lecture):
+        return cls.query(cls.lecture_keys == lecture).get()
+
 
 class Lecture(UtilModel, ndb.Model):
     title = ndb.StringProperty(required=True)
@@ -440,10 +448,13 @@ class Lecture(UtilModel, ndb.Model):
         from api.restful import current_user
         _current_user = current_user()
         if(_current_user):
-            _lesson_user = LessonUser.get_by_user(_current_user)
+            lesson = Lesson.get_by_lecture(self.key)
+            _lesson_user = False
+            if lesson:
+                _lesson_user = LessonUser.get_by_user_and_lesson(_current_user, lesson.key)
             if (_lesson_user):
                 result['_is_current_lecture'] = True if _lesson_user.current_lecture == self.key else False
-                result['_is_passed_lecture'] = True if self.key ==_lesson_user.passed_lecture else False
+                result['_is_passed_lecture'] = True if self.key in _lesson_user.passed_lecture else False
             else:
                 result['_is_current_lecture'] = False
                 result['_is_passed_lecture'] = False
@@ -552,9 +563,16 @@ class LessonUser(UtilModel, ndb.Model):
 
 class LectureUser(UtilModel, ndb.Model):
     score = ndb.FloatProperty()
-    lecture_key = ndb.KeyProperty(kind='Lecture')
-    user_key = ndb.KeyProperty(kind='User')
+    lecture = ndb.KeyProperty(kind='Lecture')
+    user = ndb.KeyProperty(kind='User')
 
+    @classmethod
+    def get_by_user(cls, user):
+        return  cls.query(cls.user == user).fetch()
+
+    @classmethod
+    def get_by_user_and_lecture(cls, user, lecture):
+        return cls.query(cls.user == user, cls.lecture == lecture).get()
 
 class ExerciseUser(UtilModel, ndb.Model):
     user = ndb.KeyProperty(kind="User")
