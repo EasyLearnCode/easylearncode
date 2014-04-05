@@ -779,10 +779,11 @@ angular.module("easylearncode.learn").run(function () {
                     })
                 });
                 $scope.lecture = _.where($scope.lectures, {Id: $location.search()['lecture_id']})[0];
-                $scope.jsrepl.loadLanguage($scope.lessonCurrent.language.toLowerCase(), function () {
+                $scope.jsrepl.loadLanguage('' + $scope.lessonCurrent.language.toLowerCase() + '', function () {
                     $scope.jsreplReady = true;
                 });
-                $scope.editor.getSession().setMode("ace/mode/"+$scope.lessonCurrent.language.toLowerCase()+"");
+                $scope.editor.getSession().setMode("ace/mode/" + $scope.lessonCurrent.language.toLowerCase() + "");
+                $scope.editor.resize()
                 $scope.loadLecture();
                 $scope.loaded = true;
             })
@@ -874,7 +875,7 @@ angular.module("easylearncode.learn").run(function () {
                         $scope.$apply(function () {
                             data = {
                                 result: true,
-                                description: 'Chúc mừng bạn :D'
+                                description: 'Chúc mừng bạn!'
                             }
                             runCodeDeferred.resolve(data);
                         })
@@ -942,6 +943,9 @@ angular.module("easylearncode.learn").run(function () {
                         }
                         else localStorageService.add("score", parseFloat(localStorageService.get("score")) + parseFloat(data.score));
                     }
+                    else {
+                        description = "Lựa chọn của bạn chưa đúng!";
+                    }
                 }
                 return {
                     result: result,
@@ -982,19 +986,22 @@ angular.module("easylearncode.learn").run(function () {
                 testScript: '',
                 type: 'eval_User'
             };
-            $scope.jsrepl.sandbox.post({
-                type: 'engine.EasyLearnCode_Eval',
-                data: dataObj
-            });
+            if ($scope.lessonCurrent.language.toUpperCase() === "PYTHON") {
+                $scope.jsrepl.sandbox.post({
+                    type: 'engine.EasyLearnCode_Eval',
+                    data: dataObj
+                });
+            }
+            else $scope.runCodeInHackerEarth()
         };
 
         $scope.runCodeInHackerEarth = function () {
-            $http.post('/api/runcode', {"lang": ""+$scope.lessonCurrent.language.toUpperCase()+"", "source": $scope.code,
+            $http.post('/api/runcode', {"lang": "" + $scope.lessonCurrent.language.toUpperCase() + "", "source": $scope.code,
                 "_csrf_token": csrf_token}).success(function (data) {
-                   if(data.compile_status == "OK"){
-                       $scope.kq = ">>"+data.run_status.output
-                   }
-                   else $scope.kq = data.compile_status
+                    if (data.compile_status == "OK") {
+                        $scope.kq = ">>" + data.run_status.output
+                    }
+                    else $scope.kq = data.compile_status
 
                 });
         }
@@ -1024,30 +1031,39 @@ angular.module("easylearncode.learn").run(function () {
             _.each($scope.config.plugins.quiz.data, function (elm, index) {
                 scores = scores + elm.score;
             });
-            //score = parseFloat(localStorageService.get("score"));
-            //if (score * 100 / scores < 70) {
-            $http.post('/api/users/me/passedLecture', {lecture_id: $scope.lecture.Id}).success(function (data) {
-                console.log(data);
-                cur_index = _.indexOf($scope.lectures, function (obj) {
-                    return obj.Id == $scope.lecture.Id;
-                });
-                if (cur_index == $scope.lectures.length - 1) {
-                    //Xử lý khi học hết khóa học
-                } else {
-                    $http.post('/api/users/me/currentLecture', {lecture_id: $scope.lectures[cur_index + 1].Id}).success(function (data) {
-
+            score = parseFloat(localStorageService.get("score"));
+            if (score * 100 / scores > 70) {
+                if ($scope.lecture._is_passed_lecture) return;
+                $http.post('/api/users/me/passedLecture', {lecture_id: $scope.lecture.Id}).success(function (data) {
+                    console.log(data);
+                    cur_index = _.indexOf($scope.lectures, function (obj) {
+                        return obj.Id == $scope.lecture.Id;
                     });
-                }
+                    if (cur_index == $scope.lectures.length - 1) {
+                        //Xử lý khi học hết khóa học
+                    } else {
+                        $http.post('/api/users/me/currentLecture', {lecture_id: $scope.lectures[cur_index + 1].Id}).success(function (data) {
 
-            })
-            //}
-            $scope.$apply(function () {
-                $scope.showAlert = true;
-                $scope.alert = {
-                    type: 'info',
-                    msg: '<strong>Chúc mừng bạn đã hoàn thành bài học này !!!</strong><br>Bài kế tiếp<button class="btn btn-primary pull-right" onclick="nextLecture()">Tiếp tục</button><div class="clearfix"></div>'
-                }
-            })
+                        });
+                        $scope.showAlert = true;
+                        $scope.alert = {
+                            type: 'info',
+                            msg: '<strong>Chúc mừng bạn đã hoàn thành bài học này !!!</strong><br>Bài kế tiếp<button class="btn btn-primary pull-right" onclick="nextLecture()">Tiếp tục</button><div class="clearfix"></div>'
+                        }
+
+                    }
+                })
+            }
+            else {
+                $scope.$apply(function () {
+                    $scope.showAlert = true;
+                    $scope.alert = {
+                        type: 'danger',
+                        msg: '<strong>Bạn không thể vượt qua bài học này! Bạn phải học lại!</div>'
+                    }
+                })
+            }
+
         };
         $window.nextLecture = function () {
             cur_index = _.indexOf($scope.lectures, function (obj) {
@@ -1443,15 +1459,15 @@ angular.module("easylearncode.course_practice_viewer", ["ui.bootstrap", "ui.ace"
             $(".js-section").filter(".is-active").next(".js-section__content").collapse("show");
         }
         $scope.initCurrentCheckpoint = function(){
-            var _current_checkpoint;
-            _.find($scope.exercise_item.projects,function(project){
-                 _.find(project.checkpoints,function(checkpoint){
-                    if(checkpoint._is_current_checkpoint){
-                        $scope.changeCurrentCheckpoint(checkpoint);
-                        _current_checkpoint = checkpoint;
-                        return {}
-                    }
-                });
+            var _current_project;
+            _.each($scope.exercise_item.projects,function(project){
+                _current_project = _.find(project.checkpoints,function(checkpoint){
+                    return checkpoint._is_current_checkpoint;
+                })
+                if(_current_project){
+                    $scope.changeCurrentCheckpoint(_current_project);
+                    return {}
+                }
             })
             if(!_current_checkpoint){
                 $scope.exercise_item.projects[0]._is_current_project = true;
@@ -2147,17 +2163,17 @@ angular.module("easylearncode.teacher", ["ui.bootstrap", "ui.ace", 'easylearncod
     .controller("BreadCrumbsCtrl", ['$scope', 'breadcrumbs', function ($scope, breadcrumbs) {
         $scope.breadcrumbs = breadcrumbs;
     }])
-    .controller("CourseTeacherCtrl", ["$scope", "$sce", "$timeout", 'formService', 'formModalService','api', '$http', function ($scope, $sce, $timeout, formService, formModalService, api, $http) {
+    .controller("CourseTeacherCtrl", ["$scope", "$sce", "$timeout", 'formService', 'formModalService', 'api', '$http', function ($scope, $sce, $timeout, formService, formModalService, api, $http) {
 
-        $http.get("/api/users/me").success(function(data){
+        $http.get("/api/users/me").success(function (data) {
             $scope.user_curent = data;
-            $http.get("api/courses?filter=author=="+data.Id+"").success(function(data){
+            $http.get("api/courses?filter=author==" + data.Id + "").success(function (data) {
                 $scope.courses = data;
             })
         })
         var form = {
             "form_id": 1,
-            "form_name": "Add Course",
+            "form_name": "Thêm khóa học",
             "form_fields": [
                 {
                     "field_title": "Key",
@@ -2294,7 +2310,7 @@ angular.module("easylearncode.teacher", ["ui.bootstrap", "ui.ace", 'easylearncod
 
         };
     }])
-    .controller("LessonTeacherCtrl", ["$scope", "$sce", "$timeout", 'formService', 'formModalService','api', '$http', '$routeParams', function ($scope, $sce, $timeout, formService, formModalService, api, $http, $routeParams) {
+    .controller("LessonTeacherCtrl", ["$scope", "$sce", "$timeout", 'formService', 'formModalService', 'api', '$http', '$routeParams', function ($scope, $sce, $timeout, formService, formModalService, api, $http, $routeParams) {
         $scope.course = api.Model.get({type: 'courses', id: $routeParams.courseId, recurse: true, depth: 2});
         console.log($routeParams.courseId);
         var form = {
@@ -2307,7 +2323,7 @@ angular.module("easylearncode.teacher", ["ui.bootstrap", "ui.ace", 'easylearncod
                     "field_type": "textfield",
                     "field_value": "",
                     "field_required": true,
-                    "field_name":"title"
+                    "field_name": "title"
                 },
                 {
                     "field_id": 2,
@@ -2538,12 +2554,12 @@ angular.module("easylearncode.teacher", ["ui.bootstrap", "ui.ace", 'easylearncod
                     headers: {'Content-Type': undefined },
                     transformRequest: angular.identity
                 }).success(function (data) {
-                    lecture.img = data.image_url;
-                }).error();
+                        lecture.img = data.image_url;
+                    }).error();
             })
         };
     }])
- .controller("QuestionLectureCtrl", ["$scope", "api", "$routeParams", '$modal', '$http', '$sce', '$compile', '$rootScope', "VG_EVENTS", 'formModalService', function ($scope, api, $routeParams, $modal, $http, $sce, $compile, $rootScope, VG_EVENTS, formModalService) {
+    .controller("QuestionLectureCtrl", ["$scope", "api", "$routeParams", '$modal', '$http', '$sce', '$compile', '$rootScope', "VG_EVENTS", 'formModalService', function ($scope, api, $routeParams, $modal, $http, $sce, $compile, $rootScope, VG_EVENTS, formModalService) {
         $scope.currentTime = 0;
         $scope.totalTime = 0;
         $scope.state = null;
@@ -2802,7 +2818,7 @@ angular.module("easylearncode.teacher", ["ui.bootstrap", "ui.ace", 'easylearncod
                     }
                     answer[ele.field_title] = ele.field_value;
                 });
-                api.Model.save({type: 'answers'}, answer, function(answer_quiz_result){
+                api.Model.save({type: 'answers'}, answer, function (answer_quiz_result) {
                     api.Model.get({type: 'lecture_quizs', id: quiz.Id}, function (quiz_result) {
                         quiz_result.answer_keys.push(answer_quiz_result.Id);
                         api.Model.save({type: 'lecture_quizs', id: quiz.Id}, quiz_result, function (data) {

@@ -49,17 +49,43 @@ angular.module("info.vietnamcode.nampnq.videogular.plugins.quiz", ['nampnq.util.
                                             API.pause();
                                             scope.submit = false;
                                             scope.skip = false;
+                                            scope.showContent = false;
                                             elem.find('form')[0].reset();
                                             elem.css("background-image", "url('http://en.hdyo.org/assets/ask-question-1-ca45a12e5206bae44014e11cd3ced9f1.jpg')").css("background-size", "100% 100%");
                                             setTimeout(function () {
+                                                scope.showContent = true;
                                                 scope.submit = true;
                                                 scope.skip = true;
                                                 scope.id = triggered_cue_points[0].Id;
+                                                scope.title = triggered_cue_points[0].title;
                                                 scope.type = triggered_cue_points[0].$class;
                                                 scope.is_quiz = false;
                                                 scope.is_test = false;
                                                 scope.score = triggered_cue_points[0].score;
                                                 if (triggered_cue_points[0].$class == "Quiz") {
+                                                    scope.time = 30;
+                                                    var clock = setInterval(function () {
+                                                        timer()
+                                                    }, 1000);
+                                                    var timer = function () {
+                                                        scope.time--;
+                                                        console.log(scope.time);
+                                                        if(scope.showContent == false || scope.continue_btn == true){
+                                                            clearInterval(clock);
+                                                        }
+                                                        if (scope.time <= 0) {
+                                                            scope.status = "";
+                                                            scope.submit = true;
+                                                            scope.skip = true;
+                                                            scope.continue_btn = false;
+                                                            scope.explanation = false;
+                                                            elem.css('display', 'none');
+                                                            API.play();
+                                                            scope.is_quiz = false;
+                                                            scope.is_test = false;
+                                                            clearInterval(clock);
+                                                        }
+                                                    }
                                                     scope.content = triggered_cue_points[0].question;
                                                     scope.answers = triggered_cue_points[0].answer_keys;
                                                     scope.is_quiz = true;
@@ -116,7 +142,9 @@ angular.module("info.vietnamcode.nampnq.videogular.plugins.quiz", ['nampnq.util.
                                         scope.skip = false;
                                         scope.continue_btn = true;
                                         scope.explanation = true;
-
+                                    }
+                                    else{
+                                        scope.score = parseFloat(scope.score)- parseFloat(scope.score) * 0.5
                                     }
                                 }
                                 else if (paramObj.type == "Test") {
@@ -130,6 +158,7 @@ angular.module("info.vietnamcode.nampnq.videogular.plugins.quiz", ['nampnq.util.
 
                                         } else {
                                             scope.status = data.description;
+                                            scope.score = parseFloat(scope.score)- parseFloat(scope.score) * 0.5
                                         }
                                     })
                                 }
