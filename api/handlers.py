@@ -248,3 +248,74 @@ class RunCodeInHackerEarthHandle(BaseHandler):
         }
         result = urlfetch.fetch(url= config.get("HACKEREARTH_RUN_URL"), payload= urllib.urlencode(data), method=urlfetch.POST)
         return result.content
+
+
+class CheckpointMeHandler(BaseHandler):
+    @user_required
+    @as_json
+    def post(self):
+        import json
+        from application.models import File, ExerciseCheckpointUser, ExerciseItemUser, \
+            ExerciseUser, CourseUser, ExerciseProject, ExerciseItem, Exercise, Course
+        from api.restful import current_user
+        from google.appengine.ext import ndb
+        body_data = json.loads(self.request.body)
+        _checkpoint_id = body_data.get("checkpoint_id", None)
+        _next_item = None
+        if _checkpoint_id:
+            _status = body_data.get("status", None)
+            _file = body_data.get("file", None)
+            if _status == "passed":
+                _current_user = current_user()
+                _checkpoint = ndb.Key(urlsafe=_checkpoint_id).get()
+                _exercise_checkpoint_user = ExerciseCheckpointUser.get_by_user_and_checkpoint(_current_user
+                                                                                              , _checkpoint.key)
+                if not _exercise_checkpoint_user:
+                    _exercise_checkpoint_user = ExerciseCheckpointUser()
+                    _exercise_checkpoint_user.user = _current_user
+                    _exercise_checkpoint_user.checkpoint = _checkpoint.key
+                if _file:
+                    _file = File(content=_file, filename='script')
+                    _file.put()
+                    _exercise_checkpoint_user.files.append(_file.key)
+                _exercise_checkpoint_user.put()
+                _project = ExerciseProject.get_by_checkpoint(_checkpoint.key)
+                _item = ExerciseItem.get_by_project(_project.key)
+                _exercise = Exercise.get_by_exercise_item(_item.key)
+                _course = Course.get_by_exercise(_exercise.key)
+                _item_user = ExerciseItemUser.get_by_user_and_exercise_item(_current_user, _item.key)
+                if not _item_user:
+                    _item_user = ExerciseItemUser()
+                    _item_user.user = _current_user
+                    _item_user.exercise_item = _item.key
+                _item_user.current_checkpoint = _checkpoint.key
+                if _checkpoint.key not in _item_user.passed_checkpoint:
+                    _item_user.passed_checkpoint.append(_checkpoint.key)
+                _item_user.put()
+                _exercise_user = ExerciseUser.get_by_user_and_exercise(_current_user,_exercise.key)
+                if not _exercise_user:
+                    _exercise_user = ExerciseUser()
+                    _exercise_user.user = _current_user
+                    _exercise_user.exercise = _exercise.key
+                _exercise_user.current_item = _item.key
+                if _item.checkpoints_count == len(_item_user.passed_checkpoint) and _item.key not in _exercise_user.passed_item:
+                    _exercise_user.passed_item.append(_item.key)
+                    _next_item = _item.get_next_exercise_item()
+                _exercise_user.put()
+                _course_user = CourseUser.get_by_user_and_course(_current_user, _course.key)
+                if not _course_user:
+                    _course_user = CourseUser()
+                    _course_user.user = _current_user
+                    _course_user.course = _course.key
+                _course_user.current_exercise = _exercise.key
+                if _exercise.items_count == len(_exercise_user.passed_item) and _exercise.key not in _course_user.passed_exercises:
+                    _course_user.passed_exercises.append(_exercise.key)
+                _course_user.put()
+        if _next_item:
+            return {
+                'next_item': _next_item.key
+            }
+        return {}
+
+
+

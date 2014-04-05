@@ -9,6 +9,8 @@ import files
 PREFIX = "/api/"
 
 _routes = [
+    RedirectRoute('/api/users/me/checkpoints', handlers.CheckpointMeHandler, name='checkpoint-submit',
+                  strict_slash=True),
     RedirectRoute('/api/runcode', handlers.RunCodeInHackerEarthHandle, name='run-code-in-hackerearth',
                   strict_slash=True),
     RedirectRoute('/api/contest', handlers.GetWeekContestHandler, name='get-thisweek-contest',
