@@ -53,7 +53,7 @@
                             <a href="/course/learn/viewer#!?lecture_id={{ lecture.Id }}"
                                class="course-item ui-card ui-card--grouped">
                                 <div class="course-item__progress-indicator"
-                                     ng-class="{'course-item__progress-indicator--complete':!_is_passed_lecture}"></div>
+                                     ng-class="{'course-item__progress-indicator--complete': lecture._is_current_lecture || lecture._is_passed_lecture}"></div>
                                 <div class="course-item__info">
                                     <h4 class="course-item__title ui-counter__item ui-card__title">
                                         {{ lecture.title }}

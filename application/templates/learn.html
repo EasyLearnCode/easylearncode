@@ -59,7 +59,7 @@
                                                         <li ng-click="goLecture(l, $index)"
                                                             class="list-group-item list-group-item-info" hover-class
                                                             add-class="list-group-item-success"
-                                                            remove-class="list-group-item-info"><i class="fa fa-circle-o" ng-class="{'fa-check-circle-o':!l._is_passed_lecture, 'fa-arrow-circle-o-righ':!l._is_current_lecture}"></i>{{ l.title }}
+                                                            remove-class="list-group-item-info"><i class="fa" ng-class="{'fa-check-circle-o': l._is_passed_lecture, 'fa-arrow-circle-o-right': l._is_current_lecture, 'fa-circle-o': !l._is_current_lecture&&!l._is_passed_lecture}"></i>{{ l.title }}
                                                         </li>
                                                     </ul>
                                                 </div>

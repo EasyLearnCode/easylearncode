@@ -18,6 +18,8 @@ _routes = [
     RedirectRoute('/api/contest/info', handlers.GetWeekContestInfoOfUserHandler, name='get-thisweek-contest',
                   strict_slash=True),
     RedirectRoute('/api/contest/submit', handlers.SubmitContestHandler, name='submit-contest', strict_slash=True),
+    RedirectRoute('/api/users/me/passedLecture', handlers.SavePassedLecture, name='passed-lecture', strict_slash=True),
+    RedirectRoute('/api/users/me/currentLecture', handlers.SaveCurrentLecture, name='passed-lecture', strict_slash=True),
     RedirectRoute('/api/files/<model>/<id>/<property>', handler=files.FileHandler, name='blog-upload-download', strict_slash=True),
     RedirectRoute(r"{}<model:[^/]+><:/?><id:(.*)>".format(PREFIX), handler=restful.RestfulHandler),
 ]

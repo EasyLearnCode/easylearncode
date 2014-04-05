@@ -9,6 +9,7 @@
     <input type="hidden" name="id" value="{{ id }}">
     <input type="hidden" name="code" value="{{code}}" ng-show="is_test">
     <input type="hidden" name="type" value="{{ type }}">
+    <input type="hidden" name="score" value="{{ score }}">
 </form>
 <button class="btn btn-primary quiz-submit-button" data-ng-click="quizSubmit()" type="button" data-ng-show="submit">Submit</button>
 <button class="btn btn-default quiz-skip-button" data-ng-click="quizSkip()" type="button" data-ng-show="skip">Skip</button>

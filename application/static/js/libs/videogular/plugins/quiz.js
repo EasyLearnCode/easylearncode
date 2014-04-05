@@ -49,6 +49,7 @@ angular.module("info.vietnamcode.nampnq.videogular.plugins.quiz", ['nampnq.util.
                                             API.pause();
                                             scope.submit = false;
                                             scope.skip = false;
+                                            elem.find('form')[0].reset();
                                             elem.css("background-image", "url('http://en.hdyo.org/assets/ask-question-1-ca45a12e5206bae44014e11cd3ced9f1.jpg')").css("background-size", "100% 100%");
                                             setTimeout(function () {
                                                 scope.submit = true;
@@ -57,6 +58,7 @@ angular.module("info.vietnamcode.nampnq.videogular.plugins.quiz", ['nampnq.util.
                                                 scope.type = triggered_cue_points[0].$class;
                                                 scope.is_quiz = false;
                                                 scope.is_test = false;
+                                                scope.score = triggered_cue_points[0].score;
                                                 if (triggered_cue_points[0].$class == "Quiz") {
                                                     scope.content = triggered_cue_points[0].question;
                                                     scope.answers = triggered_cue_points[0].answer_keys;
