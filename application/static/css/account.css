@@ -98,3 +98,21 @@
     border-right-color: #f2dede;
     left: -9px
 }
+.text-success-color {
+    color: #90cc83
+}
+
+.text-danger-color {
+    color: #e29791
+}
+
+.text-warning-color {
+    color: #fff5ca
+}
+
+.text-info-color {
+    color: #e1f6ff
+}
+.table tr.topless td,.table tr.topless th {
+    border-top: 0
+}

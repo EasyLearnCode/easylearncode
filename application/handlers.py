@@ -689,7 +689,7 @@ class CallbackSocialLoginHandler(BaseHandler):
         if continue_url:
             self.redirect(continue_url)
         else:
-            self.redirect_to('edit-profile')
+            self.redirect('/settings/profile#!/linked-accounts')
 
 
 class DeleteSocialProviderHandler(BaseHandler):
@@ -714,7 +714,7 @@ class DeleteSocialProviderHandler(BaseHandler):
                 message = ('Social account on %s cannot be deleted for user.'
                            '  Please create a username and password to delete social account.' % provider_name)
                 self.add_message(message, 'danger')
-        self.redirect_to('edit-profile')
+        self.redirect('/settings/profile#!/linked-accounts')
 
 
 class LogoutHandler(BaseHandler):

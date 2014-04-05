@@ -55,7 +55,16 @@ class User(User):
         result = super(User, self).to_dict(*args, **kwargs)
         u = current_user()
         if u and u.urlsafe() == self.key.urlsafe():
-            pass
+            result['_has_password'] = True if self.password else False
+            providers_info = self.get_social_providers_info()
+            result['used_providers'] = providers_info['used']
+            result['unused_providers'] = providers_info['unused']
+            del result['password']
+            _is_request_from_admin = is_request_from_admin()
+            if not _is_request_from_admin:
+                _course_user = CourseUser.get_by_user(self.key)
+                if _course_user:
+                    result['_current_courses'] = [c.to_dict() for c in _course_user]
         else:
             for k in result.keys():
                 if re_private.match(k):
@@ -67,11 +76,6 @@ class User(User):
         if self.is_teacher:
             result['$teacher'] = True
         del result['is_teacher']
-        _is_request_from_admin = is_request_from_admin()
-        if not _is_request_from_admin:
-            _course_user = CourseUser.get_by_user(self.key)
-            if _course_user:
-                result['_current_courses'] = [c.to_dict() for c in _course_user]
         return result
 
     @classmethod

@@ -49,8 +49,8 @@ config = {
     # get your own consumer key and consumer secret by registering at https://developers.facebook.com/apps
     #Very Important: set the site_url= your domain in the application settings in the facebook app settings page
     # callback url must be: http://[YOUR DOMAIN]/login/facebook/complete
-    'fb_api_key': 'PUT_YOUR_FACEBOOK_PUBLIC_KEY_HERE',
-    'fb_secret': 'PUT_YOUR_FACEBOOK_PUBLIC_KEY_HERE',
+    'fb_api_key': '487238447975056',
+    'fb_secret': 'd16355aac2e210dffd452dc525b0b645',
 
     #Linkedin Login
     #Get you own api key and secret from https://www.linkedin.com/secure/developer

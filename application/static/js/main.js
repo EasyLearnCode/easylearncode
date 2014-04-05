@@ -1905,7 +1905,7 @@ angular.module("easylearncode.account")
                         {type: "equal", args: [$scope.newPassword, "password"]}
                     ]}
                 ]}};
-                $scope.user.password !== null && (f.setsCurrPass = {pretty: "password", value: $scope.currentPassword, validators: [
+                $scope.user._has_password !== null && (f.setsCurrPass = {pretty: "password", value: $scope.currentPassword, validators: [
                     {type: "required", failMsg: "The current password is required.", disabled: "" === $scope.newPassword && "" === $scope.confirmedNewPassword}
                 ]});
                 f = validator.check(f);
@@ -1924,6 +1924,33 @@ angular.module("easylearncode.account")
             }
         }
     }])
+    .controller("linkedAccountsTab", ["$scope", "$timeout", "api",'$window','$http', function($scope, $timeout, api, $window, $http) {
+        $scope.loading = !0;
+        $scope.getLinkedAccountTypes = function() {
+            if(!$scope.user||!$scope.user.used_providers){
+                return [];
+            }
+            return _.union($scope.user.used_providers, $scope.user.unused_providers)
+        };
+        $scope.disconnect = function(provider) {
+            $http.post('/social_login/'+provider.name+'/delete',{}).success(function(){
+                $window.location.reload()
+            })
+
+        };
+        $scope.connect = function(provider) {
+            $scope.loading = !0;
+            $window.location.href = '/social_login/'+provider.name;
+
+        };
+        api.Model.get({type:'users', id:'me'}).$promise.then(function(data) {
+            $scope.loading = !1;
+            $scope.user = data;
+            _.each($scope.user.used_providers, function(provider){
+                provider.used = true;
+            })
+        })
+    }]);
 angular.module("easylearncode.courseCatalog")
     .config(["$locationProvider", "$routeProvider", function ($locationProvider, $routeProvider) {
         $routeProvider
