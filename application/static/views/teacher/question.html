@@ -1,0 +1,165 @@
+</div>
+<div class="container highlight">
+    <div class="pull-left"><h3>Quản lý câu hỏi của bài giảng {{ lecture.description }}</h3></div>
+    <div class="pull-right" style="padding-top: 15px;">
+        <button class="btn btn-default" type="button">Trợ giúp</button>
+    </div>
+    <div class="clearfix"></div>
+    <div class="panel panel-default">
+        <div class="panel-body aligncenter">
+            <div id="video" class="pull-left"></div>
+            <div id="video" class="pull-right">
+                <button class="btn btn-primary" type="button" ng-click="showAddCodeModal()" style="margin-top: 10px">
+                    Thêm code
+                </button>
+                </br>
+                <button class="btn btn-primary" type="button" ng-click="showAddQuizModal()" style="margin-top: 10px">
+                    Thêm câu hỏi
+                </button>
+                </br>
+                <button class="btn btn-primary" type="button" ng-click="showAddTestModal()" style="margin-top: 10px">Tạo
+                    bài tập
+                </button>
+                </br>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-info">
+        <div class="panel-heading">Danh sách code đồng bộ</div>
+        <div class="panel-body">
+            <table class="table table-bordered table-hover">
+                <thead>
+                <tr>
+                    <th>STT</th>
+                    <th>Title</th>
+                    <th>Created</th>
+                    <th>Description</th>
+                    <th>Content</th>
+                    <th>Time</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="code in lecture.code_keys">
+                    <td>{{ $index+1 }}</td>
+                    <td>{{ code.title }}</td>
+                    <td class="center">{{ code.created }}</td>
+                    <td class="center">{{ code.description }}</td>
+                    <td class="center">{{ code.content }}</td>
+                    <td class="center">{{ code.time }}</td>
+                    <td class="center">
+                        <a class="btn btn-info" ng-click="showEditCodeModal(code)">
+                            <i class="icon-edit icon-white"></i>
+                        </a>
+                        <a class="btn btn-danger" ng-click="deleteCode(code)">
+                            <i class="icon-trash icon-white"></i>
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="panel panel-info">
+        <div class="panel-heading">Danh sách code đồng bộ</div>
+        <div class="panel-body">
+            <table class="table table-bordered table-hover">
+                <thead>
+                <tr>
+                    <th>No.</th>
+                    <th>Time</th>
+                    <th>Question</th>
+                    <th>Created</th>
+                    <th>Score</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody ng-repeat="quiz in lecture.quiz_keys">
+                <tr>
+                    <td>{{ $index+1 }}</td>
+                    <td class="center">{{ quiz.time }}</td>
+                    <td class="center">{{ quiz.question }}</td>
+                    <td class="center">{{ quiz.created }}</td>
+                    <td class="center">{{ quiz.score }}</td>
+                    <td class="center">
+                        <a class="btn btn-info" ng-click="showEditQuizModal(quiz)">
+                            <i class="icon-edit icon-white"></i>
+                        </a>
+                        <a class="btn btn-danger" ng-click="deleteQuiz(quiz)">
+                            <i class="icon-trash icon-white"></i>
+                        </a>
+                        <a class="btn btn-info" ng-click="showAddAnswerQuizModal(quiz)">
+                            <i class="icon-new icon-white"></i>
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <th></th>
+                    <th>No.</th>
+                    <th>Title</th>
+                    <th>Is true</th>
+                    <th colspan="2"></th>
+
+                </tr>
+                <tr ng-repeat="answer in quiz.answer_keys">
+                    <th></th>
+                    <td>{{ $index+1 }}</td>
+                    <td class="center">{{ answer.title }}</td>
+                    <td class="center">{{ answer.is_true }}</td>
+                    <td colspan="2">
+                        <a class="btn btn-info" ng-click="showEditAnswerQuizModal(answer, quiz)">
+                            <i class="icon-edit icon-white"></i>
+                        </a>
+                        <a class="btn btn-danger" ng-click="deleteAnswerQuiz(answer, quiz)">
+                            <i class="icon-trash icon-white"></i>
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+    <div class="panel panel-info">
+        <div class="panel-heading">Danh sách code đồng bộ</div>
+        <div class="panel-body">
+            <table class="table table-bordered table-hover">
+                <thead>
+                <tr>
+                    <th>No.</th>
+                    <th>Title</th>
+                    <th>Created</th>
+                    <th>Description</th>
+                    <th>Test script</th>
+                    <th>Time</th>
+                    <th>Score</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="test in lecture.test_keys">
+                    <td>{{ $index +1 }}</td>
+                    <td>{{ test.title }}</td>
+                    <td class="center">{{ test.created }}</td>
+                    <td class="center">{{ test.description }}</td>
+                    <td class="center">{{ test.test_script }}</td>
+                    <td class="center">{{ test.time }}</td>
+                    <td class="center">{{ test.score }}</td>
+                    <td class="center">
+                        <a class="btn btn-info" ng-click="showEditTestModal(test)">
+                            <i class="icon-edit icon-white"></i>
+                        </a>
+                        <a class="btn btn-danger" ng-click="deleteTest(test)">
+                            <i class="icon-trash icon-white"></i>
+                        </a>
+
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+

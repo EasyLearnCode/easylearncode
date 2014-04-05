@@ -751,6 +751,27 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
                     "field_value": "",
                     "field_required": true,
                     "field_name": "description"
+                },
+                {
+                    "field_title": "Language",
+                    "field_type": "dropdown",
+                    "field_value": "Python",
+                    "field_required": true,
+                    "field_name": "language",
+                    "field_options": [
+                        {
+                            "option_title": "Python",
+                            "option_value": "Python"
+                        },
+                        {
+                            "option_title": "Javascript",
+                            "option_value": "Javascript"
+                        },
+                        {
+                            "option_title": "CPP",
+                            "option_value": "CPP"
+                        }
+                    ]
                 }
             ]
         }

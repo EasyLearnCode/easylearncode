@@ -490,6 +490,7 @@ class Lesson(UtilModel, ndb.Model):
     title = ndb.StringProperty()
     description = ndb.StringProperty()
     index = ndb.FloatProperty()
+    language = ndb.StringProperty()
     created = ndb.DateTimeProperty(auto_now_add=True)
     lecture_keys = ndb.KeyProperty('Lecture', repeated=True)
 
