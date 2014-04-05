@@ -779,8 +779,8 @@ class RegisterHandler(BaseHandler):
         user = self.auth.store.user_model.create_user(
             auth_id, unique_properties, password_raw=password,
             username=username, email=email,
-            ip=self.request.remote_addr
-            #username=username, name=name, last_name=last_name, email=email,
+            ip=self.request.remote_addr,
+            name=name, last_name=last_name#, email=email,
             #ip=self.request.remote_addr, country=country, tz=tz
         )
 
