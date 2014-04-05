@@ -761,8 +761,8 @@ class RegisterHandler(BaseHandler):
         if not self.form.validate():
             return self.get()
         username = self.form.username.data.lower()
-        #name = self.form.name.data.strip()
-        #last_name = self.form.last_name.data.strip()
+        name = self.form.name.data.strip()
+        last_name = self.form.last_name.data.strip()
         email = self.form.email.data.lower()
         password = self.form.password.data.strip()
         #country = self.form.country.data
