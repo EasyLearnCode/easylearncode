@@ -1,4 +1,5 @@
 {% extends "main.html" %}
+{% import "macros.html" as macros %}
 {% block mediaCSS %}
     <link href="/application/css/login.css" rel="stylesheet">
 {% endblock %}
@@ -26,10 +27,12 @@
                             {% endif %}
 			        		<form action="{{ url|safe }}" method="post" id="form_register" >
                                  <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
-						   		 <input name="username" id="username" type="text" placeholder="{% trans %}Username{% endtrans %}" class="input-field" required="">
-						   		 <input name="email" id="email" type="email" placeholder="{% trans %}Email{% endtrans %}" class="input-field" required="">
-						   		 <input name="password" id="password" type="password" placeholder="{% trans %}Password{% endtrans %}" class="input-field" required="">
-						   		 <input name="c_password" id="c_password" type="password" placeholder="{% trans %}Confirm Password{% endtrans %}" class="input-field" required="">
+						   		 {{ macros.field(form.username, label="", placeholder=_("Enter your")+" "+_("Username"), class="input-xlarge focused required") }}
+                                 {{ macros.field(form.name, label=_(""), placeholder=_("Enter your")+" "+_("Name"), class="input-xlarge focused") }}
+                                 {{ macros.field(form.last_name, label=_(""), placeholder=_("Enter your")+" "+_("Last Name"), class="input-xlarge focused") }}
+                                 {{ macros.field(form.email, label=_(""), placeholder=_("Enter your")+" "+_("Email"), class="input-xlarge focused required email", type="email") }}
+                                 {{ macros.field(form.password, label=_(""), placeholder=_("Enter your")+" "+_("Password"), class="input-xlarge focused required", type="password") }}
+                                 {{ macros.field(form.c_password, label=_(""), placeholder=_("Confirm Password"), class="input-xlarge focused required", type="password") }}
 						   		 <label class="checkbox">
         		                	<input name="rule" type="checkbox" value="option1" required=""> {% trans %} I agree to something I will never read{% endtrans %}
         		           		  </label>

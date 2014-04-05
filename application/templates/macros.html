@@ -4,11 +4,6 @@
 {% macro field(field, label='') -%}
             <div class="control-group{% if field.errors %} error{% endif %}">
             	{% set text = label or field.label.text %}
-            	{% if field.flags.required %}
-                	{{ field.label(text=text + " *", class="control-label") }}
-                {% else %}
-                	{{ field.label(text=text + " ", class="control-label") }}
-                {% endif %}
                 <div class="controls">
                 {{ field(**kwargs) }}
                 {% if field.errors %}

@@ -253,6 +253,7 @@ class ExerciseCheckpoint(UtilModel, ndb.Model):
             else:
                 result["_is_current_checkpoint"] = False
                 result["_is_passed_checkpoint"] = False
+        #TODO: Lastest files
         return result
 
 

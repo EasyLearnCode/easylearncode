@@ -1444,17 +1444,17 @@ angular.module("easylearncode.course_practice_viewer", ["ui.bootstrap", "ui.ace"
             $(".js-section").filter(".is-active").next(".js-section__content").collapse("show");
         }
         $scope.initCurrentCheckpoint = function(){
-            var _current_project;
-            _.each($scope.exercise_item.projects,function(project){
-                _current_project = _.find(project.checkpoints,function(checkpoint){
-                    return checkpoint._is_current_checkpoint;
-                })
-                if(_current_project){
-                    $scope.changeCurrentCheckpoint(_current_project);
-                    return {}
-                }
+            var _current_checkpoint;
+            _.find($scope.exercise_item.projects,function(project){
+                 _.find(project.checkpoints,function(checkpoint){
+                    if(checkpoint._is_current_checkpoint){
+                        $scope.changeCurrentCheckpoint(checkpoint);
+                        _current_checkpoint = checkpoint;
+                        return {}
+                    }
+                });
             })
-            if(!_current_project){
+            if(!_current_checkpoint){
                 $scope.exercise_item.projects[0]._is_current_project = true;
                 $scope.exercise_item.projects[0].checkpoints[0]._is_current_checkpoint = true;
                 $scope.changeCurrentCheckpoint($scope.exercise_item.projects[0].checkpoints[0]);
@@ -3013,7 +3013,6 @@ angular.module("easylearncode.teacher", ["ui.bootstrap", "ui.ace", 'easylearncod
     }]);
 angular.module("easylearncode.dashboard",["easylearncode.core", "angularMoment"])
     .constant('angularMomentConfig', {
-        preprocess: 'unix', // optional
         timezone: 'Asia/Ho_Chi_Minh' // optional
     })
     .controller("dashboardCtrl", ["$scope", "api", '$window', function($scope, api, $window){
