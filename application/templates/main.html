@@ -1,14 +1,4 @@
 {% extends base_layout %}
-{% block mediaCss %}
-    <style>
-        .nav .dropdown-menu.bottom-up::after {
-            border-bottom: 0px solid transparent !important;
-            border-top: 6px solid white;
-            top: auto !important;
-            bottom: -6px;
-        }
-    </style>
-{% endblock %}
 {% block main_content %}
     {% block nav %}
         <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -35,9 +25,15 @@
                     <ul class="nav navbar-nav navbar-right">
                         {% if user_id %}
                             <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ fullname }} <b
-                                        class="caret"></b></a>
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="padding-bottom: 5px;">
+                                    <img src="{{ avatar_url }}" alt="" class="avatar" />
+                                    {{ fullname }} <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
+                                    {% if is_admin %}
+                                    <li><a href="/admin">Admin</a></li>
+                                    <li><a href="/quanly">Appengine admin</a></li>
+                                    <li class="divider"></li>
+                                    {% endif %}
                                     <li><a href="{{ uri_for("edit-profile") }}"> Thông tin cá nhân</a></li>
                                     {% if is_teacher %}
                                     <li class="divider"></li>

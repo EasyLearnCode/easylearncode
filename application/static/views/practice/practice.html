@@ -1,0 +1,157 @@
+<div class="row" ng-show="loaded">
+    <div class="col-md-12 highlight">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                            <span class="pull-left">
+                                <h3 class="panel-title"><i class="fa fa-terminal fa-lg"></i> Code window</h3>
+                            </span>
+
+                            <span class="pull-right">
+
+                                <a class="btn btn-success" ng-click="runCode()" ng-disabled="!jsreplReady"
+                                   ng-class="{'run-btn-full-screen':isEditorFullScreen}">
+                                    <i class="fa fa-play"></i> Run</a>
+                                <a class="btn btn-default" ng-click="toggleFullScreen()"
+                                   ng-class="{'full-btn-full-screen':isEditorFullScreen}">
+                                    <i class="fa fa-laptop"></i> Full Screen</a>
+                            </span>
+
+                        <div class="clearfix"></div>
+                    </div>
+                    <div>
+
+                    </div>
+                    <div class="panel-body">
+                        <div id="console" ng-show="showConsole" ng-class="{'full-screen':isEditorFullScreen}"></div>
+                        <alert ng-show="showAlert" type="alert.type" close="showAlert=false" class="console-alert"><span
+                                ng-bind-html="alert.msg|to_trusted"></span></alert>
+                        <div ui-ace="{theme:'chrome', onLoad: aceLoaded}"
+                             data-ng-model="source" ng-class="{'editor-full-screen':isEditorFullScreen}">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-md-4">
+                <div class="lesson_info overlay" ng-show="showDropDownMenu"
+                     ng-click="showDropDownMenu=!showDropDownMenu"></div>
+                <div class="panel panel-success">
+                    <div class="panel-heading">
+                                    <span class="pull-left"><h3 class="panel-title"><i
+                                            class="fa fa-tasks fa-lg"></i> {{ exercise_item.title }}</h3></span>
+                            <span class="pull-right">
+                                <a class="btn btn-default" ng-click="showDropDownMenu=!showDropDownMenu"
+                                   ng-class="{show:showDropDownMenu}">
+                                    {{ getProgressExercises().index }}/{{ getProgressExercises().total }} <i
+                                        class="fa fa-toggle-down"></i></a>
+                                <div class="lesson-nav ui-dropdown ui-dropdown--light ui-dropdown--checkpoints ui-dropdown--arrow-on-top js-checkpoints"
+                                     ng-class="{'is-shown':showDropDownMenu}">
+                                    <div class="ui-dropdown__arrow__container">
+                                        <div class="ui-dropdown__arrow"></div>
+                                        <div class="ui-dropdown__arrow-border__container">
+                                            <div class="ui-dropdown__arrow-border"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="block-list ui-counter ui-counter--bold">
+                                        <a ng-repeat-start="project in exercise_item.projects"
+                                           class="js-section block-list__item ui-media ui-media--reverse lesson-nav__section"
+                                           ng-click="toggleSection($event)"
+                                           ng-class="{'is-active':project._is_current_project}">
+                                            <div class="ui-media__image">
+                                                <div class="new-icon new-icon--small new-icon--section--completed"
+                                                     ng-if="project._is_passed_project"></div>
+                                            </div>
+                                            <div class="ui-media__main">
+                                                {{ project.title }}
+                                            </div>
+                                        </a>
+
+                                        <div ng-repeat-end class="js-section__content collapse">
+                                            <div class="block-list lesson-nav__exercises">
+                                                <a class="block-list__item ui-media lesson-nav__exercise"
+                                                   ng-repeat="checkpoint in project.checkpoints"
+                                                   ng-click="changeCurrentCheckpoint(checkpoint)">
+                                                    <div class="ui-media__image new-icon new-icon--small"
+                                                         ng-class="checkpoint._is_current_checkpoint?'new-icon--checkpoint--current':(checkpoint._is_passed_checkpoint?'new-icon--checkpoint--completed':'new-icon--checkpoint')">
+                                                    </div>
+                                                    <div class="ui-media__main">
+                                                        <div class="ui-counter__item">
+                                                            <strong>{{ checkpoint.title }}</strong>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="block-list__item">
+                                            <div class="lesson-nav__meta">Course by @NamPNQ</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </span>
+
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="panel-body" style="padding: 2px">
+                        <div class="lesson-checkpoint__wrapper">
+                            <div class="lesson-checkpoint nano has-scrollbar">
+                                <div class="nano__content content">
+                                    <div class="lesson-checkpoint__inner">
+                                        <div class="article__inner">
+                                            <div class="article__header">
+                                                <div class="lesson-checkpoint__name">{{ current_checkpoint.title }}</div>
+                                            </div>
+                                            <div class="article__content"
+                                                 ng-bind-html="current_checkpoint._entry_html|to_trusted">
+
+                                            </div>
+                                        </div>
+                                        <div class="lesson-checkpoint__instructions">
+                                            <div class="article__inner lesson-checkpoint__instructions__header">
+                                                <div class="block-label--light-blue">Yêu cầu</div>
+                                            </div>
+                                            <div class="article__inner">
+                                                <p ng-bind-html="current_checkpoint._instruction_html|to_trusted"></p>
+
+                                                <div ng-if="current_checkpoint._hint_html"
+                                                     class="ui-accordian ui-accordian--lesson transition--max-height"
+                                                     ng-class="{'is-expanded largeHeight': current_checkpoint.showHint,'smallHeight':!current_checkpoint.showHint}"
+                                                     ng-init="isExpanded = false">
+                                                    <div class="ui-accordian__inner">
+                                                        <a href="#" class="ui-accordian__trigger ui-media"
+                                                           ng-click="current_checkpoint.showHint = !current_checkpoint.showHint">
+                                                            <div class="ui-media__image new-icon--small new-icon--center new-icon--circle--blue">
+                                                                ?
+                                                            </div>
+                                                            <div class="ui-media__main">
+                                                                            <span class="is-hidden-if-is-expanded"
+                                                                                    ><b>Khó
+                                                                                ư?</b> Nhấn để trợ giúp!</span>
+                                                                            <span class="is-shown-if-is-expanded--inline"
+                                                                                    ><b>Ẩn trợ giúp</b></span>
+                                                            </div>
+                                                        </a>
+
+                                                        <div class="ui-accordian__content has-markdown"
+                                                             ng-bind-html="current_checkpoint._hint_html|to_trusted">
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>

@@ -323,8 +323,11 @@ class BaseHandler(webapp2.RequestHandler):
             'base_layout': self.get_base_layout
         })
         if self.user_id:
+            from api.restful import _config
             _user = self.user_key.get()
             kwargs.update({'fullname': ('%s %s' % (_user.name, _user.last_name))})
+            kwargs.update({'avatar_url': _user.avatar_url})
+            kwargs.update({'is_admin': _config.is_current_user_admin()})
         kwargs.update(self.auth_config)
         if hasattr(self, 'form'):
             kwargs['form'] = self.form

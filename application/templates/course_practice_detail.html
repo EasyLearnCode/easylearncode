@@ -40,7 +40,7 @@
                     <article ng-repeat="item in exercise.items">
                         <a href="/course/practice/viewer#!?exercise_item_id={{ item.Id }}"
                            class="course-item ui-card ui-card--grouped">
-                            <div class="course-item__progress-indicator" ng-class="{'course-item__progress-indicator--complete':!item._is_passed_item}"></div>
+                            <div class="course-item__progress-indicator" ng-class="{'course-item__progress-indicator--complete':item._is_passed_item}"></div>
                             <div class="course-item__info">
                                 <h4 class="course-item__title ui-counter__item ui-card__title">
                                     {{ item.title }}

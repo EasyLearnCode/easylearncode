@@ -43,6 +43,7 @@ _routes = [
     RedirectRoute('/dashboard', handlers.DashboardHandler, name='dashboard', strict_slash=True),
     RedirectRoute('/courses', handlers.CoursesHandler, name='courses', strict_slash=True),
     RedirectRoute('/course/practice', handlers.CoursePracticeHandler, name='course-practice', strict_slash=True),
+    RedirectRoute('/course/practice/resume', handlers.CoursePracticeResumeHandler, name='course-practice-resume', strict_slash=True),
     RedirectRoute('/course/practice/viewer', handlers.CoursePracticeViewerHandler, name="course-practice-viewer", strict_slash=True),
     #RedirectRoute('/course/learn/<course_id>', handlers.CourseLearnHandler, name='course-learn', strict_slash=True),
     RedirectRoute('/course/learn', handlers.CourseLearnHandler, name='course-learn', strict_slash=True),
