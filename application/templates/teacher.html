@@ -1,12 +1,9 @@
 {% extends "main.html" %}
 {% block mediaCSS %}
+    <link rel="stylesheet" href="/application/css/teacher.css" xmlns="http://www.w3.org/1999/html">
 {% endblock %}
 {% block content %}
-    {% raw %}
-        <div class="container" data-ng-controller="TeacherCtrl">
-
-        </div>
-    {% endraw %}
+    <ng-view></ng-view>
 {% endblock %}
 {% block pluginJS %}
     <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js"></script>
@@ -14,4 +11,24 @@
     <script src="/application/js/libs/angularjs/ui-bootstrap-tpls-0.7.0.min.js"></script>
     <script src="/application/js/libs/jqconsole.min.js" charset="UTF-8"></script>
     <script src="/application/js/libs/jsrepl/jsrepl.js" id="jsrepl-script"></script>
+    <script src="/application/js/libs/angularjs/angular-route.js"></script>
+    <script src="/admin/js/libs/angular/ng-breadcrumbs.js"></script>
+    <script>
+        angular.module('angularjsFormBuilder', ["ui.bootstrap", "ui.ace"]);
+    </script>
+    <script src="/admin/js/libs/angular/ng-breadcrumbs.js"></script>
+    <script src="/admin/js/angular-resource.min.js"></script>
+    <script src="/application/js/libs/angularjs/angularjs-form-builder/directives/form-directive.js"></script>
+    <script src="/application/js/libs/angularjs/angularjs-form-builder/directives/field-directive.js"></script>
+    <script src="/application/js/libs/angularjs/ui-ace.min.js"></script>
+    <script src="/application/js/libs/angularjs/ui-ace.min.js"></script>
+    <script src="/application/js/libs/videogular/videogular.js"></script>
+    <script src="/application/js/libs/angularjs/angular-sanitize.min.js"></script>
+    <script src="/application/js/libs/videogular/videogular.js"></script>
+    <script src="/application/js/libs/videogular/plugins/controls.js"></script>
+    <script src="/application/js/libs/videogular/plugins/overlay-play.js"></script>
+    <script src="/application/js/libs/videogular/plugins/buffering.js"></script>
+    <script src="/application/js/libs/videogular/plugins/poster.js"></script>
+    <script src="/application/js/libs/videogular/plugins/youtube.js"></script>
+    <script src="/application/js/libs/videogular/plugins/quiz.js"></script>
 {% endblock %}
