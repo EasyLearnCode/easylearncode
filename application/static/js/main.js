@@ -1395,7 +1395,6 @@ angular.module("easylearncode.course_practice_viewer", ["ui.bootstrap", "ui.ace"
         $scope.jsreplReady = false;
         $scope.isEditorFullScreen = false;
         $scope.showAlert = false;
-        $scope.showConsole = false;
         $scope.aceLoaded = function (_editor) {
             $scope.editor = _editor;
         }
@@ -1473,9 +1472,7 @@ angular.module("easylearncode.course_practice_viewer", ["ui.bootstrap", "ui.ace"
             }, 10);
         }
         $scope.runCode = function () {
-            $scope.showConsole = true;
             jqconsole.Reset();
-            jqconsole.Write('>>>');
             dataObj = {
                 command: $scope.source,
                 testScript: '',
@@ -1642,8 +1639,8 @@ angular.module("easylearncode.course_practice_viewer", ["ui.bootstrap", "ui.ace"
 
         $timeout(function () {
             $window.nextCheckpoint = function () {
+                jqconsole.Reset();
                 $scope.showAlert = false;
-                $scope.showConsole = false;
                 _current_project = $scope.getCurrentProject();
                 if(_current_project.index == $scope.exercise_item.projects.length - 1){
                     //TODO: Next exercise item
