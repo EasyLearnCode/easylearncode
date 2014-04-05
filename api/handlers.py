@@ -248,3 +248,110 @@ class RunCodeInHackerEarthHandle(BaseHandler):
         }
         result = urlfetch.fetch(url= config.get("HACKEREARTH_RUN_URL"), payload= urllib.urlencode(data), method=urlfetch.POST)
         return result.content
+
+
+class SavePassedLecture(BaseHandler):
+    #TODO kiểm tra tính đúng đắn của dữ liệu
+    @user_required
+    @as_json
+    def post(self):
+        import json
+        from api.restful import current_user
+        from application.models import LessonUser, Lesson
+        from google.appengine.ext import ndb
+        msg = ''
+        status = 'ok'
+        current_user = current_user()
+        body_data = json.loads(self.request.body)
+        lecture_id = ndb.Key(urlsafe=body_data['lecture_id'])
+        lesson_id = Lesson.get_by_lecture(lecture_id).key
+        lesson_user = LessonUser.get_by_user_and_lesson(current_user, lesson_id)
+        if lesson_user:
+            lesson_user.passed_lecture.append(lecture_id)
+            lesson_user.put()
+        else:
+            msg = 'no Ok'
+        return {
+            'status': status,
+            'msg': msg,
+            'data': lesson_user
+        }
+
+
+class SaveCurrentLecture(BaseHandler):
+    #TODO kiểm tra tính đúng đắn của dữ liệu
+    @user_required
+    @as_json
+    def post(self):
+        import json
+        from api.restful import current_user
+        from google.appengine.ext import ndb
+        from application.models import LessonUser, Lesson, Course, CourseUser
+        msg = ''
+        status = 'ok'
+        current_user = current_user()
+        body_data = json.loads(self.request.body)
+        lecture_id = ndb.Key(urlsafe=body_data['lecture_id'])
+        lesson = Lesson.get_by_lecture(lecture_id)
+        lesson_user = LessonUser.get_by_user_and_lesson(current_user, lesson.key)
+        if lesson_user:
+            lesson_user.current_lecture = lecture_id
+        else:
+            lesson_user = LessonUser()
+            lesson_user.user = current_user
+            lesson_user.lesson = lesson.key
+            lesson_user.status = 'learning'
+            lesson_user.current_lecture = lecture_id
+            course = Course.get_by_lesson(lesson.key)
+            course_user = CourseUser.get_by_user_and_course(current_user, course.key)
+            if course_user:
+                lesson_passed = course_user.current_lesson
+                course_user.current_lesson = lesson.key
+                course_user.passed_lessons.append(lesson_passed)
+                lesson_passed_user = LessonUser.get_by_user_and_lesson(current_user, lesson_passed)
+                if lesson_passed_user:
+                    lesson_passed_user.status = 'passed'
+                    lesson_passed_user.put()
+            else:
+                course_user = CourseUser()
+                course_user.user = current_user
+                course_user.course = course.key
+                course_user.current_lesson = lesson.key
+            course_user.put()
+        lesson_user.put()
+        return {
+            'status': status,
+            'msg': msg,
+            'data': lesson_user
+        }
+
+
+class SaveLectureUser(BaseHandler):
+    @user_required
+    @as_json
+    def post(self):
+        import json
+        from api.restful import current_user
+        from google.appengine.ext import ndb
+        from application.models import LectureUser
+        msg = ''
+        status = 'ok'
+        current_user = current_user()
+        body_data = json.loads(self.request.body)
+        lecture_id = ndb.Key(urlsafe=body_data['lecture_id'])
+        lecture_score = body_data['score']
+        lecture_user = LectureUser.get_by_user_and_lecture(current_user, lecture_id)
+        if lecture_user:
+            if lecture_user.score < lecture_score:
+                lecture_user.score = lecture_score
+                lecture_user.put()
+            else:
+                lecture_user = LectureUser()
+                lecture_user.user = current_user
+                lecture_user.lecture = lecture_id
+                lecture_user.score = lecture_score
+        return {
+            'status': status,
+            'msg': msg,
+            'data': lecture_user
+        }

@@ -285,12 +285,12 @@ angular.module("services.utility").factory("libraryLoader", ["$q", "$rootScope",
                         cache: !0,
                         url: f
                     }).success(function () {
-                        j.resolve();
-                        $rootScope.$apply()
-                    }).error(function () {
-                        j.reject();
-                        $rootScope.$apply()
-                    }), d = j.promise);
+                            j.resolve();
+                            $rootScope.$apply()
+                        }).error(function () {
+                            j.reject();
+                            $rootScope.$apply()
+                        }), d = j.promise);
                     return d
                 }))
             }
@@ -572,9 +572,9 @@ angular.module("easylearncode.contest").controller("ContestCtrl",
                                             $scope.compiling = true;
                                             $http.post('/api/contest/submit', {"weekly_quiz_level_key": $scope.current_level.Id, "source": lang.source,
                                                 "_csrf_token": csrf_token, "lang": lang.lang, "type": type, 'filename': result}).success(function (data) {
-                                                $scope.isShowCompileResult = true;
-                                                $scope.compile_result = [];
-                                            });
+                                                    $scope.isShowCompileResult = true;
+                                                    $scope.compile_result = [];
+                                                });
                                         }
                                     });
                                 }
@@ -582,9 +582,9 @@ angular.module("easylearncode.contest").controller("ContestCtrl",
                                     $scope.compiling = true;
                                     $http.post('/api/contest/submit', {"weekly_quiz_level_key": $scope.current_level.Id, "source": lang.source,
                                         "_csrf_token": csrf_token, "lang": lang.lang, "type": type, 'filename': ""}).success(function (data) {
-                                        $scope.isShowCompileResult = true;
-                                        $scope.compile_result = [];
-                                    });
+                                            $scope.isShowCompileResult = true;
+                                            $scope.compile_result = [];
+                                        });
                                 }
 
                             } else {
@@ -714,7 +714,6 @@ angular.module("easylearncode.learn").run(function () {
         $scope.isReadonly = false;
         api.Model.query({type: 'lessons', filter: 'Lecture==' + $location.search()['lecture_id'] + '' }, function (data) {
             api.Model.query({type: 'courses', filter: 'Lesson==' + data[0].Id + '', recurse: true, depth: 6  }, function (data) {
-                console.log(data);
                 angular.forEach(data[0].lesson_keys, function (lesson) {
                     angular.forEach(lesson.lecture_keys, function (lecture) {
                         $scope.lectures.push(lecture);
@@ -806,6 +805,10 @@ angular.module("easylearncode.learn").run(function () {
                         error_msg = result_val;
                     }
                     if (isSuccess) {
+                        if (localStorageService.get("score") == null) {
+                            localStorageService.add("score", $scope.current_test.score);
+                        }
+                        else localStorageService.add("score", parseFloat(localStorageService.get("score")) + $scope.current_test.score);
                         $scope.$apply(function () {
                             data = {
                                 result: true,
@@ -859,22 +862,23 @@ angular.module("easylearncode.learn").run(function () {
         };
 
         $scope.onQuizSubmit = function (data) {
+            console.log(data);
             if (data.type == "Quiz") {
                 quizs = _.where($scope.lecture.quiz_keys, {Id: data.id});
                 result = false;
                 description = "";
                 if (quizs.length == 0) {
-                    description: "Co loi xay ra vui long coi lai!";
+                    description: "Có lỗi xin vui lòng kiểm tra lại!";
                 }
                 else {
                     answer = _.where(quizs[0].answer_keys, {Id: data.answer})
                     if (answer[0].is_true == true) {
                         result = true;
-                        description = "Ok!";
+                        description = "Chúc mừng bạn đã trả lời đúng!";
                         if (localStorageService.get("score") == null) {
-                            localStorageService.add("score", 1);
+                            localStorageService.add("score", parseFloat(data.score));
                         }
-                        else localStorageService.add("score", localStorageService.get("score") + 1);
+                        else localStorageService.add("score", parseFloat(localStorageService.get("score")) + parseFloat(data.score));
                     }
                 }
                 return {
@@ -925,8 +929,8 @@ angular.module("easylearncode.learn").run(function () {
         $scope.runCodeInHackerEarth = function () {
             $http.post('/api/runcode', {"lang": "PYTHON", "source": "print 'hello world'",
                 "_csrf_token": csrf_token}).success(function (data) {
-                console.log(data);
-            });
+                    console.log(data);
+                });
         }
 
         $scope.reSet = function () {
@@ -955,6 +959,27 @@ angular.module("easylearncode.learn").run(function () {
 
         $scope.onCompleteVideo = function () {
             $scope.isCompleted = true;
+            scores = 0;
+            _.each($scope.config.plugins.quiz.data, function (elm, index) {
+                scores = scores + elm.score;
+            });
+            //score = parseFloat(localStorageService.get("score"));
+            //if (score * 100 / scores < 70) {
+                $http.post('/api/users/me/passedLecture', {lecture_id: $scope.lecture.Id}).success(function (data) {
+                    console.log(data);
+                    cur_index = _.indexOf($scope.lectures, function (obj) {
+                        return obj.Id == $scope.lecture.Id;
+                    });
+                    if (cur_index == $scope.lectures.length - 1) {
+                        //Xử lý khi học hết khóa học
+                    } else {
+                        $http.post('/api/users/me/currentLecture', {lecture_id: $scope.lectures[cur_index + 1].Id}).success(function (data) {
+
+                        });
+                    }
+
+                })
+            //}
             $scope.$apply(function () {
                 $scope.showAlert = true;
                 $scope.alert = {
@@ -965,10 +990,23 @@ angular.module("easylearncode.learn").run(function () {
         };
         $window.nextLecture = function () {
             cur_index = _.indexOf($scope.lectures, function (obj) {
-                return obj.Id = $scope.lecture.Id;
+                return obj.Id == $scope.lecture.Id;
             });
-            if (cur_index < $scope.lectures - 1 && cur_index > 0) return;
-            $scope.goLecture($scope.lectures[cur_index + 1]);
+            if (cur_index >= $scope.lectures - 1 || cur_index < 0) return;
+            if ($scope.lecture._is_passed_lecture == false) {
+                api.Model.get({type: "lectures", id: $scope.lecture.Id, recurse: true, depth: 3}, function (data) {
+                    $scope.lectures[cur_index]._is_current_lecture = data._is_current_lecture;
+                    $scope.lectures[cur_index]._is_passed_lecture = data._is_passed_lecture;
+                });
+                api.Model.get({type: "lectures", id: $scope.lectures[cur_index + 1].Id, recurse: true, depth: 3}, function (data) {
+                    $scope.lectures[cur_index + 1]._is_current_lecture = data._is_current_lecture;
+                    $scope.lectures[cur_index + 1]._is_passed_lecture = data._is_passed_lecture;
+                    console.log(data);
+                    $scope.goLecture($scope.lectures[cur_index + 1]);
+                });
+            } else {
+                $scope.goLecture($scope.lectures[cur_index + 1]);
+            }
             $scope.showAlert = false;
         }
 
@@ -1013,10 +1051,27 @@ angular.module("easylearncode.learn").run(function () {
         $scope.goLecture = function (lecture) {
             $location.path("/").search('lecture_id', lecture.Id).replace();
             $scope.lecture = lecture;
-            console.log(lecture)
             $scope.loadLecture();
         }
         $scope.loadLecture = function () {
+            $scope.lesson_user = null;
+            if (!$scope.lecture._is_passed_lecture && !$scope.lecture._is_current_lecture) {
+                $scope.lecture = $scope.lectures[0];
+                $location.path("/").search('lecture_id', $scope.lecture.Id).replace();
+            }
+            $http.get("/api/lessons?filter=Lecture==" + $scope.lecture.Id + "").success(function (data) {
+                $scope.lessonCurrent = data[0];
+                $http.get("/api/users/me").success(function (data) {
+                    $http.get("/api/lesson_users?filter=user==" + data.Id + "&lesson==" + $scope.lessonCurrent.Id + "").success(function (lesson_user) {
+                        $scope.lesson_user = lesson_user[0];
+                        if ($scope.lesson_user == null) {
+                            $http.post("/api/users/me/currentLecture", {lecture_id: $scope.lecture.Id}).success(function (data) {
+                                console.log(data);
+                            })
+                        }
+                    });
+                });
+            });
             $scope.youtubeUrl = $sce.trustAsResourceUrl("http://www.youtube.com/watch?v=" + $scope.lecture.youtube_id);
             $scope.show = false;
             if (angular.isDefined($scope.vgScope)) {
@@ -1026,7 +1081,7 @@ angular.module("easylearncode.learn").run(function () {
             $('#video').html($compile("<videogular id=\"khung-video\"\r\n                                    vg-player-ready=\"onPlayerReady\" vg-complete=\"onCompleteVideo\" vg-update-time=\"onUpdateTime\" vg-update-size=\"onUpdateSize\" vg-update-volume=\"onUpdateVolume\" vg-update-state=\"onUpdateState\"\r\n                                    vg-width=\"config.width\" vg-height=\"config.height\" vg-theme=\"config.theme.url\" vg-autoplay=\"config.autoPlay\" vg-stretch=\"config.stretch.value\" vg-responsive=\"config.responsive\">\r\n<video preload='metadata' id=\"video_content\">\r\n<source type=\"video/youtube\" src=\"" + $scope.youtubeUrl + "\"  /></video>\r\n                                    <vg-youtube></vg-youtube>\r\n                                    <vg-quiz vg-data='config.plugins.quiz.data' vg-quiz-submit=\"onQuizSubmit\" vg-quiz-skip=\"onQuizSkip\" vg-quiz-continue=\"onQuizContinue\" vg-quiz-show-explanation=\"onQuizShowExplanation\"></vg-quiz>\r\n                                    <vg-poster-image vg-url='config.plugins.poster.url' vg-stretch=\"config.stretch.value\"></vg-poster-image>\r\n                                    <vg-buffering></vg-buffering>\r\n                                    <vg-overlay-play vg-play-icon=\"config.theme.playIcon\"></vg-overlay-play>\r\n\r\n                                    <vg-controls vg-autohide=\"config.autoHide\" vg-autohide-time=\"config.autoHideTime\" style=\"height: 50px;\">\r\n                                        <vg-play-pause-button vg-play-icon=\"config.theme.playIcon\" vg-pause-icon=\"config.theme.pauseIcon\"></vg-play-pause-button>\r\n                                        <vg-timeDisplay>{{ currentTime }}</vg-timeDisplay>\r\n                                        <vg-scrubBar>\r\n                                            <vg-scrubbarcurrenttime></vg-scrubbarcurrenttime>\r\n                                        </vg-scrubBar>\r\n                                        <vg-timeDisplay>{{ totalTime }}</vg-timeDisplay>\r\n                                        <vg-volume>\r\n                                            <vg-mutebutton\r\n                                                vg-volume-level-3-icon=\"config.theme.volumeLevel3Icon\"\r\n                                                vg-volume-level-2-icon=\"config.theme.volumeLevel2Icon\"\r\n                                                vg-volume-level-1-icon=\"config.theme.volumeLevel1Icon\"\r\n                                                vg-volume-level-0-icon=\"config.theme.volumeLevel0Icon\"\r\n                                                vg-mute-icon=\"config.theme.muteIcon\">\r\n                                            </vg-mutebutton>\r\n                                            <vg-volumebar></vg-volumebar>\r\n                                        </vg-volume>\r\n                                        <vg-fullscreenButton vg-enter-full-screen-icon=\"config.theme.enterFullScreenIcon\" vg-exit-full-screen-icon=\"config.theme.exitFullScreenIcon\"></vg-fullscreenButton>\r\n                                    </vg-controls>\r\n                                </videogular>")($scope.vgScope));
             localStorageService.remove("score");
             $scope.config.plugins.quiz.data = $scope.lecture.quiz_keys;
-            angular.forEach($scope.lecture.test_keys,function(test){
+            angular.forEach($scope.lecture.test_keys, function (test) {
                 $scope.config.plugins.quiz.data.push(test);
             });
             console.log($scope.config.plugins.quiz.data);
@@ -1118,24 +1173,24 @@ angular.module("easylearncode.learn").run(function () {
             $scope.current_url = (document.location.href);
         });
     }]).directive('hoverClass', function () {
-    return {
-        restrict: 'A',
-        scope: {
-            addClass: '@',
-            removeClass: '@'
-        },
-        link: function (scope, element) {
-            element.on('mouseenter', function () {
-                element.addClass(scope.addClass);
-                element.removeClass(scope.removeClass);
-            });
-            element.on('mouseleave', function () {
-                element.addClass(scope.removeClass);
-                element.removeClass(scope.addClass);
-            });
-        }
-    };
-});
+        return {
+            restrict: 'A',
+            scope: {
+                addClass: '@',
+                removeClass: '@'
+            },
+            link: function (scope, element) {
+                element.on('mouseenter', function () {
+                    element.addClass(scope.addClass);
+                    element.removeClass(scope.removeClass);
+                });
+                element.on('mouseleave', function () {
+                    element.addClass(scope.removeClass);
+                    element.removeClass(scope.addClass);
+                });
+            }
+        };
+    });
 
 angular.module("easylearncode.contest_result_user").controller('ContestResultUserCtrl',
     ['$scope', 'api', '$http', 'csrf_token', '$location', function ($scope, api, $http, csrf_token, $location) {
@@ -1726,9 +1781,9 @@ angular.module("easylearncode.account")
                     }
                     reset()
                 }).error(function (b) {
-                    $scope.serverError = b.error;
-                    reset()
-                })) : reset()
+                        $scope.serverError = b.error;
+                        reset()
+                    })) : reset()
             }
         }
     }])
