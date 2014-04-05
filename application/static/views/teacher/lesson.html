@@ -1,0 +1,43 @@
+</div>
+<div class="container highlight">
+    <div class="pull-left"><h3>Các chương của {{ course.title }}</h3></div>
+    <div class="pull-right" style="padding-top: 15px;">
+        <button class="btn btn-primary" type="button" ng-click="showAddModal()">Tạo chương</button>
+        <button class="btn btn-default" type="button">Trợ giúp</button>
+    </div>
+    <div class="clearfix"></div>
+    <div class="panel panel-info">
+        <div class="panel-heading">Các chương</div>
+        <div class="panel-body">
+            <table class="table table-bordered table-hover">
+                <thead>
+                <tr>
+                    <th>STT</th>
+                    <th>Tiêu đề</th>
+                    <th>Bài giảng</th>
+                    <th>Mô tả</th>
+                    <th>Chức năng</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="lesson in course.lesson_keys">
+                    <td>{{ $index + 1 }}</td>
+                    <td>{{ lesson.title }}</td>
+                    <td>{{ lesson.description }}</td>
+                    <td class="center"><a class="btn btn-success" ng-href="#!/{{ course.Id }}/lessons/{{ lesson.Id }}/lectures">
+                        <i class="glyphicon glyphicon-zoom-in"></i>
+                    </a></td>
+                    <td class="center">
+                        <a class="btn btn-info" ng-click="showEditModal(lesson)">
+                            <i class="glyphicon glyphicon-edit"></i>
+                        </a>
+                        <a class="btn btn-danger" ng-click="delete(lesson)">
+                            <i class="glyphicon glyphicon-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div
+    </div>
+

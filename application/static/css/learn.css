@@ -113,6 +113,7 @@
     padding: 10px;
     font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
     overflow: auto;
+    width: 100%;
 }
 
 .console-alert {

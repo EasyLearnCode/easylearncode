@@ -1,0 +1,53 @@
+</div>
+<div class="container highlight">
+    <div class="pull-left"><h3>Các bài giảng của phần {{ lesson.description }}</h3></div>
+    <div class="pull-right" style="padding-top: 15px;">
+        <button class="btn btn-primary" type="button" ng-click="showAddModal()">Tạo bài giảng</button>
+        <button class="btn btn-default" type="button">Trợ giúp</button>
+    </div>
+    <div class="clearfix"></div>
+    <div class="panel panel-info">
+        <div class="panel-heading">Danh sách các bài giảng</div>
+        <div class="panel-body">
+            <table class="table table-bordered table-hover">
+                <thead>
+                <tr>
+                    <th>STT</th>
+                    <th>Tiêu đề</th>
+                    <th>Mô tả</th>
+                    <th>Video</th>
+                    <th>Thời gian</th>
+                    <th>Ảnh minh họa</th>
+                    <th>Câu hỏi</th>
+                    <th>Chức năng</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="lecture in lesson.lecture_keys">
+                    <td>{{ $index + 1 }}</td>
+                    <td>{{ lecture.title }}</td>
+                    <td>{{ lecture.description }}</td>
+                    <td>{{ lecture.youtube_id }}</td>
+                    <td>{{ lecture.time }}</td>
+                    <td class="center">
+                        <div><img ng-src="{{ lecture.img }}=s150"></div>
+                        <div><input type="file" name="file" ng-file-select="uploadFile($files, lecture)"/></div>
+                    </td>
+                    <td class="center"><a class="btn btn-success"
+                                          ng-href="#!/{{ course.Id }}/lessons/{{ lesson.Id }}/lectures/{{ lecture.Id }}/questions">
+                        <i class="glyphicon glyphicon-zoom-in"></i>
+                    </a></td>
+                    <td class="center">
+                        <a class="btn btn-info" ng-click="showEditModal(lecture)">
+                            <i class="glyphicon glyphicon-edit"></i>
+                        </a>
+                        <a class="btn btn-danger" ng-click="delete(lecture)">
+                            <i class="glyphicon glyphicon-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div
+    </div>
+
