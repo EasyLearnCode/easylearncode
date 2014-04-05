@@ -1346,8 +1346,7 @@ angular.module("easylearncode.contest_result").controller('ContestResultCtrl', [
 angular.module("easylearncode.info").controller('InfoCtrl', ['$scope', '$http', '$location', 'api', '$window', function ($scope, $http, $location, api, $window) {
     var course_id = $location.search()['course_id'];
     $scope.loaded = false;
-    api.Model.get({type: 'courses', id: course_id, recurse: true, depth: 1000}, function (data) {
-        $scope.loaded = true;
+    api.Model.get({type: 'courses', id: course_id, recurse: true, depth: 2}, function (data) {
         $scope.course = data;
         $scope.loaded = true;
     });
