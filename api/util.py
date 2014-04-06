@@ -162,11 +162,5 @@ def is_request_from_admin():
     if not r.referer:
         return False
     from urlparse import urlparse
-    return urlparse(r.referer).path.lower().startswith('/admin')
-
-def is_request_from_teacher():
-    r = webapp2.get_request()
-    if not r.referer:
-        return False
-    from urlparse import urlparse
-    return urlparse(r.referer).path.lower().startswith('/teacher')
+    return urlparse(r.referer).path.lower().startswith('/admin') or \
+           urlparse(r.referer).path.lower().startswith('/teacher')

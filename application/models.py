@@ -50,7 +50,7 @@ class User(User):
 
     def to_dict(self, *args, **kwargs):
         from api.restful import current_user, _config, re_private
-        from api.util import is_request_from_admin, is_request_from_teacher
+        from api.util import is_request_from_admin
 
         result = super(User, self).to_dict(*args, **kwargs)
         u = current_user()
@@ -77,8 +77,7 @@ class User(User):
             result['$teacher'] = True
         del result['is_teacher']
         _is_request_from_admin = is_request_from_admin()
-        _is_request_from_teacher = is_request_from_teacher()
-        if not _is_request_from_admin and not _is_request_from_teacher and u and u.urlsafe() == self.key.urlsafe():
+        if not _is_request_from_admin and u and u.urlsafe() == self.key.urlsafe():
             _course_user = CourseUser.get_by_user(self.key)
             if _course_user:
                 result['_current_courses'] = [c.to_dict() for c in _course_user]
@@ -669,7 +668,7 @@ class LessonUser(UtilModel, ndb.Model):
 
     @property
     def percent_passed(self):
-        return float(len(self.passed_lecture)/self.lesson.get().lecture_count)
+        return float(len(self.passed_lecture))/self.lesson.get().lecture_count
 
     @classmethod
     def get_by_user(cls, user):
