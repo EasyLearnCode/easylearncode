@@ -1458,15 +1458,15 @@ angular.module("easylearncode.course_practice_viewer", ["ui.bootstrap", "ui.ace"
             $(".js-section").filter(".is-active").next(".js-section__content").collapse("show");
         }
         $scope.initCurrentCheckpoint = function(){
-            var _current_project;
-            _.each($scope.exercise_item.projects,function(project){
-                _current_project = _.find(project.checkpoints,function(checkpoint){
-                    return checkpoint._is_current_checkpoint;
-                })
-                if(_current_project){
-                    $scope.changeCurrentCheckpoint(_current_project);
-                    return {}
-                }
+            var _current_checkpoint;
+            _.find($scope.exercise_item.projects,function(project){
+                 _.find(project.checkpoints,function(checkpoint){
+                    if(checkpoint._is_current_checkpoint){
+                        $scope.changeCurrentCheckpoint(checkpoint);
+                        _current_checkpoint = checkpoint;
+                        return {}
+                    }
+                });
             })
             if(!_current_checkpoint){
                 $scope.exercise_item.projects[0]._is_current_project = true;
@@ -1992,7 +1992,7 @@ angular.module("easylearncode.account")
             $window.location.href = '/social_login/'+provider.name;
 
         };
-        api.Model.get({type:'users', id:'me'}).$promise.then(function(data) {
+        api.Model.get({type:'users', id:'me', extras:'providers_info'}).$promise.then(function(data) {
             $scope.loading = !1;
             $scope.user = data;
             _.each($scope.user.used_providers, function(provider){
@@ -3040,7 +3040,7 @@ angular.module("easylearncode.dashboard",["easylearncode.core", "angularMoment"]
     })
     .controller("dashboardCtrl", ["$scope", "api", '$window', function($scope, api, $window){
         $window.moment.lang('vn');
-        $scope.currentUser = api.Model.get({type:"users",id:'me'});
+        $scope.currentUser = api.Model.get({type:"users",id:'me',extras:'current_courses'});
         $scope.currentUser.$promise.then(function(data){
             if(data._current_courses){
                 $scope.current_courses = data._current_courses;

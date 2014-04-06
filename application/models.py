@@ -51,19 +51,24 @@ class User(User):
     def to_dict(self, *args, **kwargs):
         from api.restful import current_user, _config, re_private
         from api.util import is_request_from_admin, is_request_from_teacher
+        import webapp2
+        import json
 
         result = super(User, self).to_dict(*args, **kwargs)
         u = current_user()
         if u and u.urlsafe() == self.key.urlsafe():
             result['_has_password'] = True if self.password else False
-            providers_info = self.get_social_providers_info()
-            result['used_providers'] = providers_info['used']
-            result['unused_providers'] = providers_info['unused']
+            r = webapp2.get_request()
+            extras_request = r.GET.getall("extras")
+            if 'providers_info' in extras_request:
+                providers_info = self.get_social_providers_info()
+                result['used_providers'] = providers_info['used']
+                result['unused_providers'] = providers_info['unused']
             del result['password']
             _is_request_from_admin = is_request_from_admin()
             if not _is_request_from_admin:
                 _course_user = CourseUser.get_by_user(self.key)
-                if _course_user:
+                if _course_user and 'current_courses' in extras_request:
                     result['_current_courses'] = [c.to_dict() for c in _course_user]
         else:
             for k in result.keys():
