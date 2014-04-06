@@ -1032,7 +1032,7 @@ angular.module("easylearncode.learn").run(function () {
                 scores = scores + elm.score;
             });
             score = parseFloat(localStorageService.get("score"));
-            if (score * 100 / scores > 70) {
+            if (score * 100 / scores > 60) {
                 if ($scope.lecture._is_passed_lecture) return;
                 $http.post('/api/users/me/passedLecture', {lecture_id: $scope.lecture.Id}).success(function (data) {
                     console.log(data);
@@ -2173,7 +2173,7 @@ angular.module("easylearncode.teacher", ["ui.bootstrap", "ui.ace", 'easylearncod
         })
         var form = {
             "form_id": 1,
-            "form_name": "Thêm khóa học",
+            "form_name": "Add Course",
             "form_fields": [
                 {
                     "field_title": "Key",
