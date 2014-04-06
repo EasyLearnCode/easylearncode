@@ -1514,6 +1514,7 @@ angular.module("easylearncode.course_practice_viewer", ["ui.bootstrap", "ui.ace"
                 })
             })
             $scope.current_checkpoint = checkpoint;
+            $scope.current_checkpoint._available_hint = !$($scope.current_checkpoint._hint_html).is(':empty');
             $scope.source = $scope.current_checkpoint.default_files[0].content;
             $scope.showDropDownMenu = false;
         }
@@ -1658,7 +1659,8 @@ angular.module("easylearncode.course_practice_viewer", ["ui.bootstrap", "ui.ace"
                 jqconsole.Reset();
                 $scope.showAlert = false;
                 _current_project = $scope.getCurrentProject();
-                if(_current_project.index == $scope.exercise_item.projects.length - 1){
+                //TODO Add _current_checkpoint.index == _current_project.checkpoint_count
+                if(_current_project.index == $scope.exercise_item.projects.length - 1 && $scope.current_checkpoint.index == _current_project.checkpoints.length - 1){
                     //TODO: Next exercise item
                 }
                 else{

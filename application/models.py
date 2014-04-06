@@ -674,7 +674,7 @@ class LessonUser(UtilModel, ndb.Model):
 
     @property
     def percent_passed(self):
-        return float(len(self.passed_lecture)/self.lesson.get().lecture_count)
+        return float(len(self.passed_lecture))/self.lesson.get().lecture_count
 
     @classmethod
     def get_by_user(cls, user):

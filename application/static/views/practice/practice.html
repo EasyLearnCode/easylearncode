@@ -115,7 +115,7 @@
                                             <div class="article__inner">
                                                 <p ng-bind-html="current_checkpoint._instruction_html|to_trusted"></p>
 
-                                                <div ng-if="current_checkpoint._hint_html"
+                                                <div ng-if="current_checkpoint._available_hint"
                                                      class="ui-accordian ui-accordian--lesson transition--max-height"
                                                      ng-class="{'is-expanded largeHeight': current_checkpoint.showHint,'smallHeight':!current_checkpoint.showHint}"
                                                      ng-init="isExpanded = false">
