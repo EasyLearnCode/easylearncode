@@ -50,7 +50,7 @@ class User(User):
 
     def to_dict(self, *args, **kwargs):
         from api.restful import current_user, _config, re_private
-        from api.util import is_request_from_admin, is_request_from_teacher
+        from api.util import is_request_from_admin
         import webapp2
         import json
 
@@ -81,12 +81,6 @@ class User(User):
         if self.is_teacher:
             result['$teacher'] = True
         del result['is_teacher']
-        _is_request_from_admin = is_request_from_admin()
-        _is_request_from_teacher = is_request_from_teacher()
-        if not _is_request_from_admin and not _is_request_from_teacher and u and u.urlsafe() == self.key.urlsafe():
-            _course_user = CourseUser.get_by_user(self.key)
-            if _course_user:
-                result['_current_courses'] = [c.to_dict() for c in _course_user]
         return result
 
     @classmethod
