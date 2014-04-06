@@ -1604,6 +1604,19 @@ class CoursePracticeHandler(BaseHandler):
         return self.render_template("course_practice_detail.html", **params)
 
 
+class CourseLessonResumeHandler(BaseHandler):
+    @user_required
+    def get(self):
+        lesson_id = self.request.get("lesson_id", None)
+        if lesson_id:
+            from application.models import LessonUser
+            from google.appengine.ext import ndb
+            _lesson = ndb.Key(urlsafe=lesson_id)
+            _item_user = LessonUser.get_by_user_and_lesson(self.user_key, _lesson)
+            if _item_user:
+                self.redirect('/course/learn/viewer#!?lecture_id='+_item_user.current_lecture.urlsafe())
+
+
 class CoursePracticeResumeHandler(BaseHandler):
     @user_required
     def get(self):
