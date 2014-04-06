@@ -23,6 +23,9 @@ vg-quiz .quiz-status {
 }
 
 .quiz-question-text{
-    height: 200px;
-    padding: 10px;
+    height: 180px;
+    padding: 5px;
+    border:1px solid;
+    border-radius:5px;
+    margin: 10px;
 }
