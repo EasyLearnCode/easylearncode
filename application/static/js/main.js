@@ -512,8 +512,8 @@ angular.module("easylearncode.contest")
 
     }])
     .controller("ContestCtrl",
-    ["$scope", "api", "$http", "csrf_token", "channelToken", "$location",
-        function ($scope, api, $http, csrf_token, channelToken, $location) {
+    ["$scope", "api", "$http", "csrf_token", "channelToken", "$location",'$timeout',
+        function ($scope, api, $http, csrf_token, channelToken, $location, $timeout) {
             $scope.firstDayOfWeek = Date.parse("last monday");
             $scope.lastDayOfWeek = Date.parse("next sunday");
             $scope.nextfirstDayOfWeek = Date.parse("next monday");
@@ -568,6 +568,7 @@ angular.module("easylearncode.contest")
             $scope.changeCurrentLevel = function (level) {
                 level.is_current_level = true;
                 $scope.current_level = level;
+                $scope.resetCode();
 
             }
             $scope.resetCode = function () {
@@ -665,6 +666,19 @@ angular.module("easylearncode.contest")
                 }
 
             });
+            $scope.$on('$locationChangeSuccess',function(){
+                $timeout(function(){
+                    if($location.search()['result_id']){
+                        if(!$scope.current_week_user_data||!$scope.current_week_user_data.run_code_result){
+                            return;
+                        }
+                        _result = _.find($scope.current_week_user_data.run_code_result,function(result){
+                            return result.Id == $location.search()['result_id'];
+                        });
+                        $scope.viewResult(_result);
+                    }
+                })
+            })
             var channel = new goog.appengine.Channel(channelToken);
 
             var handler = {
@@ -676,9 +690,10 @@ angular.module("easylearncode.contest")
                     result.data = JSON.parse(result.data);
                     if (result.data.type) {
                         if ((result.data.type == 'run_code_result' || result.data.type == 'submit_code_result')) {
-                            $scope.compiling = false;
-                            $scope.compile_result.push(result.data);
-                            $scope.$apply();
+                            $scope.$apply(function(){
+                                $scope.compiling = false;
+                                $scope.compile_result.push(result.data);
+                            });
                         }
                         else if (result.data.type == "submit_sumary_result") {
                             if (result.data.result) {
@@ -686,11 +701,13 @@ angular.module("easylearncode.contest")
                                 memory_used = result.data.memory_used;
                                 score = result.data.score;
                                 bootbox.alert("Bạn đã qua level với thời gian " + time_used + " bộ nhớ " + memory_used + ". Điểm: " + score, function () {
-                                    $scope.current_level.is_passed_level = true;
-                                    var _level = _.find($scope.current_week_data.level_keys, function(level){
-                                        return level.Id == result.data.next_level_key;
-                                    });
-                                    $scope.changeCurrentLevel(_level);
+                                    $scope.$apply(function(){
+                                        $scope.current_level.is_passed_level = true;
+                                        var _level = _.find($scope.current_week_data.level_keys, function(level){
+                                            return level.Id == result.data.next_level_key;
+                                        });
+                                        $scope.changeCurrentLevel(_level);
+                                    })
                                 });
                             } else {
                                 bootbox.alert("Bạn không vượt qua level!", function () {

@@ -24,7 +24,7 @@
                 <div ng-class="{profileStepActive:level.is_passed_level, profileStepPassive:!level.is_passed_level && !level.is_current_level }"
                      class="profileStep profileStepOne" ng-repeat="level in current_week_data.level_keys">
                     <div class="connect"></div>
-                    <div class="icon" ng-class="{active:level.is_current_level}">
+                    <div class="icon" ng-class="{active:level.Id == current_level.Id}">
                         <a class="btn" data-ng-click="changeCurrentLevel(level)"
                            ng-show="level.is_passed_level || level.is_current_level ">{{ level.level }}</a>
                         <span ng-hide="level.is_passed_level || level.is_current_level">{{ level.level }}</span>
