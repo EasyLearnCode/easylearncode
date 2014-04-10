@@ -665,36 +665,35 @@ angular.module("easylearncode.contest")
                 }
 
             });
-        } else {
-            $scope.current_week_data = data.data;
-            $scope.current_week_data.level_keys = _.sortBy($scope.current_week_data.level_keys, function (level) {
-                return level.level;
-            })
-            $scope.current_level = _.find($scope.current_week_data.level_keys, function (level) {
-                return level.is_current_level;
-            });
-            $http.get('/api/contest/me?recurse=True').success(function(data){
-                $scope.current_week_user_data = data.data;
-                $scope.current_week_user_data.run_code_result = _.sortBy($scope.current_week_user_data.run_code_result, function(result){
-                    return result.created;
-                }).reverse();
-            })
-            $scope.loaded = true;
-        }
+            var channel = new goog.appengine.Channel(channelToken);
 
-    });
-    var channel = new goog.appengine.Channel(channelToken);
-    var handler = {
-        'onopen': function () {
-            console.log(arguments)
-        },
-        'onmessage': function (result) {
-            console.log(arguments);
-            result.data = JSON.parse(result.data);
-            if(result.data.type && (result.data.type=='run_code_result' || result.data.type=='submit_code_result')){
-                $scope.compile_result.push(result.data);
-                $scope.$apply();
-            }
+            var handler = {
+                'onopen': function () {
+                    console.log(arguments)
+                },
+                'onmessage': function (result) {
+                    console.log(arguments);
+                    result.data = JSON.parse(result.data);
+                    if (result.data.type) {
+                        if ((result.data.type == 'run_code_result' || result.data.type == 'submit_code_result')) {
+                            $scope.compiling = false;
+                            $scope.compile_result.push(result.data);
+                            $scope.$apply();
+                        }
+                        else if (result.data.type == "submit_sumary_result") {
+                            if (result.data.result) {
+                                time_used = result.data.time_used;
+                                memory_used = result.data.memory_used;
+                                score = result.data.score;
+                                bootbox.alert("Bạn đã qua level với thời gian " + time_used + " bộ nhớ " + memory_used + ". Điểm: " + score, function () {
+                                    $scope.current_level.is_passed_level = true;
+                                    var _level = _.find($scope.current_week_data.level_keys, function(level){
+                                        return level.Id == result.data.next_level_key;
+                                    });
+                                    $scope.changeCurrentLevel(_level);
+                                });
+                            } else {
+                                bootbox.alert("Bạn không vượt qua level!", function () {
 
                                 });
                             }
@@ -2939,7 +2938,7 @@ angular.module("easylearncode.dashboard",["easylearncode.core", "angularMoment"]
     }])
 angular.module("easylearncode.game")
     .controller("gameCtrl", ["$scope", '$modal', '$timeout', function ($scope, $modal, $timeout) {
-        $scope.modes = [{name:'Dễ', time:30},{name:'Trung bình', time:20},{name:'Khó', time: 10} ];
+        $scope.modes = [{name:'Dễ', time:3000},{name:'Trung bình', time:2000},{name:'Khó', time: 1000} ];
         $scope.mode = $scope.modes[0];
         $scope.showChooseMode = function () {
                 var ModalInstanceCtrl = function ($scope, $modalInstance, modes) {

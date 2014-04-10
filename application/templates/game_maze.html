@@ -7,7 +7,7 @@
 {% endblock %}
 {% block content %}
     {% raw %}
-        <div class="container" data-ng-controller="ContestCtrl">
+        <div class="container">
             <div class="col-md-12 highlight ">
                 <div><img width="100" alt="logo" style="float: left; margin-right: 5px"
                           src="/application/img/game.png"/>
@@ -23,6 +23,22 @@
                                                                  src="/application/img/quiz/help.png"
                                                                  width="50"/> </a>
             </div>
+        </div>
+        <div class="modal fade" id="timeoutModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">Hết giờ</h4>
+              </div>
+              <div class="modal-body">
+                Rất tiếc bạn phải chơi lại từ đầu
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- Modal -->
@@ -66,7 +82,25 @@
             </div>
         </div>
 
-        <div class="container" data-ng-controller="ContestCtrl" style="padding: -0.5px">
+        <div class="container" style="padding: -0.5px" ng-controller="gameCtrl">
+            <script type="text/ng-template" id="chooseModeModal.html">
+                <div class="modal-header">
+                    <h3>Vui lòng chọn mức độ chơi!</h3>
+                </div>
+                <div class="modal-body">
+                    <ul>
+                        <li ng-repeat="mode in modes">
+                            <a ng-click="selected.mode = mode">{{ mode.name }}</a>
+                        </li>
+                    </ul>
+                    Bạn chọn: <b>{{ selected.mode.name }}</b>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" ng-click="ok()">OK</button>
+                    <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+                </div>
+            </script>
+            <timer id="clock" interval="1000" countdown="mode.time" autostart="false">{{ minutes }} : {{ seconds }}</timer>
             <div class="col-md-12 highlight ">
                 <div class="container" style="min-height: 560px; padding: 0px">
                     <div id="blockyApp"></div>
@@ -85,6 +119,7 @@
     <script src="/application/js/hopscotch-0.1.2.min.js"></script>
     <script type="text/javascript" src="/application/js/help_game_vi.js"></script>
     <script src="/application/js/libs/angularjs/ui-bootstrap-tpls-0.7.0.min.js"></script>
+    <script src="/application/js/libs/angularjs/angular-timer.min.js"></script>
     <script src="/application/js/libs/angularjs/ui-ace.min.js"></script>
     <script type="text/javascript">
         $("#blockyApp").html(mazepage.start({}, null,
