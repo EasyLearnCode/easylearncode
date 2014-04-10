@@ -307,7 +307,8 @@ class SaveCurrentLecture(BaseHandler):
         lesson = Lesson.get_by_lecture(lecture_id)
         lesson_user = LessonUser.get_by_user_and_lesson(current_user, lesson.key)
         if lesson_user:
-            lesson_user.current_lecture = lecture_id
+            if lecture_id not in lesson_user.passed_lecture:
+                lesson_user.current_lecture = lecture_id
         else:
             lesson_user = LessonUser()
             lesson_user.user = current_user
@@ -345,7 +346,7 @@ class SaveLectureUser(BaseHandler):
         import json
         from api.restful import current_user
         from google.appengine.ext import ndb
-        from application.models import LectureUser
+        from application.models import LectureUser, LessonUser, Lesson
         msg = ''
         status = 'ok'
         current_user = current_user()
@@ -356,12 +357,21 @@ class SaveLectureUser(BaseHandler):
         if lecture_user:
             if lecture_user.score < lecture_score:
                 lecture_user.score = lecture_score
-                lecture_user.put()
-            else:
-                lecture_user = LectureUser()
-                lecture_user.user = current_user
-                lecture_user.lecture = lecture_id
-                lecture_user.score = lecture_score
+        else:
+            lecture_user = LectureUser()
+            lecture_user.user = current_user
+            lecture_user.lecture = lecture_id
+            lecture_user.score = lecture_score
+        lecture_user.put()
+        lesson = Lesson.get_by_lecture(lecture_id)
+        lesson_user = LessonUser.get_by_user_and_lesson(current_user, lesson.key)
+        sum = 0;
+        for lecture in lesson.lecture_keys:
+            _lecture_user = LectureUser.get_by_user_and_lecture(current_user, lecture)
+            if _lecture_user:
+                sum = sum + _lecture_user.score
+        lesson_user.score = sum
+        lesson_user.put()
         return {
             'status': status,
             'msg': msg,
@@ -440,4 +450,26 @@ class CheckpointMeHandler(BaseHandler):
         return {}
 
 
-
+class GetTotalScoreCourse(BaseHandler):
+    @user_required
+    @as_json
+    def get(self):
+        import json
+        from application.models import LessonUser, Lesson, Course
+        from api.restful import current_user
+        from google.appengine.ext import ndb
+        total = 0
+        msg = ''
+        status = 'ok'
+        _current_user = current_user()
+        _lecture_Id = ndb.Key(urlsafe=self.request.get('lecture_id'))
+        _lesson_id = Lesson.get_by_lecture(_lecture_Id).key
+        _course = Course.get_by_lesson(_lesson_id)
+        for lid in _course.lesson_keys:
+            lesson_user = LessonUser.get_by_user_and_lesson(_current_user, lid)
+            total = total + lesson_user.score
+        return {
+            'msg': msg,
+            'data': total,
+            'status': status
+        }

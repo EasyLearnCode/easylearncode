@@ -766,6 +766,8 @@ angular.module("easylearncode.learn").run(function () {
     $("[rel='tooltip']").tooltip();
 }).controller('LearnCtrl', ['$scope', '$http', '$location', '$sce', '$compile', '$window', 'api', '$timeout', 'localStorageService', 'csrf_token', "$q", '$rootScope', 'VG_EVENTS', function ($scope, $http, $location, $sce, $compile, $window, api, $timeout, localStorageService, csrf_token, $q, $rootScope, VG_EVENTS) {
         var runCodeDeferred = $q.defer()
+        $scope.percent_lecture_passed = 0
+        $scope.total_score = 0;
         $scope.loaded = false;
         $scope.showAlert = false;
         $scope.lectures = [];
@@ -773,9 +775,15 @@ angular.module("easylearncode.learn").run(function () {
         $scope.rate = 3;
         $scope.max = 5;
         $scope.isReadonly = false;
+        $scope.aceLoaded = function (_editor) {
+            $scope.editor = _editor;
+            _editor.setOptions({
+                enableBasicAutocompletion: true
+            });
+        }
         api.Model.query({type: 'lessons', filter: 'Lecture==' + $location.search()['lecture_id'] + '' }, function (data) {
             $scope.lessonCurrent = data[0]
-            api.Model.query({type: 'courses', filter: 'Lesson==' + data[0].Id + '', recurse: true, depth: 6  }, function (data) {
+            api.Model.query({type: 'courses', filter: 'Lesson==' + data[0].Id + '', recurse: true, depth: 2  }, function (data) {
                 angular.forEach(data[0].lesson_keys, function (lesson) {
                     angular.forEach(lesson.lecture_keys, function (lecture) {
                         $scope.lectures.push(lecture);
@@ -785,7 +793,7 @@ angular.module("easylearncode.learn").run(function () {
                 $scope.jsrepl.loadLanguage('' + $scope.lessonCurrent.language.toLowerCase() + '', function () {
                     $scope.jsreplReady = true;
                 });
-                $scope.editor.getSession().setMode("ace/mode/" + $scope.lessonCurrent.language.toLowerCase() + "");
+                $scope.editor.getSession().setMode("ace/mode/"+$scope.lessonCurrent.language.toLowerCase()+"");
                 $scope.editor.resize()
                 $scope.loadLecture();
                 $scope.loaded = true;
@@ -806,12 +814,7 @@ angular.module("easylearncode.learn").run(function () {
             }
         }
         $scope.isEditorFullScreen = false;
-        $scope.aceLoaded = function (_editor) {
-            $scope.editor = _editor;
-            _editor.setOptions({
-                enableBasicAutocompletion: true
-            });
-        }
+
         $scope.toggleFullScreen = function () {
             $scope.isEditorFullScreen = !$scope.isEditorFullScreen;
             if ($scope.isEditorFullScreen) {
@@ -836,16 +839,18 @@ angular.module("easylearncode.learn").run(function () {
         };
 
         $scope.outputCallback = function (output, cls) {
-
+            console.log(cls);
         };
 
         $scope.errorCallback = function (e) {
+            $scope.kq = e;
         };
 
         $scope.timeoutCallback = function () {
         };
 
         $scope.resultCallback = function (result) {
+            console.log(result);
             var code, error_msg, isSuccess, output, resultObj, result_val, _ref;
             if (result && typeof result === 'object') {
                 resultObj = result;
@@ -1030,28 +1035,32 @@ angular.module("easylearncode.learn").run(function () {
 
         $scope.onCompleteVideo = function () {
             $scope.isCompleted = true;
-            scores = 0;
+            var scores = 0;
             _.each($scope.config.plugins.quiz.data, function (elm, index) {
                 scores = scores + elm.score;
             });
-            score = parseFloat(localStorageService.get("score"));
-            if (score * 100 / scores > 60) {
-                if ($scope.lecture._is_passed_lecture) return;
+            if(localStorageService.get("score") != null)
+                 score = parseFloat(localStorageService.get("score"));
+            else score = 0;
+            var cur_index = _.indexOf($scope.lectures, function (obj) {
+                return obj.Id == $scope.lecture.Id;
+            });
+            if (score * 100 / scores > 70) {
+               //if ($scope.lecture._is_passed_lecture) return;
                 $http.post('/api/users/me/passedLecture', {lecture_id: $scope.lecture.Id}).success(function (data) {
-                    console.log(data);
-                    cur_index = _.indexOf($scope.lectures, function (obj) {
-                        return obj.Id == $scope.lecture.Id;
-                    });
                     if (cur_index == $scope.lectures.length - 1) {
-                        //Xử lý khi học hết khóa học
+                        $scope.showAlert = true;
+                        $scope.alert = {
+                            type: 'info',
+                            msg: '<i class="fa fa-check-circle"></i> <strong>Chúc mừng bạn đã hoàn thành khóa học này!!!</strong><br>Chọn khóa học khác<button class="btn btn-primary pull-right" onclick="nextLecture()">Tiếp tục</button><div class="clearfix"></div>'
+                        }
                     } else {
                         $http.post('/api/users/me/currentLecture', {lecture_id: $scope.lectures[cur_index + 1].Id}).success(function (data) {
-
                         });
                         $scope.showAlert = true;
                         $scope.alert = {
                             type: 'info',
-                            msg: '<strong>Chúc mừng bạn đã hoàn thành bài học này !!!</strong><br>Bài kế tiếp<button class="btn btn-primary pull-right" onclick="nextLecture()">Tiếp tục</button><div class="clearfix"></div>'
+                            msg: '<i class="fa fa-check-circle"></i> <strong>Chúc mừng bạn đã hoàn thành bài học này !!!</strong><br>Bài kế tiếp<button class="btn btn-primary pull-right" onclick="nextLecture()">Tiếp tục</button><div class="clearfix"></div>'
                         }
 
                     }
@@ -1062,11 +1071,13 @@ angular.module("easylearncode.learn").run(function () {
                     $scope.showAlert = true;
                     $scope.alert = {
                         type: 'danger',
-                        msg: '<strong>Bạn không thể vượt qua bài học này! Bạn phải học lại!</div>'
+                        msg: '<i class="fa fa-exclamation-triangle"></i> <strong>Bạn chưa đủ điểm để vượt qua bài học này !!!</strong><br>Học lại bài này<button class="btn btn-primary pull-right" onclick="nextLecture()">Học lại</button><div class="clearfix"></div>'
                     }
                 })
             }
-
+            $http.post('/api/users/me/saveLectureUser', {lecture_id: $scope.lectures[cur_index].Id, score: score}).success(function (data) {
+                console.log(data);
+            });
         };
         $window.nextLecture = function () {
             cur_index = _.indexOf($scope.lectures, function (obj) {
@@ -1074,19 +1085,12 @@ angular.module("easylearncode.learn").run(function () {
             });
             if (cur_index >= $scope.lectures - 1 || cur_index < 0) return;
             if ($scope.lecture._is_passed_lecture == false) {
-                api.Model.get({type: "lectures", id: $scope.lecture.Id, recurse: true, depth: 3}, function (data) {
-                    $scope.lectures[cur_index]._is_current_lecture = data._is_current_lecture;
-                    $scope.lectures[cur_index]._is_passed_lecture = data._is_passed_lecture;
-                });
-                api.Model.get({type: "lectures", id: $scope.lectures[cur_index + 1].Id, recurse: true, depth: 3}, function (data) {
-                    $scope.lectures[cur_index + 1]._is_current_lecture = data._is_current_lecture;
-                    $scope.lectures[cur_index + 1]._is_passed_lecture = data._is_passed_lecture;
-                    console.log(data);
-                    $scope.goLecture($scope.lectures[cur_index + 1]);
-                });
-            } else {
-                $scope.goLecture($scope.lectures[cur_index + 1]);
+                $scope.lectures[cur_index]._is_current_lecture = false;
+                $scope.lectures[cur_index]._is_passed_lecture = true;
+                $scope.lectures[cur_index+1]._is_current_lecture = true;
+                $scope.lectures[cur_index+1]._is_passed_lecture = false;
             }
+            $scope.goLecture($scope.lectures[cur_index + 1]);
             $scope.showAlert = false;
         }
 
@@ -1131,40 +1135,54 @@ angular.module("easylearncode.learn").run(function () {
         $scope.goLecture = function (lecture) {
             $location.path("/").search('lecture_id', lecture.Id).replace();
             $scope.lecture = lecture;
-            $scope.loadLecture();
+            api.Model.query({type: 'lessons', filter: 'Lecture==' + $location.search()['lecture_id'] + '' }, function (data) {
+                $scope.lessonCurrent = data[0];
+                $scope.jsrepl.loadLanguage('' + $scope.lessonCurrent.language.toLowerCase() + '', function () {
+                    $scope.jsreplReady = true;
+                });
+                $scope.editor.getSession().setMode("ace/mode/"+$scope.lessonCurrent.language.toLowerCase()+"");
+                $scope.editor.resize();
+                $scope.loadLecture();
+            });
         }
         $scope.loadLecture = function () {
+            $scope.editor.resize();
+            sum_lecture_passed = _.where($scope.lectures, {_is_passed_lecture: true}).length;
+            $http.get("/api/users/me/getTotalScoreCourse?lecture_id="+$scope.lecture.Id+"").success(function(data){
+                $scope.total_score = data.data;
+            });
+            $scope.percent_lecture_passed = sum_lecture_passed*100/$scope.lectures.length;
             $scope.lesson_user = null;
             if (!$scope.lecture._is_passed_lecture && !$scope.lecture._is_current_lecture) {
                 $scope.lecture = $scope.lectures[0];
                 $location.path("/").search('lecture_id', $scope.lecture.Id).replace();
             }
-            $http.get("/api/lessons?filter=Lecture==" + $scope.lecture.Id + "").success(function (data) {
-                $scope.lessonCurrent = data[0];
-                $http.get("/api/users/me").success(function (data) {
-                    $http.get("/api/lesson_users?filter=user==" + data.Id + "&lesson==" + $scope.lessonCurrent.Id + "").success(function (lesson_user) {
-                        $scope.lesson_user = lesson_user[0];
-                        if ($scope.lesson_user == null) {
-                            $http.post("/api/users/me/currentLecture", {lecture_id: $scope.lecture.Id}).success(function (data) {
-                                console.log(data);
-                            })
-                        }
-                    });
+            $http.get("/api/users/me").success(function (data) {
+                $http.get("/api/lesson_users?filter=user==" + data.Id + "&lesson==" + $scope.lessonCurrent.Id + "").success(function (lesson_user) {
+                    $scope.lesson_user = lesson_user[0];
+                    if ($scope.lesson_user == null) {
+                        $http.post("/api/users/me/currentLecture", {lecture_id: $scope.lecture.Id}).success(function (data) {
+                            $scope.lectures[getCurrentLectureIndex()]._is_current_lecture = true;
+                        })
+                    }
                 });
             });
-            $scope.youtubeUrl = $sce.trustAsResourceUrl("http://www.youtube.com/watch?v=" + $scope.lecture.youtube_id);
-            $scope.show = false;
-            if (angular.isDefined($scope.vgScope)) {
-                $scope.vgScope.$destroy();
-            }
-            $scope.vgScope = $scope.$new(false);
-            $('#video').html($compile("<videogular id=\"khung-video\"\r\n                                    vg-player-ready=\"onPlayerReady\" vg-complete=\"onCompleteVideo\" vg-update-time=\"onUpdateTime\" vg-update-size=\"onUpdateSize\" vg-update-volume=\"onUpdateVolume\" vg-update-state=\"onUpdateState\"\r\n                                    vg-width=\"config.width\" vg-height=\"config.height\" vg-theme=\"config.theme.url\" vg-autoplay=\"config.autoPlay\" vg-stretch=\"config.stretch.value\" vg-responsive=\"config.responsive\">\r\n<video preload='metadata' id=\"video_content\">\r\n<source type=\"video/youtube\" src=\"" + $scope.youtubeUrl + "\"  /></video>\r\n                                    <vg-youtube></vg-youtube>\r\n                                    <vg-quiz vg-data='config.plugins.quiz.data' vg-quiz-submit=\"onQuizSubmit\" vg-quiz-skip=\"onQuizSkip\" vg-quiz-continue=\"onQuizContinue\" vg-quiz-show-explanation=\"onQuizShowExplanation\"></vg-quiz>\r\n                                    <vg-poster-image vg-url='config.plugins.poster.url' vg-stretch=\"config.stretch.value\"></vg-poster-image>\r\n                                    <vg-buffering></vg-buffering>\r\n                                    <vg-overlay-play vg-play-icon=\"config.theme.playIcon\"></vg-overlay-play>\r\n\r\n                                    <vg-controls vg-autohide=\"config.autoHide\" vg-autohide-time=\"config.autoHideTime\" style=\"height: 50px;\">\r\n                                        <vg-play-pause-button vg-play-icon=\"config.theme.playIcon\" vg-pause-icon=\"config.theme.pauseIcon\"></vg-play-pause-button>\r\n                                        <vg-timeDisplay>{{ currentTime }}</vg-timeDisplay>\r\n                                        <vg-scrubBar>\r\n                                            <vg-scrubbarcurrenttime></vg-scrubbarcurrenttime>\r\n                                        </vg-scrubBar>\r\n                                        <vg-timeDisplay>{{ totalTime }}</vg-timeDisplay>\r\n                                        <vg-volume>\r\n                                            <vg-mutebutton\r\n                                                vg-volume-level-3-icon=\"config.theme.volumeLevel3Icon\"\r\n                                                vg-volume-level-2-icon=\"config.theme.volumeLevel2Icon\"\r\n                                                vg-volume-level-1-icon=\"config.theme.volumeLevel1Icon\"\r\n                                                vg-volume-level-0-icon=\"config.theme.volumeLevel0Icon\"\r\n                                                vg-mute-icon=\"config.theme.muteIcon\">\r\n                                            </vg-mutebutton>\r\n                                            <vg-volumebar></vg-volumebar>\r\n                                        </vg-volume>\r\n                                        <vg-fullscreenButton vg-enter-full-screen-icon=\"config.theme.enterFullScreenIcon\" vg-exit-full-screen-icon=\"config.theme.exitFullScreenIcon\"></vg-fullscreenButton>\r\n                                    </vg-controls>\r\n                                </videogular>")($scope.vgScope));
-            localStorageService.remove("score");
-            $scope.config.plugins.quiz.data = $scope.lecture.quiz_keys;
-            angular.forEach($scope.lecture.test_keys, function (test) {
-                $scope.config.plugins.quiz.data.push(test);
+            $http.get("/api/lectures/"+$scope.lecture.Id+"?depth=2&recurse=true").success(function(data){
+                $scope.lecture = data;
+                console.log(data);
+                $scope.youtubeUrl = $sce.trustAsResourceUrl("http://www.youtube.com/watch?v=" + $scope.lecture.youtube_id);
+                $scope.show = false;
+                if (angular.isDefined($scope.vgScope)) {
+                    $scope.vgScope.$destroy();
+                }
+                $scope.vgScope = $scope.$new(false);
+                $('#video').html($compile("<videogular id=\"khung-video\"\r\n                                    vg-player-ready=\"onPlayerReady\" vg-complete=\"onCompleteVideo\" vg-update-time=\"onUpdateTime\" vg-update-size=\"onUpdateSize\" vg-update-volume=\"onUpdateVolume\" vg-update-state=\"onUpdateState\"\r\n                                    vg-width=\"config.width\" vg-height=\"config.height\" vg-theme=\"config.theme.url\" vg-autoplay=\"config.autoPlay\" vg-stretch=\"config.stretch.value\" vg-responsive=\"config.responsive\">\r\n<video preload='metadata' id=\"video_content\">\r\n<source type=\"video/youtube\" src=\"" + $scope.youtubeUrl + "\"  /></video>\r\n                                    <vg-youtube></vg-youtube>\r\n                                    <vg-quiz vg-data='config.plugins.quiz.data' vg-quiz-submit=\"onQuizSubmit\" vg-quiz-skip=\"onQuizSkip\" vg-quiz-continue=\"onQuizContinue\" vg-quiz-show-explanation=\"onQuizShowExplanation\"></vg-quiz>\r\n                                    <vg-poster-image vg-url='config.plugins.poster.url' vg-stretch=\"config.stretch.value\"></vg-poster-image>\r\n                                    <vg-buffering></vg-buffering>\r\n                                    <vg-overlay-play vg-play-icon=\"config.theme.playIcon\"></vg-overlay-play>\r\n\r\n                                    <vg-controls vg-autohide=\"config.autoHide\" vg-autohide-time=\"config.autoHideTime\" style=\"height: 50px;\">\r\n                                        <vg-play-pause-button vg-play-icon=\"config.theme.playIcon\" vg-pause-icon=\"config.theme.pauseIcon\"></vg-play-pause-button>\r\n                                        <vg-timeDisplay>{{ currentTime }}</vg-timeDisplay>\r\n                                        <vg-scrubBar>\r\n                                            <vg-scrubbarcurrenttime></vg-scrubbarcurrenttime>\r\n                                        </vg-scrubBar>\r\n                                        <vg-timeDisplay>{{ totalTime }}</vg-timeDisplay>\r\n                                        <vg-volume>\r\n                                            <vg-mutebutton\r\n                                                vg-volume-level-3-icon=\"config.theme.volumeLevel3Icon\"\r\n                                                vg-volume-level-2-icon=\"config.theme.volumeLevel2Icon\"\r\n                                                vg-volume-level-1-icon=\"config.theme.volumeLevel1Icon\"\r\n                                                vg-volume-level-0-icon=\"config.theme.volumeLevel0Icon\"\r\n                                                vg-mute-icon=\"config.theme.muteIcon\">\r\n                                            </vg-mutebutton>\r\n                                            <vg-volumebar></vg-volumebar>\r\n                                        </vg-volume>\r\n                                        <vg-fullscreenButton vg-enter-full-screen-icon=\"config.theme.enterFullScreenIcon\" vg-exit-full-screen-icon=\"config.theme.exitFullScreenIcon\"></vg-fullscreenButton>\r\n                                    </vg-controls>\r\n                                </videogular>")($scope.vgScope));
+                localStorageService.remove("score");
+                $scope.config.plugins.quiz.data = $scope.lecture.quiz_keys;
+                angular.forEach($scope.lecture.test_keys, function (test) {
+                    $scope.config.plugins.quiz.data.push(test);
+                });
             });
-            console.log($scope.config.plugins.quiz.data);
             $scope.rate_lecture = null;
             $http.get("/api/users/me").success(function (data) {
                 $http.get("/api/rates?filter=User==" + data.Id + "&filter=Lecture==" + $scope.lecture.Id + "").success(function (rate) {
@@ -1178,7 +1196,6 @@ angular.module("easylearncode.learn").run(function () {
                 })
             });
         }
-
         $scope.config = {
             width: 700,
             height: 380,
@@ -1227,6 +1244,7 @@ angular.module("easylearncode.learn").run(function () {
                 }
             });
         }
+
         $scope.editRate = function () {
             $scope.isReadonly = false;
         }

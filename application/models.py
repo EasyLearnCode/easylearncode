@@ -665,6 +665,7 @@ class LessonUser(UtilModel, ndb.Model):
     status = ndb.StringProperty(choices=('passed', 'learning'))
     current_lecture = ndb.KeyProperty(kind="Lecture")
     passed_lecture = ndb.KeyProperty(kind="Lecture", repeated=True)
+    score = ndb.FloatProperty(default=0)
 
     @property
     def percent_passed(self):
