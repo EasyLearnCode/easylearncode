@@ -1162,7 +1162,7 @@ angular.module("easylearncode.learn").run(function () {
                     $scope.lesson_user = lesson_user[0];
                     if ($scope.lesson_user == null) {
                         $http.post("/api/users/me/currentLecture", {lecture_id: $scope.lecture.Id}).success(function (data) {
-                            $scope.lectures[getCurrentLectureIndex()]._is_current_lecture = true;
+                            $scope.lectures[$scope.getCurrentLectureIndex()]._is_current_lecture = true;
                         })
                     }
                 });
