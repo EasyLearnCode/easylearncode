@@ -320,11 +320,12 @@ class SaveCurrentLecture(BaseHandler):
             if course_user:
                 lesson_passed = course_user.current_lesson
                 course_user.current_lesson = lesson.key
-                course_user.passed_lessons.append(lesson_passed)
-                lesson_passed_user = LessonUser.get_by_user_and_lesson(current_user, lesson_passed)
-                if lesson_passed_user:
-                    lesson_passed_user.status = 'passed'
-                    lesson_passed_user.put()
+                if lesson_passed:
+                    course_user.passed_lessons.append(lesson_passed)
+                    lesson_passed_user = LessonUser.get_by_user_and_lesson(current_user, lesson_passed)
+                    if lesson_passed_user:
+                        lesson_passed_user.status = 'passed'
+                        lesson_passed_user.put()
             else:
                 course_user = CourseUser()
                 course_user.user = current_user
@@ -454,7 +455,6 @@ class GetTotalScoreCourse(BaseHandler):
     @user_required
     @as_json
     def get(self):
-        import json
         from application.models import LessonUser, Lesson, Course
         from api.restful import current_user
         from google.appengine.ext import ndb
@@ -467,7 +467,8 @@ class GetTotalScoreCourse(BaseHandler):
         _course = Course.get_by_lesson(_lesson_id)
         for lid in _course.lesson_keys:
             lesson_user = LessonUser.get_by_user_and_lesson(_current_user, lid)
-            total = total + lesson_user.score
+            if lesson_user:
+                total = total + lesson_user.score
         return {
             'msg': msg,
             'data': total,
