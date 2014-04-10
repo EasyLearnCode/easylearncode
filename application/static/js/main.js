@@ -688,7 +688,7 @@ angular.module("easylearncode.contest")
                                 bootbox.alert("Bạn đã qua level với thời gian " + time_used + " bộ nhớ " + memory_used + ". Điểm: " + score, function () {
                                     $scope.current_level.is_passed_level = true;
                                     var _level = _.find($scope.current_week_data.level_keys, function(level){
-                                        return level == result.data.next_level_key;
+                                        return level.Id == result.data.next_level_key;
                                     });
                                     $scope.changeCurrentLevel(_level);
                                 });

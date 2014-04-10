@@ -70,18 +70,18 @@ class User(User):
                 _course_user = CourseUser.get_by_user(self.key)
                 if _course_user and 'current_courses' in extras_request:
                     result['_current_courses'] = [c.to_dict() for c in _course_user]
+            admin = _config.is_current_user_admin()
+            if admin:
+                result["$admin"] = admin
         else:
             for k in result.keys():
                 if re_private.match(k):
                     del result[k]
         result["Id"] = self.key.urlsafe()
-        admin = _config.is_current_user_admin()
-        if admin:
-            result["$admin"] = admin
+        return result
         if self.is_teacher:
             result['$teacher'] = True
         del result['is_teacher']
-        return result
 
     @classmethod
     def get_by_email(cls, email):

@@ -69,7 +69,7 @@
                             <span class="badge">{{ player.score|number:1 }} Điểm </span>
                                         <span title="Hạng {{ $index +1}}"
                                               ng-class="{yellow:($index)==0,blue:($index)==1}"
-                                              class="glyphicon glyphicon-star"></span> {{ player.user.username }}</li>
+                                              class="glyphicon glyphicon-star"></span> {{ player.user.name }} {{ player.user.last_name }}</li>
                     </ul>
                     <a class="btn btn-success" href="#!/contest_result">Xem chi tiết...</a>
                 </div>

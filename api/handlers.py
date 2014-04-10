@@ -117,10 +117,22 @@ def run_test_case(weekly_quiz_level, **kwargs):
                             weekly_quiz_level.key)
                     else:
                         weekly_quiz_user.current_level = weekly_quiz_level.key
+
+                    def get_best_score_by_user_and_level(_user, _level):
+                        _best = WeeklyQuizRunCodeResult.get_best_score_by_user_and_level(
+                            user=_user,
+                            level=_level)
+                        if _best:
+                            return _best.score
+                        else:
+                            if _user == run_code_result.user and _level == run_code_result.level:
+                                return run_code_result.score
+                            else:
+                                return 0
+
                     weekly_quiz_user.score = sum(
-                        getattr(WeeklyQuizRunCodeResult.get_best_score_by_user_and_level(
-                            user=user,
-                            level=level), 'score', 0) for level in weekly_quiz.level_keys)
+                        get_best_score_by_user_and_level(user, level) for level in weekly_quiz.level_keys)
+                    print weekly_quiz_user.score
                     weekly_quiz_user.put()
                     #TODO: Recalc rank of all user
                     channel.send_message(str(user.id()), json.dumps(dict(
@@ -129,7 +141,7 @@ def run_test_case(weekly_quiz_level, **kwargs):
                             'result': result,
                             'time_used': avg_time,
                             'memory_used': avg_memory,
-                            'score':score,
+                            'score': score,
                             'next_level_key': _next_level_key.urlsafe() if _next_level_key else 'You not passed current level'
                         })
                     ))
