@@ -56,7 +56,7 @@
     angular.module("easylearncode.simple", ["easylearncode.core"]);
     angular.module("easylearncode.contest", ["ui.bootstrap", "ui.ace", "easylearncode.core", "timer"]);
     angular.module("easylearncode.home", ["ui.bootstrap", "easylearncode.core"]);
-    angular.module("easylearncode.game", ["easylearncode.core"]);
+    angular.module("easylearncode.game", ["easylearncode.core", "ui.bootstrap", "timer"]);
     angular.module("easylearncode.learn", ["ui.bootstrap", "ui.ace", "easylearncode.core", "com.2fdevs.videogular", "com.2fdevs.videogular.plugins.controls", "com.2fdevs.videogular.plugins.overlayplay", "com.2fdevs.videogular.plugins.buffering", "com.2fdevs.videogular.plugins.poster", "info.vietnamcode.nampnq.videogular.plugins.youtube", "info.vietnamcode.nampnq.videogular.plugins.quiz", "ngSocial", "ngDisqus"]);
     angular.module("easylearncode.info", ["ui.bootstrap", "easylearncode.core", "ngAnimate"]);
     angular.module("easylearncode.user_profile", ["easylearncode.core"]);
@@ -254,12 +254,12 @@ angular.module("services.utility").factory("libraryLoader", ["$q", "$rootScope",
                         cache: !0,
                         url: f
                     }).success(function () {
-                        j.resolve();
-                        $rootScope.$apply()
-                    }).error(function () {
-                        j.reject();
-                        $rootScope.$apply()
-                    }), d = j.promise);
+                            j.resolve();
+                            $rootScope.$apply()
+                        }).error(function () {
+                            j.reject();
+                            $rootScope.$apply()
+                        }), d = j.promise);
                     return d
                 }))
             }
@@ -497,7 +497,7 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "ap
 //        });
     }
     $scope.showMoreResult = function () {
-        $scope.resultQuantity +=2;
+        $scope.resultQuantity += 2;
     }
     $scope.changeCurrentLevel = function (level) {
         $scope.current_level = level;
@@ -533,13 +533,13 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "ap
         type = type || "run";
         _.find($scope.langs, function (lang) {
             if (lang.active) {
-                if(lang.source){
+                if (lang.source) {
                     $http.post('/api/contest/submit', {"weekly_quiz_level_key": $scope.current_level.Id, "source": lang.source,
                         "_csrf_token": csrf_token, "lang": lang.lang, "type": type}).success(function (data) {
-                        $scope.isShowCompileResult = true;
-                        $scope.compile_result = [];
-                    });
-                }else{
+                            $scope.isShowCompileResult = true;
+                            $scope.compile_result = [];
+                        });
+                } else {
                     $(function () {
                         $('#codeEmptyModal').modal();
                     });
@@ -561,9 +561,9 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "ap
             $scope.current_level = _.find($scope.current_week_data.level_keys, function (level) {
                 return level.is_current_level;
             });
-            $http.get('/api/contest/me?recurse=True').success(function(data){
+            $http.get('/api/contest/me?recurse=True').success(function (data) {
                 $scope.current_week_user_data = data.data;
-                $scope.current_week_user_data.run_code_result = _.sortBy($scope.current_week_user_data.run_code_result, function(result){
+                $scope.current_week_user_data.run_code_result = _.sortBy($scope.current_week_user_data.run_code_result,function (result) {
                     return result.created;
                 }).reverse();
             })
@@ -579,7 +579,7 @@ angular.module("easylearncode.contest").controller("ContestCtrl", ["$scope", "ap
         'onmessage': function (result) {
             console.log(arguments);
             result.data = JSON.parse(result.data);
-            if(result.data.type && (result.data.type=='run_code_result' || result.data.type=='submit_code_result')){
+            if (result.data.type && (result.data.type == 'run_code_result' || result.data.type == 'submit_code_result')) {
                 $scope.compile_result.push(result.data);
                 $scope.$apply();
             }
@@ -875,24 +875,24 @@ angular.module("easylearncode.learn").run(function () {
             $scope.current_url = (document.location.href);
         });
     }]).directive('hoverClass', function () {
-    return {
-        restrict: 'A',
-        scope: {
-            addClass: '@',
-            removeClass: '@'
-        },
-        link: function (scope, element) {
-            element.on('mouseenter', function () {
-                element.addClass(scope.addClass);
-                element.removeClass(scope.removeClass);
-            });
-            element.on('mouseleave', function () {
-                element.addClass(scope.removeClass);
-                element.removeClass(scope.addClass);
-            });
-        }
-    };
-});
+        return {
+            restrict: 'A',
+            scope: {
+                addClass: '@',
+                removeClass: '@'
+            },
+            link: function (scope, element) {
+                element.on('mouseenter', function () {
+                    element.addClass(scope.addClass);
+                    element.removeClass(scope.removeClass);
+                });
+                element.on('mouseleave', function () {
+                    element.addClass(scope.removeClass);
+                    element.removeClass(scope.addClass);
+                });
+            }
+        };
+    });
 
 angular.module("easylearncode.contest_result").controller('ContestResultCtrl', ['$scope', 'api', '$http', 'csrf_token', '$location', function ($scope, api, $http, csrf_token, $location) {
     $scope.weeks = api.Model.query({type: 'quizs', page_size: 5, order: '-week', recurse: true});
@@ -958,8 +958,8 @@ angular.module("easylearncode.contest_result").controller('ContestResultCtrl', [
     $scope.get_detail = function (key) {
         $http.get('/api/quizresults?filter=test_key==' + $scope.currentWeek + '&filter=user_key==' + key +
                 '&order=-score&recurse=true').success(function (data) {
-            $scope.details = data;
-        });
+                $scope.details = data;
+            });
     }
 }]);
 angular.module("easylearncode.user_profile")
@@ -1444,3 +1444,45 @@ angular.module("easylearncode.visualization", ["ui.bootstrap", "ui.ace", 'easyle
                 ]}
             ];
     }]);
+angular.module("easylearncode.game")
+    .controller("gameCtrl", ["$scope", '$modal', '$timeout', function ($scope, $modal, $timeout) {
+        $scope.modes = [{name:'Dễ', time:30},{name:'Trung bình', time:20},{name:'Khó', time: 10} ];
+        $scope.mode = $scope.modes[0];
+        $scope.showChooseMode = function () {
+                var ModalInstanceCtrl = function ($scope, $modalInstance, modes) {
+                  $scope.modes = modes;
+                  $scope.selected = {
+                    mode: $scope.modes[0]
+                  };
+                  $scope.ok = function () {
+                    $modalInstance.close($scope.selected.mode);
+                  };
+
+                  $scope.cancel = function () {
+                    $modalInstance.dismiss('cancel');
+                  };
+                };
+                var modalInstance = $modal.open({
+                    templateUrl: 'chooseModeModal.html',
+                    controller: ModalInstanceCtrl,
+                    resolve: {
+                        modes: function () {
+                            return $scope.modes;
+                        }
+                    }
+
+                })
+
+                modalInstance.result.then(function (selectedMode) {
+                    $scope.mode = selectedMode;
+                    $timeout(function(){$scope.$broadcast('timer-start');});
+                }, function () {
+                    $log.info('Modal dismissed at: ' + new Date());
+                });
+
+            };
+        $scope.showChooseMode();
+        $scope.$on('timer-stopped', function (event, data){
+               $("#timeoutModal").modal("show");
+            });
+    }])
