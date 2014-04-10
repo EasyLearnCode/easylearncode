@@ -1487,22 +1487,26 @@ angular.module("easylearncode.admin.quiz", ["easylearncode.admin.core"])
             .when("/",
             {
                 templateUrl: "template/angular/admin/quiz/quizs.html",
-                controller: "QuizAdminCtrl"
+                controller: "QuizAdminCtrl",
+                label: "Quiz"
             })
-            .when("/level/:quizId",
+            .when("/:quizId/level",
             {
                 templateUrl: "template/angular/admin/quiz/levels.html",
-                controller: "LevelAdminCtrl"
+                controller: "LevelAdminCtrl",
+                label: "Level"
             })
-            .when("/level/test/:levelId",
+            .when("/:quizId/level/:levelId/test",
             {
                 templateUrl: "template/angular/admin/quiz/levels/tests.html",
-                controller: "TestAdminCtrl"
+                controller: "TestAdminCtrl",
+                label: "Test"
             })
-            .when("/level/result/:levelId",
+            .when("/:quizId/level/:levelId/result",
             {
                 templateUrl: "template/angular/admin/quiz/levels/results.html",
-                controller: "ResultAdminCtrl"
+                controller: "ResultAdminCtrl",
+                label: "Result"
             })
             .otherwise({redirectTo: "/"})
     }])

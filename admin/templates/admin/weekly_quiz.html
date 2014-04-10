@@ -3,9 +3,13 @@
     <li>
         <a href="{{ uri_for("admin-home") }}">Home</a> <span class="divider">/</span>
     </li>
-    <li>
-        <a href="{{ uri_for("admin-quiz") }}">Quiz</a>
+    {% raw %}
+    <li ng-repeat="breadcrumb in breadcrumbs.get() track by breadcrumb.path" >
+      <a ng-if="!$last" ng-href="#!{{ breadcrumb.path }}" ng-bind="breadcrumb.label" class="margin-right-xs"></a>
+      <span ng-if="!$last" class="divider">/</span>
+      <span ng-if="$last" ng-bind="breadcrumb.label"></span>
     </li>
+    {% endraw %}
 {% endblock %}
 
 {% block content %}
@@ -41,7 +45,7 @@
                                 <td class="center">{{ quiz.week }}</td>
                                 <td class="center">{{ quiz.created }}</td>
                                 <td class="center">{{ quiz.start_date }}</td>
-                                <td class="center"><a class="btn btn-success" ng-href="#!/level/{{ quiz.Id }}">
+                                <td class="center"><a class="btn btn-success" ng-href="#!/{{ quiz.Id }}/level">
                                     <i class="icon-zoom-in icon-white"></i>
                                 </a></td>
 
@@ -102,11 +106,11 @@
                                 <td class="center">{{ level.limit_time }}</td>
                                 <td class="center">{{ level.limit_memory }}</td>
                                 <td class="center">{{ level.description }}</td>
-                                <td class="center"><a class="btn btn-success" ng-href="#!/level/result/{{ level.Id }}">
+                                <td class="center"><a class="btn btn-success" ng-href="#!/{{ quiz.Id }}/level/{{ level.Id }}/result">
                                     <i class="icon-zoom-in icon-white"></i>
                                 </a></td>
                                 <td class="center"><a class="btn btn-success"
-                                                      ng-href="#!/level/test/{{ level.Id }}">
+                                                      ng-href="#!/{{ quiz.Id }}/level/{{ level.Id }}/test">
                                     <i class="icon-zoom-in icon-white"></i>
                                 </a></td>
                                 <td class="center">

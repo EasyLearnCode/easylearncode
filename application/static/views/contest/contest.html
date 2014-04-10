@@ -1,0 +1,205 @@
+<div data-ng-show="loaded">
+<div class="col-md-12 highlight">
+    <div><img width="100" alt="logo" style="float: left; margin-right: 5px"
+              src="/application/img/Olympic-Flame.ico"/>
+    </div>
+    Xin chào mừng các bạn đến với phân hệ thi đố vui hàng tuần. Đây là nơi để các bạn luyện tập lập trình và
+    tư duy thuật toán thông qua việc giải các bài tập có
+    dạng tương tự như các bài thi học sinh giỏi tin học. Chúng tôi hy vọng qua việc tham gia cuộc thi, các
+    bạn sẽ tìm thấy sự hứng thú trong việc học tin học, nâng cao được trình độ của mình,
+    đồng thời cũng có thể giao lưu, học tập dược từ các bạn khác!<br/>
+    Cuộc thi hiện đang ở tuần thứ: {{ current_week_data.week }}. <br/>
+    Bắt đầu từ: {{ firstDayOfWeek | date:'dd-MM-yyyy' }} 00:00 đến {{ lastDayOfWeek | date:'dd-MM-yyyy' }} 23:59
+    <a class="pull-right btn" id="startTourBtn"><img rel="tooltip" data-placement="bottom" title="Help"
+                                                     alt="help"
+                                                     src="/application/img/quiz/help.png"
+                                                     width="50"/> </a>
+</div>
+<div class="col-md-12 highlight">
+    <div class="row">
+        <div class="col-md-8">
+            <h4 class="text-warning" style="float: left; margin-right: 5px;" id="step-1">Mức độ: </h4>
+
+            <div class="profileSteps">
+                <div ng-class="{profileStepActive:level.is_passed_level, profileStepPassive:!level.is_passed_level && !level.is_current_level }"
+                     class="profileStep profileStepOne" ng-repeat="level in current_week_data.level_keys">
+                    <div class="connect"></div>
+                    <div class="icon" ng-class="{active:level.is_current_level}">
+                        <a class="btn" data-ng-click="changeCurrentLevel(level)"
+                           ng-show="level.is_passed_level || level.is_current_level ">{{ level.level }}</a>
+                        <span ng-hide="level.is_passed_level || level.is_current_level">{{ level.level }}</span>
+                    </div>
+                </div>
+
+            </div>
+            <div class="clearfix"></div>
+            <div class="panel panel-danger">
+                <div class="panel-heading">
+                    <h3 class="panel-title" id="step-2">Đề bài</h3>
+                </div>
+                <div class="panel-body"
+                     ng-bind-html="current_level.description_html|to_trusted">
+                </div>
+                <div class="panel-footer">
+                    Thời gian giới hạn: {{ current_level.limit_time }} (s)<br/>
+                    Bộ nhớ giới hạn: {{ current_level.limit_memory }} (KiB)<br/>
+                    Điểm tối đa: {{ current_level.score }}<br/>
+                    Mức độ: {{ current_level.level }}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+
+            <label class="label label-danger" id="step-3"><span class="clock">Còn lại:
+                            <timer end-time="nextfirstDayOfWeek"> {{ days }} Ngày,
+                                {{ hours }} giờ,
+                                {{ minutes }} phút,
+                                {{ seconds }} giây
+                            </timer></span>
+            </label>
+
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Thành tích tuần này</h3>
+                </div>
+                <div class="panel-body" ng-show="current_week_data.top_player">
+                    <ul class="list-group">
+                        <li data-ng-repeat="player in current_week_data.top_player|limitTo:5"
+                            class="list-group-item">
+                            <span class="badge">{{ player.score|number:1 }} Điểm </span>
+                                        <span title="Hạng {{ $index +1}}"
+                                              ng-class="{yellow:($index)==0,blue:($index)==1}"
+                                              class="glyphicon glyphicon-star"></span> {{ player.user.username }}</li>
+                    </ul>
+                    <a class="btn btn-success" href="#!/contest_result">Xem chi tiết...</a>
+                </div>
+                <div class="panel-body" ng-hide="current_week_data.top_player">
+                    <p>Hãy là người đầu tiên trong bảng thành tích</p>
+                </div>
+            </div>
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Kết quả của bạn</h3>
+                </div>
+                <div class="panel-body" ng-show="current_week_user_data.run_code_result">
+                    <table class="table">
+                        <tr data-ng-repeat="result in current_week_user_data.run_code_result|limitTo:resultQuantity">
+                            <td>
+                                {{ result.code.filename }}
+                            </td>
+                            <td>
+                                <span ng-show="result.result" class="glyphicon glyphicon-ok"></span>
+                                <span ng-hide="result.result" class="glyphicon glyphicon-remove"></span>
+                                <br/>
+                                {{ result.score|number:1 }}
+                            </td>
+                        </tr>
+                    </table>
+                    <a href="#!/user_result" class="btn btn-success">
+                        <i class="fa fa-info-circle"></i> Xem Thêm...
+                    </a>
+                    <!--button class="btn btn-success" data-ng-click="pre_result()"><span class="glyphicon glyphicon-circle-arrow-up"></span></button-->
+                </div>
+                <div class="panel-body" ng-hide="current_week_user_data.run_code_result">
+                    <p>Bạn chưa nộp bài lần nào</p>
+                </div>
+                <div class="panel-footer" ng-hide="true">
+                    <span ng-show="current_week_user_data.rank>0">Hiện tại bạn đang xếp hạng {{ current_week_user_data.rank }} trong tuần</span>
+                    <span ng-show="current_week_user_data.rank==0">Bạn chưa có hạng</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="col-xs-12 col-md-12 highlight" id="step-4">
+    <tabset>
+        <tab data-ng-repeat="lang in langs" heading="{{ lang.name }}" active="lang.active">
+            <div ui-ace="{ theme:'chrome',
+      mode:lang.mode, onLoad: aceLoaded}" data-ng-model="lang.source">
+            </div>
+        </tab>
+
+    </tabset>
+</div>
+<div class="col-xs-12 col-md-12 highlight">
+    <a rel="tooltip" data-placement="bottom" title="Nộp bài" id="step-5" class="btn btn-success pull-right"
+       data-ng-click="submitCode('submit')">
+        <i class="fa fa-upload"></i> </a>
+    <a rel="tooltip" data-placement="bottom" title="Kiểm tra" id="step-6" class="btn btn-info"
+       data-ng-click="submitCode('run')">
+        <i class="fa fa-check"></i> </a>
+    <a rel="tooltip" data-placement="bottom" title="Làm lại" id="step-7" class="btn btn-danger"
+       data-ng-click="resetCode()">
+        <i class="fa fa-refresh"></i></a>
+</div>
+
+<div style="height: 50px; text-align: center;" data-ng-show="compiling" id="fountainTextG">
+    <div id="fountainTextG_1" class="fountainTextG">
+        C
+    </div>
+    <div id="fountainTextG_2" class="fountainTextG">
+        o
+    </div>
+    <div id="fountainTextG_3" class="fountainTextG">
+        m
+    </div>
+    <div id="fountainTextG_4" class="fountainTextG">
+        p
+    </div>
+    <div id="fountainTextG_5" class="fountainTextG">
+        i
+    </div>
+    <div id="fountainTextG_6" class="fountainTextG">
+        l
+    </div>
+    <div id="fountainTextG_7" class="fountainTextG">
+        i
+    </div>
+    <div id="fountainTextG_8" class="fountainTextG">
+        n
+    </div>
+    <div id="fountainTextG_9" class="fountainTextG">
+        g
+    </div>
+    <div id="fountainTextG_10" class="fountainTextG">
+        .
+    </div>
+    <div id="fountainTextG_11" class="fountainTextG">
+        .
+    </div>
+    <div id="fountainTextG_12" class="fountainTextG">
+        .
+    </div>
+</div>
+<div class="col-xs-12 col-md-12 highlight" id="step-8" ng-show="isShowCompileResult">
+    <h3>Kết quả chạy thử</h3>
+    <table class="table">
+        <tr>
+            <td>#STT</td>
+            <td>Kết quả</td>
+            <td>Thời gian(s)</td>
+            <td>Bộ nhớ(KiB)</td>
+            <td>Lỗi</td>
+        </tr>
+        <tr data-ng-repeat="result in compile_result">
+            <td>{{ $index+1 }}</td>
+            <td>
+                <span ng-show="result.result" class="glyphicon glyphicon-ok"></span>
+                <span ng-show="!result.result" class="glyphicon glyphicon-remove"></span>
+            </td>
+            <td>{{ result.time_used }}</td>
+            <td>{{ result.memory_used }}</td>
+            <td><span ng-show="result.error_html=='OK'" class="glyphicon glyphicon-ok"></span>
+                        <span ng-show="result.error_html!='OK'"
+                              ng-bind-html="result.error_html|to_trusted">{{ result.error_html }}</span>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="5">{{ next_level_key }}</td>
+        </tr>
+    </table>
+
+</div>
+</div>
