@@ -792,6 +792,15 @@ class WeeklyQuizUser(UtilModel, ndb.Model):
     @classmethod
     def get_top_player_by_weekly_quiz(cls, weekly_quiz):
         return [
-            {'user':obj.user, 'score':obj.score} for obj in cls.query(
+            {'user': obj.user, 'score': obj.score} for obj in cls.query(
                 cls.weekly_quiz == weekly_quiz, cls.score > 0).order(-cls.score).fetch()
         ]
+
+    def to_dict(self, *args, **kwargs):
+        result = super(WeeklyQuizUser, self).to_dict(*args, **kwargs)
+        from api.restful import current_user
+        _current_user = current_user()
+        if _current_user != self.user:
+            del result['current_level']
+            del result['passed_level']
+        return result
