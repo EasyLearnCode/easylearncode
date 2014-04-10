@@ -1496,6 +1496,7 @@ angular.module("easylearncode.course_practice_viewer", ["ui.bootstrap", "ui.ace"
                             $http.post('/api/users/me/checkpoints',{checkpoint_id: $scope.current_checkpoint.Id, status:'passed', file:$scope.source}).success(function(data){
                                 if(data.next_item){
                                     //TODO: Show success message
+                                    $window.location.href = $window.location.pathname+'#!/?exercise_item_id='+data.next_item;
                                 }
                             });
                         })
@@ -1592,6 +1593,7 @@ angular.module("easylearncode.course_practice_viewer", ["ui.bootstrap", "ui.ace"
                 //TODO Add _current_checkpoint.index == _current_project.checkpoint_count
                 if(_current_project.index == $scope.exercise_item.projects.length - 1 && $scope.current_checkpoint.index == _current_project.checkpoints.length - 1){
                     //TODO: Next exercise item
+
                 }
                 else{
                     if($scope.current_checkpoint.index == _current_project.checkpoints.length - 1){
