@@ -322,3 +322,25 @@ div.profileStepPassive .icon {
     margin-bottom: 14px;
     padding: 9px 14px;
 }
+
+#clock{
+    position: fixed;
+    top: 50px;
+    z-index: 100;
+    right: 100px;
+    background-color:#00dd00;
+    border-style: solid;
+    border-color: #9cc2d2;
+    border-width: 10px;
+}
+
+#HetGio{
+    position: fixed;
+    top: 50px;
+    z-index: 100;
+    right: 100px;
+    background-color:#00dd00;
+    border-style: solid;
+    border-color: #9cc2d2;
+    border-width: 10px;
+}

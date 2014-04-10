@@ -78,7 +78,7 @@
     angular.module("easylearncode.simple", ["easylearncode.core"]);
     angular.module("easylearncode.contest", ["ui.bootstrap", "ui.ace", "easylearncode.core", "timer", "mgcrea.ngStrap"]);
     angular.module("easylearncode.home", ["ui.bootstrap", "easylearncode.core"]);
-    angular.module("easylearncode.game", ["easylearncode.core"]);
+    angular.module("easylearncode.game", ["easylearncode.core", "ui.bootstrap", "timer"]);
     angular.module("easylearncode.learn", ["ui.bootstrap", "ui.ace", "easylearncode.core", "com.2fdevs.videogular", "com.2fdevs.videogular.plugins.controls", "com.2fdevs.videogular.plugins.overlayplay", "com.2fdevs.videogular.plugins.buffering", "com.2fdevs.videogular.plugins.poster", "info.vietnamcode.nampnq.videogular.plugins.youtube", "info.vietnamcode.nampnq.videogular.plugins.quiz", "ngSocial", "ngDisqus", "LocalStorageModule"]);
     angular.module("easylearncode.info", ["ui.bootstrap", "easylearncode.core", "ngAnimate"]);
     angular.module("easylearncode.core").config(["$locationProvider",
@@ -665,35 +665,36 @@ angular.module("easylearncode.contest")
                 }
 
             });
-            var channel = new goog.appengine.Channel(channelToken);
+        } else {
+            $scope.current_week_data = data.data;
+            $scope.current_week_data.level_keys = _.sortBy($scope.current_week_data.level_keys, function (level) {
+                return level.level;
+            })
+            $scope.current_level = _.find($scope.current_week_data.level_keys, function (level) {
+                return level.is_current_level;
+            });
+            $http.get('/api/contest/me?recurse=True').success(function(data){
+                $scope.current_week_user_data = data.data;
+                $scope.current_week_user_data.run_code_result = _.sortBy($scope.current_week_user_data.run_code_result, function(result){
+                    return result.created;
+                }).reverse();
+            })
+            $scope.loaded = true;
+        }
 
-            var handler = {
-                'onopen': function () {
-                    console.log(arguments)
-                },
-                'onmessage': function (result) {
-                    console.log(arguments);
-                    result.data = JSON.parse(result.data);
-                    if (result.data.type) {
-                        if ((result.data.type == 'run_code_result' || result.data.type == 'submit_code_result')) {
-                            $scope.compiling = false;
-                            $scope.compile_result.push(result.data);
-                            $scope.$apply();
-                        }
-                        else if (result.data.type == "submit_sumary_result") {
-                            if (result.data.result) {
-                                time_used = result.data.time_used;
-                                memory_used = result.data.memory_used;
-                                score = result.data.score;
-                                bootbox.alert("Bạn đã qua level với thời gian " + time_used + " bộ nhớ " + memory_used + ". Điểm: " + score, function () {
-                                    $scope.current_level.is_passed_level = true;
-                                    var _level = _.find($scope.current_week_data.level_keys, function(level){
-                                        return level.Id == result.data.next_level_key;
-                                    });
-                                    $scope.changeCurrentLevel(_level);
-                                });
-                            } else {
-                                bootbox.alert("Bạn không vượt qua level!", function () {
+    });
+    var channel = new goog.appengine.Channel(channelToken);
+    var handler = {
+        'onopen': function () {
+            console.log(arguments)
+        },
+        'onmessage': function (result) {
+            console.log(arguments);
+            result.data = JSON.parse(result.data);
+            if(result.data.type && (result.data.type=='run_code_result' || result.data.type=='submit_code_result')){
+                $scope.compile_result.push(result.data);
+                $scope.$apply();
+            }
 
                                 });
                             }
@@ -2935,4 +2936,46 @@ angular.module("easylearncode.dashboard",["easylearncode.core", "angularMoment"]
             return parseInt(percent*100)+'%';
         }
 
+    }])
+angular.module("easylearncode.game")
+    .controller("gameCtrl", ["$scope", '$modal', '$timeout', function ($scope, $modal, $timeout) {
+        $scope.modes = [{name:'Dễ', time:30},{name:'Trung bình', time:20},{name:'Khó', time: 10} ];
+        $scope.mode = $scope.modes[0];
+        $scope.showChooseMode = function () {
+                var ModalInstanceCtrl = function ($scope, $modalInstance, modes) {
+                  $scope.modes = modes;
+                  $scope.selected = {
+                    mode: $scope.modes[0]
+                  };
+                  $scope.ok = function () {
+                    $modalInstance.close($scope.selected.mode);
+                  };
+
+                  $scope.cancel = function () {
+                    $modalInstance.dismiss('cancel');
+                  };
+                };
+                var modalInstance = $modal.open({
+                    templateUrl: 'chooseModeModal.html',
+                    controller: ModalInstanceCtrl,
+                    resolve: {
+                        modes: function () {
+                            return $scope.modes;
+                        }
+                    }
+
+                })
+
+                modalInstance.result.then(function (selectedMode) {
+                    $scope.mode = selectedMode;
+                    $timeout(function(){$scope.$broadcast('timer-start');});
+                }, function () {
+                    $log.info('Modal dismissed at: ' + new Date());
+                });
+
+            };
+        $scope.showChooseMode();
+        $scope.$on('timer-stopped', function (event, data){
+               $("#timeoutModal").modal("show");
+            });
     }])

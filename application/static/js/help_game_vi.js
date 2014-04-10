@@ -4,38 +4,38 @@ var tour = {
     {
       target: 'step-1',
       title: 'Mức độ',
-      content: 'Đây là nơi hiển thị mức độ bạn đã vượt qua trong mỗi vòng.',
+      content: 'Đây là 10 level mà bạn có thể chơi.',
       placement: 'top'
     },
     {
       target: 'step-2',
       placement: 'left',
       title: 'Thay đổi nhân vật',
-      content: 'Đây là phần thay đổi nhân vật bạn đang chơi.'
+      content: 'Đây là phần mà bạn có thể thay đổi nhân vật đang chơi trong khung đường đi phía dưới.'
     },
     {
       target: 'blockly',
       placement: 'top',
-      title: 'Thanh tím',
-      content: 'Các thanh tím này để bạn kéo thả vào khung trắng bên cạnh.'
+      title: 'Thanh điều khiển bước đi',
+      content: 'Các thanh tím này bạn có thể kéo thả vào khung trắng bên cạnh để điều khiển nhân vật đi tới đích.'
     },
     {
       target: 'svgMaze',
       placement: 'top',
-      title: 'Khung hướng đi.',
-      content: 'Đường đi của nhân vật có thể đi tới đích có dấu màu đỏ'
+      title: 'Khung đường đi.',
+      content: 'Đây là phần thể hiện đường đi của nhân vật.'
     },
     {
       target: 'step-6',
       placement: 'bottom',
       title: 'Chạy thử',
-      content: 'Bạn bấm chạy thử để xem thuật toán của bạn có đúng không!'
+      content: 'Bạn bấm vào nút đỏ để chạy thử thuật toán!'
     },
     {
       target: 'step-7',
       placement: 'bottom',
       title: 'Xem code',
-      content: 'Bạn có thể xem code python viết bằng câu lệnh gì.'
+      content: 'Đây là phần mà bạn có thể xem code python viết như thế nào để đi tới đích của nhân vật.'
     }
   ],
   showPrevButton: true,
