@@ -1,9 +1,174 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title></title>
-</head>
-<body>
+<div class="row" data-ng-show="loaded" id="dashboard__container">
+    <div class="col-md-7 pull-left" ng-show="current_courses">
+        <div id="dashboard__primary-content">
 
-</body>
-</html>
+            <h2 class="ruled-header">
+                Đang học
+            </h2>
+
+            <div ng-repeat="course in current_courses">
+                <div class="dashboard__tracks cf" ng-show="course.current_lesson">
+                    <div class="ui-card ui-card--solo frame-card frame-card--small ">
+
+                        <div class="frame-card__frame">
+                            <div class="goal-preview" id="preview-python">
+                                <div class="curricula__item__logo-image curricula__item__logo--generic curricula__item__logo--python"></div>
+                            </div>
+                        </div>
+
+                        <div class="frame-card__seperator cf">
+                            <div class="in-progress-goal__progress-bar">
+                                <div class="in-progress-goal__progress-juice"
+                                     ng-style="{ width: getPercent(course._percent_passed_lesson) }"></div>
+                            </div>
+                        </div>
+
+                        <div class="frame-card__metadata cf">
+                            <div class="frame-card__metadata__indicator">
+                                {{ course._percent_passed_lesson*100|number:0 }}%
+                            </div>
+                            <h3 class="frame-card__metadata__title">
+                                Python cơ bản [ Học qua video ]
+                            </h3>
+
+                            <div class="frame-card__metadata__subtitle" am-time-ago="course.updated">
+                            </div>
+                        </div>
+
+                        <a ng-href="/course/learn/resume?lesson_id={{ course.current_lesson }}"
+                           class="frame-card__link"></a>
+                    </div>
+                </div>
+                <div class="dashboard__tracks cf" ng-show="course.current_exercise">
+                    <div class="ui-card ui-card--solo frame-card frame-card--small ">
+
+                        <div class="frame-card__frame">
+                            <div class="goal-preview" id="preview-python">
+                                <div class="curricula__item__logo-image curricula__item__logo--generic curricula__item__logo--python"></div>
+                            </div>
+                        </div>
+
+                        <div class="frame-card__seperator cf">
+                            <div class="in-progress-goal__progress-bar">
+                                <div class="in-progress-goal__progress-juice"
+                                     ng-style="{ width: getPercent(course._percent_passed_exercise) }"></div>
+                            </div>
+                        </div>
+
+                        <div class="frame-card__metadata cf">
+                            <div class="frame-card__metadata__indicator">
+                                {{ course._percent_passed_exercise*100|number:0 }}%
+                            </div>
+                            <h3 class="frame-card__metadata__title">
+                                Python cơ bản [ Học qua bài tập ]
+                            </h3>
+
+                            <div class="frame-card__metadata__subtitle" am-time-ago="course.updated">
+                            </div>
+                        </div>
+
+                        <a ng-href="/course/practice/resume?exercise_id={{ course.current_exercise }}"
+                           class="frame-card__link"></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="col-md-4" id="dashboard__groups-and-badges" ng-hide="true">
+        <div class="dashboard__groups-and-badges__module"><h4 class="ruled-header">
+            Huy hiệu
+            <!--a href="#" class="ruled-header__link">View all</a-->
+        </h4>
+            <h4>
+                <a href="#">
+                    <div class="dashboard__badge" title="Build &quot;Rock, Paper, Scissors&quot;">
+                        <div class="ui-media">
+                            <div class="ui-media__image dashboard__badge__icon">
+                                <div class="badge badge-30"></div>
+                            </div>
+                            <div class="ui-media__main dashboard__badge__info">
+                                <b>Tham gia khóa học đầu tiên</b>
+
+                                <div class="ui-media__main dashboard__badge__timestamp">
+                                    Cách đây 10 giờ
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </h4>
+        </div>
+    </div>
+</div>
+<div class="row" ng-hide="current_courses">
+    <div class="col-md-12">
+        <div id="dashboard__primary-content">
+
+            <h2 class="ruled-header">
+                Các khóa học đang chờ bạn
+            </h2>
+
+            <div ng-repeat="course in courses| filter: { is_available: true }">
+                <div class="dashboard__tracks cf">
+                    <div class="ui-card ui-card--solo frame-card frame-card--small ">
+
+                        <div class="frame-card__frame">
+                            <div class="goal-preview" id="preview-python">
+                                <div class="curricula__item__logo-image curricula__item__logo--generic"></div>
+                            </div>
+                        </div>
+
+                        <div class="frame-card__seperator cf">
+                            <div class="in-progress-goal__progress-bar">
+                                <div class="in-progress-goal__progress-juice" style="width: 100%"></div>
+                            </div>
+                        </div>
+
+                        <div class="frame-card__metadata cf">
+                            <div class="frame-card__metadata__indicator">
+                            </div>
+                            <h3 class="frame-card__metadata__title">
+                                {{ course.title }} [ Học qua video ]
+                            </h3>
+
+                            <div class="frame-card__metadata__subtitle">
+                            </div>
+                        </div>
+
+                        <a ng-href="/course/learn/#!?course_id={{ course.key }}" class="frame-card__link"></a>
+                    </div>
+                </div>
+                <div class="dashboard__tracks cf">
+                    <div class="ui-card ui-card--solo frame-card frame-card--small ">
+
+                        <div class="frame-card__frame">
+                            <div class="goal-preview" id="preview-python">
+                                <div class="curricula__item__logo-image curricula__item__logo--generic"></div>
+                            </div>
+                        </div>
+
+                        <div class="frame-card__seperator cf">
+                            <div class="in-progress-goal__progress-bar">
+                                <div class="in-progress-goal__progress-juice" style="width: 100%"></div>
+                            </div>
+                        </div>
+
+                        <div class="frame-card__metadata cf">
+                            <div class="frame-card__metadata__indicator">
+                            </div>
+                            <h3 class="frame-card__metadata__title">
+                                {{ course.title }} [ Học qua bài tập ]
+                            </h3>
+
+                            <div class="frame-card__metadata__subtitle">
+                            </div>
+                        </div>
+
+                        <a ng-href="/course/practice#!?course_id={{ course.key }}" class="frame-card__link"></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

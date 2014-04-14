@@ -1,0 +1,53 @@
+<div data-ng-show="loaded" class="container highlight">
+    <div id="current-curriculum" style="position: fixed; top: 100px;">
+        <div class="curricula__item ui-card ui-card--solo">
+            <div class="curricula__item__section-logo">
+                <!-- Temporary hack for scotland TODO: Bob remove later-->
+                <div class="curricula__item__logo">
+                    <div class="curricula__item__logo-image curricula__item__logo--generic curricula__item__logo--{{ course.tags[0]|lowercase }}"></div>
+                </div>
+            </div>
+            <div class="curricula__item__section-main curricula__item__panel">
+                <!-- H1 for track page. -->
+                <h1 class="curricula__item__title ui-card__title">
+                    {{ course.title }}
+                </h1>
+
+                <div class="curricula__item__description">
+                    {{ course.long_desc }}
+                </div>
+            </div>
+            <div class="curricula__item__section-start">
+                <div class="curricula__item__start-now">
+                    <a href="http://www.codecademy.com/tracks/jquery/resume">
+                        <div type="button" class="btn btn-primary">
+                            Start
+                        </div>
+                    </a></div>
+            </div>
+        </div>
+    </div>
+    <div id="curriculum-units" class="ui-counter">
+        <div class="unit-item" ng-repeat="exercise in course.exercise_keys">
+            <h2 class="unit-item__title">
+                {{ exercise.title }}
+            </h2>
+            <article ng-repeat="item in exercise.items">
+                <a href="/course/practice/viewer#!?exercise_item_id={{ item.Id }}"
+                   class="course-item ui-card ui-card--grouped">
+                    <div class="course-item__progress-indicator"
+                         ng-class="{'course-item__progress-indicator--complete':item._is_passed_item}"></div>
+                    <div class="course-item__info">
+                        <h4 class="course-item__title ui-counter__item ui-card__title">
+                            {{ item.title }}
+                        </h4>
+
+                        <p class="course-item__entry">
+                            {{ item.description }}
+                        </p>
+                    </div>
+                </a>
+            </article>
+        </div>
+    </div>
+</div>

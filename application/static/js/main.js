@@ -1308,9 +1308,19 @@ angular.module("easylearncode.info").controller('InfoCtrl', ['$scope', '$http', 
     };
 }]);
 angular.module("easylearncode.course_practice_detail", ["ui.bootstrap", "easylearncode.core", "ngAnimate"])
+    .config(['$routeProvider', function($routeProvider){
+        $routeProvider.when('/',{
+            templateUrl:'/templates/angular/practice/course_practice_detail.html',
+            controller:'InfoCtrl'
+        })
+    }])
     .controller('InfoCtrl', ['$scope', 'api', '$location', '$window', function ($scope, api, $location, $window) {
+        $scope.loaded = false;
         var course_id = $location.search()['course_id'];
         $scope.course = api.Model.get({type: 'courses', id: course_id, recurse: true, depth: 2});
+        $scope.course.$promise.then(function(){
+            $scope.loaded = true;
+        })
         $window.onscroll = function () {
             var e = $(window).scrollTop(), n = $("#footer").offset().top - 130, r = $("#current-curriculum"), i = r.offset().top - 100, o = {position: r[0].style.position, top: r[0].style.top};
             if (e + r.height() >= n) {
@@ -1345,7 +1355,9 @@ angular.module("easylearncode.course_practice_viewer", ["ui.bootstrap", "ui.ace"
             $scope.editor = _editor;
         }
         $scope.changeLanguage = function (lang) {
-            $scope.editor.getSession().setMode("ace/mode/" + lang);
+            if($scope.editor){
+                $scope.editor.getSession().setMode("ace/mode/" + lang);
+            }
         }
         $scope.getCurrentProject = function(){
             result =  _.find($scope.exercise_item.projects, function(project){
@@ -2955,17 +2967,26 @@ angular.module("easylearncode.teacher", ["ui.bootstrap", "ui.ace", 'easylearncod
         }
     }]);
 angular.module("easylearncode.dashboard",["easylearncode.core", "angularMoment"])
+    .config(['$routeProvider', function($routeProvider){
+        $routeProvider.when('/',{
+             templateUrl:'/templates/angular/home/dashboard.html',
+             controller:'dashboardCtrl'
+        })
+    }])
     .constant('angularMomentConfig', {
         timezone: 'Asia/Ho_Chi_Minh' // optional
     })
     .controller("dashboardCtrl", ["$scope", "api", '$window', function($scope, api, $window){
         $window.moment.lang('vn');
+        $scope.loaded = false;
         $scope.currentUser = api.Model.get({type:"users",id:'me',extras:'current_courses'});
         $scope.currentUser.$promise.then(function(data){
             if(data._current_courses){
                 $scope.current_courses = data._current_courses;
+                $scope.loaded = true;
             }else{
                 $scope.courses = api.Model.query({type:'courses'})
+                $scope.courses.$promise.then(function(){$scope.loaded = true;});
             }
         })
         $scope.getPercent = function(percent){
