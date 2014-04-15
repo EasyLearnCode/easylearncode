@@ -3053,8 +3053,8 @@ angular.module("easylearncode.game")
                 });
 
             };
-        $scope.showChooseMode();
-        $scope.$on('timer-stopped', function (event, data){
-               $("#timeoutModal").modal("show");
-            });
+//        $scope.showChooseMode();
+//        $scope.$on('timer-stopped', function (event, data){
+//               $("#timeoutModal").modal("show");
+//            });
     }])
