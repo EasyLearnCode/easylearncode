@@ -51,7 +51,9 @@ angular.module("info.vietnamcode.nampnq.videogular.plugins.quiz", ['nampnq.util.
                                             scope.skip = false;
                                             scope.showContent = false;
                                             elem.find('form')[0].reset();
-                                            elem.css("background-image", "url('http://en.hdyo.org/assets/ask-question-1-ca45a12e5206bae44014e11cd3ced9f1.jpg')").css("background-size", "100% 100%");
+                                            if(triggered_cue_points[0].$class === "Test")
+                                                elem.css("background-image", "url('http://en.hdyo.org/assets/ask-question-1-ca45a12e5206bae44014e11cd3ced9f1.jpg')").css("background-size", "100% 100%");
+                                            else elem.css("background-image", "url('http://www.eatyourcareer.com/wp-content/uploads/2012/08/quiz.gif')").css("background-size", "100% 100%");
                                             setTimeout(function () {
                                                 scope.showContent = true;
                                                 scope.submit = true;
