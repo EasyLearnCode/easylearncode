@@ -641,7 +641,7 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
                         {
                             "field_title": "Test Function",
                             "field_type": "code",
-                            "field_value": "def easylearncode_validate(result,code,output):\n    #validate code in here\n    return True" ,
+                            "field_value": "def easylearncode_validate(result,code,output,error=None):\n    #validate code in here\n    return True" ,
                             "field_required": true,
                             "field_name": "test_functions",
                             "field_language": $scope.exercise_project.language.toLowerCase()
