@@ -1,4 +1,4 @@
-<div class="row" data-ng-show="loaded" id="dashboard__container">
+<div class="row" data-ng-show="loaded">
     <div class="col-md-7 pull-left" ng-show="current_courses">
         <div id="dashboard__primary-content">
 
@@ -75,6 +75,77 @@
         </div>
 
     </div>
+    <div class="row" ng-hide="current_courses">
+        <div class="col-md-12">
+            <div id="dashboard__primary-content">
+
+                <h2 class="ruled-header">
+                    Các khóa học đang chờ bạn
+                </h2>
+
+                <div ng-repeat="course in courses| filter: { is_available: true }">
+                    <div class="dashboard__tracks cf">
+                        <div class="ui-card ui-card--solo frame-card frame-card--small ">
+
+                            <div class="frame-card__frame">
+                                <div class="goal-preview" id="preview-python">
+                                    <div class="curricula__item__logo-image curricula__item__logo--generic"></div>
+                                </div>
+                            </div>
+
+                            <div class="frame-card__seperator cf">
+                                <div class="in-progress-goal__progress-bar">
+                                    <div class="in-progress-goal__progress-juice" style="width: 100%"></div>
+                                </div>
+                            </div>
+
+                            <div class="frame-card__metadata cf">
+                                <div class="frame-card__metadata__indicator">
+                                </div>
+                                <h3 class="frame-card__metadata__title">
+                                    {{ course.title }} [ Học qua video ]
+                                </h3>
+
+                                <div class="frame-card__metadata__subtitle">
+                                </div>
+                            </div>
+
+                            <a ng-href="/course/learn/#!?course_id={{ course.key }}" class="frame-card__link"></a>
+                        </div>
+                    </div>
+                    <div class="dashboard__tracks cf">
+                        <div class="ui-card ui-card--solo frame-card frame-card--small ">
+
+                            <div class="frame-card__frame">
+                                <div class="goal-preview" id="preview-python">
+                                    <div class="curricula__item__logo-image curricula__item__logo--generic"></div>
+                                </div>
+                            </div>
+
+                            <div class="frame-card__seperator cf">
+                                <div class="in-progress-goal__progress-bar">
+                                    <div class="in-progress-goal__progress-juice" style="width: 100%"></div>
+                                </div>
+                            </div>
+
+                            <div class="frame-card__metadata cf">
+                                <div class="frame-card__metadata__indicator">
+                                </div>
+                                <h3 class="frame-card__metadata__title">
+                                    {{ course.title }} [ Học qua bài tập ]
+                                </h3>
+
+                                <div class="frame-card__metadata__subtitle">
+                                </div>
+                            </div>
+
+                            <a ng-href="/course/practice#!?course_id={{ course.key }}" class="frame-card__link"></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="col-md-4" id="dashboard__groups-and-badges" ng-hide="true">
         <div class="dashboard__groups-and-badges__module"><h4 class="ruled-header">
             Huy hiệu
@@ -98,77 +169,6 @@
                     </div>
                 </a>
             </h4>
-        </div>
-    </div>
-</div>
-<div class="row" ng-hide="current_courses">
-    <div class="col-md-12">
-        <div id="dashboard__primary-content">
-
-            <h2 class="ruled-header">
-                Các khóa học đang chờ bạn
-            </h2>
-
-            <div ng-repeat="course in courses| filter: { is_available: true }">
-                <div class="dashboard__tracks cf">
-                    <div class="ui-card ui-card--solo frame-card frame-card--small ">
-
-                        <div class="frame-card__frame">
-                            <div class="goal-preview" id="preview-python">
-                                <div class="curricula__item__logo-image curricula__item__logo--generic"></div>
-                            </div>
-                        </div>
-
-                        <div class="frame-card__seperator cf">
-                            <div class="in-progress-goal__progress-bar">
-                                <div class="in-progress-goal__progress-juice" style="width: 100%"></div>
-                            </div>
-                        </div>
-
-                        <div class="frame-card__metadata cf">
-                            <div class="frame-card__metadata__indicator">
-                            </div>
-                            <h3 class="frame-card__metadata__title">
-                                {{ course.title }} [ Học qua video ]
-                            </h3>
-
-                            <div class="frame-card__metadata__subtitle">
-                            </div>
-                        </div>
-
-                        <a ng-href="/course/learn/#!?course_id={{ course.key }}" class="frame-card__link"></a>
-                    </div>
-                </div>
-                <div class="dashboard__tracks cf">
-                    <div class="ui-card ui-card--solo frame-card frame-card--small ">
-
-                        <div class="frame-card__frame">
-                            <div class="goal-preview" id="preview-python">
-                                <div class="curricula__item__logo-image curricula__item__logo--generic"></div>
-                            </div>
-                        </div>
-
-                        <div class="frame-card__seperator cf">
-                            <div class="in-progress-goal__progress-bar">
-                                <div class="in-progress-goal__progress-juice" style="width: 100%"></div>
-                            </div>
-                        </div>
-
-                        <div class="frame-card__metadata cf">
-                            <div class="frame-card__metadata__indicator">
-                            </div>
-                            <h3 class="frame-card__metadata__title">
-                                {{ course.title }} [ Học qua bài tập ]
-                            </h3>
-
-                            <div class="frame-card__metadata__subtitle">
-                            </div>
-                        </div>
-
-                        <a ng-href="/course/practice#!?course_id={{ course.key }}" class="frame-card__link"></a>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 </div>

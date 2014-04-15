@@ -3,12 +3,12 @@
     <link rel="stylesheet" href="/application/css/dashboard.css">
 {% endblock %}
 {% block content %}
-    <div class="container" ng-controller="dashboardCtrl">
+    <div class="container" ng-controller="MainCtrl">
         <div class="text-center" data-ng-show="!loaded">
             <div class="row row-gap-large"><img src="/application/img/tp_loading.gif"></div>
             <div class="row row-gap-small"><h4>Đang tải dữ liệu...</h4></div>
         </div>
-        <div data-ng-view></div>
+        <div class="container" id="dashboard__container" data-ng-view></div>
     </div>
 {% endblock %}
 {% block pluginJS %}

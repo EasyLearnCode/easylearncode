@@ -511,13 +511,19 @@ angular.module("easylearncode.contest")
 
 
     }])
+    .controller("MainCtrl",
+    ["$scope", function($scope){
+        $scope.loaded = false;
+        $scope.loadingComplete = function () {
+            $scope.loaded = !0
+        };
+    }])
     .controller("ContestCtrl",
     ["$scope", "api", "$http", "csrf_token", "channelToken", "$location",'$timeout',
         function ($scope, api, $http, csrf_token, channelToken, $location, $timeout) {
             $scope.firstDayOfWeek = Date.parse("last monday");
             $scope.lastDayOfWeek = Date.parse("next sunday");
             $scope.nextfirstDayOfWeek = Date.parse("next monday");
-            $scope.loaded = false;
             $scope.compiling = false;
             $scope.resultQuantity = 3;
             $scope.isShowCompileResult = false;
@@ -662,7 +668,7 @@ angular.module("easylearncode.contest")
                             $scope.viewResult(_result);
                         }
                     })
-                    $scope.loaded = true;
+                    $scope.loadingComplete();
                 }
 
             });
@@ -1314,12 +1320,18 @@ angular.module("easylearncode.course_practice_detail", ["ui.bootstrap", "easylea
             controller:'InfoCtrl'
         })
     }])
-    .controller('InfoCtrl', ['$scope', 'api', '$location', '$window', function ($scope, api, $location, $window) {
+    .controller("MainCtrl",
+    ["$scope", function($scope){
         $scope.loaded = false;
+        $scope.loadingComplete = function () {
+            $scope.loaded = !0
+        };
+    }])
+    .controller('InfoCtrl', ['$scope', 'api', '$location', '$window', function ($scope, api, $location, $window) {
         var course_id = $location.search()['course_id'];
         $scope.course = api.Model.get({type: 'courses', id: course_id, recurse: true, depth: 2});
         $scope.course.$promise.then(function(){
-            $scope.loaded = true;
+            $scope.loadingComplete();
         })
         $window.onscroll = function () {
             var e = $(window).scrollTop(), n = $("#footer").offset().top - 130, r = $("#current-curriculum"), i = r.offset().top - 100, o = {position: r[0].style.position, top: r[0].style.top};
@@ -1341,12 +1353,18 @@ angular.module("easylearncode.course_practice_viewer", ["ui.bootstrap", "ui.ace"
             }
         )
     }])
+    .controller("MainCtrl",
+    ["$scope", function($scope){
+        $scope.loaded = false;
+        $scope.loadingComplete = function () {
+            $scope.loaded = !0
+        };
+    }])
     .controller("PracticeCtrl", ["$scope", "$sce", "$timeout", "api", '$compile', "$window", '$location', '$http', function ($scope, $sce, $timeout, api, $compile, $window, $location, $http) {
         //TODO: Sort projects, checkpoints by index
         var jqconsole;
         var jsrepl;
         var exercise_item_id = $location.search()['exercise_item_id'];
-        $scope.loaded = false;
         $scope.exercise_item = api.Model.get({type: 'exercise_items', id: exercise_item_id, recurse: true, depth: 3});
         $scope.jsreplReady = false;
         $scope.isEditorFullScreen = false;
@@ -1574,7 +1592,7 @@ angular.module("easylearncode.course_practice_viewer", ["ui.bootstrap", "ui.ace"
         $scope.exercise_item.$promise.then(
             function () {
                 $scope.initCurrentCheckpoint();
-                $scope.loaded = true;
+                $scope.loadingComplete();
                 $timeout($scope.initDropDown);
                 $timeout(function(){
                     jqconsole = $('#console').jqconsole('  >> EasyLearnCode Python Compiler v0.1 <<\n', '>>>');
@@ -1602,10 +1620,8 @@ angular.module("easylearncode.course_practice_viewer", ["ui.bootstrap", "ui.ace"
                 jqconsole.Reset();
                 $scope.showAlert = false;
                 _current_project = $scope.getCurrentProject();
-                //TODO Add _current_checkpoint.index == _current_project.checkpoint_count
                 if(_current_project.index == $scope.exercise_item.projects.length - 1 && $scope.current_checkpoint.index == _current_project.checkpoints.length - 1){
                     //TODO: Next exercise item
-
                 }
                 else{
                     if($scope.current_checkpoint.index == _current_project.checkpoints.length - 1){
@@ -2976,17 +2992,23 @@ angular.module("easylearncode.dashboard",["easylearncode.core", "angularMoment"]
     .constant('angularMomentConfig', {
         timezone: 'Asia/Ho_Chi_Minh' // optional
     })
+    .controller("MainCtrl",
+    ["$scope", function($scope){
+        $scope.loaded = false;
+        $scope.loadingComplete = function () {
+            $scope.loaded = !0
+        };
+    }])
     .controller("dashboardCtrl", ["$scope", "api", '$window', function($scope, api, $window){
         $window.moment.lang('vn');
-        $scope.loaded = false;
         $scope.currentUser = api.Model.get({type:"users",id:'me',extras:'current_courses'});
         $scope.currentUser.$promise.then(function(data){
             if(data._current_courses){
                 $scope.current_courses = data._current_courses;
-                $scope.loaded = true;
+                $scope.loadingComplete();
             }else{
                 $scope.courses = api.Model.query({type:'courses'})
-                $scope.courses.$promise.then(function(){$scope.loaded = true;});
+                $scope.courses.$promise.then(function(){$scope.loadingComplete();});
             }
         })
         $scope.getPercent = function(percent){

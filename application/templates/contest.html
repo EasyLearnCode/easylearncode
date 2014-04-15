@@ -6,12 +6,12 @@
 {% endblock %}
 {% block content %}
     {% raw %}
-        <div class="container" data-ng-controller="ContestCtrl">
-        <div class="text-center" data-ng-show="!loaded">
-            <div class="row row-gap-large"><img src="/application/img/tp_loading.gif"></div>
-            <div class="row row-gap-small"><h4>Đang tải dữ liệu...</h4></div>
-        </div>
-        <div data-ng-view></div>
+        <div class="container" data-ng-controller="MainCtrl">
+            <div class="text-center" data-ng-show="!loaded">
+                <div class="row row-gap-large"><img src="/application/img/tp_loading.gif"></div>
+                <div class="row row-gap-small"><h4>Đang tải dữ liệu...</h4></div>
+            </div>
+            <div data-ng-view></div>
         </div>
 
         <div data-backdrop='static' data-keyboard='false' class="modal fade" id="noContestModal" tabindex="-1"
