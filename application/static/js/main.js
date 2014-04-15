@@ -1573,7 +1573,7 @@ angular.module("easylearncode.course_practice_viewer", ["ui.bootstrap", "ui.ace"
             }
         };
         $scope.errorCallback = function (e) {
-            var command = 'easylearncode_validate(\'\', ' + JSON.stringify($scope.source) + ', \'\')';
+            var command = 'easylearncode_validate(\'\', ' + JSON.stringify($scope.source) + ', \'\', '+ JSON.stringify(e) +')';
             command = command.replace(/#{/g, '\\#{');
             var dataObj = {
                 command: command,
