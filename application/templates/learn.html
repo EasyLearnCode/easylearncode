@@ -38,7 +38,7 @@
             </div>
             <div class="row highlight">
                 <div class="col-xs-8">
-                    <div class="progress progress-striped active">
+                    <div class="progress progress-striped active" ng-hide="true">
                         <div class="progress-bar" role="progressbar" aria-valuenow="{{percent_lecture_passed| number:0 }}" aria-valuemin="0"
                              aria-valuemax="100" style="width: {{ percent_lecture_passed| number:0 }}%" tooltip="Đã hoàn thành {{ percent_lecture_passed| number:0 }}% khóa học">{{ percent_lecture_passed| number:0 }}%
                             <span class="sr-only">{{percent_lecture_passed| number:0 }} Complete</span>
@@ -167,7 +167,7 @@
                     </div>
                 </div>
                 <div class="col-xs-4">
-                    <h3 style="margin-bottom: 14px; margin-top: 0px; text-align: center"><span class="label label-success" tooltip="Tổng điểm của bạn trong khóa học này">{{ total_score }} Điểm</span></h3>
+                    <h3 style="margin-bottom: 14px; margin-top: 0px; text-align: center" ng-hide="true"><span class="label label-success" tooltip="Tổng điểm của bạn trong khóa học này">{{ total_score }} Điểm</span></h3>
                     <div class="panel panel-success" id="step-4">
                         <div class="panel-heading">
                             <div class="panel-title"><span class="pull-left" id="step-1"> <h3 class="panel-title"><a
