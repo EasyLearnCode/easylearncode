@@ -362,8 +362,12 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
         }
         formService.setCleanDataFunc(cleanData);
         $scope.delete = function (obj) {
+            if(!angular.isObject(obj)){
+                obj = {Id: obj};
+            }
             api.Model.delete({type: 'exercises', id: obj.Id}, function () {
                 api.Model.get({type: 'courses', id: $routeParams.courseId}, function (course) {
+                    delete course['img'];
                     course.exercise_keys.pop(obj.Id);
                     api.Model.save({type: 'courses', id: course.Id}, course, function () {
                         $scope.courses = _.without($scope.courses, obj);
