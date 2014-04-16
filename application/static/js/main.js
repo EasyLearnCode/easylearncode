@@ -508,6 +508,7 @@ angular.module("easylearncode.contest")
                 templateUrl:'/templates/angular/contest/contest_result.html',
                 controller:'ContestResultCtrl'
             })
+            .otherwise({redirectTo: "/All"})
 
 
     }])
@@ -1315,10 +1316,12 @@ angular.module("easylearncode.info").controller('InfoCtrl', ['$scope', '$http', 
 }]);
 angular.module("easylearncode.course_practice_detail", ["ui.bootstrap", "easylearncode.core", "ngAnimate"])
     .config(['$routeProvider', function($routeProvider){
-        $routeProvider.when('/',{
-            templateUrl:'/templates/angular/practice/course_practice_detail.html',
-            controller:'InfoCtrl'
-        })
+        $routeProvider
+            .when('/',{
+                templateUrl:'/templates/angular/practice/course_practice_detail.html',
+                controller:'InfoCtrl'
+            })
+            .otherwise({redirectTo: "/All"})
     }])
     .controller("MainCtrl",
     ["$scope", function($scope){
@@ -1346,11 +1349,13 @@ angular.module("easylearncode.course_practice_detail", ["ui.bootstrap", "easylea
     }]);
 angular.module("easylearncode.course_practice_viewer", ["ui.bootstrap", "ui.ace", 'easylearncode.core', "ngRoute"])
     .config(["$routeProvider",function($routeProvider){
-        $routeProvider.when(
+        $routeProvider
+            .when(
             '/',{
                 templateUrl:'/templates/angular/practice/practice.html',
                 controller:'PracticeCtrl'
             }
+            .otherwise({redirectTo: "/All"})
         )
     }])
     .controller("MainCtrl",
@@ -2984,10 +2989,12 @@ angular.module("easylearncode.teacher", ["ui.bootstrap", "ui.ace", 'easylearncod
     }]);
 angular.module("easylearncode.dashboard",["easylearncode.core", "angularMoment"])
     .config(['$routeProvider', function($routeProvider){
-        $routeProvider.when('/',{
-             templateUrl:'/templates/angular/home/dashboard.html',
-             controller:'dashboardCtrl'
-        })
+        $routeProvider
+            .when('/',{
+                 templateUrl:'/templates/angular/home/dashboard.html',
+                 controller:'dashboardCtrl'
+            })
+            .otherwise({redirectTo: "/All"})
     }])
     .constant('angularMomentConfig', {
         timezone: 'Asia/Ho_Chi_Minh' // optional
