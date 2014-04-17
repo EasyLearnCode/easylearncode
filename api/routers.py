@@ -22,6 +22,7 @@ _routes = [
     RedirectRoute('/api/users/me/saveLectureUser', handlers.SaveLectureUser, name='lecture-user', strict_slash=True),
     RedirectRoute('/api/users/me/getTotalScoreCourse', handlers.GetTotalScoreCourse, name='get-total-score-course', strict_slash=True),
     RedirectRoute('/api/users/me/currentLecture', handlers.SaveCurrentLecture, name='passed-lecture', strict_slash=True),
+    RedirectRoute('/api/courses/<course_id>/exercises', handlers.ExerciseInfo, name='passed-lecture', strict_slash=True),
     RedirectRoute('/api/files/<model>/<id>/<property>', handler=files.FileHandler, name='blog-upload-download', strict_slash=True),
     RedirectRoute(r"{}<model:[^/]+><:/?><id:(.*)>".format(PREFIX), handler=restful.RestfulHandler),
 ]

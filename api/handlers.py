@@ -476,3 +476,38 @@ class GetTotalScoreCourse(BaseHandler):
             'data': total,
             'status': status
         }
+
+
+class ExerciseInfo(BaseHandler):
+    @user_required
+    @as_json
+    def get(self, course_id):
+        from google.appengine.ext import ndb
+
+        @ndb.tasklet
+        def get_exercises_async(course):
+            exercises = yield ndb.get_multi_async(course.exercise_keys)
+            yield ndb.get_multi_async(sum([exercise.items for exercise in exercises], []))
+            raise ndb.Return(exercises)
+
+        _course = ndb.Key('Course', course_id).get()
+        if _course:
+            #_exercises = ndb.get_multi_async(_course.exercise_keys)
+            data = _course.to_dict()
+            # _exercises_future = get_exercises_async(_course)
+            # _exercises = _exercises_future.get_result()
+            _exercises = ndb.get_multi_async(_course.exercise_keys)
+            data['exercises'] = [ex.get_result().to_dict() for ex in _exercises]
+            for ex in data['exercises']:
+                ex['items'] = [item.get_result().to_dict() for item in ndb.get_multi_async(ex['items'])]
+            msg = ''
+            status = 'ok'
+        else:
+            msg = 'Not found'
+            data = []
+            status = 'error'
+        return {
+            'msg': msg,
+            'data': data,
+            'status': status
+        }
