@@ -1159,20 +1159,31 @@ angular.module("easylearncode.learn").run(function () {
             });
             $scope.percent_lecture_passed = sum_lecture_passed*100/$scope.lectures.length;
             $scope.lesson_user = null;
-            if (!$scope.lecture._is_passed_lecture && !$scope.lecture._is_current_lecture) {
-                $scope.lecture = $scope.lectures[0];
-                $location.path("/").search('lecture_id', $scope.lecture.Id).replace();
+//            if (!$scope.lecture._is_passed_lecture && !$scope.lecture._is_current_lecture) {
+//                $scope.lecture = $scope.lectures[0];
+//                $location.path("/").search('lecture_id', $scope.lecture.Id).replace();
+//            }
+            if($scope.lecture.is_passed_lecture == false){
+                 $http.post("/api/users/me/currentLecture", {lecture_id: $scope.lecture.Id}).success(function (data) {
+                    $scope.lectures[$scope.getCurrentLectureIndex()]._is_current_lecture = true;
+                 })
             }
-            $http.get("/api/users/me").success(function (data) {
-                $http.get("/api/lesson_users?filter=user==" + data.Id + "&lesson==" + $scope.lessonCurrent.Id + "").success(function (lesson_user) {
-                    $scope.lesson_user = lesson_user[0];
-                    if ($scope.lesson_user == null) {
-                        $http.post("/api/users/me/currentLecture", {lecture_id: $scope.lecture.Id}).success(function (data) {
-                            $scope.lectures[$scope.getCurrentLectureIndex()]._is_current_lecture = true;
-                        })
-                    }
-                });
-            });
+            angular.forEach($scope.lectures, function(lecture){
+                 $scope.lectures[$scope.getCurrentLectureIndex()]._is_current_lecture = true;
+                if(lecture.Id != $scope.lecture.Id){
+                    lecture._is_current_lecture = false;
+                }
+            })
+//            $http.get("/api/users/me").success(function (data) {
+//                $http.get("/api/lesson_users?filter=user==" + data.Id + "&lesson==" + $scope.lessonCurrent.Id + "").success(function (lesson_user) {
+//                    $scope.lesson_user = lesson_user[0];
+//                    if ($scope.lesson_user == null) {
+//                        $http.post("/api/users/me/currentLecture", {lecture_id: $scope.lecture.Id}).success(function (data) {
+//                            $scope.lectures[$scope.getCurrentLectureIndex()]._is_current_lecture = true;
+//                        })
+//                    }
+//                });
+//            });
             $http.get("/api/lectures/"+$scope.lecture.Id+"?depth=2&recurse=true").success(function(data){
                 $scope.lecture = data;
                 console.log(data);
