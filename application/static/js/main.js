@@ -2132,7 +2132,7 @@ angular.module("easylearncode.teacher", ["ui.bootstrap", "ui.ace", 'easylearncod
         })
         var form = {
             "form_id": 1,
-            "form_name": "Add Course",
+            "form_name": "Thêm khóa học",
             "form_fields": [
                 {
                     "field_title": "Key",
@@ -2142,7 +2142,7 @@ angular.module("easylearncode.teacher", ["ui.bootstrap", "ui.ace", 'easylearncod
                     "field_name": "adminKey"
                 },
                 {
-                    "field_title": "Title",
+                    "field_title": "Tiêu đề",
                     "field_type": "textfield",
                     "field_value": "",
                     "field_required": true,
@@ -2150,7 +2150,7 @@ angular.module("easylearncode.teacher", ["ui.bootstrap", "ui.ace", 'easylearncod
                 },
                 {
                     "field_id": 3,
-                    "field_title": "Level",
+                    "field_title": "Mức độ",
                     "field_type": "dropdown",
                     "field_value": "Beginning",
                     "field_required": true,
@@ -2175,14 +2175,14 @@ angular.module("easylearncode.teacher", ["ui.bootstrap", "ui.ace", 'easylearncod
                     ]
                 },
                 {
-                    "field_title": "Short description",
+                    "field_title": "Mô tả sơ lược",
                     "field_type": "textfield",
                     "field_value": "",
                     "field_required": true,
                     "field_name": "short_desc"
                 },
                 {
-                    "field_title": "Description",
+                    "field_title": "Mô tả chi tiết",
                     "field_type": "textarea",
                     "field_value": "",
                     "field_required": true,
@@ -2274,11 +2274,11 @@ angular.module("easylearncode.teacher", ["ui.bootstrap", "ui.ace", 'easylearncod
         console.log($routeParams.courseId);
         var form = {
             "form_id": 1,
-            "form_name": "Add Lesson",
+            "form_name": "Thêm chủ đề khóa học",
             "form_fields": [
                 {
                     "field_id": 1,
-                    "field_title": "Title",
+                    "field_title": "Tiêu đề",
                     "field_type": "textfield",
                     "field_value": "",
                     "field_required": true,
@@ -2286,14 +2286,14 @@ angular.module("easylearncode.teacher", ["ui.bootstrap", "ui.ace", 'easylearncod
                 },
                 {
                     "field_id": 2,
-                    "field_title": "Description",
+                    "field_title": "Mô tả",
                     "field_type": "textfield",
                     "field_value": "",
                     "field_required": true,
                     "field_name": "description"
                 },
                 {
-                    "field_title": "Language",
+                    "field_title": "Ngôn ngữ",
                     "field_type": "dropdown",
                     "field_value": "Python",
                     "field_required": true,
@@ -2350,7 +2350,7 @@ angular.module("easylearncode.teacher", ["ui.bootstrap", "ui.ace", 'easylearncod
         };
         $scope.showEditModal = function (lesson) {
             var editForm = $.extend(true, {}, form);
-            editForm["form_name"] = "Edit Lesson";
+            editForm["form_name"] = "Sửa chủ đề khóa học";
             _.each(editForm.form_fields, function (field) {
                 field.field_value = lesson[field.field_name];
             });
@@ -2374,11 +2374,11 @@ angular.module("easylearncode.teacher", ["ui.bootstrap", "ui.ace", 'easylearncod
         $scope.lesson = api.Model.get({type: 'lessons', id: $routeParams.lessonId, recurse: true, depth: 3});
         var form = {
             "form_id": 1,
-            "form_name": "Add Lecture",
+            "form_name": "Thêm bài giảng",
             "form_fields": [
                 {
                     "field_id": 1,
-                    "field_title": "Title",
+                    "field_title": "Tiêu đề",
                     "field_type": "textfield",
                     "field_value": "",
                     "field_required": true,
@@ -2386,7 +2386,7 @@ angular.module("easylearncode.teacher", ["ui.bootstrap", "ui.ace", 'easylearncod
                 },
                 {
                     "field_id": 2,
-                    "field_title": "Description",
+                    "field_title": "Mô tả",
                     "field_type": "textarea",
                     "field_value": "",
                     "field_required": true,
@@ -2394,7 +2394,7 @@ angular.module("easylearncode.teacher", ["ui.bootstrap", "ui.ace", 'easylearncod
                 },
                 {
                     "field_id": 3,
-                    "field_title": "Level",
+                    "field_title": "Độ khó",
                     "field_type": "dropdown",
                     "field_value": "1",
                     "field_required": true,
@@ -2427,7 +2427,7 @@ angular.module("easylearncode.teacher", ["ui.bootstrap", "ui.ace", 'easylearncod
                 },
                 {
                     "field_id": 5,
-                    "field_title": "Time",
+                    "field_title": "Thời gian học",
                     "field_type": "textfield",
                     "field_value": "",
                     "field_required": true,
@@ -2472,7 +2472,7 @@ angular.module("easylearncode.teacher", ["ui.bootstrap", "ui.ace", 'easylearncod
 
         $scope.showEditModal = function (lecture) {
             var editForm = $.extend(true, {}, form);
-            editForm["form_name"] = "Edit Lecture";
+            editForm["form_name"] = "Sửa bài giảng";
             _.each(editForm.form_fields, function (field) {
                 field.field_value = lecture[field.field_name];
             });
@@ -2607,147 +2607,163 @@ angular.module("easylearncode.teacher", ["ui.bootstrap", "ui.ace", 'easylearncod
                 }
             }
         };
-        api.Model.query({type: 'lessons', filter: 'Lecture==' + $location.search()['lecture_id'] + '' }, function (data) {
-            $scope.lesson = data[0];
+       $scope.lecture = api.Model.get({type: 'lectures', id: $routeParams.lectureId, recurse: true, depth:3}, function () {
+               $scope.loadLecture();
         });
 
         var codeForm = {
             "form_id": 1,
-            "form_name": "Add Code",
+            "form_name": "Thêm code",
             "form_fields": [
                 {
                     "field_id": 1,
-                    "field_title": "title",
+                    "field_title": "Tiêu đề",
                     "field_type": "textfield",
                     "field_value": "",
-                    "field_required": true
+                    "field_required": true,
+                    "field_name":"title"
                 },
                 {
                     "field_id": 2,
-                    "field_title": "description",
+                    "field_title": "Mô tả",
                     "field_type": "textarea",
                     "field_value": "",
-                    "field_required": true
+                    "field_required": true,
+                    "field_name":"description"
                 },
                 {
                     "field_id": 3,
-                    "field_title": "content",
+                    "field_title": "Nội dung code",
                     "field_type": "code",
                     "field_language": "python",
                     "field_value": "",
-                    "field_required": true
+                    "field_required": true,
+                    "field_name": "content"
                 },
                 {
                     "field_id": 4,
-                    "field_title": "time",
+                    "field_title": "Thời gian đồng bộ",
                     "field_type": "textfield",
                     "field_value": "",
-                    "field_required": true
+                    "field_required": true,
+                    "field_name": "time"
                 },
                 {
                     "field_id": 5,
-                    "field_title": "index",
+                    "field_title": "Index",
                     "field_type": "textfield",
                     "field_value": "",
-                    "field_required": false
+                    "field_required": false,
+                    "field_name": "index"
                 }
             ]
         }
 
         var testForm = {
             "form_id": 2,
-            "form_name": "Add Test",
+            "form_name": "Thêm bài tập",
             "form_fields": [
                 {
                     "field_id": 1,
-                    "field_title": "title",
+                    "field_title": "Tiêu đề",
                     "field_type": "textfield",
                     "field_value": "",
-                    "field_required": true
+                    "field_required": true,
+                    "field_name": "title"
                 },
                 {
                     "field_id": 2,
                     "field_title": "description",
                     "field_type": "textarea",
                     "field_value": "",
-                    "field_required": true
+                    "field_required": true,
+                    "field_name": "description"
                 },
                 {
                     "field_id": 3,
-                    "field_title": "test_script",
+                    "field_title": "Test script",
                     "field_type": "code",
                     "field_language": "python",
                     "field_value": "",
-                    "field_required": true
+                    "field_required": true,
+                    "field_name": "test_script"
                 },
                 {
                     "field_id": 4,
-                    "field_title": "time",
+                    "field_title": "Thời gian đồng bộ",
                     "field_type": "textfield",
                     "field_value": "",
-                    "field_required": true
+                    "field_required": true,
+                    "field_name": "time"
                 },
                 {
                     "field_id": 5,
-                    "field_title": "score",
+                    "field_title": "Điểm",
                     "field_type": "textfield",
                     "field_value": "",
-                    "field_required": true
+                    "field_required": true,
+                    "field_name": "score"
                 }
             ]
         }
 
         var quizForm = {
             "form_id": 3,
-            "form_name": "Add Quiz",
+            "form_name": "Thêm câu hỏi trắc nghiệm",
             "form_fields": [
                 {
                     "field_id": 1,
-                    "field_title": "title",
+                    "field_title": "Tiêu đề",
                     "field_type": "textfield",
                     "field_value": "",
-                    "field_required": true
+                    "field_required": true,
+                    "field_name": "title"
                 },
                 {
                     "field_id": 2,
-                    "field_title": "question",
+                    "field_title": "Nội dung câu hỏi",
                     "field_type": "textarea",
                     "field_value": "",
-                    "field_required": true
+                    "field_required": true,
+                    "field_name": "question"
                 },
                 {
                     "field_id": 3,
-                    "field_title": "time",
+                    "field_title": "Thời gian",
                     "field_type": "textfield",
                     "field_value": "",
-                    "field_required": true
+                    "field_required": true,
+                    "field_name": "time"
                 },
                 {
                     "field_id": 4,
-                    "field_title": "score",
+                    "field_title": "Điểm",
                     "field_type": "textfield",
                     "field_value": "",
-                    "field_required": true
+                    "field_required": true,
+                    "field_name": "score"
                 }
             ]
         }
 
         var answerQuizForm = {
             "form_id": 4,
-            "form_name": "Add Answer Quiz",
+            "form_name": "Thêm đáp án",
             "form_fields": [
                 {
                     "field_id": 1,
-                    "field_title": "title",
+                    "field_title": "Đáp án",
                     "field_type": "textfield",
                     "field_value": "",
-                    "field_required": true
+                    "field_required": true,
+                    "field_name": "title"
                 },
                 {
                     "field_id": 2,
-                    "field_title": "is_true",
+                    "field_title": "Đáp án đúng",
                     "field_type": "checkbox",
-                    "field_value": ""
+                    "field_value": "",
+                    "field_name": "is_true"
                 }
             ]
         }
@@ -2757,11 +2773,11 @@ angular.module("easylearncode.teacher", ["ui.bootstrap", "ui.ace", 'easylearncod
             formModalService.showFormModal(addForm, function (form) {
                 answer = {}
                 _.each(form.form_fields, function (ele) {
-                    if (ele.field_title == "is_true") {
+                    if (ele.field_name == "is_true") {
                         if (ele.field_value == 1) ele.field_value = true;
                         else ele.field_value = false;
                     }
-                    answer[ele.field_title] = ele.field_value;
+                    answer[ele.field_name] = ele.field_value;
                 });
                 api.Model.save({type: 'answers'}, answer, function (answer_quiz_result) {
                     api.Model.get({type: 'lecture_quizs', id: quiz.Id}, function (quiz_result) {
@@ -2793,16 +2809,16 @@ angular.module("easylearncode.teacher", ["ui.bootstrap", "ui.ace", 'easylearncod
             var editAnswerQuizForm = $.extend(true, {}, answerQuizForm);
             editAnswerQuizForm["form_name"] = "Edit Answer";
             _.each(editAnswerQuizForm.form_fields, function (field) {
-                field.field_value = answer[field.field_title];
+                field.field_value = answer[field.field_name];
             });
             formModalService.showFormModal(editAnswerQuizForm, function (form) {
                 answer_tmp = {}
                 _.each(form.form_fields, function (ele) {
-                    if (ele.field_title == "is_true") {
+                    if (ele.field_name == "is_true") {
                         if (ele.field_value == 1) ele.field_value = true;
                         else ele.field_value = false;
                     }
-                    answer_tmp[ele.field_title] = ele.field_value;
+                    answer_tmp[ele.field_name] = ele.field_value;
                 });
                 api.Model.save({type: 'answers', id: answer.Id}, answer_tmp, function (data) {
                     answer = _.extend(answer, data);
@@ -2820,8 +2836,8 @@ angular.module("easylearncode.teacher", ["ui.bootstrap", "ui.ace", 'easylearncod
             formModalService.showFormModal(addQuizForm, function (form) {
                 quiz = {}
                 _.each(form.form_fields, function (ele) {
-                    if (ele.field_title == "time" || ele.field_title == "score") ele.field_value = parseFloat(ele.field_value);
-                    quiz[ele.field_title] = ele.field_value;
+                    if (ele.field_name == "time" || ele.field_name == "score") ele.field_value = parseFloat(ele.field_value);
+                    quiz[ele.field_name] = ele.field_value;
                 });
                 api.Model.save({type: 'lecture_quizs'}, quiz, function (data) {
                     api.Model.get({type: 'lectures', id: $routeParams.lectureId}, function (lecture) {
@@ -2851,14 +2867,14 @@ angular.module("easylearncode.teacher", ["ui.bootstrap", "ui.ace", 'easylearncod
             var editQuizForm = $.extend(true, {}, quizForm);
             editQuizForm["form_name"] = "Edit Quiz";
             _.each(editQuizForm.form_fields, function (field) {
-                field.field_value = quiz[field.field_title];
+                field.field_value = quiz[field.field_name];
             });
             formModalService.showFormModal(editQuizForm, function (form) {
                 quiz_tmp = {}
                 _.each(form.form_fields, function (ele) {
-                    if (ele.field_title == "time" || ele.field_title == "score")
-                        quiz_tmp[ele.field_title] = parseFloat(ele.field_value);
-                    else quiz_tmp[ele.field_title] = ele.field_value;
+                    if (ele.field_name == "time" || ele.field_name == "score")
+                        quiz_tmp[ele.field_name] = parseFloat(ele.field_value);
+                    else quiz_tmp[ele.field_name] = ele.field_value;
                 });
                 api.Model.save({type: 'lecture_quizs', id: quiz.Id }, quiz_tmp, function (data) {
                     quiz = _.extend(quiz, quiz_tmp);
@@ -2876,8 +2892,8 @@ angular.module("easylearncode.teacher", ["ui.bootstrap", "ui.ace", 'easylearncod
             formModalService.showFormModal(addTestForm, function (form) {
                 test = {}
                 _.each(form.form_fields, function (ele) {
-                    if (ele.field_title == "time" || ele.field_title == "score") ele.field_value = parseFloat(ele.field_value);
-                    test[ele.field_title] = ele.field_value;
+                    if (ele.field_name == "time" || ele.field_name == "score") ele.field_value = parseFloat(ele.field_value);
+                    test[ele.field_name] = ele.field_value;
                 });
                 api.Model.save({type: 'tests'}, test, function (data) {
                     api.Model.get({type: 'lectures', id: $routeParams.lectureId}, function (lecture) {
@@ -2907,14 +2923,14 @@ angular.module("easylearncode.teacher", ["ui.bootstrap", "ui.ace", 'easylearncod
             var editTestForm = $.extend(true, {}, testForm);
             editTestForm["form_name"] = "Edit Test";
             _.each(editTestForm.form_fields, function (field) {
-                field.field_value = test[field.field_title];
+                field.field_value = test[field.field_name];
             });
             formModalService.showFormModal(editTestForm, function (form) {
                 test_tmp = {}
                 _.each(form.form_fields, function (ele) {
-                    if (ele.field_title == "time" || ele.field_title == "score")
-                        test_tmp[ele.field_title] = parseFloat(ele.field_value);
-                    else test_tmp[ele.field_title] = ele.field_value;
+                    if (ele.field_name == "time" || ele.field_name == "score")
+                        test_tmp[ele.field_name] = parseFloat(ele.field_value);
+                    else test_tmp[ele.field_name] = ele.field_value;
                 });
                 api.Model.save({type: 'tests', id: test.Id}, test_tmp, function (data) {
                     test = _.extend(test, data);
@@ -2932,8 +2948,8 @@ angular.module("easylearncode.teacher", ["ui.bootstrap", "ui.ace", 'easylearncod
             formModalService.showFormModal(addCodeForm, function (form) {
                 code = {}
                 _.each(form.form_fields, function (ele) {
-                    if (ele.field_title == "time" || ele.field_title == "index") ele.field_value = parseFloat(ele.field_value);
-                    code[ele.field_title] = ele.field_value;
+                    if (ele.field_name == "time" || ele.field_name == "index") ele.field_value = parseFloat(ele.field_value);
+                    code[ele.field_name] = ele.field_value;
                 });
                 api.Model.save({type: 'codes'}, code, function (data) {
                     api.Model.get({type: 'lectures', id: $routeParams.lectureId}, function (lecture) {
@@ -2963,15 +2979,15 @@ angular.module("easylearncode.teacher", ["ui.bootstrap", "ui.ace", 'easylearncod
             var editCodeForm = $.extend(true, {}, codeForm);
             editCodeForm["form_name"] = "Edit Code";
             _.each(editCodeForm.form_fields, function (field) {
-                field.field_value = code[field.field_title];
+                field.field_value = code[field.field_name];
             });
 
             formModalService.showFormModal(editCodeForm, function (form) {
                 code_tmp = {}
                 _.each(form.form_fields, function (ele) {
-                    if (ele.field_title == "time" || ele.field_title == "index")
-                        code_tmp[ele.field_title] = parseFloat(ele.field_value);
-                    else code_tmp[ele.field_title] = ele.field_value;
+                    if (ele.field_name == "time" || ele.field_name == "index")
+                        code_tmp[ele.field_name] = parseFloat(ele.field_value);
+                    else code_tmp[ele.field_name] = ele.field_value;
                 });
                 api.Model.save({type: 'codes', id: code.Id}, code_tmp, function (data) {
                     code = _.extend(code, code_tmp);

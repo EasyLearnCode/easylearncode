@@ -1110,7 +1110,7 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
                 }
             }
         };
-        $scope.lecture = api.Model.get({type: 'lectures', id: $routeParams.lectureId, recurse: true, depth:4}, function () {
+        $scope.lecture = api.Model.get({type: 'lectures', id: $routeParams.lectureId, recurse: true, depth:3}, function () {
                 $scope.loadLecture();
         });
         var codeForm = {
