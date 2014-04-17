@@ -279,8 +279,9 @@ class SavePassedLecture(BaseHandler):
         lesson_id = Lesson.get_by_lecture(lecture_id).key
         lesson_user = LessonUser.get_by_user_and_lesson(current_user, lesson_id)
         if lesson_user:
-            lesson_user.passed_lecture.append(lecture_id)
-            lesson_user.put()
+            if lecture_id not in lesson_user.passed_lecture:
+                lesson_user.passed_lecture.append(lecture_id)
+                lesson_user.put()
         else:
             msg = 'no Ok'
         return {
@@ -321,7 +322,8 @@ class SaveCurrentLecture(BaseHandler):
                 lesson_passed = course_user.current_lesson
                 course_user.current_lesson = lesson.key
                 if lesson_passed:
-                    course_user.passed_lessons.append(lesson_passed)
+                    if lesson_passed not in course_user.passed_lessons:
+                        course_user.passed_lessons.append(lesson_passed)
                     lesson_passed_user = LessonUser.get_by_user_and_lesson(current_user, lesson_passed)
                     if lesson_passed_user:
                         lesson_passed_user.status = 'passed'
