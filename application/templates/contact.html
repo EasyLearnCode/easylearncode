@@ -1,37 +1,97 @@
-{% extends base_layout %}
-
-{% block title %}
-        {% trans %}Contact{% endtrans %} - {{app_name}}
+{% extends "main.html" %}
+{% block mediaCSS %}
+    <link rel="stylesheet" href="/application/css/contact.css">
 {% endblock %}
-{% block header_title %}
-        {% trans %}Contact{% endtrans %}
-{% endblock %}
-
 {% block content %}
-    <form id="form_contact" action="{{ url|safe }}" method="post" class="well form-horizontal">
-        <fieldset>
-            <input type="hidden" name="exception" value="{{ exception|e }}">
-            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
-            {{ macros.field(form.name, label=_("Name"), placeholder=_("Enter your")+" "+_("Name"), class="input-xlarge focused required") }}
-            {{ macros.field(form.email, label=_("Email"), placeholder=_("Enter your")+" "+_("Email"), class="input-xlarge focused required email", type="email") }}
-            {{ macros.field(form.message, label=_("Message"), class="input-xlarge required", cols="40", rows="8") }}
-            <div class="form-actions">
-                <button type="submit" class="btn btn-primary">{% trans %}Send Message{% endtrans %}</button>
-            </div>
-        </fieldset>
-    </form>
+    <div class="container" data-toc-page-toc-generator="" data-toc-selector="h2">
+	<div class="row">
+		<div class="col-md-12">
+			<span class="h1">
+				Contact Us
+			</span>
+		</div>
+	</div>
+	<div class="row row-gap-small">
+		<div class="col-md-3">
+			<ul class="nav nav-pills nav-stacked nav nav-pills nav-stacked ng-isolate-scope" data-toc-page-toc-list="" data-structured-list="tocEntries"><!-- ngRepeat: entry in structuredList --><li data-ng-repeat-start="entry in structuredList" class="ng-scope"><a href="#section-0-0" class="ng-binding">Course Related</a></li><!-- ngIf: entry.children.length>0 --><!-- end ngRepeat: entry in structuredList --><li data-ng-repeat-start="entry in structuredList" class="ng-scope"><a href="#section-0-1" class="ng-binding">Companies, Educators and Schools</a></li><!-- ngIf: entry.children.length>0 --><!-- end ngRepeat: entry in structuredList --><li data-ng-repeat-start="entry in structuredList" class="ng-scope"><a href="#section-0-2" class="ng-binding">Press</a></li><!-- ngIf: entry.children.length>0 --><!-- end ngRepeat: entry in structuredList --><li data-ng-repeat-start="entry in structuredList" class="ng-scope"><a href="#section-0-3" class="ng-binding">Share your story</a></li><!-- ngIf: entry.children.length>0 --><!-- end ngRepeat: entry in structuredList --><li data-ng-repeat-start="entry in structuredList" class="ng-scope"><a href="#section-0-4" class="ng-binding">Technical</a></li><!-- ngIf: entry.children.length>0 --><!-- end ngRepeat: entry in structuredList --><li data-ng-repeat-start="entry in structuredList" class="ng-scope"><a href="#section-0-5" class="ng-binding">Mobile</a></li><!-- ngIf: entry.children.length>0 --><!-- end ngRepeat: entry in structuredList --><li data-ng-repeat-start="entry in structuredList" class="ng-scope"><a href="#section-0-6" class="ng-binding">Feedback</a></li><!-- ngIf: entry.children.length>0 --><!-- end ngRepeat: entry in structuredList --></ul>
+		</div>
+		<div class="col-md-9">
+
+
+
+
+
+
+<div class="row">
+
+</div>
+
+<div class="row">
+	<div class="col-md-12">
+		<p>
+			Our address is 2465 Latham Street 3rd Floor, Mountain View, CA 94040.</p>
+		<p>For general questions about us and our courses, please visit our <a href="/faq">FAQ page</a>.
+			If you cannot find your answer on our FAQ, there are a few ways you can contact us. Read on to learn how.
+		</p>
+
+		<h2 id="section-0-0">Course Related</h2>
+		<p>
+			If you have course related feedback or questions, please visit the discussion forums associated with that
+			course.
+		</p>
+
+		<h2 id="section-0-1">Companies, Educators and Schools</h2>
+		<p>
+			If you are a company, school or educator using (or interested in) Udacity courses, please contact us at
+			<a href="mailto:teach@udacity.com">teach@udacity.com</a>.
+		</p>
+
+		<h2 id="section-0-2">Press</h2>
+		<p>
+			If you want to learn the latest news, visit our <a href="/press">press page</a>.  If you have
+			specific media inquiries, email us at <a href="mailto:media@udacity.com">media@udacity.com</a>.
+		</p>
+
+		<h2 id="section-0-3">Share your story</h2>
+		<p>If you'd like to share your story with us, please email <a href="mailto:social@udacity.com">social@udacity.com</a>.</p>
+
+		<h2 id="section-0-4">Technical</h2>
+		<p>
+			If you are having technical difficulties or have found a bug, please check our
+			<a href="/tech-requirements">Technical FAQ</a> or post on our <a href="http://forums.udacity.com/tags/technical-support/#technical-support">technical support forum</a>.
+		</p>
+
+		<h2 id="section-0-5">Mobile</h2>
+		<p>
+			If you're experiencing any technical difficulties or have found a bug in our
+			mobile app, please email us at <a href="mailto:mobile-support@udacity.com">mobile-support@udacity.com</a>.
+		</p>
+
+		<h2 id="section-0-6">Feedback</h2>
+		<p>
+			If you want to let us know how we're doing and provide input on our product features and content, visit our
+			<a href="/feedback/signup">feedback page</a> or email us at
+			<a href="mailto:feedbackprogram@udacity.com">feedbackprogram@udacity.com</a>.
+		</p>
+
+	</div>
+</div>
+
+		</div>
+	</div>
+</div>
 {% endblock %}
 
 {% block mediaJS %}
-<script>
-    $().ready(function() {
-        $("#form_contact").validate({
-            errorPlacement: function(error, element) {
-                element.parent().parent().addClass("error");
-                error.addClass("help-inline").appendTo( element.parent() );
-            }
+    <script>
+        $().ready(function () {
+            $("#form_contact").validate({
+                errorPlacement: function (error, element) {
+                    element.parent().parent().addClass("error");
+                    error.addClass("help-inline").appendTo(element.parent());
+                }
+            });
         });
-    });
-</script>
+    </script>
 {% endblock %}
 
