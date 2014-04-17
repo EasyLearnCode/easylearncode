@@ -3031,7 +3031,7 @@ angular.module("easylearncode.dashboard",["easylearncode.core", "angularMoment"]
         $scope.loaded = false;
         $scope.loadingComplete = function () {
             $scope.loaded = !0
-        };o
+        };
     }])
     .controller("dashboardCtrl", ["$scope", "api", '$window', function($scope, api, $window){
         $window.moment.lang('vn');
