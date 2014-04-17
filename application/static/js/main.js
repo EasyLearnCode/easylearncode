@@ -1164,7 +1164,7 @@ angular.module("easylearncode.learn").run(function () {
 //                $scope.lecture = $scope.lectures[0];
 //                $location.path("/").search('lecture_id', $scope.lecture.Id).replace();
 //            }
-            if($scope.lecture.is_passed_lecture == false){
+            if($scope.lecture._is_passed_lecture == false){
                  $http.post("/api/users/me/currentLecture", {lecture_id: $scope.lecture.Id}).success(function (data) {
                     $scope.lectures[$scope.getCurrentLectureIndex()]._is_current_lecture = true;
                  })
