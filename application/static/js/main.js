@@ -1365,9 +1365,9 @@ angular.module("easylearncode.course_practice_viewer", ["ui.bootstrap", "ui.ace"
             '/',{
                 templateUrl:'/templates/angular/practice/practice.html',
                 controller:'PracticeCtrl'
-            }
+            })
             .otherwise({redirectTo: "/All"})
-        )
+
     }])
     .controller("MainCtrl",
     ["$scope", function($scope){
@@ -3031,7 +3031,7 @@ angular.module("easylearncode.dashboard",["easylearncode.core", "angularMoment"]
         $scope.loaded = false;
         $scope.loadingComplete = function () {
             $scope.loaded = !0
-        };
+        };o
     }])
     .controller("dashboardCtrl", ["$scope", "api", '$window', function($scope, api, $window){
         $window.moment.lang('vn');
