@@ -13,10 +13,7 @@
                     <div><img width="100" alt="logo" style="float: left; margin-right: 5px"
                               src="/application/img/Olympic-Flame.ico"/>
                     </div>
-                    Xin chào mừng các bạn đến với phân hệ học qua thực hành. Trong phân hệ này các bạn sẽ được học qua
-                    video dạy học thực hành trực tiếp, thực hành code trực tiếp trong khung code bên phải và được làm
-                    các bài test trong khi xem video. Qua các bài học các bạn sẽ từng bước học các kiến thức cơ bản về
-                    lập trình. Chúng tôi hi vọng khi học xong khóa học này thì các bạn sẽ thấy học việc học lập trình
+                    Xin chào mừng các bạn đến với phần hỗ trợ mô phỏng code. Ở phần này bạn sẽ hiểu được cách mà đoạn code thực hiện một cách trực quan. Chúng tôi hi vọng khi học xong khóa học này thì các bạn sẽ thấy học việc học lập trình
                     trở nên dễ dàng và thú vị hơn.
                     <a class="pull-right btn" id="startTourBtn"><img rel="tooltip" data-placement="bottom" title="Help"
                                                                      alt="help"
@@ -30,7 +27,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                        <h4 class="modal-title" id="myModalLabel">Visualization</h4>
+                        <h4 class="modal-title" id="myModalLabel">Mô phỏng trực quan</h4>
                     </div>
                     <div class="modal-body">
                         <iframe width="800" height="500" frameborder="0"></iframe>
@@ -48,17 +45,17 @@
                     <div class="panel panel-primary">
                         <div class="panel-heading">
                             <span class="pull-left">
-                                <h3 class="panel-title"><i class="fa fa-terminal fa-lg"></i> Code window</h3>
+                                <h3 class="panel-title"><i class="fa fa-terminal fa-lg"></i> Khung soạn thảo</h3>
                             </span>
                             <span class="pull-right">
                                 <a class="btn btn-success" ng-click="runCode()" ng-click="runCode()"
                                    ng-disabled="!jsreplReady" ng-class="{'run-btn-full-screen':isEditorFullScreen}">
                                     <i class="fa fa-play"></i> Run</a>
                                 <a class="btn btn-default" data-target="#visualizationModal" data-toggle="modal"
-                                   ng-click="updateVisualizationUrl()"><i class="fa fa-code"></i> Visualization</a>
+                                   ng-click="updateVisualizationUrl()"><i class="fa fa-code"></i> Mô phỏng code</a>
                                 <a class="btn btn-default" ng-click="toggleFullScreen()"
                                    ng-class="{'full-btn-full-screen':isEditorFullScreen}">
-                                    <i class="fa fa-laptop"></i> Full Screen</a>
+                                    <i class="fa fa-laptop"></i> Phóng to</a>
                             </span>
 
                             <div class="clearfix"></div>
@@ -81,7 +78,7 @@
                     <div class="panel panel-success">
                         <div class="panel-heading">
                                 <span class="pull-left"><h3 class="panel-title"><i class="fa fa-tasks fa-lg"></i>
-                                    Contents</h3></span>
+                                    Mục lục</h3></span>
 
                             <div class="clearfix"></div>
                         </div>
@@ -100,7 +97,7 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
+            <div class="row" ng-show="TreeId.currentNode.description">
                 <div class="col-md-8">
                     <div class="panel panel-primary">
                         <div class="panel-heading"><h3 class="panel-title">Mô tả</h3></div>
