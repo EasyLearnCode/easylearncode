@@ -1,11 +1,25 @@
 <div class="row" ng-show="loaded">
+    <div class="alert alert-info alert-dismissable" style="height: 140px">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <div><img width="100" alt="logo" style="float: left; margin-right: 5px"
+                  src="/application/img/Olympic-Flame.ico"/>
+        </div>
+        Xin chào mừng các bạn đến với phần học thông qua các bài tập thực tiễn. Chúng tôi hi vọng khi học xong khóa học này thì các bạn sẽ thấy học việc học lập
+        trình
+        trở nên dễ dàng và thú vị hơn.
+        <a class="pull-right btn" id="startTourBtn"><img rel="tooltip" data-placement="bottom"
+                                                         title="Help"
+                                                         alt="help"
+                                                         src="/application/img/quiz/help.png"
+                                                         width="50"/> </a>
+    </div>
     <div class="col-md-12 highlight">
         <div class="row">
             <div class="col-md-8">
                 <div class="panel panel-primary">
                     <div class="panel-heading">
                             <span class="pull-left">
-                                <h3 class="panel-title"><i class="fa fa-terminal fa-lg"></i> Code window</h3>
+                                <h3 class="panel-title"><i class="fa fa-terminal fa-lg"></i> Khung soạn thảo</h3>
                             </span>
 
                             <span class="pull-right">
@@ -15,7 +29,7 @@
                                     <i class="fa fa-play"></i> Run</a>
                                 <a class="btn btn-default" ng-click="toggleFullScreen()"
                                    ng-class="{'full-btn-full-screen':isEditorFullScreen}">
-                                    <i class="fa fa-laptop"></i> Full Screen</a>
+                                    <i class="fa fa-laptop"></i> Phóng to</a>
                             </span>
 
                         <div class="clearfix"></div>
