@@ -2450,7 +2450,7 @@ angular.module("easylearncode.teacher", ["ui.bootstrap", "ui.ace", 'easylearncod
     }])
     .controller("LectureTeacherCtrl", ["$scope", "api", "$routeParams", '$http', 'formModalService', function ($scope, api, $routeParams, $http, formModalService) {
         $scope.course = { Id: $routeParams.courseId };
-        $scope.lesson = api.Model.get({type: 'lessons', id: $routeParams.lessonId, recurse: true, depth: 3});
+        $scope.lesson = api.Model.get({type: 'lessons', id: $routeParams.lessonId, recurse: true, depth: 1});
         var form = {
             "form_id": 1,
             "form_name": "Thêm bài giảng",
