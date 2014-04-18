@@ -1835,7 +1835,7 @@ angular.module("easylearncode.visualization", ["ui.bootstrap", "ui.ace", 'easyle
                         children_two.id = code.Id;
                         children_two.code = code.content;
                         min = parseInt(code.time/60);
-                        sec = code.time%60;
+                        sec = parseInt(code.time%60);
                         if(min < 10) min= "0" + min;
                         if(sec < 10) sec = "0"+sec;
                         children_two.title = code.title+" - "+min+":"+sec;
