@@ -790,7 +790,7 @@ angular.module("easylearncode.learn").run(function () {
         $scope.max = 5;
         $scope.isReadonly = false;
         $scope.nl2br = function (text) {
-            return text ? (text.replace(/\n/g, '<br/>')) : '';
+            return text ? (text.replace(/\n/g, "<br />")) : '';
         };
         $scope.aceLoaded = function (_editor) {
             $scope.editor = _editor;
@@ -807,7 +807,7 @@ angular.module("easylearncode.learn").run(function () {
                     })
                 });
                 $scope.lecture = _.where($scope.lectures, {Id: $location.search()['lecture_id']})[0];
-                if ($scope.lessonCurrent.language == "PYTHON") {
+                if ($scope.lessonCurrent.language.toLocaleUpperCase() == "PYTHON") {
                     $scope.jsrepl.loadLanguage('' + $scope.lessonCurrent.language.toLowerCase() + '', function () {
                         $scope.jsreplReady = true;
                     });
@@ -2450,7 +2450,7 @@ angular.module("easylearncode.teacher", ["ui.bootstrap", "ui.ace", 'easylearncod
     }])
     .controller("LectureTeacherCtrl", ["$scope", "api", "$routeParams", '$http', 'formModalService', function ($scope, api, $routeParams, $http, formModalService) {
         $scope.course = { Id: $routeParams.courseId };
-        $scope.lesson = api.Model.get({type: 'lessons', id: $routeParams.lessonId, recurse: true, depth: 3});
+        $scope.lesson = api.Model.get({type: 'lessons', id: $routeParams.lessonId, recurse: true, depth: 1});
         var form = {
             "form_id": 1,
             "form_name": "Thêm bài giảng",
