@@ -27,7 +27,7 @@ var tour = {
     },
     {
       target: 'step-5',
-      placement: 'bottom',
+      placement: 'left',
       title: 'Nộp bài',
       content: 'Khi làm xong bạn hãy clink vào đây để nộp bài.'
     },
@@ -42,12 +42,6 @@ var tour = {
       placement: 'bottom',
       title: 'Làm lại',
       content: 'Khi nào muốn xóa trắng màn hình thì bạn hãy click vào đây!'
-    },
-    {
-      target: 'step-8',
-      placement: 'top',
-      title: 'Khung kết quả',
-      content: 'Bảng hiển thị kết quả khi chạy thử.'
     }
   ],
   showPrevButton: true,
@@ -68,9 +62,9 @@ addClickListener = function(el, fn) {
   else {
     el.attachEvent('onclick', fn);
   }
-},
+};
 
-init = function() {
+window.initTour = function() {
   var startBtnId = 'startTourBtn',
       calloutId = 'startTourCallout',
       mgr = hopscotch.getCalloutManager(),
@@ -103,4 +97,3 @@ init = function() {
     }
   });
 };
-init();

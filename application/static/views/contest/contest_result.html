@@ -15,7 +15,7 @@
                 <td>{{ $index+1 }}</td>
                 <td>{{ player.user.name }} {{ player.user.last_name }}</td>
                 <td>
-                    {{ player.score|number:2 }}
+                    {{ player.score|number:4 }}
                 </td>
 
                 <td><a class="btn btn-info" ng-click="getDetail(player.user.Id)"><span
@@ -65,15 +65,6 @@
     <div class="panel panel-default">
         <div class="panel-heading">Các tuần thi</div>
         <div class="panel-body">
-            <span>Chọn tuần:</span>
-
-            <div class="list-group col-md-12">
-                <div ng-hide="weeks">Không có tuần thi trong tháng</div>
-                <a data-ng-repeat="week in weeks" class="btn list-group-item"
-                   ng-class="{active:week==currentWeek}"
-                   data-ng-click="getResult(week)">Tuần {{ week.week }}</a>
-
-            </div>
             <div>
                 Tháng:
                 <div class="input-group">
@@ -83,6 +74,15 @@
                         class="glyphicon glyphicon-search"></span></button>
                   </span>
                 </div>
+
+            </div>
+            <span>Chọn tuần:</span>
+
+            <div class="list-group col-md-12">
+                <div ng-hide="weeks">Không có tuần thi trong tháng</div>
+                <a data-ng-repeat="week in weeks" class="btn list-group-item"
+                   ng-class="{active:week==currentWeek}"
+                   data-ng-click="getResult(week)">Tuần {{ week.week }}</a>
 
             </div>
         </div>

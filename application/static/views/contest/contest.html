@@ -67,9 +67,7 @@
                         <li data-ng-repeat="player in current_week_data.top_player|limitTo:5"
                             class="list-group-item">
                             <span class="badge">{{ player.score|number:1 }} Điểm </span>
-                                        <span title="Hạng {{ $index +1}}"
-                                              ng-class="{yellow:($index)==0,blue:($index)==1}"
-                                              class="glyphicon glyphicon-star"></span> {{ player.user.name }} {{ player.user.last_name }}</li>
+                                        <span>{{ $index +1}}. </span> {{ player.user.name }} {{ player.user.last_name }}</li>
                     </ul>
                     <a class="btn btn-success" href="#!/contest_result">Xem chi tiết...</a>
                 </div>
@@ -83,7 +81,14 @@
                 </div>
                 <div class="panel-body" ng-show="current_week_user_data.run_code_result">
                     <table class="table">
+                        <tr>
+                            <th>Thời gian</th>
+                            <th>Tên file</th>
+                            <th> Kết quả</th>
+                        </tr>
                         <tr data-ng-repeat="result in current_week_user_data.run_code_result|limitTo:resultQuantity">
+                            <td am-time-ago="result.created">
+                            </td>
                             <td>
                                 {{ result.code.filename }}
                             </td>

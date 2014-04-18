@@ -76,7 +76,7 @@
     angular.module("easylearncode.settings", ["easylearncode.core", "controllers.settings", "directives.location"]);
     angular.module("easylearncode.payment", ["easylearncode.core"]);
     angular.module("easylearncode.simple", ["easylearncode.core"]);
-    angular.module("easylearncode.contest", ["ui.bootstrap", "ui.ace", "easylearncode.core", "timer", "mgcrea.ngStrap"]);
+    angular.module("easylearncode.contest", ["ui.bootstrap", "ui.ace", "easylearncode.core", "timer", "mgcrea.ngStrap", "angularMoment"]);
     angular.module("easylearncode.home", ["ui.bootstrap", "easylearncode.core"]);
     angular.module("easylearncode.game", ["easylearncode.core", "ui.bootstrap", "timer"]);
     angular.module("easylearncode.learn", ["ui.bootstrap", "ui.ace", "easylearncode.core", "com.2fdevs.videogular", "com.2fdevs.videogular.plugins.controls", "com.2fdevs.videogular.plugins.overlayplay", "com.2fdevs.videogular.plugins.buffering", "com.2fdevs.videogular.plugins.poster", "info.vietnamcode.nampnq.videogular.plugins.youtube", "info.vietnamcode.nampnq.videogular.plugins.quiz", "ngSocial", "ngDisqus", "LocalStorageModule"]);
@@ -512,6 +512,9 @@ angular.module("easylearncode.contest")
 
 
     }])
+    .constant('angularMomentConfig', {
+        timezone: 'Asia/Ho_Chi_Minh' // optional
+    })
     .controller("MainCtrl",
     ["$scope", function($scope){
         $scope.loaded = false;
@@ -520,8 +523,9 @@ angular.module("easylearncode.contest")
         };
     }])
     .controller("ContestCtrl",
-    ["$scope", "api", "$http", "csrf_token", "channelToken", "$location",'$timeout',
-        function ($scope, api, $http, csrf_token, channelToken, $location, $timeout) {
+    ["$scope", "api", "$http", "csrf_token", "channelToken", "$location",'$timeout', '$window',
+        function ($scope, api, $http, csrf_token, channelToken, $location, $timeout, $window) {
+            $window.moment.lang("vn");
             $scope.firstDayOfWeek = Date.parse("last monday");
             $scope.lastDayOfWeek = Date.parse("next sunday");
             $scope.nextfirstDayOfWeek = Date.parse("next monday");
@@ -685,6 +689,9 @@ angular.module("easylearncode.contest")
                         $scope.viewResult(_result);
                     }
                 })
+            })
+            $timeout(function(){
+                $window.initTour();
             })
             var channel = new goog.appengine.Channel(channelToken);
 
