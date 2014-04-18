@@ -832,22 +832,10 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
                 console.log('Modal dismissed at: ' + new Date());
             });
         }
-//        var ModalInstanceCtrl = function ($scope, $modalInstance, form) {
-//
-//            $scope.form = form;
-//
-//            $scope.ok = function (data) {
-//                $modalInstance.close($scope.form);
-//            };
-//
-//            $scope.cancel = function () {
-//                $modalInstance.dismiss('cancel');
-//            };
-//        };
     }])
     .controller("LectureAdminCtrl", ["$scope", "api", "$routeParams", '$modal', '$http', 'formModalService', function ($scope, api, $routeParams, $modal, $http, formModalService) {
         $scope.course = { Id: $routeParams.courseId };
-        $scope.lesson = api.Model.get({type: 'lessons', id: $routeParams.lessonId, recurse: true, depth: 3});
+        $scope.lesson = api.Model.get({type: 'lessons', id: $routeParams.lessonId, recurse: true, depth: 1});
         var form = {
             "form_id": 1,
             "form_name": "Add Lecture",
@@ -967,19 +955,6 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
             });
         }
 
-//        var ModalInstanceCtrl = function ($scope, $modalInstance, form) {
-//
-//            $scope.form = form;
-//
-//            $scope.ok = function (data) {
-//                $modalInstance.close($scope.form);
-//            };
-//
-//            $scope.cancel = function () {
-//                $modalInstance.dismiss('cancel');
-//            };
-//        };
-
         $scope.uploadFile = function (files, lecture) {
             $http.get('/api/files/lecture/' + lecture.Id + '/img').success(function (data) {
                 var fd = new FormData();
@@ -993,19 +968,6 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
                 }).error();
             })
         };
-
-//        var ModalInstanceCtrl = function ($scope, $modalInstance, form) {
-//
-//            $scope.form = form;
-//
-//            $scope.ok = function (data) {
-//                $modalInstance.close($scope.form);
-//            };
-//
-//            $scope.cancel = function () {
-//                $modalInstance.dismiss('cancel');
-//            };
-//        };
     }])
     .controller("QuestionAdminCtrl", ["$scope", "api", "$routeParams", '$modal', '$http', '$sce', '$compile', '$rootScope', "VG_EVENTS", 'formModalService', function ($scope, api, $routeParams, $modal, $http, $sce, $compile, $rootScope, VG_EVENTS, formModalService) {
         $scope.currentTime = 0;
