@@ -17,8 +17,8 @@ vg-quiz .quiz-skip-button, vg-quiz .quiz-show-explanation {
 }
 vg-quiz .quiz-status {
     position: absolute;
-    bottom: 0px;
-    width: 80%;
+    bottom: -10px;
+    width: 83%;
     z-index: 1000;
 }
 

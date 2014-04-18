@@ -544,6 +544,9 @@ class Lecture(UtilModel, ndb.Model):
         else:
             result['_is_current_lecture'] = False
             result['_is_passed_lecture'] = False
+        rates = Rate.get_by_lecture(self.key)
+        rate = (sum(r.rate for r in rates))/(len(rates) or 1)
+        result['rate'] = rate
         return result
 
 
@@ -551,6 +554,10 @@ class Rate(UtilModel, ndb.Model):
     user_key = ndb.KeyProperty('User', repeated=False)
     lecture_key = ndb.KeyProperty('Lecture', repeated=False)
     rate = ndb.FloatProperty()
+
+    @classmethod
+    def get_by_lecture(cls, lecture):
+        return cls.query(cls.lecture_key == lecture).fetch()
 
 
 class Code(UtilModel, ndb.Model):
@@ -688,6 +695,10 @@ class LectureUser(UtilModel, ndb.Model):
     @classmethod
     def get_by_user(cls, user):
         return cls.query(cls.user == user).fetch()
+
+    @classmethod
+    def get_by_lecture(cls, lecture):
+        return cls.query(cls.lecture == lecture).fetch()
 
     @classmethod
     def get_by_user_and_lecture(cls, user, lecture):

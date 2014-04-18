@@ -2,53 +2,47 @@
 <div class="container highlight">
     <div class="pull-left"><h3>Các khóa học của bạn</h3></div>
     <div class="pull-right" style="padding-top: 15px;">
-        <button class="btn btn-primary" type="button" ng-click="showAddModal()">Tạo khóa học</button>
+        <button class="btn btn-primary" type="button" ng-click="showAddModal()"><i class="glyphicon glyphicon-plus-sign"></i> Khóa học mới</button>
         <button class="btn btn-default" type="button">Trợ giúp</button>
     </div>
     <div class="clearfix"></div>
     <div class="panel panel-info">
-        <div class="panel-heading">Các khóa học</div>
+        <div class="panel-heading">Danh sách các khóa học</div>
         <div class="panel-body">
-            <table class="table table-bordered table-hover">
-                <thead>
-                <tr>
-                    <th>STT</th>
-                    <th>Tên khóa học</th>
-                    <th>Hình</th>
-                    <th>Mô tả</th>
-                    <th>Lesson</th>
-                    <th>Exercise</th>
-                    <th>Chức năng</th>
-                    <th>Trạng thái</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr ng-repeat="course in courses">
-                    <td>{{ $index + 1 }}</td>
-                    <td>{{ course.title }}</td>
-                    <td class="center">
-                        <div><img ng-src="{{ course.img }}=s150"></div>
+            <div ng-repeat="course in courses">
+                <div class="row row-gap-large">
+                    <div class="col-md-3">
+                        <img alt="" class="img-responsive img-bordered"
+                             data-ng-src="{{ course.img | imageSize:290:170}}"></br>
                         <div><input type="file" name="file" ng-file-select="uploadFile($files, course)"/></div>
-                    </td>
-                    <td>{{ course.long_desc }}</td>
-                    <td class="center"><a class="btn btn-success" ng-href="#!/{{ course.key }}/lessons">
-                        <i class="glyphicon glyphicon-zoom-in"></i>
-                    </a></td>
-                    <td class="center"><a class="btn btn-success" ng-href="#!/{{ course.key }}/exercise">
-                        <i class="glyphicon glyphicon-zoom-in"></i>
-                    </a></td>
-                    <td class="center">
-                        <a class="btn btn-info" ng-click="showEditModal(course)">
-                            <i class="glyphicon glyphicon-edit"></i>
-                        </a>
-                        <a class="btn btn-danger" ng-click="delete(course)">
-                            <i class="glyphicon glyphicon-trash"></i>
-                        </a>
-                    </td>
-                    <td class="center"><i class="glyphicon" ng-class="{'glyphicon-time': !is_available, 'glyphicon-ok': is_available}"></i></td>
-                </tr>
-                </tbody>
-            </table>
+                    </div>
+                    <div class="col-md-7">
+                        <h2 class="h-slim">
+                            <a href="#">{{ course.title }}</a>
+                        </h2>
+                        <h3 class="h-slim-top">
+                            {{ course.short_desc }}
+                        </h3>
+                        <p>{{ course.long_desc }}</p>
+                        <p class="h-slim-top">
+                            Được tạo vào ngày {{course.created| date:'dd/MM/yyyy' }} bởi {{ user_curent.name }} {{ user_curent.last_name }}
+                        </p>
+                        <div ng-show="!course.is_available" style="margin-top: 10px; font-weight: bold">Đang chờ kiểm duyệt...</div>
+                        <div>
+                            <div>
+                                <a data-ng-repeat-start="tag in course.tags" data-ng-href="#!{{ tag }}"
+                                   class="text-muted"
+                                   data-ng-click="scrollTop()">{{ tag }}</a>
+                                <span data-ng-repeat-end data-ng-if="!$last"> &middot; </span>
+                            </div>
+                        </div>
+                        <a class="btn btn-info"  ng-href="#!/{{ course.Id }}/lessons"><i class="glyphicon glyphicon-zoom-in"></i> Quản lý chương</a>
+                        <button class="btn btn-info" ng-click="showEditModal(course)"><i class="glyphicon glyphicon-edit"></i></button>
+                        <button class="btn btn-danger" ng-click="delete(course)"><i class="glyphicon glyphicon-trash"></i></button>
+                    </div>
+                </div>
+            </div>
         </div
+    </div>
     </div>
 

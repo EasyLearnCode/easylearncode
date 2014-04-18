@@ -9,18 +9,21 @@
         <div class="panel-body aligncenter">
             <div id="video" class="pull-left"></div>
             <div class="pull-right">
-                <button class="btn btn-primary" type="button" ng-click="showAddCodeModal()" style="margin-top: 10px">
-                    Thêm code
+                <button class="btn btn-info" type="button" ng-click="showAddCodeModal()" style="margin-top: 10px; width: 130px; text-align: left">
+                   <i class="glyphicon glyphicon-plus-sign"></i> Thêm code
                 </button>
                 </br>
-                <button class="btn btn-primary" type="button" ng-click="showAddQuizModal()" style="margin-top: 10px">
-                    Thêm câu hỏi
+                <button class="btn btn-info" type="button" ng-click="showAddQuizModal()" style="margin-top: 10px; width: 130px; text-align: left">
+                   <i class="glyphicon glyphicon-plus-sign"></i> Thêm câu hỏi
                 </button>
                 </br>
-                <button class="btn btn-primary" type="button" ng-click="showAddTestModal()" style="margin-top: 10px">Tạo
-                    bài tập
+                <button class="btn btn-info" type="button" ng-click="showAddTestModal()" style="margin-top: 10px; width: 130px; text-align: left">
+                   <i class="glyphicon glyphicon-plus-sign"></i> Thêm bài tập
                 </button>
                 </br>
+                <button class="btn btn-info" type="button" ng-click="preView()"  data-target="#videoModal" data-toggle="modal"style="margin-top: 10px; width: 130px;">
+                   <i class="glyphicon glyphicon-play"></i> Xem thử
+                </button>
             </div>
         </div>
     </div>
@@ -43,16 +46,16 @@
                 <tr ng-repeat="code in lecture.code_keys">
                     <td>{{ $index+1 }}</td>
                     <td>{{ code.title }}</td>
-                    <td class="center">{{ code.created }}</td>
+                    <td class="center">{{ code.created| date:'dd/MM/yyyy' }}</td>
                     <td class="center">{{ code.description }}</td>
                     <td class="center">{{ code.content }}</td>
                     <td class="center">{{ code.time }}</td>
                     <td class="center">
                         <a class="btn btn-info" ng-click="showEditCodeModal(code)">
-                            <i class="icon-edit icon-white"></i>
+                            <i class="glyphicon glyphicon-edit"></i>
                         </a>
                         <a class="btn btn-danger" ng-click="deleteCode(code)">
-                            <i class="icon-trash icon-white"></i>
+                            <i class="glyphicon glyphicon-trash"></i>
                         </a>
                     </td>
                 </tr>
@@ -80,7 +83,7 @@
                     <td>{{ $index+1 }}</td>
                     <td class="center">{{ quiz.time }}</td>
                     <td class="center">{{ quiz.question }}</td>
-                    <td class="center">{{ quiz.created }}</td>
+                    <td class="center">{{ quiz.created| date:'dd/MM/yyyy' }}</td>
                     <td class="center">{{ quiz.score }}</td>
                     <td class="center">
                         <a class="btn btn-info" ng-click="showEditQuizModal(quiz)">
@@ -142,7 +145,7 @@
                     <td>{{ $index +1 }}</td>
                     <td>{{ test.title }}</td>
                     <td class="center">{{ test.created }}</td>
-                    <td class="center">{{ test.description }}</td>
+                    <td class="center">{{ test.description| date:'dd/MM/yyyy' }}</td>
                     <td class="center">{{ test.test_script }}</td>
                     <td class="center">{{ test.time }}</td>
                     <td class="center">{{ test.score }}</td>
@@ -159,7 +162,26 @@
                 </tbody>
             </table>
         </div>
-
+         <div class="modal fade" id="videoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog question" style="width: 1200px">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">Chạy thử video</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div id="video-dialog" class="pull-left"></div>
+                        <div class="pull-right" ui-ace="{ theme:'chrome',
+                        mode:'python', onLoad: aceLoaded}" data-ng-model="code" style="width: 400px; height:380px!important;"></div>
+                         <div class="clearfix"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
