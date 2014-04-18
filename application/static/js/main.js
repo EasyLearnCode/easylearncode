@@ -790,7 +790,7 @@ angular.module("easylearncode.learn").run(function () {
         $scope.max = 5;
         $scope.isReadonly = false;
         $scope.nl2br = function (text) {
-            return text ? (text.replace(/\n/g, '<br/>')) : '';
+            return text ? (text.replace(/\n/g, "<br />")) : '';
         };
         $scope.aceLoaded = function (_editor) {
             $scope.editor = _editor;
@@ -807,7 +807,7 @@ angular.module("easylearncode.learn").run(function () {
                     })
                 });
                 $scope.lecture = _.where($scope.lectures, {Id: $location.search()['lecture_id']})[0];
-                if ($scope.lessonCurrent.language == "PYTHON") {
+                if ($scope.lessonCurrent.language.toLocaleUpperCase() == "PYTHON") {
                     $scope.jsrepl.loadLanguage('' + $scope.lessonCurrent.language.toLowerCase() + '', function () {
                         $scope.jsreplReady = true;
                     });
