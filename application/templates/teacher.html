@@ -1,8 +1,18 @@
 {% extends "main.html" %}
 {% block mediaCSS %}
     <link rel="stylesheet" href="/application/css/teacher.css" xmlns="http://www.w3.org/1999/html">
+    <link rel="stylesheet" type="text/css" href="/application/css/videogular/quiz.css">
 {% endblock %}
 {% block content %}
+    <div ng-controller="BreadCrumbsCtrl" class="breadcrumb container">
+        <a href="{{ uri_for("teacher-page") }}">Quản lý khóa học</a>
+    {% raw %}
+    <li ng-repeat="breadcrumb in breadcrumbs.get() track by breadcrumb.path" >
+      <a ng-if="!$last" ng-href="#!{{ breadcrumb.path }}" ng-bind="breadcrumb.label" class="margin-right-xs"></a>
+      <span ng-if="!$last" class="divider"></span>
+      <span ng-if="$last" ng-bind="breadcrumb.label"></span>
+    </li>
+    {% endraw %}</div>
     <ng-view></ng-view>
 {% endblock %}
 {% block pluginJS %}

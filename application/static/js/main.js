@@ -500,13 +500,13 @@ angular.module("easylearncode.contest")
             })
             .when('/user_result',
             {
-                templateUrl:'/templates/angular/contest/contest_result_user.html',
-                controller:'ContestCtrl'
+                templateUrl: '/templates/angular/contest/contest_result_user.html',
+                controller: 'ContestCtrl'
             })
             .when('/contest_result',
             {
-                templateUrl:'/templates/angular/contest/contest_result.html',
-                controller:'ContestResultCtrl'
+                templateUrl: '/templates/angular/contest/contest_result.html',
+                controller: 'ContestResultCtrl'
             })
             .otherwise({redirectTo: "/All"})
 
@@ -782,6 +782,9 @@ angular.module("easylearncode.learn").run(function () {
         $scope.rate = 3;
         $scope.max = 5;
         $scope.isReadonly = false;
+        $scope.nl2br = function (text) {
+            return text ? (text.replace(/\n/g, '<br/>')) : '';
+        };
         $scope.aceLoaded = function (_editor) {
             $scope.editor = _editor;
             _editor.setOptions({
@@ -789,7 +792,7 @@ angular.module("easylearncode.learn").run(function () {
             });
         }
         api.Model.query({type: 'lessons', filter: 'Lecture==' + $location.search()['lecture_id'] + '' }, function (data) {
-            $scope.lessonCurrent = data[0]
+            $scope.lessonCurrent = data[0];
             api.Model.query({type: 'courses', filter: 'Lesson==' + data[0].Id + '', recurse: true, depth: 2  }, function (data) {
                 angular.forEach(data[0].lesson_keys, function (lesson) {
                     angular.forEach(lesson.lecture_keys, function (lecture) {
@@ -797,10 +800,16 @@ angular.module("easylearncode.learn").run(function () {
                     })
                 });
                 $scope.lecture = _.where($scope.lectures, {Id: $location.search()['lecture_id']})[0];
-                $scope.jsrepl.loadLanguage('' + $scope.lessonCurrent.language.toLowerCase() + '', function () {
-                    $scope.jsreplReady = true;
-                });
-                $scope.editor.getSession().setMode("ace/mode/"+$scope.lessonCurrent.language.toLowerCase()+"");
+                if ($scope.lessonCurrent.language == "PYTHON") {
+                    $scope.jsrepl.loadLanguage('' + $scope.lessonCurrent.language.toLowerCase() + '', function () {
+                        $scope.jsreplReady = true;
+                    });
+                }
+                else $scope.jsreplReady = true;
+                if ($scope.lessonCurrent.language == "CPP")
+                    $scope.editor.getSession().setMode("ace/mode/c_cpp");
+                else
+                    $scope.editor.getSession().setMode("ace/mode/" + $scope.lessonCurrent.language.toLowerCase() + "");
                 $scope.editor.resize()
                 $scope.loadLecture();
                 $scope.loaded = true;
@@ -850,6 +859,19 @@ angular.module("easylearncode.learn").run(function () {
         };
 
         $scope.errorCallback = function (e) {
+            if ($scope.current_test) {
+                var command = 'easylearncode_validate(\'\', ' + JSON.stringify($scope.code_answer) + ', \'\', ' + JSON.stringify(e) + ')';
+                command = command.replace(/#{/g, '\\#{');
+                var dataObj = {
+                    command: command,
+                    testScript: $scope.current_test.test_script,
+                    type: 'evalSolution'
+                };
+                $scope.jsrepl.sandbox.post({
+                    type: 'engine.EasyLearnCode_Eval',
+                    data: dataObj
+                });
+            }
             $scope.kq = e;
         };
 
@@ -890,7 +912,7 @@ angular.module("easylearncode.learn").run(function () {
                         $scope.$apply(function () {
                             data = {
                                 result: true,
-                                description: 'Chúc mừng bạn!'
+                                description: 'Chúc mừng! Bạn đã trả lời đúng!'
                             }
                             runCodeDeferred.resolve(data);
                         })
@@ -899,7 +921,7 @@ angular.module("easylearncode.learn").run(function () {
                         $scope.$apply(function () {
                             data = {
                                 result: false,
-                                description: utf8_decode(result_val)
+                                description: (utf8_decode(result_val))
                             }
                             runCodeDeferred.resolve(data);
                         })
@@ -938,8 +960,9 @@ angular.module("easylearncode.learn").run(function () {
                 //$scope.jqconsole.Write('==> ' + result, 'output');
             }
         };
-
+        $scope.code_answer = "";
         $scope.onQuizSubmit = function (data) {
+            $scope.code_answer = data.code;
             console.log(data);
             if (data.type == "Quiz") {
                 quizs = _.where($scope.lecture.quiz_keys, {Id: data.id});
@@ -1046,14 +1069,14 @@ angular.module("easylearncode.learn").run(function () {
             _.each($scope.config.plugins.quiz.data, function (elm, index) {
                 scores = scores + elm.score;
             });
-            if(localStorageService.get("score") != null)
-                 score = parseFloat(localStorageService.get("score"));
+            if (localStorageService.get("score") != null)
+                score = parseFloat(localStorageService.get("score"));
             else score = 0;
             var cur_index = _.indexOf($scope.lectures, function (obj) {
                 return obj.Id == $scope.lecture.Id;
             });
             if (score * 100 / scores > 70) {
-               //if ($scope.lecture._is_passed_lecture) return;
+                //if ($scope.lecture._is_passed_lecture) return;
                 $http.post('/api/users/me/passedLecture', {lecture_id: $scope.lecture.Id}).success(function (data) {
                     if (cur_index == $scope.lectures.length - 1) {
                         $scope.showAlert = true;
@@ -1094,8 +1117,8 @@ angular.module("easylearncode.learn").run(function () {
             if ($scope.lecture._is_passed_lecture == false) {
                 $scope.lectures[cur_index]._is_current_lecture = false;
                 $scope.lectures[cur_index]._is_passed_lecture = true;
-                $scope.lectures[cur_index+1]._is_current_lecture = true;
-                $scope.lectures[cur_index+1]._is_passed_lecture = false;
+                $scope.lectures[cur_index + 1]._is_current_lecture = true;
+                $scope.lectures[cur_index + 1]._is_passed_lecture = false;
             }
             $scope.goLecture($scope.lectures[cur_index + 1]);
             $scope.showAlert = false;
@@ -1147,7 +1170,7 @@ angular.module("easylearncode.learn").run(function () {
                 $scope.jsrepl.loadLanguage('' + $scope.lessonCurrent.language.toLowerCase() + '', function () {
                     $scope.jsreplReady = true;
                 });
-                $scope.editor.getSession().setMode("ace/mode/"+$scope.lessonCurrent.language.toLowerCase()+"");
+                $scope.editor.getSession().setMode("ace/mode/" + $scope.lessonCurrent.language.toLowerCase() + "");
                 $scope.editor.resize();
                 $scope.loadLecture();
             });
@@ -1155,23 +1178,23 @@ angular.module("easylearncode.learn").run(function () {
         $scope.loadLecture = function () {
             $scope.editor.resize();
             sum_lecture_passed = _.where($scope.lectures, {_is_passed_lecture: true}).length;
-            $http.get("/api/users/me/getTotalScoreCourse?lecture_id="+$scope.lecture.Id+"").success(function(data){
+            $http.get("/api/users/me/getTotalScoreCourse?lecture_id=" + $scope.lecture.Id + "").success(function (data) {
                 $scope.total_score = data.data;
             });
-            $scope.percent_lecture_passed = sum_lecture_passed*100/$scope.lectures.length;
+            $scope.percent_lecture_passed = sum_lecture_passed * 100 / $scope.lectures.length;
             $scope.lesson_user = null;
 //            if (!$scope.lecture._is_passed_lecture && !$scope.lecture._is_current_lecture) {
 //                $scope.lecture = $scope.lectures[0];
 //                $location.path("/").search('lecture_id', $scope.lecture.Id).replace();
 //            }
-            if($scope.lecture._is_passed_lecture == false){
-                 $http.post("/api/users/me/currentLecture", {lecture_id: $scope.lecture.Id}).success(function (data) {
+            if ($scope.lecture._is_passed_lecture == false) {
+                $http.post("/api/users/me/currentLecture", {lecture_id: $scope.lecture.Id}).success(function (data) {
                     $scope.lectures[$scope.getCurrentLectureIndex()]._is_current_lecture = true;
-                 })
+                })
             }
-            angular.forEach($scope.lectures, function(lecture){
-                 $scope.lectures[$scope.getCurrentLectureIndex()]._is_current_lecture = true;
-                if(lecture.Id != $scope.lecture.Id){
+            angular.forEach($scope.lectures, function (lecture) {
+                $scope.lectures[$scope.getCurrentLectureIndex()]._is_current_lecture = true;
+                if (lecture.Id != $scope.lecture.Id) {
                     lecture._is_current_lecture = false;
                 }
             })
@@ -1185,7 +1208,7 @@ angular.module("easylearncode.learn").run(function () {
 //                    }
 //                });
 //            });
-            $http.get("/api/lectures/"+$scope.lecture.Id+"?depth=2&recurse=true").success(function(data){
+            $http.get("/api/lectures/" + $scope.lecture.Id + "?depth=2&recurse=true").success(function (data) {
                 $scope.lecture = data;
                 console.log(data);
                 $scope.youtubeUrl = $sce.trustAsResourceUrl("http://www.youtube.com/watch?v=" + $scope.lecture.youtube_id);
@@ -1208,7 +1231,7 @@ angular.module("easylearncode.learn").run(function () {
                     if (rate.length > 0)
                         $scope.rate_lecture = rate[0];
                     if ($scope.rate_lecture != null) {
-                        $scope.rate = $scope.rate_lecture.rate;
+                        $scope.rate = $scope.lecture.rate;
                         $scope.isReadonly = true;
                     }
                 })
@@ -1257,7 +1280,7 @@ angular.module("easylearncode.learn").run(function () {
                     }
                     api.Model.save({type: 'rates'}, $scope.rate_lecture);
                 } else {
-                    $scope.rate_lecture.rate = $scope.rate;
+                    $scope.rate_lecture.rate = Math.round($scope.rate);
                     api.Model.save({type: 'rates', id: $scope.rate_lecture.Id}, $scope.rate_lecture)
                 }
             });
@@ -1265,6 +1288,7 @@ angular.module("easylearncode.learn").run(function () {
 
         $scope.editRate = function () {
             $scope.isReadonly = false;
+            $scope.rate = $scope.rate_lecture.rate;
         }
         $scope.hoveringOver = function (value) {
             $scope.overStar = value;
@@ -1326,11 +1350,11 @@ angular.module("easylearncode.info").controller('InfoCtrl', ['$scope', '$http', 
     };
 }]);
 angular.module("easylearncode.course_practice_detail", ["ui.bootstrap", "easylearncode.core", "ngAnimate"])
-    .config(['$routeProvider', function($routeProvider){
+    .config(['$routeProvider', function ($routeProvider) {
         $routeProvider
-            .when('/',{
-                templateUrl:'/templates/angular/practice/course_practice_detail.html',
-                controller:'InfoCtrl'
+            .when('/', {
+                templateUrl: '/templates/angular/practice/course_practice_detail.html',
+                controller: 'InfoCtrl'
             })
             .otherwise({redirectTo: "/All"})
     }])
@@ -1365,9 +1389,9 @@ angular.module("easylearncode.course_practice_viewer", ["ui.bootstrap", "ui.ace"
             '/',{
                 templateUrl:'/templates/angular/practice/practice.html',
                 controller:'PracticeCtrl'
-            })
+            }
             .otherwise({redirectTo: "/All"})
-
+        )
     }])
     .controller("MainCtrl",
     ["$scope", function($scope){
@@ -1682,7 +1706,7 @@ angular.module("easylearncode.course_practice_viewer", ["ui.bootstrap", "ui.ace"
 
 
 angular.module("easylearncode.visualization", ["ui.bootstrap", "ui.ace", 'easylearncode.core', 'angularTreeview'])
-    .controller("VisualizationCtrl", ["$scope", "$sce", "$timeout", function ($scope, $sce, $timeout) {
+    .controller("VisualizationCtrl", ["$scope", "$sce", "$timeout", "$http", function ($scope, $sce, $timeout, $http) {
         var jqconsole = $('#console').jqconsole('  >> EasyLearnCode Python Compiler v0.1 <<\n', '>>>');
         $scope.jsreplReady = false;
         $scope.isEditorFullScreen = false;
@@ -1783,50 +1807,82 @@ angular.module("easylearncode.visualization", ["ui.bootstrap", "ui.ace", 'easyle
                 $scope.jsreplReady = true;
             })
         });
+        $scope.Tests = new Array();
+        $http.get("/api/courses/han?recurse=true&depth=3").success(function(course){
+            $scope.course = course;
+            var count_lecture = 0
+            angular.forEach(course.lesson_keys, function(lesson, index){
+                var part = new Object();
+                part.title = "Chương " + index + ": " + lesson.title;
+                part.id = lesson.Id;
+                part.children = new Array();
+                angular.forEach(lesson.lecture_keys, function(lecture, index){
+                    count_lecture++;
+                    var children_one = new Object();
+                    children_one.title = "Bài "+count_lecture+": "+lecture.title;
+                    children_one.id = lecture.Id;
+                    children_one.children = new Array();
+                    angular.forEach(lecture.code_keys, function(code){
+                        var children_two = new Object();
+                        children_two.description = code.description;
+                        children_two.id = code.Id;
+                        children_two.code = code.content;
+                        min = parseInt(code.time/60);
+                        sec = code.time%60;
+                        if(min < 10) min= "0" + min;
+                        if(sec < 10) sec = "0"+sec;
+                        children_two.title = code.title+" - "+min+":"+sec;
+                        children_one.children.push(children_two);
+                    });
+                    part.children.push(children_one);
+                })
+                $scope.Tests.push(part);
+            })
 
-        $scope.Tests =
-            [
-                { "title": "Phần 1: Kiến thức cơ bản về Python", "id": "LessonId1", "children": [
-                    { "title": "Bài 1: Giới thiệu về chương trình, loại dữ liệu và giá trị", "id": "LectureId01", "children": [
-                        {"description": "Lệnh print - Hiển thị một chuỗi, hoặc một biến nào đó là màn hình", "title": "Ví dụ 1.1 - 01:16", "id": "LessonId01", "code": 'print(3+7)\r\nprint(2-1) \r\nprint("this is a chunk of text")', "children": []},
-                        {"title": "Ví dụ 1.2 - 01:20", "id": "LessonId02", "code": 'a = 3+5\r\nb= a*a-a-1\r\nc = a*b\r\nprint(c)', "children": []},
-                        {"title": "Ví dụ 1.3 - 01:30", "id": "LessonId03", "code": 'a = -6\r\nb= a*a-a-1\r\nc = a*b\r\nif(a<0):\r\n\tprint(c)\r\nelse:\r\n\tprint(c-a)', "children": []},
-                        {"title": "Ví dụ 1.4 - 01:40" , "id": "LessonId04", "code": 'a = -6\r\nb= a*a-a-1\r\nc = a*b\r\nif(a<0):\r\n\tprint("a<0")\r\n\tprint(c)\r\nelse:\r\n\tprint("a is not less than 0")\r\n\tprint(c-a)\r\n\tprint("We are done with the program")', "children": []}
-                    ]},
-                    { "title": "Bài 3: List trong Python", "id": "LectureId03", "children": [
-                        {"title": "Ví dụ 3.1", "id": "LessonId05", "code": "a =[1, 2, -7, 9, 11]\r\nprint(a)\r\na[1] = \"Sal's String\"\r\nprint (a)\r\nb=a\r\nprint(b)\r\nc = a[:]\r\nprint (c)\r\nb[0] = 0\r\nprint(b)\r\nprint(a)\r\nprint(c)\r\na.append(\"new elemen\")\r\nprint(a)\r\nprint(b)\r\nprint(c)", "children": []}
-                    ]},
-                    { "title": "Bài 4: Vòng lặp for trong python", "id": "LectureId04", "children": [
-                        {"title": "Ví dụ 4.1", "id": "LessonId06", "code": "print range(6)\r\nprint range(7)\r\nprint range(1,7)\r\nprint range(0, 8, 2)\r\nprint range(3, 31, 3)", "children": []},
-                        {"title": "Ví dụ 4.2", "id": "LessonId07", "code": "for i in range(5):\n    print i", "children": []},
-                        {"title": "Ví dụ 4.3", "id": "LessonId08", "code": "sum = 0\r\nfor i in range(5):\r\n    sum = sum+i\r\n    print sum", "children": []}
-                    ]},
-                    { "title": "Bài 5: Vòng lặp while trong python", "id": "LectureId05", "children": [
-                        {"title": "Ví dụ 5.1", "id": "LessonId09", "code": "#this while loop calculates the sum of 0 throunh 9 (including 9) and places\n#it in the variable \"sum\"\nsum = 0\ni = 0\nwhile i < 10:\n    sum = sum + i\n    print sum\n    i = i +1\n    \n#for i in range(10):\n#    sum = sum + i\n#    print sum", "children": []}
-                    ]},
-                    { "title": "Bài 6: Kiểu chuỗi trong python", "id": "LectureId06", "children": [
-                        {"title": "Ví dụ 6.1", "id": "LessonId10", "code": "a = \"My first test string\"\nb = 'Another test string that I have defined'\nc = \"this is Sal's string\"\nd = 'My favorite word is \"asparaus\", what is your?'\nmath_string = \"3+4*2\"\nexpression_string = \"a+' '+b+' tiger'\"\nprint a\nprint b\nprint c\nprint d\nprint math_string\nprint expression_string\n", "children": []},
-                        {"title": "Ví dụ 6.2", "id": "LessonId11", "code": "a = \"My first test string\"\nb = 'Another test string that I have defined'\nc = \"this is Sal's string\"\nd = 'My favorite word is \"asparaus\", what is your?'\nmath_string = \"3+4*2\"\nexpression_string = \"a+' '+b+' tiger'\"\nprint a\nprint b\nprint c\nprint d\nprint math_string\nprint expression_string\nprint a +b", "children": []},
-                        {"title": "Ví dụ 6.3", "id": "LessonId12", "code": "a = \"My first test string\"\nb = 'Another test string that I have defined'\nc = \"this is Sal's string\"\nd = 'My favorite word is \"asparaus\", what is your?'\nmath_string = \"3+4*2\"\nexpression_string = \"a+' '+b+' tiger'\"\nprint a\nprint b\nprint c\nprint d\nprint math_string\nprint expression_string\nprint math_string.find('*')\nprint math_string.find('3')", "children": []},
-                        {"title": "Ví dụ 6.4", "id": "LessonId13", "code": "a = \"My first test string\"\nb = 'Another test string that I have defined'\nc = \"this is Sal's string\"\nd = 'My favorite word is \"asparaus\", what is your?'\nmath_string = \"3+4*2\"\nexpression_string = \"a+' '+b+' tiger'\"\nprint a\nprint b\nprint c\nprint d\nprint math_string\nprint expression_string\nprint c.replace('i', 'o')\nprint c", "children": []},
-                        {"title": "Ví dụ 6.5", "id": "LessonId14", "code": "a = \"My first test string\"\nb = 'Another test string that I have defined'\nc = \"this is Sal's string\"\nd = 'My favorite word is \"asparaus\", what is your?'\nmath_string = \"3+4*2\"\nexpression_string = \"a+' '+b+' tiger'\"\nprint a\nprint b\nprint c\nprint d\nprint math_string\nprint expression_string\nc = c.replace('i', 'o')\nprint c", "children": []},
-                        {"title": "Ví dụ 6.6", "id": "LessonId15", "code": "a = \"My first test string\"\nb = 'Another test string that I have defined'\nc = \"this is Sal's string\"\nd = 'My favorite word is \"asparaus\", what is your?'\nmath_string = \"3+4*2\"\nexpression_string = \"a+' '+b+' tiger'\"\nprint a\nprint b\nprint c\nprint d\nprint math_string\nprint expression_string\nprint eval(math_string)\nprint eval(math_string + '1')", "children": []},
-                    ]},
-                    { "title": "Bài 7: Viết một chương trình đơn giản", "id": "LectureId07", "children": [
-                        {"title": "Ví dụ 7.1", "id": "LessonId16", "code": "#Enter non-negative integer to take the factorial of:\nnumber = 10\n\nproduct = 1\nfor i in range(number):\n    product = product * (i+1)\n\nprint product", "children": []}
-                    ]},
-                    { "title": "Bài 11: Định nghĩa hàm trong python", "id": "LectureId08", "children": [
-                        {"title": "Ví dụ 11.1", "id": "LessonId17", "code": "#returns the facturial of the argument \"number\"\ndef factorial(number):    \n    product = 1\n    for i in range(number):\n        product = product * (i+1)\n    return product\n\nprint factorial(10)", "children": []}
-                    ]},
-                    { "title": "Bài 13: Hàm đệ quy", "id": "LectureId09", "children": [
-                        {"title": "Ví dụ 13.1", "id": "LessonId18", "code": "def factorial(number):\n    if number <= 1:\n        return 1\n    else:\n        return number*factorial(number -1)\n\nprint factorial(10)", "children": []}
-                    ]},
-                ]},
-                { "title": "Phần 2: Python nâng cao", "id": "LessonId2", "children": [
-                    { "title": "Bài 1", "id": "LectureId33", "children": [
-                    ]}
-                ]}
-            ];
+        })
+//        $scope.Tests =
+//            [
+//                { "title": "Phần 1: Kiến thức cơ bản về Python", "id": "LessonId1", "children": [
+//                    { "title": "Bài 1: Giới thiệu về chương trình, loại dữ liệu và giá trị", "id": "LectureId01", "children": [
+//                        {"description": "Lệnh print - Hiển thị một chuỗi, hoặc một biến nào đó là màn hình", "title": "Ví dụ 1.1 - 01:16", "id": "LessonId01", "code": 'print(3+7)\r\nprint(2-1) \r\nprint("this is a chunk of text")', "children": []},
+//                        {"title": "Ví dụ 1.2 - 01:20", "id": "LessonId02", "code": 'a = 3+5\r\nb= a*a-a-1\r\nc = a*b\r\nprint(c)', "children": []},
+//                        {"title": "Ví dụ 1.3 - 01:30", "id": "LessonId03", "code": 'a = -6\r\nb= a*a-a-1\r\nc = a*b\r\nif(a<0):\r\n\tprint(c)\r\nelse:\r\n\tprint(c-a)', "children": []},
+//                        {"title": "Ví dụ 1.4 - 01:40", "id": "LessonId04", "code": 'a = -6\r\nb= a*a-a-1\r\nc = a*b\r\nif(a<0):\r\n\tprint("a<0")\r\n\tprint(c)\r\nelse:\r\n\tprint("a is not less than 0")\r\n\tprint(c-a)\r\n\tprint("We are done with the program")', "children": []}
+//                    ]},
+//                    { "title": "Bài 3: List trong Python", "id": "LectureId03", "children": [
+//                        {"title": "Ví dụ 3.1", "id": "LessonId05", "code": "a =[1, 2, -7, 9, 11]\r\nprint(a)\r\na[1] = \"Sal's String\"\r\nprint (a)\r\nb=a\r\nprint(b)\r\nc = a[:]\r\nprint (c)\r\nb[0] = 0\r\nprint(b)\r\nprint(a)\r\nprint(c)\r\na.append(\"new elemen\")\r\nprint(a)\r\nprint(b)\r\nprint(c)", "children": []}
+//                    ]},
+//                    { "title": "Bài 4: Vòng lặp for trong python", "id": "LectureId04", "children": [
+//                        {"title": "Ví dụ 4.1", "id": "LessonId06", "code": "print range(6)\r\nprint range(7)\r\nprint range(1,7)\r\nprint range(0, 8, 2)\r\nprint range(3, 31, 3)", "children": []},
+//                        {"title": "Ví dụ 4.2", "id": "LessonId07", "code": "for i in range(5):\n    print i", "children": []},
+//                        {"title": "Ví dụ 4.3", "id": "LessonId08", "code": "sum = 0\r\nfor i in range(5):\r\n    sum = sum+i\r\n    print sum", "children": []}
+//                    ]},
+//                    { "title": "Bài 5: Vòng lặp while trong python", "id": "LectureId05", "children": [
+//                        {"title": "Ví dụ 5.1", "id": "LessonId09", "code": "#this while loop calculates the sum of 0 throunh 9 (including 9) and places\n#it in the variable \"sum\"\nsum = 0\ni = 0\nwhile i < 10:\n    sum = sum + i\n    print sum\n    i = i +1\n    \n#for i in range(10):\n#    sum = sum + i\n#    print sum", "children": []}
+//                    ]},
+//                    { "title": "Bài 6: Kiểu chuỗi trong python", "id": "LectureId06", "children": [
+//                        {"title": "Ví dụ 6.1", "id": "LessonId10", "code": "a = \"My first test string\"\nb = 'Another test string that I have defined'\nc = \"this is Sal's string\"\nd = 'My favorite word is \"asparaus\", what is your?'\nmath_string = \"3+4*2\"\nexpression_string = \"a+' '+b+' tiger'\"\nprint a\nprint b\nprint c\nprint d\nprint math_string\nprint expression_string\n", "children": []},
+//                        {"title": "Ví dụ 6.2", "id": "LessonId11", "code": "a = \"My first test string\"\nb = 'Another test string that I have defined'\nc = \"this is Sal's string\"\nd = 'My favorite word is \"asparaus\", what is your?'\nmath_string = \"3+4*2\"\nexpression_string = \"a+' '+b+' tiger'\"\nprint a\nprint b\nprint c\nprint d\nprint math_string\nprint expression_string\nprint a +b", "children": []},
+//                        {"title": "Ví dụ 6.3", "id": "LessonId12", "code": "a = \"My first test string\"\nb = 'Another test string that I have defined'\nc = \"this is Sal's string\"\nd = 'My favorite word is \"asparaus\", what is your?'\nmath_string = \"3+4*2\"\nexpression_string = \"a+' '+b+' tiger'\"\nprint a\nprint b\nprint c\nprint d\nprint math_string\nprint expression_string\nprint math_string.find('*')\nprint math_string.find('3')", "children": []},
+//                        {"title": "Ví dụ 6.4", "id": "LessonId13", "code": "a = \"My first test string\"\nb = 'Another test string that I have defined'\nc = \"this is Sal's string\"\nd = 'My favorite word is \"asparaus\", what is your?'\nmath_string = \"3+4*2\"\nexpression_string = \"a+' '+b+' tiger'\"\nprint a\nprint b\nprint c\nprint d\nprint math_string\nprint expression_string\nprint c.replace('i', 'o')\nprint c", "children": []},
+//                        {"title": "Ví dụ 6.5", "id": "LessonId14", "code": "a = \"My first test string\"\nb = 'Another test string that I have defined'\nc = \"this is Sal's string\"\nd = 'My favorite word is \"asparaus\", what is your?'\nmath_string = \"3+4*2\"\nexpression_string = \"a+' '+b+' tiger'\"\nprint a\nprint b\nprint c\nprint d\nprint math_string\nprint expression_string\nc = c.replace('i', 'o')\nprint c", "children": []},
+//                        {"title": "Ví dụ 6.6", "id": "LessonId15", "code": "a = \"My first test string\"\nb = 'Another test string that I have defined'\nc = \"this is Sal's string\"\nd = 'My favorite word is \"asparaus\", what is your?'\nmath_string = \"3+4*2\"\nexpression_string = \"a+' '+b+' tiger'\"\nprint a\nprint b\nprint c\nprint d\nprint math_string\nprint expression_string\nprint eval(math_string)\nprint eval(math_string + '1')", "children": []},
+//                    ]},
+//                    { "title": "Bài 7: Viết một chương trình đơn giản", "id": "LectureId07", "children": [
+//                        {"title": "Ví dụ 7.1", "id": "LessonId16", "code": "#Enter non-negative integer to take the factorial of:\nnumber = 10\n\nproduct = 1\nfor i in range(number):\n    product = product * (i+1)\n\nprint product", "children": []}
+//                    ]},
+//                    { "title": "Bài 11: Định nghĩa hàm trong python", "id": "LectureId08", "children": [
+//                        {"title": "Ví dụ 11.1", "id": "LessonId17", "code": "#returns the facturial of the argument \"number\"\ndef factorial(number):    \n    product = 1\n    for i in range(number):\n        product = product * (i+1)\n    return product\n\nprint factorial(10)", "children": []}
+//                    ]},
+//                    { "title": "Bài 13: Hàm đệ quy", "id": "LectureId09", "children": [
+//                        {"title": "Ví dụ 13.1", "id": "LessonId18", "code": "def factorial(number):\n    if number <= 1:\n        return 1\n    else:\n        return number*factorial(number -1)\n\nprint factorial(10)", "children": []}
+//                    ]},
+//                ]},
+//                { "title": "Phần 2: Python nâng cao", "id": "LessonId2", "children": [
+//                    { "title": "Bài 1", "id": "LectureId33", "children": [
+//                    ]}
+//                ]}
+//            ];
     }]);
 angular.module("easylearncode.account", ["easylearncode.core", "ngRoute"]);
 angular.module("easylearncode.account")
@@ -2113,19 +2169,19 @@ angular.module("easylearncode.teacher", ["ui.bootstrap", "ui.ace", 'easylearncod
             {
                 templateUrl: "/templates/angular/teacher/lesson.html",
                 controller: "LessonTeacherCtrl",
-                label: 'Lessons'
+                label: 'Quản lý chương'
             })
             .when("/:courseId/lessons/:lessonId/lectures",
             {
                 templateUrl: "/templates/angular/teacher/lecture.html",
                 controller: "LectureTeacherCtrl",
-                label: 'Lectures'
+                label: 'Quản lý bài giảng'
             })
             .when("/:courseId/lessons/:lessonId/lectures/:lectureId/questions",
             {
                 templateUrl: "/templates/angular/teacher/question.html",
                 controller: "QuestionLectureCtrl",
-                label: 'Questions'
+                label: 'Quản lý câu hỏi'
             })
             .otherwise({redirectTo: "/"})
     }])
@@ -2552,6 +2608,12 @@ angular.module("easylearncode.teacher", ["ui.bootstrap", "ui.ace", 'easylearncod
         $scope.onUpdateTime = function (currentTime, totalTime) {
             $scope.currentTime = currentTime;
             $scope.totalTime = totalTime;
+            angular.forEach($scope.lecture.code_keys, function (code) {
+                if (currentTime - code.time < 2 && currentTime - code.time > 0) {
+                    if ($scope.state == 'play')
+                        $scope.code = code.content;
+                }
+            });
         };
 
         $scope.onUpdateVolume = function (newVol) {
@@ -2623,105 +2685,136 @@ angular.module("easylearncode.teacher", ["ui.bootstrap", "ui.ace", 'easylearncod
                 }
             }
         };
-       $scope.lecture = api.Model.get({type: 'lectures', id: $routeParams.lectureId, recurse: true, depth:3}, function () {
-               $scope.loadLecture();
+        $scope.lecture = api.Model.get({type: 'lectures', id: $routeParams.lectureId, recurse: true, depth: 2}, function () {
+            $scope.loadLecture();
         });
+        $scope.editor;
+        $scope.aceLoaded = function (_editor) {
+             $scope.editor = _editor;
+        };
 
-        var codeForm = {
-            "form_id": 1,
-            "form_name": "Thêm code",
-            "form_fields": [
-                {
-                    "field_id": 1,
-                    "field_title": "Tiêu đề",
-                    "field_type": "textfield",
-                    "field_value": "",
-                    "field_required": true,
-                    "field_name":"title"
-                },
-                {
-                    "field_id": 2,
-                    "field_title": "Mô tả",
-                    "field_type": "textarea",
-                    "field_value": "",
-                    "field_required": true,
-                    "field_name":"description"
-                },
-                {
-                    "field_id": 3,
-                    "field_title": "Nội dung code",
-                    "field_type": "code",
-                    "field_language": "python",
-                    "field_value": "",
-                    "field_required": true,
-                    "field_name": "content"
-                },
-                {
-                    "field_id": 4,
-                    "field_title": "Thời gian đồng bộ",
-                    "field_type": "textfield",
-                    "field_value": "",
-                    "field_required": true,
-                    "field_name": "time"
-                },
-                {
-                    "field_id": 5,
-                    "field_title": "Index",
-                    "field_type": "textfield",
-                    "field_value": "",
-                    "field_required": false,
-                    "field_name": "index"
-                }
-            ]
+        $scope.preView = function(){
+            $scope.config.plugins.quiz.data = $scope.lecture.quiz_keys;
+            angular.forEach($scope.lecture.test_keys, function (test) {
+                $scope.config.plugins.quiz.data.push(test);
+            });
+            $scope.editor.getSession().setMode("ace/mode/"+$scope.lesson.language+"");
+            $scope.editor.resize();
+            $scope.youtubeUrl = $sce.trustAsResourceUrl("http://www.youtube.com/watch?v=" + $scope.lecture.youtube_id);
+            $scope.show = false;
+            if (angular.isDefined($scope.vgScope)) {
+                $scope.vgScope.$destroy();
+            }
+            $scope.vgScope = $scope.$new(false);
+            $('#video-dialog').html($compile("<videogular id=\"khung-video\"\r\n                                    vg-player-ready=\"onPlayerReady\" vg-complete=\"onCompleteVideo\" vg-update-time=\"onUpdateTime\" vg-update-size=\"onUpdateSize\" vg-update-volume=\"onUpdateVolume\" vg-update-state=\"onUpdateState\"\r\n                                    vg-width=\"config.width\" vg-height=\"config.height\" vg-theme=\"config.theme.url\" vg-autoplay=\"config.autoPlay\" vg-stretch=\"config.stretch.value\" vg-responsive=\"config.responsive\">\r\n<video preload='metadata' id=\"video_content\">\r\n<source type=\"video/youtube\" src=\"" + $scope.youtubeUrl + "\"  /></video>\r\n                                    <vg-youtube></vg-youtube>\r\n                                    <vg-quiz vg-data='config.plugins.quiz.data' vg-quiz-submit=\"onQuizSubmit\" vg-quiz-skip=\"onQuizSkip\" vg-quiz-continue=\"onQuizContinue\" vg-quiz-show-explanation=\"onQuizShowExplanation\"></vg-quiz>\r\n                                    <vg-poster-image vg-url='config.plugins.poster.url' vg-stretch=\"config.stretch.value\"></vg-poster-image>\r\n                                    <vg-buffering></vg-buffering>\r\n                                    <vg-overlay-play vg-play-icon=\"config.theme.playIcon\"></vg-overlay-play>\r\n\r\n                                    <vg-controls vg-autohide=\"config.autoHide\" vg-autohide-time=\"config.autoHideTime\" style=\"height: 50px;\">\r\n                                        <vg-play-pause-button vg-play-icon=\"config.theme.playIcon\" vg-pause-icon=\"config.theme.pauseIcon\"></vg-play-pause-button>\r\n                                        <vg-timeDisplay>{{ currentTime }}</vg-timeDisplay>\r\n                                        <vg-scrubBar>\r\n                                            <vg-scrubbarcurrenttime></vg-scrubbarcurrenttime>\r\n                                        </vg-scrubBar>\r\n                                        <vg-timeDisplay>{{ totalTime }}</vg-timeDisplay>\r\n                                        <vg-volume>\r\n                                            <vg-mutebutton\r\n                                                vg-volume-level-3-icon=\"config.theme.volumeLevel3Icon\"\r\n                                                vg-volume-level-2-icon=\"config.theme.volumeLevel2Icon\"\r\n                                                vg-volume-level-1-icon=\"config.theme.volumeLevel1Icon\"\r\n                                                vg-volume-level-0-icon=\"config.theme.volumeLevel0Icon\"\r\n                                                vg-mute-icon=\"config.theme.muteIcon\">\r\n                                            </vg-mutebutton>\r\n                                            <vg-volumebar></vg-volumebar>\r\n                                        </vg-volume>\r\n                                        <vg-fullscreenButton vg-enter-full-screen-icon=\"config.theme.enterFullScreenIcon\" vg-exit-full-screen-icon=\"config.theme.exitFullScreenIcon\"></vg-fullscreenButton>\r\n                                    </vg-controls>\r\n                                </videogular>")($scope.vgScope));
         }
 
-        var testForm = {
-            "form_id": 2,
-            "form_name": "Thêm bài tập",
-            "form_fields": [
-                {
-                    "field_id": 1,
-                    "field_title": "Tiêu đề",
-                    "field_type": "textfield",
-                    "field_value": "",
-                    "field_required": true,
-                    "field_name": "title"
-                },
-                {
-                    "field_id": 2,
-                    "field_title": "description",
-                    "field_type": "textarea",
-                    "field_value": "",
-                    "field_required": true,
-                    "field_name": "description"
-                },
-                {
-                    "field_id": 3,
-                    "field_title": "Test script",
-                    "field_type": "code",
-                    "field_language": "python",
-                    "field_value": "",
-                    "field_required": true,
-                    "field_name": "test_script"
-                },
-                {
-                    "field_id": 4,
-                    "field_title": "Thời gian đồng bộ",
-                    "field_type": "textfield",
-                    "field_value": "",
-                    "field_required": true,
-                    "field_name": "time"
-                },
-                {
-                    "field_id": 5,
-                    "field_title": "Điểm",
-                    "field_type": "textfield",
-                    "field_value": "",
-                    "field_required": true,
-                    "field_name": "score"
-                }
-            ]
-        }
+        $scope.lesson = null;
+        var codeForm;
+        var testForm;
+        $http.get("/api/lessons?filter=Lecture==" + $routeParams.lectureId + "").success(function (data) {
+            $scope.lesson = data[0];
+            console.log(data[0]);
+            if($scope.lesson.language == "CPP") $scope.lesson.language = "c_cpp";
+            else $scope.lesson.language = $scope.lesson.language.toLocaleLowerCase();
+            codeForm = {
+                "form_id": 1,
+                "form_name": "Thêm code",
+                "form_fields": [
+                    {
+                        "field_id": 1,
+                        "field_title": "Tiêu đề",
+                        "field_type": "textfield",
+                        "field_value": "",
+                        "field_required": true,
+                        "field_name": "title"
+                    },
+                    {
+                        "field_id": 2,
+                        "field_title": "Mô tả",
+                        "field_type": "textarea",
+                        "field_value": "",
+                        "field_required": true,
+                        "field_name": "description"
+                    },
+                    {
+                        "field_id": 3,
+                        "field_title": "Nội dung code",
+                        "field_type": "code",
+                        "field_language": $scope.lesson.language,
+                        "field_value": "",
+                        "field_required": true,
+                        "field_name": "content"
+                    },
+                    {
+                        "field_id": 4,
+                        "field_title": "Thời gian đồng bộ",
+                        "field_type": "textfield",
+                        "field_value": "",
+                        "field_required": true,
+                        "field_name": "time"
+                    },
+                    {
+                        "field_id": 5,
+                        "field_title": "Index",
+                        "field_type": "textfield",
+                        "field_value": "",
+                        "field_required": false,
+                        "field_name": "index"
+                    }
+                ]
+            }
+
+            testForm = {
+                "form_id": 2,
+                "form_name": "Thêm bài tập",
+                "form_fields": [
+                    {
+                        "field_id": 1,
+                        "field_title": "Tiêu đề",
+                        "field_type": "textfield",
+                        "field_value": "",
+                        "field_required": true,
+                        "field_name": "title"
+                    },
+                    {
+                        "field_id": 2,
+                        "field_title": "description",
+                        "field_type": "textarea",
+                        "field_value": "",
+                        "field_required": true,
+                        "field_name": "description"
+                    },
+                    {
+                        "field_id": 3,
+                        "field_title": "Test script",
+                        "field_type": "code",
+                        "field_language": $scope.lesson.language,
+                        "field_value": "",
+                        "field_required": true,
+                        "field_name": "test_script"
+                    },
+                    {
+                        "field_id": 4,
+                        "field_title": "Thời gian đồng bộ",
+                        "field_type": "textfield",
+                        "field_value": "",
+                        "field_required": true,
+                        "field_name": "time"
+                    },
+                    {
+                        "field_id": 5,
+                        "field_title": "Điểm",
+                        "field_type": "textfield",
+                        "field_value": "",
+                        "field_required": true,
+                        "field_name": "score"
+                    }
+                ]
+            }
+        })
+
+
 
         var quizForm = {
             "form_id": 3,

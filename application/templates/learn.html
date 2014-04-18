@@ -115,7 +115,7 @@
                             <rating value="rate" max="max" readonly="isReadonly"
                                     ng-class="{'cursor-rating':!isReadonly}"
                                     on-hover="hoveringOver(value)" ng-click="setRate()"
-                                    on-leave="overStar = null"></rating>
+                                    on-leave="overStar = null"></rating><i class="fa fa-pencil-square-o" ng-show="isReadonly" ng-click="editRate()"></i>
                             <span class="label"
                                   ng-class="{'label-warning': percent<=40, 'label-info': percent>40}"
                                   ng-show="overStar && !isReadonly">{{ strRate }}</span>
