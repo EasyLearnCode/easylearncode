@@ -1389,9 +1389,9 @@ angular.module("easylearncode.course_practice_viewer", ["ui.bootstrap", "ui.ace"
             '/',{
                 templateUrl:'/templates/angular/practice/practice.html',
                 controller:'PracticeCtrl'
-            }
+            })
             .otherwise({redirectTo: "/All"})
-        )
+
     }])
     .controller("MainCtrl",
     ["$scope", function($scope){
@@ -1808,7 +1808,7 @@ angular.module("easylearncode.visualization", ["ui.bootstrap", "ui.ace", 'easyle
             })
         });
         $scope.Tests = new Array();
-        $http.get("/api/courses/han?recurse=true&depth=3").success(function(course){
+        $http.get("/api/courses/cs001?recurse=true&depth=3").success(function(course){
             $scope.course = course;
             var count_lecture = 0
             angular.forEach(course.lesson_keys, function(lesson, index){
