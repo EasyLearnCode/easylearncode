@@ -812,7 +812,7 @@ angular.module("easylearncode.learn").run(function () {
                         $scope.jsreplReady = true;
                     });
                 }
-                else $scope.jsreplReady = true;
+                else $scope.jsreplReady = false;
                 if ($scope.lessonCurrent.language == "CPP")
                     $scope.editor.getSession().setMode("ace/mode/c_cpp");
                 else
