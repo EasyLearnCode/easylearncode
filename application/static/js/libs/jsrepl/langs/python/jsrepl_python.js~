@@ -21,11 +21,11 @@
       printError = makeUtf8Print(output);
       bufferError = function(chr) {
         if (chr != null) {
-          //if (_this.Python.isHandlingError) {
+          if (_this.Python.isHandlingError) {
             return _this.error_buffer.push(String.fromCharCode(chr));
-          //} else {
-          //  return printError(chr);
-          //}
+          } else {
+            return printError(chr);
+          }
         }
       };
       this.Python.initialize(null, printOutput, bufferError);
@@ -50,6 +50,7 @@
     };
 
     JSREPLEngine.prototype.EasyLearnCode_Eval = function(input) {
+      this.Python.isHandlingError = true;
       var e, error_str, output_str, result, resultObj;
       try {
         if (input.testScript) {
@@ -62,7 +63,7 @@
         if (result === void 0) {
           return this.error(error_str || 'Unknown error.', input.type);
         } else {
-          this.output(error_str);
+          //this.output(error_str);
           output_str = this.output_buffer.join('');
           resultObj = {
             result: result,
