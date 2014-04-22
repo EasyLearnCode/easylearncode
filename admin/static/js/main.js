@@ -280,9 +280,14 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
             var addForm = $.extend(true, {}, form);
             formModalService.showFormModal(addForm, function (form) {
                 var data = formService.getDataFromForm(form);
-                api.Model.save({type: 'courses'}, data, function (result) {
-                    $scope.courses.push(result);
+                api.Model.get({type:'courses', id:data['adminKey']},function(){
+                },function(){
+                    //course with key not exits
+                    api.Model.save({type: 'courses'}, data, function (result) {
+                            $scope.courses.push(result);
+                    })
                 })
+
             }, function () {
                 console.log('Modal dismissed at: ' + new Date());
             });
