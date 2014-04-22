@@ -851,13 +851,21 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
                 {
                     "field_id": 2,
                     "field_title": "Description",
-                    "field_type": "wysiwyg",
+                    "field_type": "textarea",
                     "field_value": "",
                     "field_required": true,
                     "field_name": "description"
                 },
                 {
                     "field_id": 3,
+                    "field_title": "Summary",
+                    "field_type": "wysiwyg",
+                    "field_value": "",
+                    "field_required": true,
+                    "field_name": "summary"
+                },
+                {
+                    "field_id": 4,
                     "field_title": "Level",
                     "field_type": "dropdown",
                     "field_value": "1",
@@ -882,7 +890,7 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
                     "field_name": "level"
                 },
                 {
-                    "field_id": 4,
+                    "field_id": 5,
                     "field_title": "Youtube video id",
                     "field_type": "textfield",
                     "field_value": "",
@@ -890,7 +898,7 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
                     "field_name": "youtube_id"
                 },
                 {
-                    "field_id": 5,
+                    "field_id": 6,
                     "field_title": "Time",
                     "field_type": "textfield",
                     "field_value": "",

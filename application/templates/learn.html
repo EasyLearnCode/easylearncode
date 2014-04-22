@@ -160,7 +160,7 @@
                             Hỏi đáp</a></li>
                     </ul>
                     <div class="tab-content border_info">
-                        <div class="tab-pane fade active" id="home">{{ lecture.description }}</div>
+                        <div class="tab-pane fade active" id="home" bind-html-unsafe="lecture.summary"></div>
                         <div class="tab-pane fade" id="profile">
                             <div disqus="lecture.Id"></div>
                         </div>
