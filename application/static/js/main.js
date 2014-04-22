@@ -2241,13 +2241,6 @@ angular.module("easylearncode.teacher", ["ui.bootstrap", "ui.ace", 'easylearncod
             "form_name": "Thêm khóa học",
             "form_fields": [
                 {
-                    "field_title": "Key",
-                    "field_type": "textfield",
-                    "field_value": "",
-                    "field_required": true,
-                    "field_name": "adminKey"
-                },
-                {
                     "field_title": "Tiêu đề",
                     "field_type": "textfield",
                     "field_value": "",
@@ -2342,9 +2335,6 @@ angular.module("easylearncode.teacher", ["ui.bootstrap", "ui.ace", 'easylearncod
         $scope.showEditModal = function (obj) {
             var editForm = $.extend(true, {}, form);
             editForm["form_name"] = "Edit Course";
-            editForm.form_fields = _.reject(editForm.form_fields, function (field) {
-                return field.field_name == "adminKey"
-            });
             formService.fillFormData(editForm, obj);
             formModalService.showFormModal(editForm, function (form) {
                 var data = formService.getDataFromForm(form);
