@@ -316,7 +316,15 @@ class ExerciseItem(UtilModel, ndb.Model):
     def get_next_exercise_item(self):
         _exercise = Exercise.get_by_exercise_item(self.key)
         _next = [item for item in ndb.get_multi(_exercise.items) if item.index == self.index+1]
-        return _next[0] if _next else None
+        if _next:
+            return _next[0]
+        else:
+            _next_exercise = _exercise.get_next_exercise()
+            if _next_exercise:
+                _first_next_exercise_item = _next_exercise.get_first_exercise_item()
+                if _first_next_exercise_item:
+                    return _first_next_exercise_item
+        return {'Id': 'Finish'}
 
     @classmethod
     def get_by_project(cls, project):
@@ -342,6 +350,7 @@ class ExerciseItem(UtilModel, ndb.Model):
             else:
                 result['_is_current_item'] = False
                 result['_is_passed_item'] = False
+        result['_success_html'] = self.success_html
         result['_checkpoints_count'] = self.checkpoints_count
         result['_projects_count'] = self.projects_count
         return result
@@ -370,6 +379,16 @@ class Exercise(UtilModel, ndb.Model):
     @classmethod
     def get_by_exercise_item(cls, exercise_item):
         return cls.query(cls.items == exercise_item).get()
+
+    def get_next_exercise(self):
+        _course = Course.get_by_exercise(self.key)
+        _next = [item for item in ndb.get_multi(_course.exercise_keys) if item.index == self.index+1]
+        return _next[0] if _next else None
+
+    def get_first_exercise_item(self):
+        _first = [item for item in ndb.get_multi(self.items) if item.index == 0]
+        return _first[0] if _first else None
+
 
 
 LEVELS = ('Beginning', 'Intermediate', 'Advanced', 'Other')

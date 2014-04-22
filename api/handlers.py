@@ -430,8 +430,9 @@ class CheckpointMeHandler(BaseHandler):
                     _exercise_user.user = _current_user
                     _exercise_user.exercise = _exercise.key
                 _exercise_user.current_item = _item.key
-                if _item.checkpoints_count == len(_item_user.passed_checkpoint) and _item.key not in _exercise_user.passed_item:
-                    _exercise_user.passed_item.append(_item.key)
+                if _item.checkpoints_count == len(_item_user.passed_checkpoint):
+                    if _item.key not in _exercise_user.passed_item:
+                        _exercise_user.passed_item.append(_item.key)
                     _next_item = _item.get_next_exercise_item()
                 _exercise_user.put()
                 _course_user = CourseUser.get_by_user_and_course(_current_user, _course.key)
@@ -446,7 +447,11 @@ class CheckpointMeHandler(BaseHandler):
                 else:
                     _exercise_user.status = 'working'
                 _course_user.put()
-        if _next_item:
+        if _next_item and type(_next_item) == dict:
+            return {
+                'next_item': 'Finish'
+            }
+        elif _next_item:
             return {
                 'next_item': _next_item.key
             }

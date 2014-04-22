@@ -1407,7 +1407,7 @@ angular.module("easylearncode.course_practice_viewer", ["ui.bootstrap", "ui.ace"
             $scope.loaded = !0
         };
     }])
-    .controller("PracticeCtrl", ["$scope", "$sce", "$timeout", "api", '$compile', "$window", '$location', '$http', function ($scope, $sce, $timeout, api, $compile, $window, $location, $http) {
+    .controller("PracticeCtrl", ["$scope", "$sce", "$timeout", "api", '$compile', "$window", '$location', '$http', '$modal', function ($scope, $sce, $timeout, api, $compile, $window, $location, $http, $modal) {
         //TODO: Sort projects, checkpoints by index
         var jqconsole;
         var jsrepl;
@@ -1565,15 +1565,45 @@ angular.module("easylearncode.course_practice_viewer", ["ui.bootstrap", "ui.ace"
                     }
                     if (isSuccess) {
                         $scope.$apply(function () {
-                            $scope.showAlert = true;
-                            $scope.alert = {
-                                type: 'info',
-                                msg: '<i class="fa fa-sun-o"></i> <strong>Tuyệt vời ông mặt trời!!!</strong><br>Tiếp tục nào<a class="btn btn-primary pull-right" onclick="nextCheckpoint()">Tiếp tục</a><div class="clearfix"></div>'
-                            }
                             $http.post('/api/users/me/checkpoints',{checkpoint_id: $scope.current_checkpoint.Id, status:'passed', file:$scope.source}).success(function(data){
                                 if(data.next_item){
                                     //TODO: Show success message
-                                    $window.location.href = $window.location.pathname+'#!/?exercise_item_id='+data.next_item;
+                                    var dataModal = {};
+                                    if(data.next_item == "Finish"){
+                                        dataModal.url= '/courses#!/All';
+                                        dataModal.success_message = 'Chúc mừng bạn đã hoàn thành khóa học của chúng tôi.<br>Nhấn ok để tiếp tục đến với các khóa học thú vị khác';
+                                    }else{
+                                        dataModal.next_item = data.next_item;
+                                        dataModal.success_message = $scope.exercise_item._success_html;
+                                        dataModal.url = $window.location.pathname+'#!/?exercise_item_id='+data.next_item;
+                                    }
+                                    $scope.next_item = data.next_item;
+                                    $modal.open({
+                                        templateUrl:"/templates/angular/practice/success_modal.html",
+                                        resolve:{
+                                            data:function(){
+                                                return dataModal;
+                                            }
+                                        },
+                                        controller: function($scope, $modalInstance, data){
+                                            $scope.success_message = data.success_message;
+                                            $scope.ok = function(){
+                                                $window.location.href = data.url;
+                                                $modalInstance.close();
+                                            }
+                                            $scope.cancel = function(){
+                                                $modalInstance.close();
+                                            }
+                                        }
+                                    });
+
+                                    //$window.location.href = $window.location.pathname+'#!/?exercise_item_id='+data.next_item;
+                                }else{
+                                    $scope.showAlert = true;
+                                    $scope.alert = {
+                                        type: 'info',
+                                        msg: '<i class="fa fa-sun-o"></i> <strong>Tuyệt vời ông mặt trời!!!</strong><br>Tiếp tục nào<a class="btn btn-primary pull-right" onclick="nextCheckpoint()">Tiếp tục</a><div class="clearfix"></div>'
+                                    }
                                 }
                             });
                         })
