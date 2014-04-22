@@ -1,0 +1,7 @@
+<div class="field row">
+    <div class="span2">{{field.field_title}}:</div>
+    <div class="span7" style="margin-bottom: 20px;">
+        <wysiwyg textarea-class="form-control"  textarea-height="80px" textarea-required="field.field_required" ng-model="field.field_value" enable-bootstrap-title="true"></wysiwyg>
+        <span class="required-error" ng-show="field.field_required && !field.field_value">* required</span>
+    </div>
+</div>

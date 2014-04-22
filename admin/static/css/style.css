@@ -2357,3 +2357,20 @@ footer p {
     word-wrap: break-word!important;
     max-width: 300px;
 }
+
+.modal{
+    width: 950px;
+    margin-left: -450px;
+}
+.wysiwyg-textarea{
+    background-color: #fff;
+    border: 1px solid #ccc;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+    -moz-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+    -webkit-transition: border linear .2s,box-shadow linear .2s;
+    -moz-transition: border linear .2s,box-shadow linear .2s;
+    -o-transition: border linear .2s,box-shadow linear .2s;
+    transition: border linear .2s,box-shadow linear .2s;
+    margin: 5px;
+}

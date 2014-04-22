@@ -851,7 +851,7 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
                 {
                     "field_id": 2,
                     "field_title": "Description",
-                    "field_type": "textarea",
+                    "field_type": "wysiwyg",
                     "field_value": "",
                     "field_required": true,
                     "field_name": "description"

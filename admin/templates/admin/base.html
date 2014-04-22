@@ -20,6 +20,8 @@
     <link id="base-style" href="/admin/css/style.css" rel="stylesheet">
     <link id="base-style-responsive" href="/admin/css/style-responsive.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/application/css/videogular/quiz.css">
+    <link rel="stylesheet" type="text/css" href="/admin/css/colorpicker.css">
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.3/css/font-awesome.min.css">
     {% block mediaCSS %}
     {% endblock %}
 
@@ -240,21 +242,23 @@
 <script src="/application/js/libs/angularjs/angular-route.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js"></script>
 <script src="/application/js/libs/angularjs/ui-ace.min.js"></script>
+<script src="/admin/js/libs/angular/bootstrap-colorpicker-module.js"></script>
+<script src="/admin/js/libs/angular/angular-wysiwyg.js"></script>
 <script>
-    angular.module('angularjsFormBuilder', ["ui.bootstrap", "ui.ace"]);
+    angular.module('angularjsFormBuilder', ["ui.bootstrap", "ui.ace", "wysiwyg.module"]);
 </script>
 <script src="/admin/js/libs/angular/angularjs-form-builder/directives/form-directive.js"></script>
 <script src="/admin/js/libs/angular/angularjs-form-builder/directives/field-directive.js"></script>
+<script src="/application/js/libs/videogular/videogular.js"></script>
+<script src="/application/js/libs/angularjs/angular-sanitize.min.js"></script>
+<script src="/application/js/libs/videogular/videogular.js"></script>
+<script src="/application/js/libs/videogular/plugins/controls.js"></script>
+<script src="/application/js/libs/videogular/plugins/overlay-play.js"></script>
+<script src="/application/js/libs/videogular/plugins/buffering.js"></script>
+<script src="/application/js/libs/videogular/plugins/poster.js"></script>
+<script src="/application/js/libs/videogular/plugins/youtube.js"></script>
+<script src="/application/js/libs/videogular/plugins/quiz.js"></script>
 {% block mediaJS %}
-    <script src="/application/js/libs/videogular/videogular.js"></script>
-    <script src="/application/js/libs/angularjs/angular-sanitize.min.js"></script>
-    <script src="/application/js/libs/videogular/videogular.js"></script>
-    <script src="/application/js/libs/videogular/plugins/controls.js"></script>
-    <script src="/application/js/libs/videogular/plugins/overlay-play.js"></script>
-    <script src="/application/js/libs/videogular/plugins/buffering.js"></script>
-    <script src="/application/js/libs/videogular/plugins/poster.js"></script>
-    <script src="/application/js/libs/videogular/plugins/youtube.js"></script>
-    <script src="/application/js/libs/videogular/plugins/quiz.js"></script>
 {% endblock %}
 <script src="/admin/js/main.js"></script>
 <script>
