@@ -790,7 +790,7 @@ angular.module("easylearncode.learn").run(function () {
         $scope.max = 5;
         $scope.isReadonly = false;
         $scope.nl2br = function (text) {
-            return text ? (text.replace(/\n/g, "<br />")) : '';
+            return text ? (text.replace(/\\n/g,'</br>')).replace(/\\/g, "") : '';
         };
         $scope.aceLoaded = function (_editor) {
             $scope.editor = _editor;
@@ -862,7 +862,7 @@ angular.module("easylearncode.learn").run(function () {
         };
 
         $scope.outputCallback = function (output, cls) {
-            console.log(cls);
+            console.log(output);
         };
 
         $scope.errorCallback = function (e) {
@@ -886,7 +886,6 @@ angular.module("easylearncode.learn").run(function () {
         };
 
         $scope.resultCallback = function (result) {
-            console.log(result);
             var code, error_msg, isSuccess, output, resultObj, result_val, _ref;
             if (result && typeof result === 'object') {
                 resultObj = result;
@@ -919,7 +918,7 @@ angular.module("easylearncode.learn").run(function () {
                         $scope.$apply(function () {
                             data = {
                                 result: true,
-                                description: 'Chúc mừng! Bạn đã trả lời đúng!'
+                                description: '<i class=\"fa fa-sun-o\"></i> <strong>Tuyệt vời!!!</strong><br />Bạn đã trả lời đúng!'
                             }
                             runCodeDeferred.resolve(data);
                         })
@@ -928,10 +927,10 @@ angular.module("easylearncode.learn").run(function () {
                         $scope.$apply(function () {
                             data = {
                                 result: false,
-                                description: (utf8_decode(result_val))
+                                description: '<i class=\"fa fa-exclamation-triangle\"></i> <strong>Rất tiếc!!!</strong><br />' + $scope.nl2br((utf8_decode(result_val)))
                             }
                             runCodeDeferred.resolve(data);
-                        })
+                        });
 
                     }
                 } else if (resultObj.type === 'evalUser') {
@@ -970,7 +969,6 @@ angular.module("easylearncode.learn").run(function () {
         $scope.code_answer = "";
         $scope.onQuizSubmit = function (data) {
             $scope.code_answer = data.code;
-            console.log(data);
             if (data.type == "Quiz") {
                 quizs = _.where($scope.lecture.quiz_keys, {Id: data.id});
                 result = false;
@@ -982,14 +980,14 @@ angular.module("easylearncode.learn").run(function () {
                     answer = _.where(quizs[0].answer_keys, {Id: data.answer})
                     if (answer[0].is_true == true) {
                         result = true;
-                        description = "Chúc mừng bạn đã trả lời đúng!";
+                        description = "<i class=\"fa fa-sun-o\"></i> <strong>Tuyệt vời!!!</strong><br/>Chúc mừng bạn đã trả lời đúng!";
                         if (localStorageService.get("score") == null) {
                             localStorageService.add("score", parseFloat(data.score));
                         }
                         else localStorageService.add("score", parseFloat(localStorageService.get("score")) + parseFloat(data.score));
                     }
                     else {
-                        description = "Lựa chọn của bạn chưa đúng!";
+                        description = "<i class=\"fa fa-exclamation-triangle\"></i> <strong>Rất tiếc!!!</strong><br />Lựa chọn của bạn chưa đúng!";
                     }
                 }
                 return {
@@ -1025,7 +1023,6 @@ angular.module("easylearncode.learn").run(function () {
 
 
         $scope.runCode = function () {
-            console.log($scope.jsrepl);
             dataObj = {
                 command: $scope.code,
                 testScript: '',
@@ -1865,7 +1862,7 @@ angular.module("easylearncode.visualization", ["ui.bootstrap", "ui.ace", 'easyle
                         children_two.id = code.Id;
                         children_two.code = code.content;
                         min = parseInt(code.time/60);
-                        sec = code.time%60;
+                        sec = parseInt(code.time%60);
                         if(min < 10) min= "0" + min;
                         if(sec < 10) sec = "0"+sec;
                         children_two.title = code.title+" - "+min+":"+sec;
@@ -2652,7 +2649,6 @@ angular.module("easylearncode.teacher", ["ui.bootstrap", "ui.ace", 'easylearncod
                 }
             });
         };
-
         $scope.onUpdateVolume = function (newVol) {
             $scope.volume = newVol;
         };

@@ -17,7 +17,7 @@
 <button class="btn btn-default quiz-skip-button" data-ng-click="quizSkip()" type="button" data-ng-show="skip">Skip</button>
 <button class="btn btn-success quiz-continue-button" data-ng-click="quizContinue()" type="button" data-ng-show="continue_btn">Continue</button>
 <button class="btn btn-info quiz-show-explanation" data-ng-click="quizShowExplanation()" type="button" data-ng-show="explanation">Explanation</button>
-<div class="alert alert-warning alert-dismissable quiz-status" data-ng-show="status" style="z-index: 10000!important;">
+<div class="alert alert-dismissable quiz-status" ng-class="alert_type" data-ng-show="status" style="z-index: 10000!important;">
   <button type="button" class="close" data-ng-click="status=''" aria-hidden="true">&times;</button>
-  {{ status }}
+  <div bind-html-unsafe="status"></div>
 </div>
