@@ -6,7 +6,7 @@ class UtilModel(object):
     def to_dict(self, *args, **kwargs):
         result = super(UtilModel, self).to_dict(*args, **kwargs)
         result['Id'] = self.key.urlsafe()
-        result['key'] = self.key.id()
+        result['key'] = self.key.string_id()
         return result
 
 
@@ -411,7 +411,7 @@ class Course(UtilModel, ndb.Model):
 
     @classmethod
     def get_by_exercise(cls, exercise):
-        return cls.query(cls.exercise_keys==exercise).get()
+        return cls.query(cls.exercise_keys == exercise).get()
     
     @classmethod
     def get_by_lesson(cls, lesson):
@@ -420,7 +420,7 @@ class Course(UtilModel, ndb.Model):
     def to_dict(self, *args, **kwargs):
         result = super(Course, self).to_dict(*args, **kwargs)
         count_user = len(CourseUser.get_by_course(self.key))
-        result['count_user_joined']= count_user
+        result['count_user_joined'] = count_user
         return result
 
 
