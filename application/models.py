@@ -417,6 +417,12 @@ class Course(UtilModel, ndb.Model):
     def get_by_lesson(cls, lesson):
         return cls.query(cls.lesson_keys == lesson).get()
 
+    def to_dict(self, *args, **kwargs):
+        result = super(Course, self).to_dict(*args, **kwargs)
+        count_user = len(CourseUser.get_by_course(self.key))
+        result['count_user_joined']= count_user
+        return result
+
 
 class WeeklyQuizTest(UtilModel, ndb.Model):
     input = ndb.StringProperty()
@@ -535,6 +541,7 @@ class Lesson(UtilModel, ndb.Model):
 class Lecture(UtilModel, ndb.Model):
     title = ndb.StringProperty(required=True)
     description = ndb.StringProperty()
+    summary = ndb.StringProperty(indexed=False)
     img = ndb.BlobKeyProperty()
     youtube_id = ndb.StringProperty()
     time = ndb.FloatProperty()
@@ -675,6 +682,10 @@ class CourseUser(UtilModel, ndb.Model):
     @classmethod
     def get_by_user_and_course(cls, user, course):
         return cls.query(cls.user == user, cls.course == course).get()
+
+    @classmethod
+    def get_by_course(cls, course):
+        return cls.query(cls.course == course).fetch()
 
     def to_dict(self, *args, **kwargs):
         result = super(CourseUser, self).to_dict(*args, **kwargs)

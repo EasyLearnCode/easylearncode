@@ -37,6 +37,9 @@ angular.module('angularjsFormBuilder').directive('fieldDirective', function ($ht
                 case 'code':
                     templateUrl = '/application/js/libs/angularjs/angularjs-form-builder/views/field/code.html';
                     break;
+                case 'wysiwyg':
+                    templateUrl = '/application/js/libs/angularjs/angularjs-form-builder/views/field/wysiwyg.html';
+                    break;
             }
             return templateUrl;
         }

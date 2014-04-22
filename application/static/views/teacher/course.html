@@ -24,8 +24,9 @@
                             {{ course.short_desc }}
                         </h3>
                         <p>{{ course.long_desc }}</p>
+                        <p>Đã có {{ course.count_user_joined }} học viên tham gia khóa học</p>
                         <p class="h-slim-top">
-                            Được tạo vào ngày {{course.created| date:'dd/MM/yyyy' }} bởi {{ user_curent.name }} {{ user_curent.last_name }}
+                            Được tạo vào ngày {{course.created| date:'dd/MM/yyyy' }} bởi <i>{{ user_curent.name }} {{ user_curent.last_name }}</i>
                         </p>
                         <div ng-show="!course.is_available" style="margin-top: 10px; font-weight: bold">Đang chờ kiểm duyệt...</div>
                         <div>

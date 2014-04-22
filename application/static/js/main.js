@@ -2500,6 +2500,14 @@ angular.module("easylearncode.teacher", ["ui.bootstrap", "ui.ace", 'easylearncod
                 },
                 {
                     "field_id": 3,
+                    "field_title": "Tóm tắt kiến thức cơ bản",
+                    "field_type": "wysiwyg",
+                    "field_value": "",
+                    "field_required": true,
+                    "field_name": "summary"
+                },
+                {
+                    "field_id": 4,
                     "field_title": "Độ khó",
                     "field_type": "dropdown",
                     "field_value": "1",
@@ -2524,7 +2532,7 @@ angular.module("easylearncode.teacher", ["ui.bootstrap", "ui.ace", 'easylearncod
                     "field_name": "level"
                 },
                 {
-                    "field_id": 4,
+                    "field_id": 5,
                     "field_title": "Youtube video id",
                     "field_type": "textfield",
                     "field_value": "",
@@ -2532,7 +2540,7 @@ angular.module("easylearncode.teacher", ["ui.bootstrap", "ui.ace", 'easylearncod
                     "field_name": "youtube_id"
                 },
                 {
-                    "field_id": 5,
+                    "field_id": 6,
                     "field_title": "Thời gian học",
                     "field_type": "textfield",
                     "field_value": "",
