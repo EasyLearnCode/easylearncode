@@ -144,9 +144,10 @@ angular.module("info.vietnamcode.nampnq.videogular.plugins.quiz", ['nampnq.util.
                                         scope.skip = false;
                                         scope.continue_btn = true;
                                         scope.explanation = true;
+                                        scope.alert_type="alert-info";
                                     }
                                     else{
-                                        scope.score = parseFloat(scope.score)- parseFloat(scope.score) * 0.5
+                                        scope.score = parseFloat(scope.score)- parseFloat(scope.score) * 0.5;
                                     }
                                 }
                                 else if (paramObj.type == "Test") {
@@ -157,10 +158,12 @@ angular.module("info.vietnamcode.nampnq.videogular.plugins.quiz", ['nampnq.util.
                                             scope.skip = false;
                                             scope.continue_btn = true;
                                             scope.explanation = true;
+                                            scope.alert_type="alert-info";
 
                                         } else {
                                             scope.status = data.description;
-                                            scope.score = parseFloat(scope.score)- parseFloat(scope.score) * 0.5
+                                            scope.score = parseFloat(scope.score)- parseFloat(scope.score) * 0.5;
+                                            scope.alert_type="alert-danger";
                                         }
                                     })
                                 }
