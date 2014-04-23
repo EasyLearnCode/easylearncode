@@ -70,7 +70,7 @@
                                     </div>
 
                                     <div class="block-list ui-counter ui-counter--bold">
-                                        <a ng-repeat-start="project in exercise_item.projects"
+                                        <a ng-repeat-start="project in exercise_item._projects"
                                            class="js-section block-list__item ui-media ui-media--reverse lesson-nav__section"
                                            ng-click="toggleSection($event)"
                                            ng-class="{'is-active':project._is_current_project}">
@@ -86,7 +86,7 @@
                                         <div ng-repeat-end class="js-section__content collapse">
                                             <div class="block-list lesson-nav__exercises">
                                                 <a class="block-list__item ui-media lesson-nav__exercise"
-                                                   ng-repeat="checkpoint in project.checkpoints"
+                                                   ng-repeat="checkpoint in project._checkpoints"
                                                    ng-click="changeCurrentCheckpoint(checkpoint)">
                                                     <div class="ui-media__image new-icon new-icon--small"
                                                          ng-class="checkpoint._is_current_checkpoint?'new-icon--checkpoint--current':(checkpoint._is_passed_checkpoint?'new-icon--checkpoint--completed':'new-icon--checkpoint')">

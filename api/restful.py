@@ -463,6 +463,12 @@ class RestfulHandler(BaseHandler):
             self.redirect(redirect)
             # Raising break error to avoid header and body writes from @as_json decorator since we override as a redirect
             raise BreakError()
+        if id:
+            from google.appengine.api import memcache
+            logging.info('delete cache model: %s with id: %s' % (model, id))
+            cache_id = "to_dict_%s" % (id)
+            memcache.delete(cache_id)
+
         return m.to_dict()
 
     # Metadata including the count in the response header

@@ -1409,7 +1409,7 @@ angular.module("easylearncode.course_practice_viewer", ["ui.bootstrap", "ui.ace"
         var jqconsole;
         var jsrepl;
         var exercise_item_id = $location.search()['exercise_item_id'];
-        $scope.exercise_item = api.Model.get({type: 'exercise_items', id: exercise_item_id, recurse: true, depth: 3});
+        $scope.exercise_item = api.Model.get({type: 'exercise_items', id: exercise_item_id, extras: 'current_user'});
         $scope.jsreplReady = false;
         $scope.isEditorFullScreen = false;
         $scope.showAlert = false;
@@ -1422,24 +1422,24 @@ angular.module("easylearncode.course_practice_viewer", ["ui.bootstrap", "ui.ace"
             }
         }
         $scope.getCurrentProject = function(){
-            result =  _.find($scope.exercise_item.projects, function(project){
+            result =  _.find($scope.exercise_item._projects, function(project){
                 return project._is_current_project == true;
             })
             if (!result){
-                $scope.exercise_item.projects[0]._is_current_project = true;
-                result = $scope.exercise_item.projects[0];
+                $scope.exercise_item._projects[0]._is_current_project = true;
+                result = $scope.exercise_item._projects[0];
             }
             return result;
 
         }
         $scope.getProgressExercises = function(){
-            if(!$scope.exercise_item.projects){
+            if(!$scope.exercise_item._projects){
                 return {
                     index: 0,
                     total: 0
                 }
             }
-            var e = $scope.exercise_item.projects,
+            var e = $scope.exercise_item._projects,
                 t = $scope.getCurrentProject(),
                 n = 0,
                 r = 0,
@@ -1463,8 +1463,8 @@ angular.module("easylearncode.course_practice_viewer", ["ui.bootstrap", "ui.ace"
         }
         $scope.initCurrentCheckpoint = function(){
             var _current_checkpoint;
-            _.find($scope.exercise_item.projects,function(project){
-                 _.find(project.checkpoints,function(checkpoint){
+            _.find($scope.exercise_item._projects,function(project){
+                 _.find(project._checkpoints,function(checkpoint){
                     if(checkpoint._is_current_checkpoint){
                         $scope.changeCurrentCheckpoint(checkpoint);
                         _current_checkpoint = checkpoint;
@@ -1473,9 +1473,9 @@ angular.module("easylearncode.course_practice_viewer", ["ui.bootstrap", "ui.ace"
                 });
             })
             if(!_current_checkpoint){
-                $scope.exercise_item.projects[0]._is_current_project = true;
-                $scope.exercise_item.projects[0].checkpoints[0]._is_current_checkpoint = true;
-                $scope.changeCurrentCheckpoint($scope.exercise_item.projects[0].checkpoints[0]);
+                $scope.exercise_item._projects[0]._is_current_project = true;
+                $scope.exercise_item._projects[0]._checkpoints[0]._is_current_checkpoint = true;
+                $scope.changeCurrentCheckpoint($scope.exercise_item._projects[0]._checkpoints[0]);
             }
         }
         $scope.toggleFullScreen = function () {
@@ -1507,9 +1507,9 @@ angular.module("easylearncode.course_practice_viewer", ["ui.bootstrap", "ui.ace"
             type: 'success', msg: 'Well done! You <a href="#">successfully</a> read this important alert message.'
         }
         $scope.changeCurrentCheckpoint = function (checkpoint) {
-            _.each($scope.exercise_item.projects,function(project){
+            _.each($scope.exercise_item._projects,function(project){
                 project._is_current_project = false;
-                _.each(project.checkpoints, function(_checkpoint){
+                _.each(project._checkpoints, function(_checkpoint){
                     _checkpoint._is_current_checkpoint = false;
                     if(_checkpoint.Id === checkpoint.Id){
                         project._is_current_project = true;
@@ -1519,7 +1519,7 @@ angular.module("easylearncode.course_practice_viewer", ["ui.bootstrap", "ui.ace"
             })
             $scope.current_checkpoint = checkpoint;
             $scope.current_checkpoint._available_hint = !$($scope.current_checkpoint._hint_html).is(':empty');
-            $scope.source = $scope.current_checkpoint.default_files[0].content;
+            $scope.source = $scope.current_checkpoint._default_files[0].content;
             $scope.showDropDownMenu = false;
         }
         $scope.inputCallback = function (callback) {
@@ -1699,8 +1699,8 @@ angular.module("easylearncode.course_practice_viewer", ["ui.bootstrap", "ui.ace"
                 }
                 else{
                     if($scope.current_checkpoint.index == _current_project.checkpoints.length - 1){
-                        _.each($scope.exercise_item.projects,function(project){
-                            _.each(project.checkpoints, function(_checkpoint){
+                        _.each($scope.exercise_item._projects,function(project){
+                            _.each(project._checkpoints, function(_checkpoint){
                                 if(project.index == _current_project.index+1 && _checkpoint.index === 0){
                                     $scope.changeCurrentCheckpoint(_checkpoint);
                                     return {}
@@ -1708,7 +1708,7 @@ angular.module("easylearncode.course_practice_viewer", ["ui.bootstrap", "ui.ace"
                             })
                         })
                     }else{
-                        $scope.changeCurrentCheckpoint(_.find(_current_project.checkpoints, function(checkpoint){
+                        $scope.changeCurrentCheckpoint(_.find(_current_project._checkpoints, function(checkpoint){
                             return checkpoint.index == $scope.current_checkpoint.index+1;
                         }))
                     }

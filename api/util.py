@@ -163,4 +163,10 @@ def is_request_from_admin():
         return False
     from urlparse import urlparse
     return urlparse(r.referer).path.lower().startswith('/admin') or \
-           urlparse(r.referer).path.lower().startswith('/teacher')
+        urlparse(r.referer).path.lower().startswith('/teacher')
+
+
+def request_extras_info(info):
+    r = webapp2.get_request()
+    extras_request = r.GET.getall("extras")
+    return info in extras_request

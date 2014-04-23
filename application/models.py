@@ -1,6 +1,6 @@
 from webapp2_extras.appengine.auth.models import User
 from google.appengine.ext import ndb
-
+from google.appengine.api import memcache
 
 class UtilModel(object):
     def to_dict(self, *args, **kwargs):
@@ -241,24 +241,11 @@ class ExerciseCheckpoint(UtilModel, ndb.Model):
         return markdown2.markdown(self.instruction)
 
     def to_dict(self, *args, **kwargs):
-        from api.restful import current_user
-        from api.util import is_request_from_admin
         result = super(ExerciseCheckpoint, self).to_dict(*args, **kwargs)
         result['_entry_html'] = self.entry_html
         result['_hint_html'] = self.hint_html
         result['_instruction_html'] = self.instruction_html
-        _current_user = current_user()
-        _is_request_from_admin = is_request_from_admin()
-        if _current_user and not _is_request_from_admin:
-            _exercise_item = ExerciseItem.get_by_checkpoint(self.key).key
-            _exercise_item_user = ExerciseItemUser.get_by_user_and_exercise_item(_current_user, _exercise_item)
-            if _exercise_item_user:
-                result['_is_current_checkpoint'] = True if _exercise_item_user.current_checkpoint == self.key else False
-                result['_is_passed_checkpoint'] = True if self.key in _exercise_item_user.passed_checkpoint else False
-            else:
-                result["_is_current_checkpoint"] = False
-                result["_is_passed_checkpoint"] = False
-        #TODO: Lastest files
+        result['_default_files'] = [file.to_dict() for file in ndb.get_multi(self.default_files)]
         return result
 
 
@@ -278,27 +265,25 @@ class ExerciseProject(UtilModel, ndb.Model):
         return cls.query(cls.checkpoints == checkpoint).get()
 
     def to_dict(self, *args, **kwargs):
-        result = super(ExerciseProject, self).to_dict(*args, **kwargs)
-        from api.util import is_request_from_admin
-        from api.restful import current_user
-        _current_user = current_user()
-        _is_request_from_admin = is_request_from_admin()
-        if _current_user and not _is_request_from_admin:
-            _exercise_item = ExerciseItem.get_by_project(self.key).key
-            _exercise_item_user = ExerciseItemUser.get_by_user_and_exercise_item(_current_user,_exercise_item)
-            if _exercise_item_user:
-                result['_is_passed_project'] = True if set(self.checkpoints).issubset(set(_exercise_item_user.passed_checkpoint)) else False
-        result['_checkpoints_count'] = self.checkpoints_count
+        cache_id = "to_dict_%s" % (self.key.urlsafe())
+        cache = memcache.get(cache_id)
+        if cache:
+            result = cache
+        else:
+            result = super(ExerciseProject, self).to_dict(*args, **kwargs)
+            result['_checkpoints_count'] = self.checkpoints_count
+            result['_checkpoints'] = [checkpoint.to_dict() for checkpoint in ndb.get_multi(self.checkpoints)]
+            memcache.set(cache_id, result)
         return result
 
 
 class ExerciseItem(UtilModel, ndb.Model):
-    title = ndb.StringProperty()
+    title = ndb.StringProperty(required=True)
     created = ndb.DateTimeProperty(auto_now_add=True)
     index = ndb.FloatProperty()
     description = ndb.TextProperty()
     projects = ndb.KeyProperty(kind='ExerciseProject', repeated=True)
-    success = ndb.StringProperty(indexed=False)
+    success = ndb.StringProperty(indexed=False, required=True)
 
     @property
     def success_html(self):
@@ -336,23 +321,43 @@ class ExerciseItem(UtilModel, ndb.Model):
         return cls.get_by_project(_project.key)
 
     def to_dict(self, *args, **kwargs):
-        result = super(ExerciseItem, self).to_dict(*args, **kwargs)
-        from api.restful import current_user
-        from api.util import is_request_from_admin
-        _current_user = current_user()
-        _is_request_from_admin = is_request_from_admin()
-        if _current_user and not _is_request_from_admin :
-            _exercise = Exercise.get_by_exercise_item(self.key).key
-            _exercise_user = ExerciseUser.get_by_user_and_exercise(_current_user, _exercise)
-            if _exercise_user:
-                result['_is_current_item'] = True if _exercise_user.current_item == self.key else False
-                result['_is_passed_item'] = True if self.key in _exercise_user.passed_item else False
-            else:
-                result['_is_current_item'] = False
-                result['_is_passed_item'] = False
-        result['_success_html'] = self.success_html
-        result['_checkpoints_count'] = self.checkpoints_count
-        result['_projects_count'] = self.projects_count
+        cache_id = "to_dict_%s" % (self.key.urlsafe())
+        cache = memcache.get(cache_id)
+        if cache:
+            result = cache
+        else:
+            result = super(ExerciseItem, self).to_dict(*args, **kwargs)
+            result['_success_html'] = self.success_html
+            result['_checkpoints_count'] = self.checkpoints_count
+            result['_projects_count'] = self.projects_count
+            memcache.set(cache_id, result)
+        from api.util import request_extras_info
+        if request_extras_info("current_user"):
+            from api.restful import current_user
+            _current_user = current_user()
+            if _current_user:
+                result['_exercise'] = Exercise.get_by_exercise_item(self.key).key
+                _exercise_user = ExerciseUser.get_by_user_and_exercise(_current_user, result['_exercise'])
+                _exercise_item_user = ExerciseItemUser.get_by_user_and_exercise_item(_current_user, self.key)
+                if _exercise_user:
+                    result['_is_current_item'] = True if _exercise_user.current_item == self.key else False
+                    result['_is_passed_item'] = True if self.key in _exercise_user.passed_item else False
+                else:
+                    result['_is_current_item'] = False
+                    result['_is_passed_item'] = False
+                result['_projects'] = [project.to_dict() for project in ndb.get_multi(self.projects)]
+                for project in result['_projects']:
+                    if _exercise_item_user:
+                        project['_is_passed_project'] = True if set(project['checkpoints']).issubset(
+                            set(_exercise_item_user.passed_checkpoint)) else False
+                    for checkpoint in project['_checkpoints']:
+                        if _exercise_item_user:
+                            checkpoint['_is_current_checkpoint'] = True if _exercise_item_user.current_checkpoint == ndb.Key(urlsafe=checkpoint['Id']) else False
+                            checkpoint['_is_passed_checkpoint'] = True if ndb.Key(urlsafe=checkpoint['Id']) in _exercise_item_user.passed_checkpoint else False
+                        else:
+                            checkpoint["_is_current_checkpoint"] = False
+                            checkpoint["_is_passed_checkpoint"] = False
+
         return result
 
 
