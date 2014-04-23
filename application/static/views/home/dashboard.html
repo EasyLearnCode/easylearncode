@@ -28,7 +28,7 @@
                                 {{ course._percent_passed_lesson*100|number:0 }}%
                             </div>
                             <h3 class="frame-card__metadata__title">
-                                {{ course.title }} [ Học qua video ]
+                                {{ course._course.title }} [ Học qua video ]
                             </h3>
 
                             <div class="frame-card__metadata__subtitle" am-time-ago="course.updated">
@@ -60,7 +60,7 @@
                                 {{ course._percent_passed_exercise*100|number:0 }}%
                             </div>
                             <h3 class="frame-card__metadata__title">
-                                {{ course.title }} [ Học qua bài tập ]
+                                {{ course._course.title }} [ Học qua bài tập ]
                             </h3>
 
                             <div class="frame-card__metadata__subtitle" am-time-ago="course.updated">

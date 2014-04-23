@@ -694,6 +694,7 @@ class CourseUser(UtilModel, ndb.Model):
 
     def to_dict(self, *args, **kwargs):
         result = super(CourseUser, self).to_dict(*args, **kwargs)
+        result['_course'] = self.course.get().to_dict()
         result['_percent_passed_exercise'] = self.percent_passed_exercise
         result['_percent_passed_lesson'] = self.percent_passed_lesson
         return result
