@@ -790,7 +790,7 @@ angular.module("easylearncode.learn").run(function () {
         $scope.max = 5;
         $scope.isReadonly = false;
         $scope.nl2br = function (text) {
-            return text ? (text.replace(/\\n/g,'</br>')).replace(/\\/g, "") : '';
+            return text ? (text.replace(/\\n/g, '</br>')).replace(/\\/g, "") : '';
         };
         $scope.aceLoaded = function (_editor) {
             $scope.editor = _editor;
@@ -1363,12 +1363,12 @@ angular.module("easylearncode.course_practice_detail", ["ui.bootstrap", "easylea
             .otherwise({redirectTo: "/All"})
     }])
     .controller("MainCtrl",
-    ["$scope", function($scope){
-        $scope.loaded = false;
-        $scope.loadingComplete = function () {
-            $scope.loaded = !0
-        };
-    }])
+        ["$scope", function ($scope) {
+            $scope.loaded = false;
+            $scope.loadingComplete = function () {
+                $scope.loaded = !0
+            };
+        }])
     .controller('InfoCtrl', ['$scope', 'api', '$location', '$window', function ($scope, api, $location, $window) {
         var course_id = $location.search()['course_id'];
         $scope.course = api.Model.get({type: 'courses', id: course_id, recurse: true, depth: 2});
@@ -1740,13 +1740,72 @@ angular.module("easylearncode.course_practice_viewer", ["ui.bootstrap", "ui.ace"
 
 
 angular.module("easylearncode.visualization", ["ui.bootstrap", "ui.ace", 'easylearncode.core', 'angularTreeview'])
-    .controller("VisualizationCtrl", ["$scope", "$sce", "$timeout", "$http", function ($scope, $sce, $timeout, $http) {
-        var jqconsole = $('#console').jqconsole('  >> EasyLearnCode Python Compiler v0.1 <<\n', '>>>');
+    .controller("VisualizationCtrl", ["$scope", "$sce", "$timeout", "$http", "csrf_token", function ($scope, $sce, $timeout, $http, csrf_token) {
+        $scope.courses = new Array();
+        $scope.loaded = false;
+        $scope.loadedTree = false;
+        $http.get("/api/courses?depth=1&recurse=true").success(function (data) {
+            angular.forEach(data, function (course) {
+                if (course.lesson_keys.length > 0)
+                    if (course.is_available == true&&(course.lesson_keys[0].language.toUpperCase() === "PYTHON" || course.lesson_keys[0].language.toUpperCase() === "JAVA" || course.lesson_keys[0].language.toUpperCase() === "JAVASCRIPT")) {
+                        $scope.courses.push(course);
+                    }
+            });
+            $scope.goCourse($scope.courses[0]);
+            $scope.loaded = true;
+        });
+        var jqconsole = $('#console').jqconsole('  >> EasyLearnCode Compiler v0.1 <<\n', '>>>');
         $scope.jsreplReady = false;
+        $scope.language = "Python";
         $scope.isEditorFullScreen = false;
         $scope.showConsole = false;
+        $scope.goCourse = function (course) {
+            $scope.loadedTree = false;
+            $scope.jsreplReady = false;
+            $scope.show = false;
+            $scope.Tests = new Array();
+            $http.get("/api/courses/"+course.Id+"?recurse=true&depth=3").success(function (course) {
+                $scope.course = course;
+                var count_lecture = 0
+                angular.forEach(course.lesson_keys, function (lesson, index) {
+                    var part = new Object();
+                    part.title = "Chương " + (index + 1) + ": " + lesson.title;
+                    part.id = lesson.Id;
+                    part.children = new Array();
+                    angular.forEach(lesson.lecture_keys, function (lecture, index) {
+                        count_lecture++;
+                        var children_one = new Object();
+                        children_one.title = "Bài " + count_lecture + ": " + lecture.title;
+                        children_one.id = lecture.Id;
+                        children_one.children = new Array();
+                        angular.forEach(lecture.code_keys, function (code) {
+                            var children_two = new Object();
+                            children_two.description = code.description;
+                            children_two.id = code.Id;
+                            children_two.code = code.content;
+                            min = parseInt(code.time / 60);
+                            sec = parseInt(code.time % 60);
+                            if (min < 10) min = "0" + min;
+                            if (sec < 10) sec = "0" + sec;
+                            children_two.title = code.title + " - " + min + ":" + sec;
+                            children_one.children.push(children_two);
+                        });
+                        part.children.push(children_one);
+                    })
+                    $scope.Tests.push(part);
+                })
+                $scope.loadedTree = true;
+                $scope.jsreplReady = true;
+            })
+            $scope.editor.getSession().setMode("ace/mode/" + course.lesson_keys[0].language.toLocaleLowerCase() + "");
+            $scope.editor.resize();
+            $scope.language = course.lesson_keys[0].language;
+        }
         $scope.aceLoaded = function (_editor) {
             $scope.editor = _editor;
+            _editor.setOptions({
+                enableBasicAutocompletion: true
+            });
         }
         $scope.toggleFullScreen = function () {
             $scope.isEditorFullScreen = !$scope.isEditorFullScreen;
@@ -1771,7 +1830,12 @@ angular.module("easylearncode.visualization", ["ui.bootstrap", "ui.ace", 'easyle
         ];
 
         $scope.updateVisualizationUrl = function () {
-            src = "http://pythontutor.com/iframe-embed.html#code=" + encodeURIComponent($scope.TreeId.currentNode.code) + "&cumulative=false&heapPrimitives=false&drawParentPointers=false&textReferences=false&showOnlyOutputs=false&py=2&curInstr=0&codeDivWidth=350&codeDivHeight=400";
+            if ($scope.language == "Java")
+                src = "http://cscircles.cemc.uwaterloo.ca/java_visualize/#code=" + encodeURIComponent($scope.TreeId.currentNode.code) + "&mode=display&cumulative=false&curInstr=43&codeDivWidth=350&codeDivHeight=400";
+            else if ($scope.language == "Javascript")
+                src = "http://jstutor.herokuapp.com/#code=" + encodeURIComponent($scope.TreeId.currentNode.code) + "&mode=display&cumulative=false&curInstr=0";
+            else
+                src = "http://pythontutor.com/iframe-embed.html#code=" + encodeURIComponent($scope.TreeId.currentNode.code) + "&cumulative=false&heapPrimitives=false&drawParentPointers=false&textReferences=false&showOnlyOutputs=false&py=2&curInstr=0&codeDivWidth=350&codeDivHeight=400";
             $("#visualizationModal .modal-body").find("iframe").remove();
             var iframe = $('<iframe src="' + src + '" frameborder="0" width="800" height="500"></iframe>');
             $("#visualizationModal .modal-body").append(iframe);
@@ -1824,12 +1888,29 @@ angular.module("easylearncode.visualization", ["ui.bootstrap", "ui.ace", 'easyle
                 testScript: '',
                 type: 'evalUser'
             };
-            $scope.jsrepl.sandbox.post({
-                type: 'engine.EasyLearnCode_Eval',
-                data: dataObj
-            });
-
+            if ($scope.language.toUpperCase() === "PYTHON") {
+                $scope.jsrepl.sandbox.post({
+                    type: 'engine.EasyLearnCode_Eval',
+                    data: dataObj
+                });
+            }
+            else $scope.runCodeInHackerEarth();
         };
+
+        $scope.runCodeInHackerEarth = function () {
+            jqconsole.Write('Compiling...');
+            $http.post('/api/runcode', {"lang": "" + $scope.language.toUpperCase() + "", "source": $scope.TreeId.currentNode.code,
+                "_csrf_token": csrf_token}).success(function (data) {
+                    if (data.compile_status == "OK") {
+                        jqconsole.Reset();
+                        jqconsole.Write('==> ' + data.run_status.output);
+                    }
+                    else {
+                        jqconsole.Reset();
+                        jqconsole.Write(data.compile_status);
+                    }
+                });
+        }
 
         $scope.reSet = function () {
             $scope.source = "";
@@ -1841,39 +1922,39 @@ angular.module("easylearncode.visualization", ["ui.bootstrap", "ui.ace", 'easyle
                 $scope.jsreplReady = true;
             })
         });
-        $scope.Tests = new Array();
-        $http.get("/api/courses/cs001?recurse=true&depth=3").success(function(course){
-            $scope.course = course;
-            var count_lecture = 0
-            angular.forEach(course.lesson_keys, function(lesson, index){
-                var part = new Object();
-                part.title = "Chương " + index + ": " + lesson.title;
-                part.id = lesson.Id;
-                part.children = new Array();
-                angular.forEach(lesson.lecture_keys, function(lecture, index){
-                    count_lecture++;
-                    var children_one = new Object();
-                    children_one.title = "Bài "+count_lecture+": "+lecture.title;
-                    children_one.id = lecture.Id;
-                    children_one.children = new Array();
-                    angular.forEach(lecture.code_keys, function(code){
-                        var children_two = new Object();
-                        children_two.description = code.description;
-                        children_two.id = code.Id;
-                        children_two.code = code.content;
-                        min = parseInt(code.time/60);
-                        sec = parseInt(code.time%60);
-                        if(min < 10) min= "0" + min;
-                        if(sec < 10) sec = "0"+sec;
-                        children_two.title = code.title+" - "+min+":"+sec;
-                        children_one.children.push(children_two);
-                    });
-                    part.children.push(children_one);
-                })
-                $scope.Tests.push(part);
-            })
-
-        })
+//        $scope.Tests = new Array();
+//        $http.get("/api/courses/cs001?recurse=true&depth=3").success(function (course) {
+//            $scope.course = course;
+//            var count_lecture = 0
+//            angular.forEach(course.lesson_keys, function (lesson, index) {
+//                var part = new Object();
+//                part.title = "Chương " + (index + 1) + ": " + lesson.title;
+//                part.id = lesson.Id;
+//                part.children = new Array();
+//                angular.forEach(lesson.lecture_keys, function (lecture, index) {
+//                    count_lecture++;
+//                    var children_one = new Object();
+//                    children_one.title = "Bài " + count_lecture + ": " + lecture.title;
+//                    children_one.id = lecture.Id;
+//                    children_one.children = new Array();
+//                    angular.forEach(lecture.code_keys, function (code) {
+//                        var children_two = new Object();
+//                        children_two.description = code.description;
+//                        children_two.id = code.Id;
+//                        children_two.code = code.content;
+//                        min = parseInt(code.time / 60);
+//                        sec = parseInt(code.time % 60);
+//                        if (min < 10) min = "0" + min;
+//                        if (sec < 10) sec = "0" + sec;
+//                        children_two.title = code.title + " - " + min + ":" + sec;
+//                        children_one.children.push(children_two);
+//                    });
+//                    part.children.push(children_one);
+//                })
+//                $scope.Tests.push(part);
+//            })
+//
+//        })
 //        $scope.Tests =
 //            [
 //                { "title": "Phần 1: Kiến thức cơ bản về Python", "id": "LessonId1", "children": [
@@ -1917,7 +1998,25 @@ angular.module("easylearncode.visualization", ["ui.bootstrap", "ui.ace", 'easyle
 //                    ]}
 //                ]}
 //            ];
-    }]);
+    }]).directive('hoverClass', function () {
+        return {
+            restrict: 'A',
+            scope: {
+                addClass: '@',
+                removeClass: '@'
+            },
+            link: function (scope, element) {
+                element.on('mouseenter', function () {
+                    element.addClass(scope.addClass);
+                    element.removeClass(scope.removeClass);
+                });
+                element.on('mouseleave', function () {
+                    element.addClass(scope.removeClass);
+                    element.removeClass(scope.addClass);
+                });
+            }
+        };
+    });
 angular.module("easylearncode.account", ["easylearncode.core", "ngRoute"]);
 angular.module("easylearncode.account")
     .config(["$routeProvider", function ($routeProvider) {
@@ -2041,29 +2140,29 @@ angular.module("easylearncode.account")
             }
         }
     }])
-    .controller("linkedAccountsTab", ["$scope", "$timeout", "api",'$window','$http', function($scope, $timeout, api, $window, $http) {
+    .controller("linkedAccountsTab", ["$scope", "$timeout", "api", '$window', '$http', function ($scope, $timeout, api, $window, $http) {
         $scope.loading = !0;
-        $scope.getLinkedAccountTypes = function() {
-            if(!$scope.user||!$scope.user.used_providers){
+        $scope.getLinkedAccountTypes = function () {
+            if (!$scope.user || !$scope.user.used_providers) {
                 return [];
             }
             return _.union($scope.user.used_providers, $scope.user.unused_providers)
         };
-        $scope.disconnect = function(provider) {
-            $http.post('/social_login/'+provider.name+'/delete',{}).success(function(){
+        $scope.disconnect = function (provider) {
+            $http.post('/social_login/' + provider.name + '/delete', {}).success(function () {
                 $window.location.reload()
             })
 
         };
-        $scope.connect = function(provider) {
+        $scope.connect = function (provider) {
             $scope.loading = !0;
-            $window.location.href = '/social_login/'+provider.name;
+            $window.location.href = '/social_login/' + provider.name;
 
         };
-        api.Model.get({type:'users', id:'me', extras:'providers_info'}).$promise.then(function(data) {
+        api.Model.get({type: 'users', id: 'me', extras: 'providers_info'}).$promise.then(function (data) {
             $scope.loading = !1;
             $scope.user = data;
-            _.each($scope.user.used_providers, function(provider){
+            _.each($scope.user.used_providers, function (provider) {
                 provider.used = true;
             })
         })
@@ -2721,15 +2820,15 @@ angular.module("easylearncode.teacher", ["ui.bootstrap", "ui.ace", 'easylearncod
         });
         $scope.editor;
         $scope.aceLoaded = function (_editor) {
-             $scope.editor = _editor;
+            $scope.editor = _editor;
         };
 
-        $scope.preView = function(){
+        $scope.preView = function () {
             $scope.config.plugins.quiz.data = $scope.lecture.quiz_keys;
             angular.forEach($scope.lecture.test_keys, function (test) {
                 $scope.config.plugins.quiz.data.push(test);
             });
-            $scope.editor.getSession().setMode("ace/mode/"+$scope.lesson.language+"");
+            $scope.editor.getSession().setMode("ace/mode/" + $scope.lesson.language + "");
             $scope.editor.resize();
             $scope.youtubeUrl = $sce.trustAsResourceUrl("http://www.youtube.com/watch?v=" + $scope.lecture.youtube_id);
             $scope.show = false;
@@ -2746,7 +2845,7 @@ angular.module("easylearncode.teacher", ["ui.bootstrap", "ui.ace", 'easylearncod
         $http.get("/api/lessons?filter=Lecture==" + $routeParams.lectureId + "").success(function (data) {
             $scope.lesson = data[0];
             console.log(data[0]);
-            if($scope.lesson.language == "CPP") $scope.lesson.language = "c_cpp";
+            if ($scope.lesson.language == "CPP") $scope.lesson.language = "c_cpp";
             else $scope.lesson.language = $scope.lesson.language.toLocaleLowerCase();
             codeForm = {
                 "form_id": 1,
@@ -2844,7 +2943,6 @@ angular.module("easylearncode.teacher", ["ui.bootstrap", "ui.ace", 'easylearncod
                 ]
             }
         })
-
 
 
         var quizForm = {
