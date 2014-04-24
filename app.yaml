@@ -1,5 +1,5 @@
 application: easylearncode
-version: 1-2
+version: beta
 runtime: python27
 api_version: 1
 threadsafe: true
