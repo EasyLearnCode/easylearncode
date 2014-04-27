@@ -66,7 +66,7 @@ addClickListener = function(el, fn) {
   }
 },
 
-init = function() {
+initTour = function() {
   var startBtnId = 'startTourBtn',
       calloutId = 'startTourCallout',
       mgr = hopscotch.getCalloutManager(),
@@ -99,4 +99,3 @@ init = function() {
     }
   });
 };
-init();

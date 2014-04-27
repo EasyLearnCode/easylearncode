@@ -51,9 +51,11 @@ angular.module("info.vietnamcode.nampnq.videogular.plugins.quiz", ['nampnq.util.
                                             scope.skip = false;
                                             scope.showContent = false;
                                             elem.find('form')[0].reset();
-                                            if(triggered_cue_points[0].$class === "Test")
+                                            if(triggered_cue_points[0].$class === "Test"){
                                                 elem.css("background-image", "url('http://en.hdyo.org/assets/ask-question-1-ca45a12e5206bae44014e11cd3ced9f1.jpg')").css("background-size", "100% 100%");
-                                            else elem.css("background-image", "url('http://www.eatyourcareer.com/wp-content/uploads/2012/08/quiz.gif')").css("background-size", "100% 100%");
+                                            }else{
+                                                elem.css("background-image", "url('http://www.eatyourcareer.com/wp-content/uploads/2012/08/quiz.gif')").css("background-size", "100% 100%");
+                                            }
                                             setTimeout(function () {
                                                 scope.showContent = true;
                                                 scope.submit = true;
@@ -71,7 +73,6 @@ angular.module("info.vietnamcode.nampnq.videogular.plugins.quiz", ['nampnq.util.
                                                     }, 1000);
                                                     var timer = function () {
                                                         scope.time--;
-                                                        console.log(scope.time);
                                                         if(scope.showContent == false || scope.continue_btn == true){
                                                             clearInterval(clock);
                                                         }
@@ -89,7 +90,7 @@ angular.module("info.vietnamcode.nampnq.videogular.plugins.quiz", ['nampnq.util.
                                                         }
                                                     }
                                                     scope.content = triggered_cue_points[0].question;
-                                                    scope.answers = triggered_cue_points[0].answer_keys;
+                                                    scope.answers = triggered_cue_points[0].answers;
                                                     scope.is_quiz = true;
                                                 }
                                                 else if (triggered_cue_points[0].$class == "Test") {
@@ -148,6 +149,7 @@ angular.module("info.vietnamcode.nampnq.videogular.plugins.quiz", ['nampnq.util.
                                     }
                                     else{
                                         scope.score = parseFloat(scope.score)- parseFloat(scope.score) * 0.5;
+                                        scope.alert_type="alert-danger";
                                     }
                                 }
                                 else if (paramObj.type == "Test") {

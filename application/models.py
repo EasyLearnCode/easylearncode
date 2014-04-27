@@ -423,7 +423,40 @@ class Course(UtilModel, ndb.Model):
         return cls.query(cls.lesson_keys == lesson).get()
 
     def to_dict(self, *args, **kwargs):
-        result = super(Course, self).to_dict(*args, **kwargs)
+        from api.util import request_extras_info
+        if request_extras_info('course_info'):
+            cache_id = 'to_dict_%s' % (self.key.urlsafe())
+            cache = memcache.get(cache_id)
+            if cache:
+                result = cache
+            else:
+                result = super(Course, self).to_dict(*args, **kwargs)
+                result['exercises'] = [e.to_dict() for e in ndb.get_multi(self.exercise_keys)]
+                result['lessons'] = [l.to_dict() for l in ndb.get_multi(self.lesson_keys)]
+                for e in result['exercises']:
+                    e['_items'] = [i.to_dict() for i in ndb.get_multi(e['items'])]
+                for l in result['lessons']:
+                    l['lectures'] = [
+                        {
+                            'Id': le.key.urlsafe(),
+                            'title': le.title,
+                            'description': le.description,
+                            'time': le.time,
+                            'level': le.level
+                        } for le in ndb.get_multi(l['lecture_keys'])]
+                memcache.set(cache_id, result)
+            if request_extras_info('current_user'):
+                    from api.restful import current_user
+                    _current_user = current_user()
+                    for l in result['lessons']:
+                        _lesson_user = LessonUser.get_by_user_and_lesson(_current_user, ndb.Key(urlsafe=l['Id']))
+                        for le in l['lectures']:
+                            le['_is_current_lecture'] = True if _current_user and _lesson_user and \
+                                ndb.Key(urlsafe=le["Id"]) == _lesson_user.current_lecture else False
+                            le['_is_passed_lecture'] = True if _current_user and _lesson_user and \
+                                ndb.Key(urlsafe=le["Id"]) in _lesson_user.passed_lecture else False
+        else:
+            result = super(Course, self).to_dict(*args, **kwargs)
         count_user = len(CourseUser.get_by_course(self.key))
         result['count_user_joined'] = count_user
         return result
@@ -558,26 +591,30 @@ class Lecture(UtilModel, ndb.Model):
     level = ndb.FloatProperty()
 
     def to_dict(self, *args, **kwargs):
-        result = super(Lecture, self).to_dict(*args, **kwargs)
+        from api.util import request_extras_info
         from api.restful import current_user
-        _current_user = current_user()
-        _lesson_user = False
-        if _current_user:
-            _lesson = Lesson.get_by_lecture(self.key)
-            if _lesson:
-                _lesson_user = LessonUser.get_by_user_and_lesson(_current_user, _lesson.key)
-            if (_lesson_user):
-                result['_is_current_lecture'] = True if _lesson_user.current_lecture == self.key else False
-                result['_is_passed_lecture'] = True if self.key in _lesson_user.passed_lecture else False
+        if request_extras_info('lecture_extras'):
+            cache_id = "to_dict_%s" % (self.key.urlsafe())
+            cache = memcache.get(cache_id)
+            if cache:
+                result = cache
             else:
-                result['_is_current_lecture'] = False
-                result['_is_passed_lecture'] = False
+                result = super(Lecture, self).to_dict(*args, **kwargs)
+                result['quizs'] = [q.to_dict() for q in ndb.get_multi(self.quiz_keys)]
+                result['tests'] = [t.to_dict() for t in ndb.get_multi(self.test_keys)]
+                result['codes'] = [c.to_dict() for c in ndb.get_multi(self.code_keys)]
+                lesson = Lesson.get_by_lecture(self.key)
+                result['course_id'] = Course.get_by_lesson(lesson.key).key.urlsafe()
+                result['lecture_language'] = lesson.language
+                memcache.set(cache_id, cache)
+            rates = Rate.get_by_lecture(self.key)
+            rate = (sum(r.rate for r in rates))/(len(rates) or 1)
+            result['rate'] = rate
+            _current_user = current_user()
+            _rate_user = Rate.query(Rate.user_key == _current_user, Rate.lecture_key == self.key).fetch(keys_only=True)
+            result['_can_rate'] = True if _current_user and not _rate_user else False
         else:
-            result['_is_current_lecture'] = False
-            result['_is_passed_lecture'] = False
-        rates = Rate.get_by_lecture(self.key)
-        rate = (sum(r.rate for r in rates))/(len(rates) or 1)
-        result['rate'] = rate
+            result = super(Lecture, self).to_dict(*args, **kwargs)
         return result
 
 
@@ -613,6 +650,22 @@ class Quiz(UtilModel, ndb.Model):
     created = ndb.DateTimeProperty(auto_now_add=True)
     score = ndb.FloatProperty()
 
+    def to_dict(self, *args, **kwargs):
+        from api.util import request_extras_info
+        if request_extras_info('lecture_extras'):
+            cache_id = "to_dict_%s" % (self.key.urlsafe())
+            cache = memcache.get(cache_id)
+            if cache:
+                result = cache
+            else:
+                result = super(Quiz, self).to_dict(*args, **kwargs)
+                result['answers'] = [a.to_dict() for a in ndb.get_multi(self.answer_keys) if a]
+                result['$class'] = 'Quiz'
+                memcache.set(cache_id,result)
+        else:
+            result = super(Quiz, self).to_dict(*args, **kwargs)
+        return result
+
 
 class Test(UtilModel, ndb.Model):
     title = ndb.StringProperty()
@@ -621,6 +674,11 @@ class Test(UtilModel, ndb.Model):
     time = ndb.FloatProperty()
     created = ndb.DateTimeProperty(auto_now_add=True)
     score = ndb.FloatProperty()
+
+    def to_dict(self, *args, **kwargs):
+        result = super(Test, self).to_dict(*args, **kwargs)
+        result['$class'] = 'Test'
+        return result
 
 
 class Badge(UtilModel, ndb.Model):

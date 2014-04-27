@@ -1,0 +1,204 @@
+<div data-ng-show="loaded">
+    <div class="row">
+        <div class="alert alert-info alert-dismissable" style="height: 140px">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <div><img width="100" alt="logo" style="float: left; margin-right: 5px"
+                      src="/application/img/Olympic-Flame.ico"/>
+            </div>
+            Xin chào mừng các bạn đến với phân hệ học qua thực hành. Trong phân hệ này các bạn sẽ được học
+            qua
+            video dạy học thực hành trực tiếp, thực hành code trực tiếp trong khung code bên phải và được
+            làm
+            các bài test trong khi xem video. Qua các bài học các bạn sẽ từng bước học các kiến thức cơ bản
+            về
+            lập trình. Chúng tôi hi vọng khi học xong khóa học này thì các bạn sẽ thấy học việc học lập
+            trình
+            trở nên dễ dàng và thú vị hơn.
+            <a class="pull-right btn" id="startTourBtn"><img rel="tooltip" data-placement="bottom"
+                                                             title="Help"
+                                                             alt="help"
+                                                             src="/application/img/quiz/help.png"
+                                                             width="50"/> </a>
+        </div>
+    </div>
+    <div class="row highlight">
+        <div class="col-xs-8">
+            <div class="progress progress-striped active" ng-hide="true">
+                <div class="progress-bar" role="progressbar" aria-valuenow="{{ percent_lecture_passed| number:0 }}"
+                     aria-valuemin="0"
+                     aria-valuemax="100" style="width: {{ percent_lecture_passed| number:0 }}%"
+                     tooltip="Đã hoàn thành {{ percent_lecture_passed| number:0 }}% khóa học">{{ percent_lecture_passed| number:0 }}%
+                    <span class="sr-only">{{ percent_lecture_passed| number:0 }} Complete</span>
+                </div>
+            </div>
+            <div class="lesson_info overlay" ng-show="show"></div>
+            <div class="panel-group" style="margin-bottom: 0px" id="accordion">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                                    <span class="pull-left" id="step-1"> <h3 class="panel-title"><a class="second"><i
+                                            class="fa fa-laptop fa-lg"></i> {{ lecture.title }}</a></h3></span>
+                                <span class="pull-right" id="step-2">
+                                   <a class="btn btn-default" ng-click="show=!show" ng-class="{show:show}">
+                                       {{ getCurrentLectureIndex()+1 }}/{{ lectures.length }} <i
+                                           class="fa fa-toggle-down"></i></a></span>
+
+                        <div class="lesson_info popover fade bottom" ng-init="show=false"
+                             ng-class="{in:show}"
+                             ng-show="show" style="display: block; top: 40px;left: 450px;width: 330px;">
+                            <div class="arrow"></div>
+                            <h3 class="popover-title" style="display: none;"></h3>
+
+                            <div class="popover-content">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a data-toggle="collapse" data-parent="#accordion"
+                                               href="#collapseOne">
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapseOne" class="panel-collapse collapse in">
+                                        <div class="panel-body">
+                                            <ul class="list-group" data-ng-repeat="l in lectures">
+                                                <li ng-click="goLecture(l, $index)"
+                                                    class="list-group-item list-group-item-info" hover-class
+                                                    add-class="list-group-item-success"
+                                                    remove-class="list-group-item-info"><i class="fa"
+                                                                                           ng-class="{'fa-check-circle-o': l._is_passed_lecture, 'fa-arrow-circle-o-right': l._is_current_lecture, 'fa-circle-o': !l._is_current_lecture&&!l._is_passed_lecture}"></i>{{ l.title }}
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a data-toggle="collapse" data-parent="#accordion"
+                                               href="#collapseTwo">
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapseTwo" class="panel-collapse collapse in">
+                                        <div class="panel-body">
+                                            <ul class="list-group">
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        </span>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="panel-body" id="video-content">
+                        <div id="video"></div>
+                        <alert ng-show="showAlert" type="alert.type" close="showAlert=false"
+                               class="console-alert"><span ng-bind-html="alert.msg|to_trusted"></span>
+                        </alert>
+                    </div>
+                </div>
+                <div class="pull-left" style="padding-top: 20px"><span
+                        style="font-weight: bold">Đánh giá:</span>
+                    <rating value="rate" max="max" readonly="isReadonly"
+                            ng-class="{'cursor-rating':!isReadonly}"
+                            on-hover="hoveringOver(value)" ng-click="setRate()"
+                            on-leave="overStar = null"></rating>
+                    <i class="fa fa-pencil-square-o" ng-show="isReadonly" ng-click="editRate()"></i>
+                                <span class="label"
+                                      ng-class="{'label-warning': percent<=40, 'label-info': percent>40}"
+                                      ng-show="overStar && !isReadonly">{{ strRate }}</span>
+
+                    <!--<div style="margin: 0 0 5px 0px">
+                        <span ng-click="editRate()" class="label label-warning">13/25</span> <span
+                            ng-click="editRate()" class="label label-info">12/25</span>
+                    </div>-->
+                </div>
+                <div class="pull-right" style="padding-top: 15px;">
+                    <ul ng-social-buttons
+                        data-url="current_url"
+                        data-title="current_title"
+                        data-description="current_description"
+                        data-image="'http://easylearncode.appspot.com/application/img/logo.png'">
+                        <li style="font-weight: bold">Chia sẻ:</li>
+                        <li class="ng-social-facebook" tooltip-placement="bottom"
+                            tooltip="Chia sẻ trên facebook">Facebook
+                        </li>
+                        <li class="ng-social-google-plus" tooltip-placement="bottom"
+                            tooltip="Chia sẻ trên google plus">Google+
+                        </li>
+                        <li class="ng-social-twitter" tooltip-placement="bottom"
+                            tooltip="Chia sẻ trên twitter">Twitter
+                        </li>
+                        <li class="ng-social-pinterest" tooltip-placement="bottom"
+                            tooltip="Chia sẻ trên printerest">Pinterest
+                        </li>
+                        <li style="cursor: pointer"><img
+                                src="https://cdn1.iconfinder.com/data/icons/sweetsocial/32/youtube.png"
+                                ng-click="ViewOnYoutube()"
+                                tooltip="Xem trên youtube" tooltip-placement="bottom"/></li>
+                    </ul>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <ul class="nav nav-tabs" id="myTab">
+                <li class="active"><a href="#home" data-toggle="tab"><span
+                        class="glyphicon glyphicon-info-sign"></span> Tóm tắt</a></li>
+                <li><a href="#profile" data-toggle="tab"><span
+                        class="glyphicon glyphicon-question-sign"></span>
+                    Hỏi đáp</a></li>
+            </ul>
+            <div class="tab-content border_info">
+                <div class="tab-pane fade active" id="home" bind-html-unsafe="lecture.summary"></div>
+                <div class="tab-pane fade" id="profile">
+                    <div disqus="lecture.Id"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-4">
+            <h3 style="margin-bottom: 14px; margin-top: 0px; text-align: center" ng-hide="true"><span
+                    class="label label-success" tooltip="Tổng điểm của bạn trong khóa học này">{{ total_score }} Điểm</span>
+            </h3>
+
+            <div class="panel panel-success" id="step-4">
+                <div class="panel-heading">
+                    <div class="panel-title"><span class="pull-left" id="step-1"> <h3 class="panel-title"><a
+                            class="second"><i
+                            class="fa fa-code fa-lg"></i> Phần thực hành</a></h3></span><span
+                            class="pull-right"><button
+                            type="button" class="btn btn-default"
+                            id="step-7"
+                            ng-click="toggleFullScreen()"
+                            ng-class="{'full-btn-full-screen':isEditorFullScreen}" rel="tooltip"
+                            data-placement="bottom"
+                            title="Phóng to khung code"><i
+                            class="glyphicon glyphicon-resize-full"
+                            ng-class="{'glyphicon-resize-small':isEditorFullScreen}"></i>
+                    </button></span>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="panel-body">
+                    <div ui-ace="{ theme:'chrome',
+                            mode:'python', onLoad: aceLoaded}" data-ng-model="code" id="code-content"
+                         ng-class="{'editor-full-screen':isEditorFullScreen}"></div>
+                    </br>
+                    <button type="button" class="btn btn-success" ng-click="runCode()" rel="tooltip"
+                            data-placement="bottom" ng-class="{'run-btn-full-screen':isEditorFullScreen}"
+                            title="Thực thi code" style="margin-right: 5px;" ng-disabled="
+                                !jsreplReady" id="step-5"><i
+                            class="glyphicon glyphicon-play"></i>
+                    </button>
+                    <button type="button" class="btn btn-default pull-right" ng-click="reSet()"
+                            ng-class="{'full-btn-clear-screen':isEditorFullScreen}" id="step-6"
+                            rel="tooltip"
+                            data-placement="bottom" title="Làm lại"><i
+                            class="fa fa-refresh"></i>
+                    </button>
+                    <textarea disabled id="console" style="margin-top: 10px"
+                              ng-class="{'full-screen':isEditorFullScreen}"
+                              bind-html-unsafe="kq"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -41,10 +41,6 @@ handlers:
   script: google.appengine.ext.admin.application
   login: admin
 
-- url: /remote_api
-  script: remote_api.app
-  login: admin
-
 - url: /admin/css
   mime_type: text/css
   static_dir: admin/static/css

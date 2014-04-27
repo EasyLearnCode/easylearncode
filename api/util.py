@@ -58,7 +58,7 @@ def json_extras(obj):
         return obj.urlsafe()
     if isinstance(obj, ndb.BlobKey):
         blob_info = blobstore.BlobInfo.get(obj)
-        if HAS_PIL and re_image.match(blob_info.content_type):
+        if HAS_PIL and blob_info and re_image.match(blob_info.content_type):
             return get_serving_url_async(blob_info.key())
         else:
             return None

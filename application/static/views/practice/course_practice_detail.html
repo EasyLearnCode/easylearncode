@@ -28,11 +28,11 @@
         </div>
     </div>
     <div id="curriculum-units" class="ui-counter">
-        <div class="unit-item" ng-repeat="exercise in course.exercise_keys">
+        <div class="unit-item" ng-repeat="exercise in course.exercises">
             <h2 class="unit-item__title">
                 {{ exercise.title }}
             </h2>
-            <article ng-repeat="item in exercise.items">
+            <article ng-repeat="item in exercise._items">
                 <a href="/course/practice/viewer#!?exercise_item_id={{ item.Id }}"
                    class="course-item ui-card ui-card--grouped">
                     <div class="course-item__progress-indicator"
