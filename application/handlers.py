@@ -1661,3 +1661,8 @@ class TeacherHandler(BaseHandler):
         params = {}
         params.update({'angular_app_name': 'easylearncode.teacher'})
         return self.render_template("teacher.html", **params)
+
+
+class AboutHandler(BaseHandler):
+    def get(self):
+        return self.render_template("about.html")

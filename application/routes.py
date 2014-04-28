@@ -10,6 +10,7 @@ import handlers
 secure_scheme = 'https'
 
 _routes = [
+    RedirectRoute('/about/', handlers.AboutHandler, name='about', strict_slash=True),
     RedirectRoute('/taskqueue-send-email/', handlers.SendEmailHandler, name='taskqueue-send-email', strict_slash=True),
     RedirectRoute('/_ah/login_required', handlers.LoginRequiredHandler),
     RedirectRoute('/login/', handlers.LoginHandler, name='login', strict_slash=True),
