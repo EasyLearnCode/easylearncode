@@ -557,7 +557,7 @@ class WeeklyQuizRunCodeResult(UtilModel, ndb.Model):
 
     @classmethod
     def get_top_user_by_level(cls, level, quantity=5):
-        _lst_score = cls.query(cls.level == level).que
+        _lst_score = cls.query(cls.level == level).fetch()
         return dict((x.user, x) for x in sorted(_lst_score, key=lambda x: x.score)).values()[quantity]
 
 
