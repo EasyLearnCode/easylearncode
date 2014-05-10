@@ -1327,10 +1327,10 @@ angular.module("easylearncode.learn")
             }
         };
     });
-angular.module("easylearncode.info").controller('InfoCtrl', ['$scope', '$http', '$location', 'api', '$window', function ($scope, $http, $location, api, $window) {
+angular.module("easylearncode.info").controller('InfoCtrl', ['$scope', '$http', '$location', 'api', '$window', '$modal', function ($scope, $http, $location, api, $window, $modal) {
     var course_id = $location.search()['course_id'];
     $scope.loaded = false;
-    api.Model.get({type: 'courses', id: course_id, extras:'course_info'}, function (data) {
+    api.Model.get({type: 'courses', id: course_id, extras:['course_info','current_user']}, function (data) {
         $scope.course = data;
         $scope.loaded = true;
     });
@@ -1344,6 +1344,31 @@ angular.module("easylearncode.info").controller('InfoCtrl', ['$scope', '$http', 
         } else
             e >= i ? r.css({position: "fixed", top: 100 + "px"}) : e < i && r.css(o)
     };
+    $scope.showModalMode = function(){
+        $modal.open({
+                    templateUrl:"/templates/angular/learn/choose_mode_modal.html",
+                    resolve : {
+                            currentMode:function(){
+                                return $scope.course._learn_mode;
+                            }
+                    },
+                    controller: function($scope, $modalInstance, currentMode){
+                        $scope.mode = currentMode;
+                        $scope.changeMode = function(mode){
+                            $scope.mode = mode;
+                        }
+                        $scope.ok = function(){
+                            $modalInstance.close($scope.mode);
+                        }
+                        $scope.cancel = function(){
+                            $modalInstance.dismiss('cancel');
+                        }
+                    }
+                }).result.then(function(mode){
+                    $scope.course._learn_mode = mode;
+                    $http.put('/api/users/me/learn/change_mode',{course_id:$scope.course.key,learn_mode:mode});
+                });
+    }
 }]);
 angular.module("easylearncode.course_practice_detail", ["ui.bootstrap", "easylearncode.core", "ngAnimate"])
     .config(['$routeProvider', function ($routeProvider) {

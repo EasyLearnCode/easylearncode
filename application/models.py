@@ -446,6 +446,7 @@ class Course(UtilModel, ndb.Model):
                         } for le in ndb.get_multi(l['lecture_keys'])]
                 memcache.set(cache_id, result)
             if request_extras_info('current_user'):
+                    #TODO: ExerciseItem
                     from api.restful import current_user
                     _current_user = current_user()
                     for l in result['lessons']:
@@ -455,6 +456,8 @@ class Course(UtilModel, ndb.Model):
                                 ndb.Key(urlsafe=le["Id"]) == _lesson_user.current_lecture else False
                             le['_is_passed_lecture'] = True if _current_user and _lesson_user and \
                                 ndb.Key(urlsafe=le["Id"]) in _lesson_user.passed_lecture else False
+                    _course_user = CourseUser.get_by_user_and_course(_current_user, self.key)
+                    result['_learn_mode'] = _course_user.learn_mode if _course_user else 'sequence'
         else:
             result = super(Course, self).to_dict(*args, **kwargs)
         count_user = len(CourseUser.get_by_course(self.key))
@@ -554,7 +557,7 @@ class WeeklyQuizRunCodeResult(UtilModel, ndb.Model):
 
     @classmethod
     def get_top_user_by_level(cls, level, quantity=5):
-        _lst_score = cls.query(cls.level == level).query()
+        _lst_score = cls.query(cls.level == level).que
         return dict((x.user, x) for x in sorted(_lst_score, key=lambda x: x.score)).values()[quantity]
 
 
@@ -566,7 +569,6 @@ class Lesson(UtilModel, ndb.Model):
     language = ndb.StringProperty()
     created = ndb.DateTimeProperty(auto_now_add=True)
     lecture_keys = ndb.KeyProperty('Lecture', repeated=True)
-
     @property
     def lecture_count(self):
         return len(self.lecture_keys)
@@ -713,6 +715,7 @@ class CourseUser(UtilModel, ndb.Model):
     current_exercise = ndb.KeyProperty(Exercise)
     passed_lessons = ndb.KeyProperty(Lesson, repeated=True)
     passed_exercises = ndb.KeyProperty(Exercise, repeated=True)
+    learn_mode = ndb.StringProperty(choices=('random', 'sequence'), default='sequence')
 
     @property
     def percent_passed_exercise(self):

@@ -516,3 +516,35 @@ class ExerciseInfo(BaseHandler):
             'data': data,
             'status': status
         }
+
+
+class UserChangeLearnMode(BaseHandler):
+    @user_required
+    @as_json
+    def put(self):
+        import json
+        from google.appengine.ext import ndb
+        from .restful import current_user
+        from application.models import CourseUser
+        body_data = json.loads(self.request.body)
+        _current_user = current_user()
+        _course_id = body_data.get('course_id')
+        _learn_mode = body_data.get('learn_mode')
+        _course = ndb.Key('Course', _course_id).get()
+        _course_user = CourseUser.get_by_user_and_course(_current_user, _course.key)
+        if _course and _course_user:
+            _course_user.learn_mode = _learn_mode
+            _course_user.put()
+            msg = 'Change mode success'
+            data = ''
+            status = 'ok'
+        else:
+            msg = 'Course not found!'
+            data = ''
+            status = 'error'
+
+        return {
+            'msg': msg,
+            'data': data,
+            'status': status
+        }

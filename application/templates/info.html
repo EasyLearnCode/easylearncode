@@ -37,9 +37,14 @@
                                 </a></div>
                         </div>
                     </div>
-                    <!--<a href="http://www.codecademy.com/glossary/html" class="curriculum__glossary-button">
-                        HTML Glossary
-                    </a>
+                    <div style="text-align: center">
+                        <p>Bạn đang học theo chế độ:</p>
+                        <p><b>{{ course._learn_mode=='random'?'Ngẫu nhiên':'Tuần tự' }}</b></p>
+                    </div>
+                    <button class="curriculum__glossary-button" data-ng-click="showModalMode()">
+                        Chuyển chế độ học
+                    </button>
+                    <!--
                     <a href="http://www.codecademy.com/glossary/css" class="curriculum__glossary-button">
                         CSS Glossary
                     </a>-->

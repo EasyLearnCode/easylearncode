@@ -18,6 +18,7 @@ _routes = [
     RedirectRoute('/api/contest/info', handlers.GetWeekContestInfoOfUserHandler, name='get-thisweek-contest',
                   strict_slash=True),
     RedirectRoute('/api/contest/submit', handlers.SubmitContestHandler, name='submit-contest', strict_slash=True),
+    RedirectRoute('/api/users/me/learn/change_mode', handlers.UserChangeLearnMode, name='change-learn-mode', strict_slash=True),
     RedirectRoute('/api/users/me/passedLecture', handlers.SavePassedLecture, name='passed-lecture', strict_slash=True),
     RedirectRoute('/api/users/me/saveLectureUser', handlers.SaveLectureUser, name='lecture-user', strict_slash=True),
     RedirectRoute('/api/users/me/getTotalScoreCourse', handlers.GetTotalScoreCourse, name='get-total-score-course', strict_slash=True),
