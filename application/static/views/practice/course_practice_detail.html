@@ -17,14 +17,14 @@
                     {{ course.long_desc }}
                 </div>
             </div>
-            <div class="curricula__item__section-start">
+            <!--div class="curricula__item__section-start">
                 <div class="curricula__item__start-now">
                     <a href="http://www.codecademy.com/tracks/jquery/resume">
                         <div type="button" class="btn btn-primary">
                             Start
                         </div>
                     </a></div>
-            </div>
+            </div-->
         </div>
     </div>
     <div id="curriculum-units" class="ui-counter">
@@ -36,7 +36,7 @@
                 <a href="/course/practice/viewer#!?exercise_item_id={{ item.Id }}"
                    class="course-item ui-card ui-card--grouped">
                     <div class="course-item__progress-indicator"
-                         ng-class="{'course-item__progress-indicator--complete':item._is_passed_item}"></div>
+                         ng-class="{'course-item__progress-indicator--complete':item._is_passed_item||item._is_current_item}"></div>
                     <div class="course-item__info">
                         <h4 class="course-item__title ui-counter__item ui-card__title">
                             {{ item.title }}

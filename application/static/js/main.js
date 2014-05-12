@@ -1388,7 +1388,7 @@ angular.module("easylearncode.course_practice_detail", ["ui.bootstrap", "easylea
         }])
     .controller('InfoCtrl', ['$scope', 'api', '$location', '$window', function ($scope, api, $location, $window) {
         var course_id = $location.search()['course_id'];
-        $scope.course = api.Model.get({type: 'courses', id: course_id, extras: 'course_info'});
+        $scope.course = api.Model.get({type: 'courses', id: course_id, extras: ['course_info', 'current_user']});
         $scope.course.$promise.then(function(){
             $scope.loadingComplete();
         })

@@ -434,7 +434,12 @@ class Course(UtilModel, ndb.Model):
                 result['exercises'] = [e.to_dict() for e in ndb.get_multi(self.exercise_keys)]
                 result['lessons'] = [l.to_dict() for l in ndb.get_multi(self.lesson_keys)]
                 for e in result['exercises']:
-                    e['_items'] = [i.to_dict() for i in ndb.get_multi(e['items'])]
+                    e['_items'] = [
+                        {
+                            'Id': i.key.urlsafe(),
+                            'title': i.title,
+                            'description': i.description,
+                        } for i in ndb.get_multi(e['items'])]
                 for l in result['lessons']:
                     l['lectures'] = [
                         {
@@ -446,7 +451,6 @@ class Course(UtilModel, ndb.Model):
                         } for le in ndb.get_multi(l['lecture_keys'])]
                 memcache.set(cache_id, result)
             if request_extras_info('current_user'):
-                    #TODO: ExerciseItem
                     from api.restful import current_user
                     _current_user = current_user()
                     for l in result['lessons']:
@@ -456,6 +460,14 @@ class Course(UtilModel, ndb.Model):
                                 ndb.Key(urlsafe=le["Id"]) == _lesson_user.current_lecture else False
                             le['_is_passed_lecture'] = True if _current_user and _lesson_user and \
                                 ndb.Key(urlsafe=le["Id"]) in _lesson_user.passed_lecture else False
+                    for e in result['exercises']:
+                        _ex_user = ExerciseUser.get_by_user_and_exercise(_current_user, ndb.Key(urlsafe=e['Id']))
+                        for i in e['_items']:
+                            i['_is_current_item'] = True if _current_user and _ex_user and \
+                                _ex_user.current_item == ndb.Key(urlsafe=i['Id']) else False
+                            i['_is_passed_item'] = True if _current_user and _ex_user and \
+                                ndb.Key(urlsafe=i['Id']) in _ex_user.passed_item else False
+
                     _course_user = CourseUser.get_by_user_and_course(_current_user, self.key)
                     result['_learn_mode'] = _course_user.learn_mode if _course_user else 'sequence'
         else:
