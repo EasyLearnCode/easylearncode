@@ -790,7 +790,7 @@ angular.module("easylearncode.learn")
                 $scope.loaded = !0
             };
     }])
-    .controller('LearnCtrl', ['$scope', '$http', '$location', '$sce', '$compile', '$window', 'api', '$timeout', 'localStorageService', 'csrf_token', "$q", '$rootScope', 'VG_EVENTS', function ($scope, $http, $location, $sce, $compile, $window, api, $timeout, localStorageService, csrf_token, $q, $rootScope, VG_EVENTS) {
+    .controller('LearnCtrl', ['$scope', '$http', '$location', '$sce', '$compile', '$window', 'api', '$timeout', 'localStorageService', 'csrf_token', "$q", '$rootScope', 'VG_EVENTS','$modal', function ($scope, $http, $location, $sce, $compile, $window, api, $timeout, localStorageService, csrf_token, $q, $rootScope, VG_EVENTS, $modal) {
         var runCodeDeferred = $q.defer();
 
         $scope.percent_lecture_passed = 0
@@ -1103,11 +1103,47 @@ angular.module("easylearncode.learn")
         $scope.$on('$locationChangeSuccess', function () {
             $scope.current_url = (document.location.href);
         });
+        var canAccessLecture = function(lecture){
+            if(!$scope.course){
+                return false;
+            }
+            if($scope.course._learn_mode == 'random'){
+                return true;
+            }
+            else{
+                var l_index = _.indexOf($scope.lectures, function (obj) {
+                    return obj.Id == lecture.Id;
+                });
+                if($scope.lectures[l_index]<=0||$scope.lectures[l_index-1]._is_passed_lecture){
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
 
+        }
         $scope.goLecture = function (lecture) {
             $location.path("/").search('lecture_id', lecture.Id).replace();
         }
         $scope.loadLecture = function () {
+            if(!canAccessLecture($scope.lecture)){
+                $modal.open({
+                    templateUrl:"/templates/angular/learn/alert_learn_mode_modal.html",
+                    controller: function($scope, $modalInstance){
+                        $scope.ok = function(){
+                            $modalInstance.close($scope.mode);
+                        }
+                        $scope.cancel = function(){
+                            $modalInstance.dismiss('cancel');
+                        }
+                    }
+                }).result.then(function(mode){
+                    $window.location.href='/course/learn#!?course_id=' + $scope.course.key;
+                });
+                return;
+            }
             $scope.youtubeUrl = $sce.trustAsResourceUrl("http://www.youtube.com/watch?v=" + $scope.lecture.youtube_id);
             $scope.show = false;
             if (angular.isDefined($scope.vgScope)) {
@@ -1289,6 +1325,7 @@ angular.module("easylearncode.learn")
                     $scope.editor.getSession().setMode("ace/mode/" + $scope.lang.mode);
                 }
                 api.Model.get({type: 'courses', id:lecture.course_id, extras:['course_info','current_user']  }, function (course) {
+                    $scope.course = course;
                     $scope.lectures = [];
                     angular.forEach(course.lessons, function (lesson) {
                         angular.forEach(lesson.lectures, function (lecture) {
@@ -1300,8 +1337,8 @@ angular.module("easylearncode.learn")
                             $scope.lectures.push(lecture);
                         })
                     });
+                    $scope.loadLecture();
                 })
-                $scope.loadLecture();
                 $('#myTab a:last').tab('show');
                 $("[rel='tooltip']").tooltip();
                 $window.initTour();
