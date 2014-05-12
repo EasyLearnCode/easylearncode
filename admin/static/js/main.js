@@ -1302,6 +1302,7 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
                 });
                 api.Model.save({type: 'lecture_quizs'}, quiz, function (data) {
                     api.Model.get({type: 'lectures', id: $routeParams.lectureId}, function (lecture) {
+                        delete lecture['img'];
                         lecture.quiz_keys.push(data.Id);
                         api.Model.save({type: 'lectures', id: lecture.Id}, lecture, function () {
                             $scope.lecture.quiz_keys.push(data);
@@ -1316,6 +1317,7 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
         $scope.deleteQuiz = function (quiz) {
             api.Model.delete({type: 'lecture_quizs', id: quiz.Id}, function () {
                 api.Model.get({type: 'lectures', id: $routeParams.lectureId}, function (lecture) {
+                    delete lecture['img'];
                     lecture.quiz_keys.pop(quiz.Id);
                     api.Model.save({type: 'lectures', id: lecture.Id}, lecture, function () {
                         $scope.lecture.quiz_keys = _.without($scope.lecture.quiz_keys, quiz);
@@ -1358,6 +1360,7 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
                 });
                 api.Model.save({type: 'tests'}, test, function (data) {
                     api.Model.get({type: 'lectures', id: $routeParams.lectureId}, function (lecture) {
+                        delete lecture['img'];
                         lecture.test_keys.push(data.Id);
                         api.Model.save({type: 'lectures', id: lecture.Id}, lecture, function () {
                             $scope.lecture.test_keys.push(data);
@@ -1372,6 +1375,7 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
         $scope.deleteTest = function (test) {
             api.Model.delete({type: 'tests', id: test.Id}, function () {
                 api.Model.get({type: 'lectures', id: $routeParams.lectureId}, function (lecture) {
+                    delete lecture['img'];
                     lecture.test_keys.pop(test.Id);
                     api.Model.save({type: 'lectures', id: lecture.Id}, lecture, function () {
                         $scope.lecture.test_keys = _.without($scope.lecture.test_keys, test);
@@ -1414,6 +1418,7 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
                 });
                 api.Model.save({type: 'codes'}, code, function (data) {
                     api.Model.get({type: 'lectures', id: $routeParams.lectureId}, function (lecture) {
+                        delete lecture['img'];
                         lecture.code_keys.push(data.Id);
                         api.Model.save({type: 'lectures', id: lecture.Id}, lecture, function () {
                             $scope.lecture.code_keys.push(data);
@@ -1428,6 +1433,7 @@ angular.module("easylearncode.admin.course", ["easylearncode.admin.core", "com.2
         $scope.deleteCode = function (code) {
             api.Model.delete({type: 'codes', id: code.Id}, function () {
                 api.Model.get({type: 'lectures', id: $routeParams.lectureId}, function (lecture) {
+                    delete lecture['img'];
                     lecture.code_keys.pop(code.Id);
                     api.Model.save({type: 'lectures', id: lecture.Id}, lecture, function () {
                         $scope.lecture.code_keys = _.without($scope.lecture.code_keys, code);
