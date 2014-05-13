@@ -1314,7 +1314,7 @@ angular.module("easylearncode.learn")
                 $scope.loadingComplete();
                 $scope.lecture = lecture;
                 $scope.lang = _.find($scope.langs,function(lang){
-                    return lang.name == $scope.lecture.lecture_language.toLowerCase() || lang.lang == $scope.lecture.lecture_language.toLowerCase();
+                    return (lang.name == $scope.lecture.lecture_language.toLowerCase() || lang.lang == $scope.lecture.lecture_language.toLowerCase());
                 });
                 if($scope.lang.jsrepl){
                     $scope.jsrepl.loadLanguage($scope.lang.name, function () {
