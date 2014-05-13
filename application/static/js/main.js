@@ -1114,7 +1114,7 @@ angular.module("easylearncode.learn")
                 var l_index = _.indexOf($scope.lectures, function (obj) {
                     return obj.Id == lecture.Id;
                 });
-                if($scope.lectures[l_index]<=0||$scope.lectures[l_index-1]._is_passed_lecture){
+                if(l_index<=0||$scope.lectures[l_index-1]._is_passed_lecture){
                     return true;
                 }
                 else
