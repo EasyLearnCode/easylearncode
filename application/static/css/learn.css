@@ -119,7 +119,7 @@
 .console-alert {
     position: absolute;
     z-index: 1000;
-    top: 365px;
+    bottom: 440px;
     width: 92.1%;
     border-radius: 0px!important;
 }
