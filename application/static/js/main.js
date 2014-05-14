@@ -1029,6 +1029,9 @@ angular.module("easylearncode.learn")
                         type: 'danger',
                         msg: '<i class="fa fa-exclamation-triangle"></i> <strong>Bạn chưa đủ điểm để vượt qua bài học này !!!</strong><br>Học lại bài này<button class="btn btn-primary pull-right" onclick="learnAgain()">Học lại</button><div class="clearfix"></div>'
                     }
+                    if($scope.course._learn_mode=='random'){
+                        $scope.alert.msg += '<strong>Hoặc</strong><br>chuyển chế độ học sang tuần tự <a class="btn btn-primary pull-right" href="/course/learn#!?course_id='+$scope.course.key+'">Chuyển chế độ</button><div class="clearfix"></div>';
+                    }
                 })
             }
             $http.post('/api/users/me/saveLectureUser', {lecture_id: $scope.lecture.Id, score: score});
