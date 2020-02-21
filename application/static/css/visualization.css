@@ -1,0 +1,282 @@
+.highlight {
+    background-color: #F7F7F9;
+    border: 1px solid #E1E1E8;
+    border-radius: 4px;
+    margin-bottom: 14px;
+    padding: 9px 14px;
+}
+
+.ace_editor {
+    height: 470px;
+    font-size: 14px !important;
+}
+
+.wrap_introduction {
+    height: 470px;
+    overflow: auto;
+}
+
+.modal-dialog.visualization {
+    width: 900px;
+}
+
+.result_box {
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
+}
+
+.lesson_info.popover > .popover-content {
+    padding: 0px !important;
+}
+
+.lesson_info .panel-body {
+    padding: 0;
+}
+
+.lesson_info .list-group {
+    margin: 0px !important;
+}
+
+.lesson_info .list-group-item {
+    border: none;
+    border-radius: 0px;
+    padding-left: 25px;
+    cursor: pointer;
+}
+
+.lesson_info .list-group-item > i {
+    margin-right: 10px;
+}
+
+.lesson_info.popover.bottom > .arrow {
+    left: 90% !important;
+}
+
+.lesson_info a:hover {
+    text-decoration: none;
+}
+
+.lesson_info.overlay {
+    background-color: white;
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    opacity: 0.5;
+}
+
+.show {
+    z-index: 100;
+    position: relative;
+}
+
+#console {
+    position: absolute;
+    width: 400px;
+    height: 200px;
+    background-color: black;
+    z-index: 100;
+    right: 30px;
+    bottom: 30px;
+    opacity: .7;
+    border-radius:10px;
+}
+
+/* The inner console element. */
+.jqconsole {
+    padding: 10px;
+}
+
+.jqconsole-header {
+    color: #ffff00;
+    text-shadow: 0px 2px 3px #ffffff;
+}
+
+/* The cursor. */
+.jqconsole-cursor {
+    background-color: gray;
+    line-height: 115%;
+    position: relative !important;
+    margin-right: -8px;
+    -webkit-animation-name: blinker;
+    -moz-animation-name: blinker;
+    -ms-animation-name: blinker;
+    -o-animation-name: blinker;
+    animation-name: blinker;
+    -webkit-animation-iteration-count: infinite;
+    -moz-animation-iteration-count: infinite;
+    -ms-animation-iteration-count: infinite;
+    -o-animation-iteration-count: infinite;
+    animation-iteration-count: infinite;
+    -webkit-animation-timing-function: cubic-bezier(1, 0, 0, 1);
+    -moz-animation-timing-function: cubic-bezier(1, 0, 0, 1);
+    -ms-animation-timing-function: cubic-bezier(1, 0, 0, 1);
+    -o-animation-timing-function: cubic-bezier(1, 0, 0, 1);
+    animation-timing-function: cubic-bezier(1, 0, 0, 1);
+    -webkit-animation-duration: 1s;
+    -moz-animation-duration: 1s;
+    -ms-animation-duration: 1s;
+    -o-animation-duration: 1s;
+    animation-duration: 1s
+}
+@-webkit-keyframes blinker {
+    from {
+        opacity: 1.0
+    }
+
+    to {
+        opacity: .0
+    }
+}
+
+@-moz-keyframes blinker {
+    from {
+        opacity: 1.0
+    }
+
+    to {
+        opacity: .0
+    }
+}
+
+@-ms-keyframes blinker {
+    from {
+        opacity: 1.0
+    }
+
+    to {
+        opacity: .0
+    }
+}
+
+@-o-keyframes blinker {
+    from {
+        opacity: 1.0
+    }
+
+    to {
+        opacity: .0
+    }
+}
+
+
+/* The cursor color when the console looses focus. */
+.jqconsole-blurred .jqconsole-cursor {
+    background-color: #666;
+}
+
+/* The current prompt text color */
+.jqconsole-prompt {
+    color: #0d0;
+}
+
+/* The command history */
+.jqconsole-old-prompt {
+    color: #0b0;
+    font-weight: normal;
+}
+
+/* The text color when in input mode. */
+.jqconsole-input {
+    color: #dd0;
+}
+
+/* Previously entered input. */
+.jqconsole-old-input {
+    color: #bb0;
+    font-weight: normal;
+}
+
+/* The text color of the output. */
+.jqconsole-output {
+    color: white;
+}
+
+.console-alert {
+    position: absolute;
+    z-index: 101;
+    bottom: 10px;
+    width: 92%;
+    border-radius: 0px;
+}
+.run-btn-full-screen, .full-btn-full-screen {
+    position: fixed !important;
+    z-index: 10000000 !important;
+    top: 10px !important;
+}
+.run-btn-full-screen {
+    right: 150px !important;
+}
+.full-btn-full-screen {
+    right: 20px !important;
+}
+.editor-full-screen {
+    position: fixed !important;
+    top: 0px !important;
+    bottom: 0px !important;
+    left: 0px !important;
+    right: 0px !important;
+    z-index: 9999999 !important;
+    height: auto !important;
+    width: auto !important;
+    border: 0 !important;
+    margin: 0 !important;
+}
+#console.full-screen{
+    position: fixed !important;
+    z-index: 10000000 !important;
+    bottom: 5px !important;
+    right: 20px !important;
+}
+
+pre {
+    background-color: #232c31;
+    color: #c5c8c6;
+}
+
+.lesson_info.popover > .popover-content {
+    padding: 0px !important;
+}
+
+.lesson_info .panel-body {
+    padding: 0;
+}
+
+.lesson_info .list-group {
+    margin: 0px !important;
+}
+
+.lesson_info .list-group-item {
+    border: none;
+    border-radius: 0px;
+    padding-left: 25px;
+    cursor: pointer;
+}
+
+.lesson_info .list-group-item > i {
+    margin-right: 10px;
+}
+
+.lesson_info.popover.bottom > .arrow {
+    left: 90% !important;
+}
+
+.lesson_info a:hover {
+    text-decoration: none;
+}
+
+.lesson_info.overlay {
+    background-color: white;
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    opacity: 0.5;
+    z-index: 99;
+}
+
+.show {
+    z-index: 100;
+    position: relative;
+}

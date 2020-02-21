@@ -1,0 +1,40 @@
+{% extends "main.html" %}
+{% block mediaCSS %}
+    <link rel="stylesheet" href="/application/css/learn.css" xmlns="http://www.w3.org/1999/html">
+    <link rel="stylesheet" type="text/css" href="/application/css/videogular/quiz.css">
+    <link href="/application/css/hopscotch-0.1.1.css" rel="stylesheet">
+    <link href="/application/css/angular-social.css" rel="stylesheet">
+    <!--<link rel="stylesheet" type="text/css" href="/application/css/expandable_menu/expandable_menu.css">-->
+{% endblock %}
+{% block content %}
+    {% raw %}
+        <div class="container" data-ng-controller="MainCtrl">
+            <div class="text-center" data-ng-show="!loaded">
+                <div class="row row-gap-large"><img src="/application/img/tp_loading.gif"></div>
+                <div class="row row-gap-small"><h4>Đang tải dữ liệu...</h4></div>
+            </div>
+            <div data-ng-view></div>
+        </div>
+    {% endraw %}
+{% endblock %}
+{% block pluginJS %}
+    <script src="//ace.c9.io/build/src-noconflict/ace.js"></script>
+    <script src="//ace.c9.io/build/src-noconflict/ext-language_tools.js"></script>
+    <script src="/application/js/libs/videogular/videogular.js"></script>
+    <script src="/application/js/libs/angularjs/ui-ace.min.js"></script>
+    <script src="/application/js/libs/angularjs/angular-sanitize.min.js"></script>
+    <script src="/application/js/libs/angularjs/ui-bootstrap-tpls-0.7.0.min.js"></script>
+    <script src="/application/js/libs/angularjs/angular-social.js"></script>
+    <script src="/application/js/libs/angularjs/angular-disqus.min.js"></script>
+    <script src="/application/js/libs/angularjs/angular-local-storage.min.js"></script>
+    <script src="/application/js/libs/videogular/videogular.js"></script>
+    <script src="/application/js/libs/videogular/plugins/controls.js"></script>
+    <script src="/application/js/libs/videogular/plugins/overlay-play.js"></script>
+    <script src="/application/js/libs/videogular/plugins/buffering.js"></script>
+    <script src="/application/js/libs/videogular/plugins/poster.js"></script>
+    <script src="/application/js/libs/videogular/plugins/youtube.js"></script>
+    <script src="/application/js/libs/videogular/plugins/quiz.js"></script>
+    <script src="/application/js/libs/jsrepl/jsrepl.js" id="jsrepl-script"></script>
+    <script src="/application/js/hopscotch-0.1.2.min.js"></script>
+    <script src="/application/js/intro_learn_page.js"></script>
+{% endblock %}

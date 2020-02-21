@@ -1,0 +1,68 @@
+{% extends 'admin/base.html' %}
+
+{% block breadcrumb %}
+    <li>
+        <a href="{{ uri_for("admin-home") }}">Home</a> <span class="divider">/</span>
+    </li>
+    <li>
+        <span>User list</span>
+    </li>
+{% endblock %}
+
+{% block content %}
+    <div class="row-fluid sortable">
+        <div class="box span12">
+            <div class="box-header" data-original-title>
+                <h2><i class="icon-user"></i><span class="break"></span>User list</h2>
+                <div class="box-icon">
+                    <a href="#" class="btn-setting"><i class="icon-wrench"></i></a>
+                    <a href="#" class="btn-minimize"><i class="icon-chevron-up"></i></a>
+                    <a href="#" class="btn-close"><i class="icon-remove"></i></a>
+                </div>
+            </div>
+            <div class="box-content">
+                <div class="row-fluid">
+                    <div class="span6">
+                        <form method="GET" class="navbar-search">
+                            <label> Search:
+                            <input type="text" name="q" value="{{ q or '' }}" class=""
+                                   placeholder="{{ _('Search User') }}"></input>
+                            <button type="submit" title="Search"><i class="icon-search"></i></button>
+                            {% if q %}
+                                <a href="{{ uri_for('user-list') }}" class="clear">×</a>
+                            {% endif %}
+                        </form>
+                    </div>
+                </div>
+                <table class="table table-striped table-bordered">
+                    <thead>
+                    <tr>
+                        <th class="span1">&nbsp;</th>
+                        {% for attr, name in list_columns %}
+                            <th>
+                                {{ name|safe }}
+                            </th>
+                        {% endfor %}
+                    </tr>
+                    </thead>
+                    {% for user in users %}
+                        <tr>
+                            <td>
+                                <a class="icon" href="{{ uri_for('user-edit', user_id=user.get_id()) }}"><i
+                                        class="icon-pencil"></i></a>
+                            </td>
+                            {% for attr, name in list_columns %}
+                                <td>
+                                    {{ getattr(user, attr)|e }}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </table>
+                {{ lib.render_pager() }}
+            </div>
+        </div>
+        <!--/span-->
+
+    </div><!--/row-->
+{% endblock %}

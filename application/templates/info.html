@@ -1,0 +1,89 @@
+{% extends "main.html" %}
+{% block mediaCSS %}
+    <link rel="stylesheet" href="/application/css/info.css">
+{% endblock %}
+{% block content %}
+    {% raw %}
+        <div data-ng-controller="InfoCtrl">
+            <div class="text-center" data-ng-show="!loaded">
+                <div class="row row-gap-large"><img src="/application/img/tp_loading.gif"></div>
+                <div class="row row-gap-small"><h4>Đang tải dữ liệu...</h4></div>
+            </div>
+            <div data-ng-show="loaded" class="container highlight">
+                <div id="current-curriculum" style="position: fixed; top: 100px;">
+                    <div class="curricula__item ui-card ui-card--solo">
+                        <div class="curricula__item__section-logo">
+                            <!-- Temporary hack for scotland TODO: Bob remove later-->
+                            <div class="curricula__item__logo">
+                                <div class="curricula__item__logo-image curricula__item__logo--generic curricula__item__logo--{{ course.title|lowercase }}"></div>
+                            </div>
+                        </div>
+                        <div class="curricula__item__section-main curricula__item__panel">
+                            <!-- H1 for track page. -->
+                            <h1 class="curricula__item__title ui-card__title">
+                                {{ course.title }}
+                            </h1>
+
+                            <div class="curricula__item__description">
+                                {{ course.long_desc }}
+                            </div>
+                        </div>
+                        <!--div class="curricula__item__section-start">
+                            <div class="curricula__item__start-now">
+                                <a href="http://www.codecademy.com/tracks/jquery/resume">
+                                    <div type="button" class="btn btn-primary">
+                                        Start
+                                    </div>
+                                </a></div>
+                        </div-->
+                    </div>
+                    <div style="text-align: center">
+                        <p>Bạn đang học theo chế độ:</p>
+                        <p><b>{{ course._learn_mode=='random'?'Ngẫu nhiên':'Tuần tự' }}</b></p>
+                    </div>
+                    <button class="curriculum__glossary-button" data-ng-click="showModalMode()">
+                        Chuyển chế độ học
+                    </button>
+                    <!--
+                    <a href="http://www.codecademy.com/glossary/css" class="curriculum__glossary-button">
+                        CSS Glossary
+                    </a>-->
+                </div>
+                <div id="curriculum-units" class="ui-counter">
+                    <div class="unit-item" ng-repeat="lesson in course.lessons">
+                        <h2 class="unit-item__title">
+                            {{ lesson.description }}
+                        </h2>
+                        <article ng-repeat="lecture in lesson.lectures">
+                            <a href="/course/learn/viewer#!?lecture_id={{ lecture.Id }}"
+                               class="course-item ui-card ui-card--grouped">
+                                <div class="course-item__progress-indicator"
+                                     ng-class="{'course-item__progress-indicator--complete': lecture._is_current_lecture || lecture._is_passed_lecture}"></div>
+                                <div class="course-item__info">
+                                    <h4 class="course-item__title ui-counter__item ui-card__title">
+                                        {{ lecture.title }}
+                                    </h4>
+
+                                    <p class="course-item__entry">
+                                        {{ lecture.description }}
+                                    </p>
+
+                                    <p style="margin-top: 5px;">
+                                        <span class="pull-left">Thời lượng: <span
+                                                class="badge">{{ lecture.time }}:00</span></span><span
+                                            class="pull-right">Độ khó: <span
+                                            class="icon-level icon-level-{{ lecture.level }}"></span></span>
+                                    </p>
+                                </div>
+                            </a>
+                        </article>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endraw %}
+{% endblock %}
+{% block pluginJS %}
+    <script src="/application/js/libs/angularjs/ui-bootstrap-tpls-0.7.0.min.js"></script>
+    <script src="/application/js/libs/angularjs/angular-animate.js"></script>
+{% endblock %}>

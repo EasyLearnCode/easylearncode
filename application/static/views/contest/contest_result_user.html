@@ -1,0 +1,48 @@
+<div class="panel panel-success">
+    <div class="panel-heading">
+        <h3 class="panel-title">Kết quả của bạn</h3>
+    </div>
+    <div class="panel-body" ng-show="current_week_user_data.run_code_result">
+        <table class="table">
+            <tr>
+                <th>Tên file</th>
+                <th>Mức độ</th>
+                <th>Thời gian (s)</th>
+                <th>Bộ nhớ (KiB)</th>
+                <th>Ngôn ngữ</th>
+                <th>Kết quả</th>
+                <th>Xem</th>
+            </tr>
+            <tr data-ng-repeat="result in current_week_user_data.run_code_result">
+                <td>
+                    {{ result.code.filename }}
+                </td>
+                <td>{{ result.level.level }}</td>
+                <td>
+                    {{ result.time_used|number:1 }}
+                </td>
+                <td>
+                    {{ result.memory_used|number:1 }}
+                </td>
+                <td>{{ result.language }}</td>
+                <td>
+                    <span ng-show="result.result" class="glyphicon glyphicon-ok"></span>
+                    <span ng-hide="result.result" class="glyphicon glyphicon-remove"></span>
+                    <br/>
+                    {{ result.score|number:1 }}
+                </td>
+                <td>
+                    <a href="/contest#!?result_id={{ result.Id }}" class="btn btn-primary"><span
+                            class="glyphicon glyphicon-search"></span></a>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="panel-body" ng-hide="current_week_user_data.run_code_result">
+        <p>Bạn chưa nộp bài lần nào</p>
+    </div>
+    <div class="panel-footer" ng-hide="true">
+        <span ng-show="current_week_user_data.rank>0">Hiện tại bạn đang xếp hạng {{ current_week_user_data.rank }} trong tuần</span>
+        <span ng-show="current_week_user_data.rank==0">Bạn chưa có hạng</span>
+    </div>
+</div>

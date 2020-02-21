@@ -1,0 +1,187 @@
+</div>
+<div class="container highlight">
+    <div class="pull-left"><h3>Quản lý câu hỏi của bài giảng {{ lecture.description }}</h3></div>
+    <div class="pull-right" style="padding-top: 15px;">
+        <button class="btn btn-default" type="button">Trợ giúp</button>
+    </div>
+    <div class="clearfix"></div>
+    <div class="panel panel-default">
+        <div class="panel-body aligncenter">
+            <div id="video" class="pull-left"></div>
+            <div class="pull-right">
+                <button class="btn btn-info" type="button" ng-click="showAddCodeModal()" style="margin-top: 10px; width: 130px; text-align: left">
+                   <i class="glyphicon glyphicon-plus-sign"></i> Thêm code
+                </button>
+                </br>
+                <button class="btn btn-info" type="button" ng-click="showAddQuizModal()" style="margin-top: 10px; width: 130px; text-align: left">
+                   <i class="glyphicon glyphicon-plus-sign"></i> Thêm câu hỏi
+                </button>
+                </br>
+                <button class="btn btn-info" type="button" ng-click="showAddTestModal()" style="margin-top: 10px; width: 130px; text-align: left">
+                   <i class="glyphicon glyphicon-plus-sign"></i> Thêm bài tập
+                </button>
+                </br>
+                <button class="btn btn-info" type="button" ng-click="preView()"  data-target="#videoModal" data-toggle="modal"style="margin-top: 10px; width: 130px;">
+                   <i class="glyphicon glyphicon-play"></i> Xem thử
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-info">
+        <div class="panel-heading">Danh sách code đồng bộ</div>
+        <div class="panel-body">
+            <table class="table table-bordered table-hover">
+                <thead>
+                <tr>
+                    <th>STT</th>
+                    <th>Title</th>
+                    <th>Created</th>
+                    <th>Description</th>
+                    <th>Content</th>
+                    <th>Time</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="code in lecture.code_keys">
+                    <td>{{ $index+1 }}</td>
+                    <td>{{ code.title }}</td>
+                    <td class="center">{{ code.created| date:'dd/MM/yyyy' }}</td>
+                    <td class="center">{{ code.description }}</td>
+                    <td class="center">{{ code.content }}</td>
+                    <td class="center">{{ code.time }}</td>
+                    <td class="center">
+                        <a class="btn btn-info" ng-click="showEditCodeModal(code)">
+                            <i class="glyphicon glyphicon-edit"></i>
+                        </a>
+                        <a class="btn btn-danger" ng-click="deleteCode(code)">
+                            <i class="glyphicon glyphicon-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="panel panel-info">
+        <div class="panel-heading">Danh sách câu hỏi trắc nghiệm</div>
+        <div class="panel-body">
+            <table class="table table-bordered table-hover">
+                <thead>
+                <tr>
+                    <th>No.</th>
+                    <th>Time</th>
+                    <th>Question</th>
+                    <th>Created</th>
+                    <th>Score</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody ng-repeat="quiz in lecture.quiz_keys">
+                <tr>
+                    <td>{{ $index+1 }}</td>
+                    <td class="center">{{ quiz.time }}</td>
+                    <td class="center">{{ quiz.question }}</td>
+                    <td class="center">{{ quiz.created| date:'dd/MM/yyyy' }}</td>
+                    <td class="center">{{ quiz.score }}</td>
+                    <td class="center">
+                        <a class="btn btn-info" ng-click="showEditQuizModal(quiz)">
+                            <i class="glyphicon glyphicon-edit"></i>
+                        </a>
+                        <a class="btn btn-danger" ng-click="deleteQuiz(quiz)">
+                            <i class="glyphicon glyphicon-trash"></i>
+                        </a>
+                        <a class="btn btn-info" ng-click="showAddAnswerQuizModal(quiz)">
+                            <i class="glyphicon glyphicon-plus"></i>
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <th></th>
+                    <th>No.</th>
+                    <th>Title</th>
+                    <th>Is true</th>
+                    <th colspan="2"></th>
+
+                </tr>
+                <tr ng-repeat="answer in quiz.answer_keys">
+                    <th></th>
+                    <td>{{ $index+1 }}</td>
+                    <td class="center">{{ answer.title }}</td>
+                    <td class="center">{{ answer.is_true }}</td>
+                    <td colspan="2">
+                        <a class="btn btn-info" ng-click="showEditAnswerQuizModal(answer, quiz)">
+                            <i class="glyphicon glyphicon-edit"></i>
+                        </a>
+                        <a class="btn btn-danger" ng-click="deleteAnswerQuiz(answer, quiz)">
+                            <i class="glyphicon glyphicon-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+    <div class="panel panel-info">
+        <div class="panel-heading">Danh sách bài tập</div>
+        <div class="panel-body">
+            <table class="table table-bordered table-hover">
+                <thead>
+                <tr>
+                    <th>No.</th>
+                    <th>Title</th>
+                    <th>Created</th>
+                    <th>Description</th>
+                    <th>Test script</th>
+                    <th>Time</th>
+                    <th>Score</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="test in lecture.test_keys">
+                    <td>{{ $index +1 }}</td>
+                    <td>{{ test.title }}</td>
+                    <td class="center">{{ test.created }}</td>
+                    <td class="center">{{ test.description| date:'dd/MM/yyyy' }}</td>
+                    <td class="center">{{ test.test_script }}</td>
+                    <td class="center">{{ test.time }}</td>
+                    <td class="center">{{ test.score }}</td>
+                    <td class="center">
+                        <a class="btn btn-info" ng-click="showEditTestModal(test)">
+                            <i class="glyphicon glyphicon-edit"></i>
+                        </a>
+                        <a class="btn btn-danger" ng-click="deleteTest(test)">
+                            <i class="glyphicon glyphicon-trash"></i>
+                        </a>
+
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+         <div class="modal fade" id="videoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog question" style="width: 1200px">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">Chạy thử video</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div id="video-dialog" class="pull-left"></div>
+                        <div class="pull-right" ui-ace="{ theme:'chrome',
+                        mode:'python', onLoad: aceLoaded}" data-ng-model="code" style="width: 400px; height:380px!important;"></div>
+                         <div class="clearfix"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

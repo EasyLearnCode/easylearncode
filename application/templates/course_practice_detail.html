@@ -1,0 +1,19 @@
+{% extends "main.html" %}
+{% block mediaCSS %}
+<link rel="stylesheet" href="/application/css/info.css">
+{% endblock %}
+{% block content %}
+{% raw %}
+<div data-ng-controller="MainCtrl" class="container">
+    <div class="text-center" data-ng-show="!loaded">
+        <div class="row row-gap-large"><img src="/application/img/tp_loading.gif"></div>
+        <div class="row row-gap-small"><h4>Đang tải dữ liệu...</h4></div>
+    </div>
+    <div data-ng-view></div>
+</div>
+{% endraw %}
+{% endblock %}
+{% block pluginJS %}
+<script src="/application/js/libs/angularjs/ui-bootstrap-tpls-0.7.0.min.js"></script>
+<script src="/application/js/libs/angularjs/angular-animate.js"></script>
+{% endblock %}>

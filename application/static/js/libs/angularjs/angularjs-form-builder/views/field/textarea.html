@@ -1,0 +1,5 @@
+<div class="form-group">
+    <label class="control-label" for={{ field.field_name }}>{{ field.field_title }}:</label>
+    <textarea id="{{ field.field_name }}" ng-model="field.field_value" value="{{field.field_value}}" class="form-control" ng-required="field.field_required" ng-disabled="field.field_disable"></textarea>
+    <span class="required-error" ng-show="field.field_required && !field.field_value">* required</span>
+</div>

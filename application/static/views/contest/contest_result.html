@@ -1,0 +1,90 @@
+<div class="col-xs-8 col-md-8">
+
+    <div class="well">
+        <div class="text-center text-success" style="font-size: 18px; font-weight: bold">Bảng xếp
+            hạng
+        </div>
+        <table class="table table-bordered table-condensed table-hover" ng-show="currentWeek.top_player">
+            <tr class="success">
+                <th>Hạng</th>
+                <th>Họ tên</th>
+                <th>Điểm</th>
+                <th>Xem</th>
+            </tr>
+            <tr data-ng-repeat="player in currentWeek.top_player">
+                <td>{{ $index+1 }}</td>
+                <td>{{ player.user.name }} {{ player.user.last_name }}</td>
+                <td>
+                    {{ player.score|number:4 }}
+                </td>
+
+                <td><a class="btn btn-info" ng-click="getDetail(player.user.Id)"><span
+                        class="glyphicon glyphicon-search"></span></a></td>
+            </tr>
+        </table>
+        <div ng-hide="currentWeek.top_player">
+            <p>Chưa có ai trong bảng xếp hạng của tuần. Chọn tuần khác để xem bảng xếp hạng trong
+                tuần.</p>
+        </div>
+    </div>
+    <div class="well">
+        <div class="text-center text-success" style="font-size: 18px; font-weight: bold;">Bảng chi
+            tiết
+        </div>
+        <div ng-hide="details.run_code_result">Bạn hãy chọn xem trên bảng kết quả để xem chi tiết thành
+            tích của người đó.
+        </div>
+        <table class="table table-bordered table-condensed table-hover"
+               ng-show="details.run_code_result">
+            <tr class="success">
+                <th>STT</th>
+                <th>Họ tên</th>
+                <th>Level</th>
+                <th>Kết quả</th>
+                <th>Thời gian</th>
+                <th>Bộ nhớ</th>
+            </tr>
+            <tr data-ng-repeat="player in details.run_code_result">
+                <td>{{ $index+1 }}</td>
+                <td>{{ player.user.name }} {{ player.user.last_name }}</td>
+                <td>{{ player.level.level }}</td>
+                <td>
+                    <span ng-show="player.result" class="glyphicon glyphicon-ok"></span>
+                    <span ng-show="!player.result" class="glyphicon glyphicon-remove"></span>
+                    <br/>
+                    {{ player.score|number:2 }}
+                </td>
+
+                <td>{{ player.time_used|number:2 }}</td>
+                <td>{{ player.memory_used|number:2 }}</td>
+            </tr>
+        </table>
+    </div>
+</div>
+<div class="col-xs-3 col-md-3">
+    <div class="panel panel-default">
+        <div class="panel-heading">Các tuần thi</div>
+        <div class="panel-body">
+            <div>
+                Tháng:
+                <div class="input-group">
+                  <input type="text" class="form-control" ng-model="selectedDate" name="date" bs-datepicker data-date-format="MM-yyyy" data-min-view="1">
+                  <span class="input-group-btn">
+                    <button class="btn btn-primary" data-ng-click="getWeek()"><span
+                        class="glyphicon glyphicon-search"></span></button>
+                  </span>
+                </div>
+
+            </div>
+            <span>Chọn tuần:</span>
+
+            <div class="list-group col-md-12">
+                <div ng-hide="weeks">Không có tuần thi trong tháng</div>
+                <a data-ng-repeat="week in weeks" class="btn list-group-item"
+                   ng-class="{active:week==currentWeek}"
+                   data-ng-click="getResult(week)">Tuần {{ week.week }}</a>
+
+            </div>
+        </div>
+    </div>
+</div>

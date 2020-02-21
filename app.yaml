@@ -1,0 +1,145 @@
+application: easylearncode
+version: beta
+runtime: python27
+api_version: 1
+threadsafe: true
+
+default_expiration: "30d"
+
+skip_files:
+- ^(.*/)?app\.yaml
+- ^(.*/)?app\.yml
+- ^(.*/)?#.*#
+- ^(.*/)?.*~
+- ^(.*/)?.*\.py[co]
+- ^(.*/)?.*/RCS/.*
+- ^(.*/)?\..*
+- ^(.*/)?tests$
+- ^(.*/)?test$
+- ^test/(.*/)?
+- ^COPYING.LESSER
+- ^README\..*
+- \.gitignore
+- ^\.git/.*
+- \.*\.lint$
+- ^fabfile\.py
+- ^testrunner\.py
+- ^grunt\.js
+- ^node_modules/(.*/)?
+
+builtins:
+- appstats: on #/_ah/stats/
+- remote_api: on #/_ah/remote_api/
+- deferred: on #/_ah/queue/deferred
+
+inbound_services:
+- channel_presence
+
+handlers:
+
+- url: /quanly/.*
+  script: google.appengine.ext.admin.application
+  login: admin
+
+- url: /admin/css
+  mime_type: text/css
+  static_dir: admin/static/css
+
+- url: /admin/js
+  mime_type: text/javascript
+  static_dir: admin/static/js
+
+- url: /admin/img
+  static_dir: admin/static/img
+
+- url: /admin/font
+  static_dir: admin/static/font
+
+- url: /admin/template/angular/
+  mime_type: text/html
+  static_dir: admin/static/views
+
+- url: /admin.*
+  script: main.app
+  login: admin
+
+- url: /favicon\.ico
+  mime_type: image/vnd.microsoft.icon
+  static_files: static/favicon.ico
+  upload: static/favicon.ico
+
+- url: /apple-touch-icon\.png
+  static_files: static/apple-touch-icon.png
+  upload: static/apple-touch-icon.png
+
+- url: /apple-touch-icon-precomposed\.png
+  static_files: static/apple-touch-icon-precomposed.png
+  upload: static/apple-touch-icon-precomposed.png
+
+- url: /(robots\.txt|humans\.txt|crossdomain\.xml)
+  static_files: static/\1
+  upload: static/(robots\.txt|humans\.txt|crossdomain\.xml)
+
+- url: /application/css
+  mime_type: text/css
+  static_dir: application/static/css
+
+- url: /application/js
+  mime_type: text/javascript
+  static_dir: application/static/js
+
+- url: /application/img
+  static_dir: application/static/img
+
+- url: /templates/angular
+  mime_type: text/html
+  static_dir: application/static/views
+
+- url: /img/(.*\.(gif|png|jpg|jpeg))
+  static_files: static/img/\1
+  upload: static/img/(.*\.(gif|png|jpg|jpeg))
+
+- url: /css/(.*\.(gif|png|jpg|jpeg))
+  static_files: static/css/\1
+  upload: static/css/(.*\.(gif|png|jpg|jpeg))
+
+- url: /css
+  mime_type: text/css
+  static_dir: static/css
+
+- url: /js
+  mime_type: text/javascript
+  static_dir: static/js
+
+- url: /.*
+  script: main.app
+#  secure: always
+
+libraries:
+- name: jinja2
+  version: "2.6"
+- name: webapp2
+  version: "2.5.2"
+- name: markupsafe
+  version: "0.15"
+- name: pycrypto
+  version: "2.6"
+- name: PIL
+  version: latest
+
+error_handlers:
+  # Only errors with error_code, don't put a default error here
+  - error_code: over_quota
+    file: application/templates/errors/over_quota.html
+
+  - error_code: dos_api_denial
+    file: application/templates/errors/dos_api_denial.html
+
+  - error_code: timeout
+    file: application/templates/errors/timeout.html
+
+pagespeed:
+  enabled_rewriters:
+  - MinifyCss
+  disabled_rewriters:
+  - LazyloadImages

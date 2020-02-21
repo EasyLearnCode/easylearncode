@@ -1,0 +1,37 @@
+{% extends "main.html" %}
+{% block mediaCSS %}
+    <link href="/application/css/account.css" rel="stylesheet"/>
+{% endblock %}
+{% block content %}
+    <div class="container" data-ng-controller="accountPage">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="page-header">
+                    <h1>Tài khoản của tôi</h1>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <ul class="nav nav-pills nav-stacked nav-stacked-extended">
+                    <!-- target="_self" b/c http://docs.angularjs.org/guide/dev_guide.services.$location -->
+                    <li data-ng-class="{active: isActive('/contact-info')}">
+                        <a href="#!/contact-info" target="_self">Thông tin cá nhân</a>
+                    </li>
+                    <li data-ng-class="{active: isActive('/password')}">
+                        <a href="#!/password" target="_self">Mật khẩu</a>
+                    </li>
+                    <li data-ng-class="{active: isActive('/my-courses')}" ng-hide="true">
+                        <a href="#!/my-courses" target="_self">Các khóa đang học</a>
+                    </li>
+                    <li data-ng-class="{active: isActive('/linked-accounts')}">
+                        <a href="#!/linked-accounts" target="_self">Liên kết tài khoản</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-md-9" data-ng-view>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}

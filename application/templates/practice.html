@@ -1,0 +1,25 @@
+{% extends "main.html" %}
+{% block mediaCSS %}
+    <link href="/application/css/practice.css" rel="stylesheet" type="text/css"/>
+{% endblock %}
+{% block content %}
+    {% raw %}
+        <div class="container" data-ng-controller="MainCtrl">
+            <!-- Modal -->
+        <div class="text-center" data-ng-show="!loaded">
+            <div class="row row-gap-large"><img src="/application/img/tp_loading.gif"></div>
+            <div class="row row-gap-small"><h4>Đang tải những điều thú vị...</h4></div>
+        </div>
+        <div data-ng-view></div>
+        </div>
+    {% endraw %}
+{% endblock %}
+{% block pluginJS %}
+    <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js"></script>
+    <script src="/application/js/libs/angularjs/ui-ace.min.js"></script>
+    <script src="/application/js/libs/angularjs/ui-bootstrap-tpls-0.7.0.min.js"></script>
+{% endblock %}
+{% block mediaJS %}
+    <script src="/application/js/libs/jqconsole.min.js" charset="UTF-8"></script>
+    <script src="/application/js/libs/jsrepl/jsrepl.js" id="jsrepl-script"></script>
+{% endblock %}
