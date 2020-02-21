@@ -1,0 +1,13 @@
+{% extends "main.html" %}
+{% block mediaCSS %}
+    <link href="/application/css/courses.css" rel="stylesheet">
+{% endblock %}
+{% block content %}
+    <div class="container" data-ng-controller="courseCatalog">
+        <div class="text-center" data-ng-show="!loaded">
+            <div class="row row-gap-large"><img src="/application/img/tp_loading.gif"></div>
+            <div class="row row-gap-small"><h4>Đang tải dữ liệu...</h4></div>
+        </div>
+        <div data-ng-view></div>
+    </div>
+{% endblock %}

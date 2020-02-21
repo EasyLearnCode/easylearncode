@@ -1,0 +1,13 @@
+<div class="modal-header">
+    <h3>Mời bạn chọn chế độ học!!</h3>
+</div>
+<div class="modal-body">
+    <div style="text-align: center">
+        <btn class="btn btn-default btn-circle-lg" ng-class="{'btn-primary':mode=='random'}" ng-click="changeMode('random')"><i class="fa fa-random fa-2x"></i> <p style="font-weight: bold">Ngẫu nhiên</p></btn>
+        <btn class="btn btn-default btn-circle-lg" ng-class="{'btn-primary':mode=='sequence'}" ng-click="changeMode('sequence')"><i class="fa fa-sort-alpha-asc fa-2x"></i> <p style="font-weight: bold">Tuần tự</p></btn>
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="ok()">OK</button>
+    <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+</div>

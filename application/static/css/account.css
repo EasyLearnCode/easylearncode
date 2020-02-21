@@ -1,0 +1,118 @@
+.nav-pills>li {
+    float: left
+}
+
+.nav-pills>li>a {
+    border-radius: 0
+}
+
+.nav-pills>li+li {
+    margin-left: 2px
+}
+
+.nav-pills>li.active>a,.nav-pills>li.active>a:hover,.nav-pills>li.active>a:focus {
+    color: #fff;
+    background-color: #0c92bf
+}
+
+.nav-pills>li.active>a .caret,.nav-pills>li.active>a:hover .caret,.nav-pills>li.active>a:focus .caret {
+    border-top-color: #fff;
+    border-bottom-color: #fff
+}
+
+.nav-stacked>li {
+    float: none
+}
+
+.nav-stacked>li+li {
+    margin-top: 2px;
+    margin-left: 0
+}
+.nav-pills>li>a {
+    border-radius: 0
+}
+
+.nav.nav-stacked {
+    border-right: 1px solid #dcdcdc
+}
+
+.nav.nav-stacked>li:not(.active) a:hover {
+    background-color: #e6e6e6
+}
+
+.nav.nav-stacked>li a {
+    padding: 8px 30px 8px 10px
+}
+
+.nav.nav-stacked>li a:hover {
+    color: #0c92bf
+}
+
+.nav.nav-stacked>li.active a {
+    background-color: #e6e6e6;
+    border-right: 5px solid #0c92bf;
+    font-weight: 700;
+    color: #0c92bf
+}
+
+.nav.nav-stacked>li.active a:hover {
+    background-color: #e6e6e6;
+    color: #0c92bf
+}
+
+.nav.nav-stacked-extended {
+    padding-top: 10px;
+    padding-bottom: 10px
+}
+.form-error {
+    display: none;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    color: #260f0f
+}
+
+.has-error .form-error {
+    display: block;
+    background-color: #f2dede;
+    border: #ebccd1 solid 1px
+}
+
+.has-error .form-error:before,.has-error .form-error:after {
+    content: "";
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    width: 0;
+    height: 0;
+    border: 10px solid transparent
+}
+
+.has-error .form-error:before,.has-error .form-error:after {
+    top: 3px;
+    left: -10px;
+    border-left: 0;
+    border-right: 10px solid #ebccd1
+}
+
+.has-error .form-error:after {
+    border-right-color: #f2dede;
+    left: -9px
+}
+.text-success-color {
+    color: #90cc83
+}
+
+.text-danger-color {
+    color: #e29791
+}
+
+.text-warning-color {
+    color: #fff5ca
+}
+
+.text-info-color {
+    color: #e1f6ff
+}
+.table tr.topless td,.table tr.topless th {
+    border-top: 0
+}

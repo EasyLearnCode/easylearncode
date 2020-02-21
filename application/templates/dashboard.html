@@ -1,0 +1,17 @@
+{% extends "main.html" %}
+{% block mediaCSS %}
+    <link rel="stylesheet" href="/application/css/dashboard.css">
+{% endblock %}
+{% block content %}
+    <div class="container" ng-controller="MainCtrl">
+        <div class="text-center" data-ng-show="!loaded">
+            <div class="row row-gap-large"><img src="/application/img/tp_loading.gif"></div>
+            <div class="row row-gap-small"><h4>Đang tải dữ liệu...</h4></div>
+        </div>
+        <div class="container" id="dashboard__container" data-ng-view></div>
+    </div>
+{% endblock %}
+{% block pluginJS %}
+    <script src="/application/js/libs/moment-with-langs.js"></script>
+    <script src="/application/js/libs/angularjs/angular-moment.min.js"></script>
+{% endblock %}

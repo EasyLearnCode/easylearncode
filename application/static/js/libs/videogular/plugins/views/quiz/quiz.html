@@ -1,0 +1,23 @@
+<form>
+    <div class="row" data-ng-show="showContent"><div  class="col-xs-4" style="font-weight: bold; text-align: center">{{ title }}</div><div class="col-xs-4" style="font-weight: bold;  text-align: center"data-ng-show="is_quiz" >Thời gian: 00:{{ time }}</div><div class="col-xs-4" style="font-weight: bold;  text-align: center">Điểm: {{ score }}</div></div>
+    <div class="clearfix"></div>
+    <div class="quiz-question-text" bind-html-unsafe="content" data-ng-show="showContent"></div>
+    <div ng-show="is_quiz" class="quiz-option" style="position:absolute; left:10px; top: 250px; width:330px;  height:80px;"><input dir="auto" class="quiz-input" type="radio" name="answer" id="{{ answers[0].Id }}" value="{{ answers[0].Id }}"> <label for="{{ answers[0].Id }}" style="cursor:pointer; display: inline!important; font-weight: normal"  bind-html-unsafe="answers[0].title"></label></div>
+	<div ng-show="is_quiz" class="quiz-option" style="position:absolute; left:10px; top: 310px; width:330px;  height:80px;"><input dir="auto" class="quiz-input" type="radio" name="answer" id="{{ answers[1].Id }}" value="{{ answers[1].Id }}"> <label for="{{ answers[1].Id }}" style="cursor:pointer;  display: inline!important; font-weight: normal" bind-html-unsafe="answers[1].title"></label></div>
+	<div ng-show="is_quiz" class="quiz-option" style="position:absolute; left:350px; top: 250px; width:330px;  height:80px;"><input dir="auto" class="quiz-input" type="radio" name="answer" id="{{ answers[2].Id }}" value="{{ answers[2].Id }}"> <label for="{{ answers[2].Id }}" style="cursor:pointer;  display: inline!important; font-weight: normal " bind-html-unsafe="answers[2].title"></label></div>
+	<div ng-show="is_quiz" class="quiz-option" style="position:absolute; left:350px; top: 310px; width:330px;  height:80px;"><input dir="auto" class="quiz-input" type="radio" name="answer" id="{{ answers[3].Id }}" value="{{ answers[3].Id }}"> <label for="{{ answers[3].Id }}" style="cursor:pointer;  display: inline!important; font-weight: normal" bind-html-unsafe="answers[3].title"></label></div>
+    <div style="height: 150px;!important" ui-ace="{ theme:'chrome',
+                        mode:'python'}" data-ng-model="code" ng-show="is_test"></div>
+    <input type="hidden" name="id" value="{{ id }}">
+    <input type="hidden" name="code" value="{{code}}" ng-show="is_test">
+    <input type="hidden" name="type" value="{{ type }}">
+    <input type="hidden" name="score" value="{{ score }}">
+</form>
+<button class="btn btn-primary quiz-submit-button" data-ng-click="quizSubmit()" type="button" data-ng-show="submit">Submit</button>
+<button class="btn btn-default quiz-skip-button" data-ng-click="quizSkip()" type="button" data-ng-show="skip">Skip</button>
+<button class="btn btn-success quiz-continue-button" data-ng-click="quizContinue()" type="button" data-ng-show="continue_btn">Continue</button>
+<button class="btn btn-info quiz-show-explanation" data-ng-click="quizShowExplanation()" type="button" data-ng-show="explanation">Explanation</button>
+<div class="alert alert-dismissable quiz-status" ng-class="alert_type" data-ng-show="status" style="z-index: 10000!important;">
+  <button type="button" class="close" data-ng-click="status=''" aria-hidden="true">&times;</button>
+  <div bind-html-unsafe="status"></div>
+</div>

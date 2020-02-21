@@ -1,0 +1,19 @@
+{% extends "/admin/base.html" %}
+{% block breadcrumb %}
+    <li>
+        <a href="{{ uri_for("admin-home") }}">Home</a> <span class="divider">/</span>
+    </li>
+    {% raw %}
+    <li ng-repeat="breadcrumb in breadcrumbs.get() track by breadcrumb.path" >
+      <a ng-if="!$last" ng-href="#!{{ breadcrumb.path }}" ng-bind="breadcrumb.label" class="margin-right-xs"></a>
+      <span ng-if="!$last" class="divider">/</span>
+      <span ng-if="$last" ng-bind="breadcrumb.label"></span>
+    </li>
+    {% endraw %}
+{% endblock %}
+{% block content %}
+    <ng-view></ng-view>
+{% endblock %}
+{% block pluginJS %}
+
+{% endblock %}

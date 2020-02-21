@@ -1,0 +1,39 @@
+<div>
+    <div class="row row-gap-large">
+        <div class="col-md-3">
+                <img alt="" class="img-responsive img-bordered" data-ng-src="{{ course['img'] | imageSize:290:170}}">
+        </div>
+        <div class="col-md-7">
+            <h2 class="h-slim">
+                <a href="#">{{ course["title"] }}</a>
+                <span data-ng-show="course['is_new'] && course['is_available']"
+                              class="h4 badge-new">New</span>
+                <span data-ng-cloak data-ng-hide="course['is_available']" class="h4 badge-soon">Coming Soon</span>
+            </h2>
+
+            <h3 class="h-slim-top">
+                {{ course.short_desc }}
+            </h3>
+
+            <h3 class="h-slim-top"><span class="text-muted ng-scope">
+        <span class="glyphicon glyphicon-certificate"></span>
+        Khóa học miễn phí
+    </span>
+            </h3>
+
+            <p>{{ course.long_desc }}</p>
+
+            <div>
+            <div>
+                <a data-ng-repeat-start="tag in course.tags" data-ng-href="#!{{ tag }}" class="text-muted"
+                   data-ng-click="scrollTop()">{{ tag }}</a>
+                <span data-ng-repeat-end data-ng-if="!$last"> &middot; </span>
+            </div>
+            </div>
+        </div>
+        <div class="col-md-2 " data-ng-show="course['is_available']">
+            <a data-ng-show="course.lesson_keys" ng-href="/course/learn#!?course_id={{course['key']}}" class="btn btn-info" style="width: 200px; margin: 5px"><i class="fa fa-youtube-play"></i> Học qua video</a>
+            <a data-ng-show="course.exercise_keys" ng-href="/course/practice#!?course_id={{course['key']}}" class="btn btn-info" style="width: 200px; margin: 5px"><i class="fa fa-magic"></i> Học qua bài tập</a>
+        </div>
+    </div>
+</div>

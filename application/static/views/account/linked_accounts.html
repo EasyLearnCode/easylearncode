@@ -1,0 +1,37 @@
+<div class="text-center" data-ng-show="loading">
+	<div class="row row-gap-huge">
+		<img src="//lh5.ggpht.com/b3OandPWsUWAnRVS5d8JS8OL0nu8dU2d3NceS7p1yKhPl9KD4EhqeylPm7yFbft5wmsA2VCAZ-8wAkmFduXJ=s0#w=90&h=30">
+	</div>
+</div>
+<div class="row">
+	<div>
+		<div class="alert alert-danger col-md-12" data-ng-show="serverError">
+			{{serverError}}
+		</div>
+		<div class="alert alert-success col-md-12" data-ng-show="serverSuccess">
+			{{serverSuccess}}
+		</div>
+		<div class="alert alert-warning col-md-12" data-ng-show="!loading && !user['_has_password']">
+			It looks like you haven't set a password.  If you want to disconnect a social account, you'll have to <a href="#!/password" target="_self">set one</a> so we can let you log back in!
+		</div>
+	</div>
+	<div data-ng-hide="loading">
+		<div data-ng-hide="managed">
+			<h3>Sign In Accounts</h3>
+			<table class="table">
+				<tr data-ng-repeat="linkedAccountType in getLinkedAccountTypes()" class="text-uppercase" data-ng-class="{'topless': $first}">
+					<td class="col-md-1"><span class="glyphicon" data-ng-class="{'glyphicon-ok-circle text-success-color': linkedAccountType.used,
+					'glyphicon-remove-circle text-danger-color': !linkedAccountType.used}"></span></td>
+					<td>
+						<span data-ng-class="{'text-disabled': !linkedAccountType.used}">{{linkedAccountType.label}}
+						</span>
+					</td>
+					<td class="text-right">
+						<a href="" data-ng-show="linkedAccountType.used" data-ng-click="disconnect(linkedAccountType)">Disconnect</a>
+						<a href="" data-ng-hide="linkedAccountType.used" data-ng-click="connect(linkedAccountType)">Connect</a>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</div>

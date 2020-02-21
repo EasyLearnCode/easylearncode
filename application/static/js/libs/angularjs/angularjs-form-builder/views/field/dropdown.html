@@ -1,0 +1,7 @@
+<label class="control-label">{{ field.field_title }}:</label>
+<select class="form-control" ng-model="field.field_value"
+        ng-options="option.option_value as option.option_title for option in field.field_options"
+        ng-required="field.field_required"></select>
+<span class="required-error" ng-show="field.field_required && !field.field_value">* required</span>
+
+<br>

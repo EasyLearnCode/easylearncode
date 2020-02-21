@@ -1,0 +1,239 @@
+{% extends "/admin/base.html" %}
+{% block breadcrumb %}
+    <li>
+        <a href="{{ uri_for("admin-home") }}">Home</a> <span class="divider">/</span>
+    </li>
+    {% raw %}
+    <li ng-repeat="breadcrumb in breadcrumbs.get() track by breadcrumb.path" >
+      <a ng-if="!$last" ng-href="#!{{ breadcrumb.path }}" ng-bind="breadcrumb.label" class="margin-right-xs"></a>
+      <span ng-if="!$last" class="divider">/</span>
+      <span ng-if="$last" ng-bind="breadcrumb.label"></span>
+    </li>
+    {% endraw %}
+{% endblock %}
+
+{% block content %}
+    <ng-view></ng-view>
+    <script type="text/ng-template" id="template/angular/admin/quiz/quizs.html">
+        {% raw %}
+            <div class="row-fluid sortable">
+                <div class="box span12">
+                    <div class="box-header" data-original-title>
+                        <h2><i class="icon-user"></i><span class="break"></span>Quiz</h2>
+
+                        <div class="box-icon">
+                            <a href="#" class="btn-setting"><i class="icon-wrench"></i></a>
+                            <a href="#" ng-click="showAddModal()"><i class="icon-plus"></i></a>
+                            <a href="#" class="btn-minimize"><i class="icon-chevron-up"></i></a>
+                            <a href="#" class="btn-close"><i class="icon-remove"></i></a>
+                        </div>
+                    </div>
+                    <div class="box-content">
+                        <table class="table table-striped table-bordered bootstrap-datatable">
+                            <thead>
+                            <tr>
+                                <th>Tuần</th>
+                                <th>Ngày tạo</th>
+                                <th>Ngày bắt đầu</th>
+                                <th>Mức độ</th>
+
+                                <th>Cập nhật</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="quiz in quizs">
+                                <td class="center">{{ quiz.week }}</td>
+                                <td class="center">{{ quiz.created }}</td>
+                                <td class="center">{{ quiz.start_date }}</td>
+                                <td class="center"><a class="btn btn-success" ng-href="#!/{{ quiz.Id }}/level">
+                                    <i class="icon-zoom-in icon-white"></i>
+                                </a></td>
+
+                                <td class="center">
+                                    <a class="btn btn-success" href="#">
+                                        <i class="icon-zoom-in icon-white"></i>
+                                    </a>
+                                    <a class="btn btn-info" ng-click="showEditModal(quiz)">
+                                        <i class="icon-edit icon-white"></i>
+                                    </a>
+                                    <a class="btn btn-danger" ng-click="delete(quiz)">
+                                        <i class="icon-trash icon-white"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!--/span-->
+
+            </div><!--/row-->
+        {% endraw %}
+    </script>
+    <script type="text/ng-template" id="template/angular/admin/quiz/levels.html">
+        {% raw %}
+            <h2>Level manage of quiz {{ quiz.week }}</h2>
+            <div class="row-fluid sortable">
+                <div class="box span12">
+                    <div class="box-header" data-original-title>
+                        <h2><i class="icon-user"></i><span class="break"></span>Level</h2>
+
+                        <div class="box-icon">
+                            <a href="#" class="btn-setting"><i class="icon-wrench"></i></a>
+                            <a href="#" ng-click="showAddModal()"><i class="icon-plus"></i></a>
+                            <a href="#" class="btn-minimize"><i class="icon-chevron-up"></i></a>
+                            <a href="#" class="btn-close"><i class="icon-remove"></i></a>
+                        </div>
+                    </div>
+                    <div class="box-content">
+                        <table class="table table-striped table-bordered bootstrap-datatable">
+                            <thead>
+                            <tr>
+                                <th>Mức độ</th>
+                                <th>Điểm</th>
+                                <th>Thời gian giới hạn</th>
+                                <th>Bộ nhớ giới hạn</th>
+                                <th>Mô tả</th>
+                                <th>Thành tích</th>
+                                <th>Các bộ test</th>
+                                <th>Cập nhật</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="level in quiz.level_keys">
+                                <td>{{ level.level }}</td>
+                                <td class="center">{{ level.score }}</td>
+                                <td class="center">{{ level.limit_time }}</td>
+                                <td class="center">{{ level.limit_memory }}</td>
+                                <td class="center">{{ level.description }}</td>
+                                <td class="center"><a class="btn btn-success" ng-href="#!/{{ quiz.Id }}/level/{{ level.Id }}/result">
+                                    <i class="icon-zoom-in icon-white"></i>
+                                </a></td>
+                                <td class="center"><a class="btn btn-success"
+                                                      ng-href="#!/{{ quiz.Id }}/level/{{ level.Id }}/test">
+                                    <i class="icon-zoom-in icon-white"></i>
+                                </a></td>
+                                <td class="center">
+                                    <a class="btn btn-info" ng-click="showEditModal(level)">
+                                        <i class="icon-edit icon-white"></i>
+                                    </a>
+                                    <a class="btn btn-danger" ng-click="delete(level)">
+                                        <i class="icon-trash icon-white"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!--/span-->
+            </div><!--/row-->
+        {% endraw %}
+    </script>
+    <script type="text/ng-template" id="template/angular/admin/quiz/levels/tests.html">
+        {% raw %}
+            <h2>Test manage of level {{ level.level }}</h2>
+            <div class="row-fluid sortable">
+                <div class="box span12">
+                    <div class="box-header" data-original-title>
+                        <h2><i class="icon-user"></i><span class="break"></span>Test case</h2>
+
+                        <div class="box-icon">
+                            <a href="#" class="btn-setting"><i class="icon-wrench"></i></a>
+                            <a href="#" ng-click="showAddModal()"><i class="icon-plus"></i></a>
+                            <a href="#" class="btn-minimize"><i class="icon-chevron-up"></i></a>
+                            <a href="#" class="btn-close"><i class="icon-remove"></i></a>
+                        </div>
+                    </div>
+                    <div class="box-content">
+                        <table class="table table-striped table-bordered bootstrap-datatable">
+                            <thead>
+                            <tr>
+                                <th>Input</th>
+                                <th>Output</th>
+                                <th>Cập nhật</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="test in level.test_case">
+                                <td>{{ test.input }}</td>
+                                <td>{{ test.output }}</td>
+                                <td class="center">
+                                    <a class="btn btn-info" ng-click="showEditModal(test)">
+                                        <i class="icon-edit icon-white"></i>
+                                    </a>
+                                    <a class="btn btn-danger" ng-click="delete(test)">
+                                        <i class="icon-trash icon-white"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!--/span-->
+            </div><!--/row-->
+        {% endraw %}
+    </script>
+    <script type="text/ng-template" id="template/angular/admin/quiz/levels/results.html">
+        {% raw %}
+            <h2>Result manage</h2>
+            <div class="row-fluid sortable">
+                <div class="box span12">
+                    <div class="box-header" data-original-title>
+                        <h2><i class="icon-user"></i><span class="break"></span>Result</h2>
+
+                        <div class="box-icon">
+                            <a href="#" class="btn-setting"><i class="icon-wrench"></i></a>
+                            <a href="#" ng-click="showAddModal()"><i class="icon-plus"></i></a>
+                            <a href="#" class="btn-minimize"><i class="icon-chevron-up"></i></a>
+                            <a href="#" class="btn-close"><i class="icon-remove"></i></a>
+                        </div>
+                    </div>
+                    <div class="box-content">
+                        <table class="table table-striped table-bordered bootstrap-datatable">
+                            <thead>
+                            <tr>
+                                <th>Người dùng</th>
+                                <th>Ngôn ngữ</th>
+                                <th>Code</th>
+                                <th>Điểm</th>
+                                <th>Thời gian</th>
+                                <th>Bộ nhớ</th>
+                                <th>Kết quả</th>
+                                <th>Ngày giờ nộp</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="result in results">
+                                <td>{{ result.user_key }}</td>
+                                <td>{{ result.language }}</td>
+                                <td>{{ result.code }}</td>
+                                <td class="center">
+                                    {{ result.score }}
+                                </td>
+                                <td class="center">
+                                    {{ result.memory_used}}
+                                </td>
+                                <td class="center">
+                                    {{ result.time_used }}
+                                </td>
+                                <td class="center">
+                                    {{ result.result }}
+                                </td>
+                                <td class="center">
+                                    {{ result.submit_time }}
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!--/span-->
+            </div><!--/row-->
+        {% endraw %}
+    </script>
+    <script type="text/ng-template" id="myModalContent.html">
+        <form-directive form="form"></form-directive>
+    </script>
+{% endblock %}

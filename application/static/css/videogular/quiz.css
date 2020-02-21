@@ -1,0 +1,32 @@
+vg-quiz {
+    position: absolute;
+    z-index: 1000;
+    border: solid #888888;
+    border-radius: 5px;
+}
+vg-quiz .quiz-submit-button, vg-quiz .quiz-skip-button, vg-quiz .quiz-continue-button, vg-quiz .quiz-show-explanation {
+    position: absolute;
+    right: 10px;
+    width: 100px;
+}
+vg-quiz .quiz-submit-button, vg-quiz .quiz-continue-button {
+    bottom: 50px;
+}
+vg-quiz .quiz-skip-button, vg-quiz .quiz-show-explanation {
+    bottom: 10px;
+}
+vg-quiz .quiz-status {
+    position: absolute;
+    bottom: -10px;
+    width: 83%;
+    z-index: 1000;
+}
+
+.quiz-question-text{
+    height: 180px;
+    padding: 5px;
+    border:1px solid;
+    border-radius:5px;
+    margin: 10px;
+    overflow: auto;
+}
